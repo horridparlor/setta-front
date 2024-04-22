@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { ThemeProvider, Box } from '@mui/material';
+import { theme } from './styles/Theme';
+import HomeBar from './components/common/HomeBar';
+import CardEditor from './components/card-editor/CardEditor';
+import CardCatalogue from './components/card-catalogue/CardCatalogue';
+import ImageCapture from "./components/test/ImageCapture";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+interface AppProps {}
+
+const App: React.FC<AppProps> = () => {
+    const [activeComponent, setActiveComponent] = useState<string>('editor');
+
+    return (
+        <ThemeProvider theme={theme}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#244775' }}>
+                <Box sx={{ width: '100%', p: 2 }}>
+                    <HomeBar setActiveComponent={setActiveComponent} />
+                </Box>
+                <Box sx={{
+                    flex: 1,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    overflow: 'auto'
+                }}>
+                    {activeComponent === 'editor' ?
+                        <CardEditor /> :
+                        <CardCatalogue cards={{}} />}
+                </Box>
+            </Box>
+        </ThemeProvider>
+    );
+};
 
 export default App;
