@@ -7,6 +7,7 @@ import StatFrame from './StatFrame';
 import LevelFrame from './LevelFrame';
 import EffectsFrame from './EffectsFrame';
 import BackFrame from './BackFrame';
+import {StatBoxColor} from "../../../types/color";
 
 
 interface CardPreviewerProps {
@@ -29,13 +30,13 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale 
             <BackFrame scale={scale} cardData={cardData} />
             <TopFrame scale={scale} name={cardName} />
             <ArtFrame imageUrl={'https://setta.fi/rush-api/assets/card-art/hammer-waifu.png'} scale={scale} />
-            <Box sx={{ position: 'absolute', bottom: 20, left: 20, right: 20 }}>
+            <Box sx={{ position: 'absolute', bottom: 28, left: 28, right: 28 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
                     <LevelFrame level={level} />
-                    <StatFrame label="ATK" value={atk} color="red" />
-                    <StatFrame label="DEF" value={def} color="blue" />
+                    <StatFrame label="ATK" value={atk} color={StatBoxColor.ATK} />
+                    <StatFrame label="DEF" value={def} color={StatBoxColor.DEF} />
                 </Box>
-                <EffectsFrame text={effectText} />
+                <EffectsFrame cardData={cardData} />
             </Box>
         </Card>
     );

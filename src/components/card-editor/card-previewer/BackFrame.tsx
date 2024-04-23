@@ -28,7 +28,7 @@ const BackFrame: React.FC<BackFrameProps> = ({ scale, cardData }) => {
             width: `${30 * scale}rem`,
             height: `calc(${30 * scale * 1.43}rem)`,
             backgroundColor: CardMainFrameColor.FRAME,
-            borderRadius: '0.4rem',
+            borderRadius: '1.5rem',
             padding: '0.8rem 0.6rem',
         }}>
             <Box sx={{
@@ -36,7 +36,7 @@ const BackFrame: React.FC<BackFrameProps> = ({ scale, cardData }) => {
                 height: '100%',
                 backgroundColor: getBackgroundColor(),
                 border: '0.2rem solid black',
-                borderRadius: '0.2rem',
+                borderRadius: '0.8rem',
             }} />
         </Box>
     );

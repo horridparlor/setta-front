@@ -30,7 +30,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const handleInputChange = (field: keyof CardData) =>
         (event: React.ChangeEvent<HTMLInputElement>) => {
             const value = event.target.value;
-            onCardDataChange(field, isNaN(+value) ? value : +value);
+            if (value === "") {
+                onCardDataChange(field, "");
+            } else {
+                onCardDataChange(field, isNaN(+value) ? value : +value);
+            }
         };
 
     return (
@@ -116,6 +120,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 fullWidth
                 label="Effect Text"
                 variant="outlined"
+                multiline
+                rows={5}
                 value={cardData.effectText}
                 onChange={handleInputChange('effectText')}
                 sx={{ marginBottom: 2 }}

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
+import {CardType} from "../../../types/card";
+import {CardEffectFrameColor} from "../../../types/color";
 
 interface StatFrameProps {
     label: string;
