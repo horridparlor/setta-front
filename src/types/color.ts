@@ -1,3 +1,7 @@
+import {CardData, CardType, StatType} from "./card";
+
+const ARTWORK_BORDER_THICKNESS = 0.15
+
 export enum CardMainFrameColor {
     NORMAL = '#e0c71b',
     EFFECT = '#ec8c57',
@@ -24,4 +28,41 @@ export enum CardEffectFrameColor {
 export enum StatBoxColor {
     ATK = '#aa2929',
     DEF = '#2a7aaf'
+}
+
+export const getCardBackgroundColor = (cardData : CardData) => {
+    switch (cardData.cardType) {
+        case CardType.MONSTER:
+            return CardMainFrameColor.EFFECT;
+        case CardType.SPELL:
+            return CardMainFrameColor.SPELL;
+        case CardType.TRAP:
+            return CardMainFrameColor.TRAP;
+    }
+};
+
+export const getCardEffectFrameColor = (cardData : CardData) => {
+    switch (cardData.cardType) {
+        case CardType.MONSTER:
+            return CardEffectFrameColor.EFFECT;
+        case CardType.SPELL:
+            return CardEffectFrameColor.SPELL;
+        case CardType.TRAP:
+            return CardEffectFrameColor.TRAP;
+        default:
+            return 'defaultColor';
+    }
+};
+
+export const getStatBoxBackgroundColor = (statType : StatType) => {
+    switch (statType) {
+        case StatType.ATTACK:
+            return StatBoxColor.ATK;
+        case StatType.DEFENSE:
+            return StatBoxColor.DEF;
+    }
+};
+
+export const getArtworkBorder = (scale: number) => {
+    return `solid ${ARTWORK_BORDER_THICKNESS * scale}rem black`;
 }

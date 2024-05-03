@@ -4,7 +4,7 @@ import { theme } from './styles/Theme';
 import HomeBar from './components/common/HomeBar';
 import CardEditor from './components/card-editor/CardEditor';
 import CardCatalogue from './components/card-catalogue/CardCatalogue';
-import ImageCapture from "./components/test/ImageCapture";
+import './styles/montserrat.css';
 
 interface AppProps {}
 

@@ -1,13 +1,14 @@
 import React from 'react';
-import { Card, Box } from '@mui/material';
-import { CardData } from '../../../types/card';
-import TopFrame from './TopFrame';
+import {Box, Card} from '@mui/material';
+import {CardData, StatType} from '../../../types/card';
+import NameFrame from './NameFrame';
 import ArtFrame from './ArtFrame';
 import StatFrame from './StatFrame';
 import LevelFrame from './LevelFrame';
 import EffectsFrame from './EffectsFrame';
 import BackFrame from './BackFrame';
-import {StatBoxColor} from "../../../types/color";
+import AttributeCut from "./AttributeCut";
+import AttributeFrame from "./AttributeFrame";
 
 
 interface CardPreviewerProps {
@@ -28,15 +29,18 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale 
             borderRadius: '0.4rem',
         }}>
             <BackFrame scale={scale} cardData={cardData} />
-            <TopFrame scale={scale} name={cardName} />
+            <NameFrame scale={scale} name={cardName} />
             <ArtFrame imageUrl={'https://setta.fi/rush-api/assets/card-art/hammer-waifu.png'} scale={scale} />
+            <AttributeCut scale={scale} cardData={cardData}/>
+            <AttributeFrame scale={scale} cardData={cardData}/>
             <Box sx={{ position: 'absolute', bottom: 28, left: 28, right: 28 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <LevelFrame level={level} />
-                    <StatFrame label="ATK" value={atk} color={StatBoxColor.ATK} />
-                    <StatFrame label="DEF" value={def} color={StatBoxColor.DEF} />
+                <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
+                    <LevelFrame level={level} scale={scale}/>
+                    <StatFrame value={atk} statType={StatType.ATTACK} scale={scale}/>
+                    <StatFrame value={def} statType={StatType.DEFENSE} scale={scale}/>
+                    <Box style={{width: '0'}}/>
                 </Box>
-                <EffectsFrame cardData={cardData} />
+                <EffectsFrame cardData={cardData} scale={scale} />
             </Box>
         </Card>
     );

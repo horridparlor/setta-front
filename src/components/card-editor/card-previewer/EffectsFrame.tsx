@@ -1,42 +1,31 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { CardData, CardType } from "../../../types/card";
-import { CardEffectFrameColor } from "../../../types/color";
+import { CardData } from "../../../types/card";
+import { getCardEffectFrameColor } from "../../../types/color";
+import {formatText, getFontSize} from "../../../utils/fonts";
 
 interface EffectsFrameProps {
     cardData: CardData;
+    scale: number;
 }
 
-const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData }) => {
-    const getEffectFrameColor = () => {
-        switch (cardData.cardType) {
-            case CardType.MONSTER:
-                return CardEffectFrameColor.EFFECT;
-            case CardType.SPELL:
-                return CardEffectFrameColor.SPELL;
-            case CardType.TRAP:
-                return CardEffectFrameColor.TRAP;
-            default:
-                return 'defaultColor';
-        }
-    };
-
+const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale }) => {
     return (
         <Typography variant="subtitle1" sx={{
             textAlign: 'left',
-            padding: '2rem',
-            paddingLeft: '0.9rem',
-            paddingTop: '0.5rem',
-            backgroundColor: getEffectFrameColor(),
+            paddingLeft: '0.7rem',
+            paddingRight: '0.5rem',
+            paddingTop: '0.3rem',
+            backgroundColor: getCardEffectFrameColor(cardData),
             borderRadius: '0.4rem',
-            minHeight: '9.2rem',
+            height: '11.6rem',
             overflow: 'hidden',
-            fontSize: '1.4rem',
-            fontFamily: 'Montserrat, sans-serif',
+            fontSize: getFontSize(4, scale),
             whiteSpace: 'pre-line',
-            lineHeight: '1.4'
+            lineHeight: '1.4',
+            fontWeight: '400',
         }}>
-            {cardData.effectText}
+            {formatText(cardData.effectText, scale)}
         </Typography>
     );
 };

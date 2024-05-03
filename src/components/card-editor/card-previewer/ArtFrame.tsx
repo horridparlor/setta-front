@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
+import {getArtworkBorder} from "../../../types/color";
 
 interface ArtFrameProps {
     imageUrl: string;
@@ -16,7 +17,7 @@ const ArtFrame: React.FC<ArtFrameProps> = ({ imageUrl, scale }) => (
             height: `${24 * scale}rem`,
             marginTop: `-${13 * scale}rem`,
             marginLeft: `-${13.6 * scale}rem`,
-            border: `solid ${0.14 * scale}vw black`,
+            border: getArtworkBorder(scale),
             overflow: 'hidden',
             transform: 'none',
         }}

@@ -1,24 +1,31 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import {CardType} from "../../../types/card";
-import {CardEffectFrameColor} from "../../../types/color";
+import {CardType, StatType} from "../../../types/card";
+import {CardEffectFrameColor, getArtworkBorder, getStatBoxBackgroundColor} from "../../../types/color";
+import {getFontSize} from "../../../utils/fonts";
 
 interface StatFrameProps {
-    label: string;
     value: number;
-    color: string;
+    statType: StatType;
+    scale: number;
 }
 
-const StatFrame: React.FC<StatFrameProps> = ({ label, value, color }) => (
+const StatFrame: React.FC<StatFrameProps> = ({ value, statType, scale }) => (
     <Typography variant="h6" sx={{
-        flex: 1,
         textAlign: 'center',
-        backgroundColor: color,
-        borderRadius: '4px',
+        backgroundColor: getStatBoxBackgroundColor(statType),
+        borderRadius: `${0.8 * scale}rem`,
         color: 'white',
-        padding: '4px',
+        padding: `${0.1 * scale}rem`,
+        paddingTop: `${0.40 * scale}rem`,
+        fontSize: getFontSize(8, scale),
+        fontWeight: '700',
+        width: `${7.07 * scale}rem`,
+        height: `${4.5 * scale}rem`,
+        marginBottom: `${1.8 * scale}rem`,
+        border: `solid ${0.2 * scale}rem black`,
     }}>
-        {label}: {value}
+        {value}
     </Typography>
 );
 

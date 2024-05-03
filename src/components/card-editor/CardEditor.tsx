@@ -31,7 +31,7 @@ const CardEditor: React.FC = () => {
         if (cardRef.current && cardRef.current.parentNode) {
             const wrapper = document.createElement('div');
             wrapper.style.backgroundColor = CardMainFrameColor.FRAME;
-            wrapper.style.padding = '2.5rem';
+            wrapper.style.padding = '2rem';
 
             const parent = cardRef.current.parentNode;
             parent.insertBefore(wrapper, cardRef.current);

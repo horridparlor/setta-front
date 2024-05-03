@@ -33,3 +33,8 @@ export interface CardData {
     def: number;
     effectText: string;
 }
+
+export enum StatType {
+    ATTACK = 'attack',
+    DEFENSE = 'defense'
+}

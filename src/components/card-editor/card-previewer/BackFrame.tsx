@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { CardData, CardType } from "../../../types/card";
-import {CardMainFrameColor} from "../../../types/color";
+import { CardData } from "../../../types/card";
+import { CardMainFrameColor, getCardBackgroundColor } from "../../../types/color";
 
 interface BackFrameProps {
     scale: number;
@@ -9,17 +9,6 @@ interface BackFrameProps {
 }
 
 const BackFrame: React.FC<BackFrameProps> = ({ scale, cardData }) => {
-    const getBackgroundColor = () => {
-        switch (cardData.cardType) {
-            case CardType.MONSTER:
-                return CardMainFrameColor.EFFECT;
-            case CardType.SPELL:
-                return CardMainFrameColor.SPELL;
-            case CardType.TRAP:
-                return CardMainFrameColor.TRAP;
-        }
-    };
-
     return (
         <Box sx={{
             display: 'flex',
@@ -34,7 +23,7 @@ const BackFrame: React.FC<BackFrameProps> = ({ scale, cardData }) => {
             <Box sx={{
                 width: '100%',
                 height: '100%',
-                backgroundColor: getBackgroundColor(),
+                backgroundColor: getCardBackgroundColor(cardData),
                 border: '0.2rem solid black',
                 borderRadius: '0.8rem',
             }} />
