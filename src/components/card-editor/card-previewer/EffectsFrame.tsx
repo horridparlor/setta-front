@@ -1,7 +1,7 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import {Box, Typography} from '@mui/material';
 import { CardData } from "../../../types/card";
-import {getArtworkBorder, getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
+import {getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
 import {formatText, getFontSize} from "../../../utils/fonts";
 
 interface EffectsFrameProps {
@@ -27,6 +27,15 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale }) => {
             border: getEffectsBorder(cardData, scale),
         }}>
             {formatText(cardData.effectText, scale)}
+            <Box
+                sx={{
+                    flexGrow: 1,
+                    marginTop: `${0.4 * scale}rem`,
+                    height: `${0.1 * scale}rem`,
+                    backgroundColor: 'black',
+                    opacity: 0.2,
+                }}
+            />
         </Typography>
     );
 };

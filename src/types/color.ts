@@ -10,6 +10,8 @@ export enum CardMainFrameColor {
     REVENGE = '#f35a5a',
     ROYAL_DARK = '#151515',
     ROYAL_LIGHT = '#575757',
+    TIME_TRAVELLER_DARK = '#102058',
+    TIME_TRAVELLER_LIGHT = '#2650ea',
     SPELL = '#4cb871',
     TRAP = '#e77c9b',
     RITUAL = '#5f9bdb',
@@ -22,6 +24,7 @@ export enum CardEffectFrameColor {
     FUSION = '#eee2f5',
     REVENGE = '#f6dcdc',
     ROYAL = '#e5e5e5',
+    TIME_TRAVELLER = '#e9ecf6',
     SPELL = '#e3f5ea',
     TRAP = '#f5e0e6',
     RITUAL = '#e7f0f7',
@@ -50,8 +53,20 @@ export const getCardBackgroundColor = (cardData : CardData) => {
 };
 
 export const getCardBackground = (cardData : CardData) => {
-    if (cardData.cardType === CardType.MONSTER && cardData.subtype === CardSubtype.ROYAL) {
-        return `linear-gradient(to bottom, ${CardMainFrameColor.ROYAL_DARK}, ${CardMainFrameColor.ROYAL_LIGHT})`;
+    let darkColor;
+    let lightColor;
+    switch (cardData.subtype) {
+        case CardSubtype.ROYAL:
+            darkColor = CardMainFrameColor.ROYAL_DARK;
+            lightColor = CardMainFrameColor.ROYAL_LIGHT;
+            break;
+        case CardSubtype.TIME_TRAVELLER:
+            darkColor = CardMainFrameColor.TIME_TRAVELLER_DARK;
+            lightColor = CardMainFrameColor.TIME_TRAVELLER_LIGHT;
+            break;
+    }
+    if (cardData.cardType === CardType.MONSTER && darkColor !== undefined) {
+        return `linear-gradient(to bottom, ${darkColor}, ${lightColor})`;
     }
     return '';
 }
@@ -99,6 +114,8 @@ export const getMonsterEffectFrameColor = (subtype : CardSubtype) => {
             return CardEffectFrameColor.REVENGE;
         case CardSubtype.ROYAL:
             return CardEffectFrameColor.ROYAL;
+        case CardSubtype.TIME_TRAVELLER:
+            return CardEffectFrameColor.TIME_TRAVELLER;
         default:
             return CardEffectFrameColor.NORMAL;
     }
@@ -128,12 +145,14 @@ export const getArtworkBorder = (scale: number) => {
 
 export const getEffectsBorder = (cardData: CardData, scale: number) => {
     return `solid ${EFFECTS_BORDER_THICKNESS * scale}rem ${cardData.cardType === CardType.MONSTER
-        && [CardSubtype.REVENGE, CardSubtype.ROYAL].includes(cardData.subtype) ? 'black' : 'transparent'}`;
+        && [CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER].includes(cardData.subtype) ? 'black' : 'transparent'}`;
 }
 
 export const getFrameTextColor = (cardData: CardData) => {
     switch (cardData.subtype) {
         case CardSubtype.ROYAL:
+            return TextColor.PEARL_WHITE;
+        case CardSubtype.TIME_TRAVELLER:
             return TextColor.PEARL_WHITE;
         default:
             return TextColor.BLACK;

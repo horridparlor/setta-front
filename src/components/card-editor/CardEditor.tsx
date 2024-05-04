@@ -1,22 +1,37 @@
-import React, { useState, useRef } from 'react';
+import React, {useRef, useState} from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
-import html2canvas from 'html2canvas';
+import domtoimage from 'dom-to-image';
 import {Box} from "@mui/material";
-import {CardClass, CardData, CardSubtype, CardType} from "../../types/card";
+import {CardClass, CardData, CardSubtype, CardSupertype, CardType, MaximumPiece} from "../../types/card";
 import {CardMainFrameColor} from "../../types/color";
+
 const CardEditor: React.FC = () => {
     const [cardData, setCardData] = useState<CardData>({
-        cardName: 'Name',
+        cardName: '',
+        isAce: false,
         cardClass: CardClass.ABYSS,
         cardType: CardType.MONSTER,
         subtype: CardSubtype.FUSION,
+        supertype: CardSupertype.NONE,
+        maximumPiece: MaximumPiece.NONE,
         level: 1,
         atk: 0,
         def: 0,
-        effectText: '{h}(Name + Name){/h}\n' +
-            '{i}Cost:{/i} Discard a card. {i}(Hand.){/i}\n' +
-            '{i}Effect:{/i} Target monster loses {sb}200{/sb} {b}atk{/b}. {i}(Until the end of turn.){/i}'
+        primaryMaterial: '',
+        secondaryMaterial: '',
+        tertiaryMaterial: '',
+        costText: '',
+        effectText: '',
+        flavourText: '',
+        countsAs: '',
+        artScale: 1,
+        artXOffset: 0,
+        artYOffset: 0,
+        nameSize: 3,
+        materialsSize: 5,
+        effectsSize: 5,
+        expansionId: 0,
     });
 
     const cardRef = useRef<HTMLDivElement>(null);
@@ -38,22 +53,30 @@ const CardEditor: React.FC = () => {
             parent.insertBefore(wrapper, cardRef.current);
             wrapper.appendChild(cardRef.current);
 
-            const canvas = await html2canvas(wrapper, {
-                scale: 2,
-                backgroundColor: CardMainFrameColor.FRAME,
-                useCORS: true,
-            });
+            try {
+                const dataUrl = await domtoimage.toPng(wrapper, {
+                    height: wrapper.offsetHeight * 2,
+                    width: wrapper.offsetWidth * 2,
+                    style: {
+                        transform: 'scale(2)',
+                        transformOrigin: 'top left',
+                        width: `${wrapper.offsetWidth}px`,
+                        height: `${wrapper.offsetHeight}px`
+                    }
+                });
 
-            if (parent) {
-                parent.insertBefore(cardRef.current, wrapper);
+                if (parent) {
+                    parent.insertBefore(cardRef.current, wrapper);
+                }
+                wrapper.remove();
+
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = cardData.cardName + '.png';
+                link.click();
+            } catch (err) {
+                console.error('oops, something went wrong!', err);
             }
-            wrapper.remove();
-
-            const image = canvas.toDataURL('image/png').replace("image/png", "image/octet-stream");
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = 'card.png';
-            link.click();
         }
     };
 

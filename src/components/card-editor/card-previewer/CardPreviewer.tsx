@@ -10,6 +10,7 @@ import BackFrame from './BackFrame';
 import AttributeCut from "./AttributeCut";
 import AttributeFrame from "./AttributeFrame";
 import {getCardBackgroundColor} from "../../../types/color";
+import {normalizeName} from "../../../utils/string";
 
 
 interface CardPreviewerProps {
@@ -29,7 +30,7 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale 
             backgroundColor: 'transparent',
             borderRadius: '0.4rem',
         }}>
-            <ArtFrame imageUrl={'https://setta.fi/rush-api/assets/card-art/hammer-waifu.png'} scale={scale} />
+            <ArtFrame imageUrl={'https://setta.fi/rush-api/assets/card-art/' + normalizeName(cardData.cardName) + '.png'} scale={scale} />
             <BackFrame scale={scale} cardData={cardData} />
             <NameFrame scale={scale} cardData={cardData} />
             <AttributeCut scale={scale} cardData={cardData}/>
