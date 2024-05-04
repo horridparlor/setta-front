@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import {CardType, StatType} from "../../../types/card";
-import {CardEffectFrameColor, getArtworkBorder, getStatBoxBackgroundColor} from "../../../types/color";
+import {CardEffectFrameColor, getArtworkBorder, getStatBoxBackgroundColor, TextColor} from "../../../types/color";
 import {getFontSize} from "../../../utils/fonts";
 
 interface StatFrameProps {
@@ -15,7 +15,7 @@ const StatFrame: React.FC<StatFrameProps> = ({ value, statType, scale }) => (
         textAlign: 'center',
         backgroundColor: getStatBoxBackgroundColor(statType),
         borderRadius: `${0.8 * scale}rem`,
-        color: 'white',
+        color: TextColor.WHITE,
         padding: `${0.1 * scale}rem`,
         paddingTop: `${0.40 * scale}rem`,
         fontSize: getFontSize(8, scale),

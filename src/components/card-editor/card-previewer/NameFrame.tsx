@@ -1,13 +1,15 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import {formatText, getFontSize} from "../../../utils/fonts";
+import {CardData} from "../../../types/card";
+import {getFrameTextColor} from "../../../types/color";
 
 interface TopFrameProps {
-    name: string;
+    cardData: CardData;
     scale: number;
 }
 
-const NameFrame: React.FC<TopFrameProps> = ({ name, scale }) => (
+const NameFrame: React.FC<TopFrameProps> = ({ cardData, scale }) => (
     <Typography variant="h5" component="h1" sx={{
         fontFamily: 'Montserrat, sans-serif',
         fontWeight: '600',
@@ -19,8 +21,9 @@ const NameFrame: React.FC<TopFrameProps> = ({ name, scale }) => (
         top: `${1.6 * scale}rem`,
         left: `${1.9 * scale}rem`,
         zIndex: 1000,
+        color: getFrameTextColor(cardData),
     }}>
-        {formatText(name, scale)}
+        {formatText(cardData.cardName, scale)}
     </Typography>
 );
 

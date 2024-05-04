@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import { CardData } from "../../../types/card";
-import { CardMainFrameColor, getCardBackgroundColor } from "../../../types/color";
+import {Box} from '@mui/material';
+import {CardData, CardSubtype, CardType} from "../../../types/card";
+import {CardMainFrameColor, getCardBackgroundColor} from "../../../types/color";
 
 interface BackFrameProps {
     scale: number;
@@ -26,6 +26,7 @@ const BackFrame: React.FC<BackFrameProps> = ({ scale, cardData }) => {
                 backgroundColor: getCardBackgroundColor(cardData),
                 border: '0.2rem solid black',
                 borderRadius: '0.8rem',
+                clipPath: 'polygon(0 0 100% 100%, 100% 100%)'
             }} />
         </Box>
     );

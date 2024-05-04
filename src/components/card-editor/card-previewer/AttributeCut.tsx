@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { CardData } from "../../../types/card";
+import {CardData, CardSubtype, CardType} from "../../../types/card";
 import { getArtworkBorder, getCardBackgroundColor } from "../../../types/color";
 
 interface AttributeCutProps {

@@ -1,4 +1,4 @@
-import {CardData, CardType, StatType} from "./card";
+import {CardData, CardSubtype, CardType, StatType} from "./card";
 
 const ARTWORK_BORDER_THICKNESS = 0.15
 
@@ -7,7 +7,7 @@ export enum CardMainFrameColor {
     EFFECT = '#ec8c57',
     FUSION = '#b361e2',
     REVENGE = '#f35a5a',
-    ROYAL = '#505051',
+    ROYAL = '#212121',
     SPELL = '#4cb871',
     TRAP = '#e77c9b',
     RITUAL = '#5f9bdb',
@@ -30,13 +30,43 @@ export enum StatBoxColor {
     DEF = '#2a7aaf'
 }
 
+export enum TextColor {
+    BLACK = '#000000',
+    PEARL_WHITE = '#f3f3f3',
+    WHITE = '#ffffff',
+}
+
 export const getCardBackgroundColor = (cardData : CardData) => {
     switch (cardData.cardType) {
         case CardType.MONSTER:
-            return CardMainFrameColor.EFFECT;
+            return getMonsterBackgroundColor(cardData.subtype);
         case CardType.SPELL:
             return CardMainFrameColor.SPELL;
         case CardType.TRAP:
+            return getTrapBackgroundColor(cardData.subtype);
+    }
+};
+
+export const getMonsterBackgroundColor = (subtype : CardSubtype) => {
+    switch (subtype) {
+        case CardSubtype.EFFECT:
+            return CardMainFrameColor.EFFECT;
+        case CardSubtype.FUSION:
+            return CardMainFrameColor.FUSION;
+        case CardSubtype.REVENGE:
+            return CardMainFrameColor.REVENGE;
+        case CardSubtype.ROYAL:
+            return CardMainFrameColor.ROYAL;
+        default:
+            return CardMainFrameColor.NORMAL;
+    }
+};
+
+export const getTrapBackgroundColor = (subtype : CardSubtype) => {
+    switch (subtype) {
+        case CardSubtype.RITUAL:
+            return CardMainFrameColor.RITUAL;
+        default:
             return CardMainFrameColor.TRAP;
     }
 };
@@ -44,13 +74,35 @@ export const getCardBackgroundColor = (cardData : CardData) => {
 export const getCardEffectFrameColor = (cardData : CardData) => {
     switch (cardData.cardType) {
         case CardType.MONSTER:
-            return CardEffectFrameColor.EFFECT;
+            return getMonsterEffectFrameColor(cardData.subtype);
         case CardType.SPELL:
             return CardEffectFrameColor.SPELL;
         case CardType.TRAP:
-            return CardEffectFrameColor.TRAP;
+            return getTrapEffectFrameColor(cardData.subtype);
+    }
+};
+
+export const getMonsterEffectFrameColor = (subtype : CardSubtype) => {
+    switch (subtype) {
+        case CardSubtype.EFFECT:
+            return CardEffectFrameColor.EFFECT;
+        case CardSubtype.FUSION:
+            return CardEffectFrameColor.FUSION;
+        case CardSubtype.REVENGE:
+            return CardEffectFrameColor.REVENGE;
+        case CardSubtype.ROYAL:
+            return CardEffectFrameColor.ROYAL;
         default:
-            return 'defaultColor';
+            return CardEffectFrameColor.NORMAL;
+    }
+};
+
+export const getTrapEffectFrameColor = (subtype : CardSubtype) => {
+    switch (subtype) {
+        case CardSubtype.RITUAL:
+            return CardEffectFrameColor.RITUAL;
+        default:
+            return CardEffectFrameColor.TRAP;
     }
 };
 
@@ -65,4 +117,13 @@ export const getStatBoxBackgroundColor = (statType : StatType) => {
 
 export const getArtworkBorder = (scale: number) => {
     return `solid ${ARTWORK_BORDER_THICKNESS * scale}rem black`;
+}
+
+export const getFrameTextColor = (cardData: CardData) => {
+    switch (cardData.subtype) {
+        case CardSubtype.ROYAL:
+            return TextColor.PEARL_WHITE;
+        default:
+            return TextColor.BLACK;
+    }
 }

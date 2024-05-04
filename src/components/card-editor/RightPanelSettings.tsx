@@ -1,13 +1,14 @@
 import React from 'react';
 import {
+    Box,
     Button,
-    TextField,
+    Card,
     FormControl,
     InputLabel,
-    Select,
     MenuItem,
+    Select,
     SelectChangeEvent,
-    Box
+    TextField
 } from '@mui/material';
 import {CardClass, CardData, CardSubtype, CardType} from "../../types/card";
 
@@ -36,6 +37,17 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 onCardDataChange(field, isNaN(+value) ? value : +value);
             }
         };
+
+    const getActiveSubtypes = () => {
+        switch (cardData.cardType) {
+            case CardType.MONSTER:
+                return [CardSubtype.NORMAL, CardSubtype.EFFECT, CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL];
+            case CardType.SPELL:
+                return [CardSubtype.NORMAL];
+            case CardType.TRAP:
+                return [CardSubtype.NORMAL, CardSubtype.RITUAL];
+        }
+    }
 
     return (
         <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
@@ -81,7 +93,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     label="Subtype"
                     onChange={handleSelectChange('subtype')}
                 >
-                    {Object.values(CardSubtype).map(s => (
+                    {Object.values(CardSubtype).filter(s => getActiveSubtypes().includes(s)).map(s => (
                         <MenuItem key={s} value={s}>{s}</MenuItem>
                     ))}
                 </Select>

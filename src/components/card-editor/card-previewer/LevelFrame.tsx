@@ -18,8 +18,8 @@ const LevelFrame: React.FC<LevelFrameProps> = ({ level, scale }) => {
             alignItems: 'center',
             width: `${STAR_SIZE * scale}rem`,
             height: `${STAR_SIZE * scale}rem`,
-            left: `${0.25 * scale}rem`,
-            top: `${-1.2 * scale}rem`,
+            left: `${0.4 * scale}rem`,
+            top: `${-1.3 * scale}rem`,
         }}>
             <img
                 src={'http://setta.fi/rush-api/assets/icons/level-frame.png'}
@@ -28,7 +28,7 @@ const LevelFrame: React.FC<LevelFrameProps> = ({ level, scale }) => {
                     width: `${STAR_SIZE * scale}rem`,
                     height: `${STAR_SIZE * scale}rem`,
                     position: 'absolute',
-                    top: `${-0.25 * scale}rem`,
+                    top: `${-0.2 * scale}rem`,
                 }}
             />
             <Typography

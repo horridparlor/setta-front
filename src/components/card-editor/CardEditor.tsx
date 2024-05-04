@@ -2,20 +2,21 @@ import React, { useState, useRef } from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
 import html2canvas from 'html2canvas';
-import {Box, Card} from "@mui/material";
+import {Box} from "@mui/material";
 import {CardClass, CardData, CardSubtype, CardType} from "../../types/card";
 import {CardMainFrameColor} from "../../types/color";
-
 const CardEditor: React.FC = () => {
     const [cardData, setCardData] = useState<CardData>({
-        cardName: '',
+        cardName: 'Name',
         cardClass: CardClass.ABYSS,
         cardType: CardType.MONSTER,
-        subtype: CardSubtype.NONE,
+        subtype: CardSubtype.FUSION,
         level: 1,
         atk: 0,
         def: 0,
-        effectText: ''
+        effectText: '{h}(Name + Name){/h}\n' +
+            '{i}Cost:{/i} Discard a card. {i}(Hand.){/i}\n' +
+            '{i}Effect:{/i} Target monster loses {sb}200{/sb} {b}atk{/b}. {i}(Until the end of turn.){/i}'
     });
 
     const cardRef = useRef<HTMLDivElement>(null);

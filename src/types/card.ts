@@ -14,7 +14,6 @@ export enum CardType {
 }
 
 export enum CardSubtype {
-    NONE = 'None',
     NORMAL = 'Normal',
     EFFECT = 'Effect',
     FUSION = 'Fusion',
