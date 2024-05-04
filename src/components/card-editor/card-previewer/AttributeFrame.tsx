@@ -39,9 +39,9 @@ const AttributeFrame: React.FC<AttributeFrameProps> = ({ scale, cardData }) => {
                 sx={{
                     position: 'absolute',
                     fontWeight: '600',
-                    left: `${3.75 * scale}rem`,
-                    top: `${6.5 * scale}rem`,
-                    fontSize: getFontSize(4, scale),
+                    left: `${3.85 * scale}rem`,
+                    top: `${6.6 * scale}rem`,
+                    fontSize: getFontSize(3, scale),
                     transform: 'translateX(-50%)',
                     color: getFrameTextColor(cardData),
                 }}

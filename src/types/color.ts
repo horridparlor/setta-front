@@ -1,13 +1,15 @@
 import {CardData, CardSubtype, CardType, StatType} from "./card";
 
-const ARTWORK_BORDER_THICKNESS = 0.15
+const ARTWORK_BORDER_THICKNESS = 0.225;
+const EFFECTS_BORDER_THICKNESS = 0.2;
 
 export enum CardMainFrameColor {
     NORMAL = '#e0c71b',
     EFFECT = '#ec8c57',
     FUSION = '#b361e2',
     REVENGE = '#f35a5a',
-    ROYAL = '#212121',
+    ROYAL_DARK = '#151515',
+    ROYAL_LIGHT = '#575757',
     SPELL = '#4cb871',
     TRAP = '#e77c9b',
     RITUAL = '#5f9bdb',
@@ -47,6 +49,13 @@ export const getCardBackgroundColor = (cardData : CardData) => {
     }
 };
 
+export const getCardBackground = (cardData : CardData) => {
+    if (cardData.cardType === CardType.MONSTER && cardData.subtype === CardSubtype.ROYAL) {
+        return `linear-gradient(to bottom, ${CardMainFrameColor.ROYAL_DARK}, ${CardMainFrameColor.ROYAL_LIGHT})`;
+    }
+    return '';
+}
+
 export const getMonsterBackgroundColor = (subtype : CardSubtype) => {
     switch (subtype) {
         case CardSubtype.EFFECT:
@@ -55,8 +64,6 @@ export const getMonsterBackgroundColor = (subtype : CardSubtype) => {
             return CardMainFrameColor.FUSION;
         case CardSubtype.REVENGE:
             return CardMainFrameColor.REVENGE;
-        case CardSubtype.ROYAL:
-            return CardMainFrameColor.ROYAL;
         default:
             return CardMainFrameColor.NORMAL;
     }
@@ -117,6 +124,11 @@ export const getStatBoxBackgroundColor = (statType : StatType) => {
 
 export const getArtworkBorder = (scale: number) => {
     return `solid ${ARTWORK_BORDER_THICKNESS * scale}rem black`;
+}
+
+export const getEffectsBorder = (cardData: CardData, scale: number) => {
+    return `solid ${EFFECTS_BORDER_THICKNESS * scale}rem ${cardData.cardType === CardType.MONSTER
+        && [CardSubtype.REVENGE, CardSubtype.ROYAL].includes(cardData.subtype) ? 'black' : 'transparent'}`;
 }
 
 export const getFrameTextColor = (cardData: CardData) => {

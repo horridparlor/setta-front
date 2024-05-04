@@ -17,7 +17,7 @@ const AttributeCut: React.FC<AttributeCutProps> = ({ scale, cardData }) => {
         justifyContent: 'center',
         width: `${PANEL_SIZE * scale}rem`,
         height: `${PANEL_SIZE * scale}rem`,
-        backgroundColor: getCardBackgroundColor(cardData),
+        backgroundColor: 'transparent',
         padding: `${0.8 * scale}rem ${0.6 * scale}rem`,
     }
 
@@ -25,14 +25,14 @@ const AttributeCut: React.FC<AttributeCutProps> = ({ scale, cardData }) => {
         <>
             <Box sx={{
                 top: `${5.15 * scale}rem`,
-                left: `${23.3 * scale}rem`,
+                left: `${23.35 * scale}rem`,
                 borderBottom: getArtworkBorder(scale),
                 ...cutPanelStyle
             }}>
             </Box>
             <Box sx={{
                 top: `${4.3 * scale}rem`,
-                left: `${21.8 * scale}rem`,
+                left: `${21.85 * scale}rem`,
                 transform: `rotate(-22.5deg)`,
                 borderLeft: getArtworkBorder(scale),
                 ...cutPanelStyle

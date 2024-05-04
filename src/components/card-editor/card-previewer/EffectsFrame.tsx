@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { CardData } from "../../../types/card";
-import { getCardEffectFrameColor } from "../../../types/color";
+import {getArtworkBorder, getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
 import {formatText, getFontSize} from "../../../utils/fonts";
 
 interface EffectsFrameProps {
@@ -24,6 +24,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale }) => {
             whiteSpace: 'pre-line',
             lineHeight: '1.4',
             fontWeight: '400',
+            border: getEffectsBorder(cardData, scale),
         }}>
             {formatText(cardData.effectText, scale)}
         </Typography>

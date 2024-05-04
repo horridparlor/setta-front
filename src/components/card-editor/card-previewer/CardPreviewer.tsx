@@ -9,6 +9,7 @@ import EffectsFrame from './EffectsFrame';
 import BackFrame from './BackFrame';
 import AttributeCut from "./AttributeCut";
 import AttributeFrame from "./AttributeFrame";
+import {getCardBackgroundColor} from "../../../types/color";
 
 
 interface CardPreviewerProps {
@@ -28,9 +29,9 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale 
             backgroundColor: 'transparent',
             borderRadius: '0.4rem',
         }}>
+            <ArtFrame imageUrl={'https://setta.fi/rush-api/assets/card-art/hammer-waifu.png'} scale={scale} />
             <BackFrame scale={scale} cardData={cardData} />
             <NameFrame scale={scale} cardData={cardData} />
-            <ArtFrame imageUrl={'https://setta.fi/rush-api/assets/card-art/hammer-waifu.png'} scale={scale} />
             <AttributeCut scale={scale} cardData={cardData}/>
             <AttributeFrame scale={scale} cardData={cardData}/>
             <Box sx={{

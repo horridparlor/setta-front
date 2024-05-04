@@ -25,6 +25,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                                                                }) => {
     const handleSelectChange = (field: keyof CardData) =>
         (event: SelectChangeEvent<string>) => {
+            if (field === 'cardType') {
+                onCardDataChange('subtype', event.target.value === CardType.MONSTER ? CardSubtype.EFFECT : CardSubtype.NORMAL);
+            }
             onCardDataChange(field, event.target.value as any);
         };
 

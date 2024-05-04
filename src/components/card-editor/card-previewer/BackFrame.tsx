@@ -1,7 +1,7 @@
 import React from 'react';
 import {Box} from '@mui/material';
 import {CardData, CardSubtype, CardType} from "../../../types/card";
-import {CardMainFrameColor, getCardBackgroundColor} from "../../../types/color";
+import {CardMainFrameColor, getCardBackground, getCardBackgroundColor} from "../../../types/color";
 
 interface BackFrameProps {
     scale: number;
@@ -21,12 +21,28 @@ const BackFrame: React.FC<BackFrameProps> = ({ scale, cardData }) => {
             padding: '0.8rem 0.6rem',
         }}>
             <Box sx={{
-                width: '100%',
-                height: '100%',
+                position: 'absolute',
+                width: '94%',
+                height: '95.5%',
                 backgroundColor: getCardBackgroundColor(cardData),
+                background: getCardBackground(cardData),
                 border: '0.2rem solid black',
                 borderRadius: '0.8rem',
-                clipPath: 'polygon(0 0 100% 100%, 100% 100%)'
+                clipPath: "polygon(" +
+                    "0% 0%, " +
+                    "100% 0%, " +
+                    "100% 100%, " +
+                    "4% 100%, " +
+                    "4% 68.3%, " +
+                    "96.3% 68.3%, " +
+                    "96.3% 25.3%, " +
+                    "76.2% 25.3%, " +
+                    "67.9% 11.3%, " +
+                    "4% 11.3%, " +
+                    "4% 68.3%, " +
+                    "4% 100%, " +
+                    "0% 100%" +
+                ")"
             }} />
         </Box>
     );

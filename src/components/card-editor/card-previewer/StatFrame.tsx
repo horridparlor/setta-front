@@ -17,12 +17,11 @@ const StatFrame: React.FC<StatFrameProps> = ({ value, statType, scale }) => (
         borderRadius: `${0.8 * scale}rem`,
         color: TextColor.WHITE,
         padding: `${0.1 * scale}rem`,
-        paddingTop: `${0.40 * scale}rem`,
+        paddingTop: `${0.4 * scale}rem`,
         fontSize: getFontSize(8, scale),
         fontWeight: '700',
         width: `${7.07 * scale}rem`,
         height: `${4.5 * scale}rem`,
-        marginBottom: `${1.8 * scale}rem`,
         border: `solid ${0.2 * scale}rem black`,
     }}>
         {value}
