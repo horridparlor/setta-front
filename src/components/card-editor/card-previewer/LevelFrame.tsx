@@ -22,7 +22,7 @@ const LevelFrame: React.FC<LevelFrameProps> = ({ level, scale }) => {
             top: `${-1.3 * scale}rem`,
         }}>
             <img
-                src={'http://setta.fi/rush-api/assets/icons/level-frame.png'}
+                src={'https://setta.fi/rush-api/assets/icons/level-frame.png'}
                 alt="Level icon"
                 style={{
                     width: `${STAR_SIZE * scale}rem`,
