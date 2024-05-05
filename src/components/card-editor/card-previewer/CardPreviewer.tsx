@@ -9,7 +9,6 @@ import EffectsFrame from './EffectsFrame';
 import BackFrame from './BackFrame';
 import AttributeCut from "./AttributeCut";
 import AttributeFrame from "./AttributeFrame";
-import {normalizeName} from "../../../utils/string";
 import CopyrightIndicator from "./CopyrightIndicator";
 import AceFrame from "./AceFrame";
 
@@ -22,8 +21,6 @@ interface CardPreviewerProps {
 
 const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale }) => {
     const { cardName, level, atk, def, effectText } = cardData;
-
-    console.log(222, normalizeName(cardData.cardName));
     return (
         <Card ref={cardRef} sx={{
             position: 'relative',

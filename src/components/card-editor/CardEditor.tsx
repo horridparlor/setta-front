@@ -3,11 +3,21 @@ import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
 import domtoimage from 'dom-to-image';
 import {Box} from "@mui/material";
-import {CardClass, CardData, CardSubtype, CardSupertype, CardType, MaximumPiece} from "../../types/card";
+import {
+    CardClass,
+    CardData,
+    CardSubtype,
+    CardSupertype,
+    CardType,
+    getCardClassId, getCardMaximumPieceId, getCardSubtypeId, getCardTypeId,
+    MaximumPiece
+} from "../../types/card";
 import {CardMainFrameColor} from "../../types/color";
+import {toast} from "react-toastify";
 
 const CardEditor: React.FC = () => {
     const [cardData, setCardData] = useState<CardData>({
+        cardId: 0,
         cardName: '',
         isAce: false,
         cardClass: CardClass.ABYSS,
@@ -42,6 +52,60 @@ const CardEditor: React.FC = () => {
             [field]: value
         }));
     };
+
+    const handleSave = async () => {
+        const url = 'http://localhost:8000/api/card';
+        const method = cardData.cardId ? 'PUT' : 'POST';
+        const body = JSON.stringify({
+            cardId: cardData.cardId,
+            cardName: cardData.cardName,
+            isAce: cardData.isAce,
+            cardClassId: getCardClassId(cardData),
+            cardTypeId: getCardTypeId(cardData),
+            subtypeId: getCardSubtypeId(cardData),
+            supertypeId: getCardSubtypeId(cardData),
+            maximumPieceId: getCardMaximumPieceId(cardData),
+            level: cardData.level,
+            atk: cardData.atk,
+            def: cardData.def,
+            primaryMaterialId: null,
+            secondaryMaterialId: null,
+            tertiaryMaterialId: null,
+            costText: cardData.costText,
+            effectText: cardData.effectText,
+            flavourText: cardData.flavourText,
+            countsAsId: null,
+            artScale: cardData.artScale,
+            artXOffset: cardData.artXOffset,
+            artYOffset: cardData.artYOffset,
+            nameSize: cardData.nameSize,
+            materialsSize: cardData.materialsSize,
+            effectsSize: cardData.effectsSize,
+            expansionId: cardData.expansionId
+        });
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            });
+            if (!response.ok) {
+                toast.error('Network error');
+            }
+            const responseData = await response.json();
+            const cardId = responseData.cardId;
+            setCardData(cardData => ({
+                ...cardData,
+                cardId: cardId
+            }));
+            toast.success('Card saved: ' + cardId);
+        } catch (error) {
+            toast.error('Failed to save card: ' + error);
+        }
+    }
 
     const handleExport = async () => {
         if (cardRef.current && cardRef.current.parentNode) {
@@ -86,7 +150,7 @@ const CardEditor: React.FC = () => {
             <Box sx={{ marginRight: '2rem' }}>
                 <CardPreviewer cardData={cardData} cardRef={cardRef} scale={1}/>
             </Box>
-            <RightPanelSettings cardData={cardData} onCardDataChange={handleCardDataChange} onExport={handleExport} />
+            <RightPanelSettings cardData={cardData} onCardDataChange={handleCardDataChange} onExport={handleExport} onSave={handleSave} />
         </Box>
     );
 };

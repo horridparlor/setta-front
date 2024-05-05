@@ -5,6 +5,8 @@ import HomeBar from './components/common/HomeBar';
 import CardEditor from './components/card-editor/CardEditor';
 import CardCatalogue from './components/card-catalogue/CardCatalogue';
 import './styles/montserrat.css';
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 interface AppProps {}
 
@@ -29,6 +31,10 @@ const App: React.FC<AppProps> = () => {
                         <CardCatalogue cards={{}} />}
                 </Box>
             </Box>
+            <ToastContainer
+                position="bottom-right"
+                autoClose={2000}
+            />
         </ThemeProvider>
     );
 };

@@ -46,6 +46,7 @@ export const EXTRA_DECK_SUBTYPES = [
 ];
 
 export interface CardData {
+    cardId: number;
     cardName: string;
     isAce: boolean;
     cardClass: CardClass;
@@ -104,4 +105,77 @@ export const isPendulumCard = (cardData: CardData) => {
 
 export const isHandTrapCard = (cardData: CardData) => {
     return cardData.supertype === CardSupertype.HAND_TRAP;
+}
+
+export const getCardClassId = (cardData: CardData) => {
+    switch (cardData.cardClass) {
+        case CardClass.ABYSS:
+            return 1;
+        case CardClass.DRAGON:
+            return 2;
+        case CardClass.KAWAII:
+            return 3;
+        case CardClass.SLIME:
+            return 4;
+        case CardClass.SPARKS:
+            return 5;
+        case CardClass.ZOMBIE:
+            return 6;
+    }
+}
+
+export const getCardTypeId = (cardData: CardData) => {
+    switch (cardData.cardType) {
+        case CardType.MONSTER:
+            return 1;
+        case CardType.SPELL:
+            return 2;
+        case CardType.TRAP:
+            return 3;
+    }
+}
+
+export const getCardSubtypeId = (cardData: CardData) => {
+    switch (cardData.subtype) {
+        case CardSubtype.NORMAL:
+            return 1;
+        case CardSubtype.EFFECT:
+            return 2;
+        case CardSubtype.FUSION:
+            return 3;
+        case CardSubtype.REVENGE:
+            return 4;
+        case CardSubtype.ROYAL:
+            return 5;
+        case CardSubtype.TIME_TRAVELLER:
+            return 6;
+        case CardSubtype.RITUAL:
+            return 7;
+    }
+}
+
+export const getSupertypeId = (cardData: CardData) => {
+    switch (cardData.supertype) {
+        case CardSupertype.NONE:
+            return 1;
+        case CardSupertype.HAND_TRAP:
+            return 2;
+        case CardSupertype.PENDULUM:
+            return 3;
+        case CardSupertype.MAXIMUM:
+            return 4;
+    }
+}
+
+export const getCardMaximumPieceId = (cardData: CardData) => {
+    switch (cardData.maximumPiece) {
+        case MaximumPiece.NONE:
+            return 1;
+        case MaximumPiece.LEFT:
+            return 2;
+        case MaximumPiece.MIDDLE:
+            return 3;
+        case MaximumPiece.RIGHT:
+            return 4;
+    }
 }

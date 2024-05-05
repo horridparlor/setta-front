@@ -28,13 +28,15 @@ interface RightPanelSettingsProps {
     cardData: CardData;
     onCardDataChange: (field: keyof CardData, value: string | number) => void;
     onExport: () => void;
+    onSave: () => void;
 }
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
-                                                                   cardData,
-                                                                   onCardDataChange,
-                                                                   onExport
-                                                               }) => {
+    cardData,
+    onCardDataChange,
+    onExport,
+    onSave,
+}) => {
     const handleSelectChange = (field: keyof CardData) =>
         (event: SelectChangeEvent<string>) => {
             const value = event.target.value;
@@ -182,7 +184,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.artScale}
                     onChange={handleInputChange('artScale')}
-                    inputProps={{ min: 1, max: 1.5, step:0.025 }}
+                    inputProps={{ min: 0, max: 20 }}
                 />
                 <TextField
                     fullWidth
@@ -191,7 +193,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.artXOffset}
                     onChange={handleInputChange('artXOffset')}
-                    inputProps={{ min: 0, max: 20.0, step: 0.25 }}
+                    inputProps={{ min: 0, max: 20 }}
                 />
                 <TextField
                     fullWidth
@@ -200,7 +202,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.artYOffset}
                     onChange={handleInputChange('artYOffset')}
-                    inputProps={{ min: 0, max: 20.0, step: 0.25 }}
+                    inputProps={{ min: 0, max: 20 }}
                 />
             </Box>
             <Box
@@ -417,9 +419,14 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </Select>
                 </FormControl>
             </Box>
-            <Button onClick={onExport} variant="contained" color="primary">
-                Export as PNG
-            </Button>
+            <Box sx={{...rowContainerStyle, marginBottom: 0}}>
+                <Button onClick={onSave} variant="contained" color="primary" disabled={cardData.cardName.length === 0}>
+                    Save
+                </Button>
+                <Button onClick={onExport} variant="contained" color="secondary">
+                    Export as PNG
+                </Button>
+            </Box>
         </Box>
     );
 };
