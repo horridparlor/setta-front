@@ -17,7 +17,10 @@ import {
     CardSubtype,
     CardSupertype,
     CardType,
-    EXTRA_DECK_SUBTYPES,
+    hasCostText,
+    hasEffectText,
+    hasFlavourText,
+    isExtraDeckCard,
     MaximumPiece
 } from "../../types/card";
 
@@ -45,9 +48,27 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     if (value === CardSubtype.EFFECT) {
                         onCardDataChange('flavourText', '');
                     }
+                    if (cardData.flavourText.length) {
+                        switch (cardData.supertype) {
+                            case CardSupertype.HAND_TRAP:
+                                onCardDataChange('effectText', '');
+                                break;
+                            case CardSupertype.PENDULUM:
+                                onCardDataChange('costText', '');
+                                break;
+                        }
+                    }
                     onCardDataChange('supertype', CardSupertype.NONE);
                     break;
                 case 'supertype':
+                    switch (cardData.supertype) {
+                        case CardSupertype.HAND_TRAP:
+                            onCardDataChange('effectText', '');
+                            break;
+                        case CardSupertype.PENDULUM:
+                            onCardDataChange('costText', '');
+                            break;
+                    }
                     onCardDataChange('maximumPiece', value === CardSupertype.MAXIMUM ? MaximumPiece.LEFT : MaximumPiece.NONE);
                     break;
             }
@@ -136,7 +157,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.nameSize}
                     onChange={handleInputChange('nameSize')}
-                    inputProps={{ min: 1, max: 3 }}
+                    inputProps={{ min: 1, max: 4 }}
                     sx={{ minWidth: '8rem' }}
                 />
                 <FormControlLabel
@@ -149,6 +170,37 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     }
                     label="Is Ace"
                     sx={{ minWidth: 'fit-content' }}
+                />
+            </Box>
+            <Box
+                sx={rowContainerStyle}
+            >
+                <TextField
+                    fullWidth
+                    type="number"
+                    label="Art Scale"
+                    variant="outlined"
+                    value={cardData.artScale}
+                    onChange={handleInputChange('artScale')}
+                    inputProps={{ min: 1, max: 1.5, step:0.025 }}
+                />
+                <TextField
+                    fullWidth
+                    type="number"
+                    label="X Offset"
+                    variant="outlined"
+                    value={cardData.artXOffset}
+                    onChange={handleInputChange('artXOffset')}
+                    inputProps={{ min: 0, max: 20.0, step: 0.25 }}
+                />
+                <TextField
+                    fullWidth
+                    type="number"
+                    label="Y Offset"
+                    variant="outlined"
+                    value={cardData.artYOffset}
+                    onChange={handleInputChange('artYOffset')}
+                    inputProps={{ min: 0, max: 20.0, step: 0.25 }}
                 />
             </Box>
             <Box
@@ -250,7 +302,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             <Box
                 sx={{
                     ...rowContainerStyle,
-                    display: EXTRA_DECK_SUBTYPES.includes(cardData.subtype) ? 'flex' : 'none',
+                    display: isExtraDeckCard(cardData) ? 'flex' : 'none',
                 }}
             >
                 <TextField
@@ -276,7 +328,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.tertiaryMaterial}
                     onChange={handleInputChange('tertiaryMaterial')}
                     sx={{
-                        display: cardData.subtype === CardSubtype.RITUAL ? 'none' : 'flex',
+                        display: cardData.subtype === CardSubtype.RITUAL || cardData.secondaryMaterial.length === 0 ? 'none' : 'flex',
                         marginBottom: 2
                     }}
                 />
@@ -290,8 +342,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 value={cardData.costText}
                 onChange={handleInputChange('costText')}
                 sx={{
-                    display: (cardData.cardType === CardType.MONSTER && cardData.subtype !== CardSubtype.NORMAL
-                        && cardData.flavourText.length > 0) || (cardData.subtype === CardSubtype.NORMAL && cardData.supertype === CardSupertype.NONE) ? 'none' : 'flex',
+                    display: hasCostText(cardData) ? 'flex' : 'none',
                     marginBottom: 2
                 }}
             />
@@ -304,7 +355,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 value={cardData.effectText}
                 onChange={handleInputChange('effectText')}
                 sx={{
-                    display: (cardData.cardType === CardType.MONSTER && cardData.subtype === CardSubtype.NORMAL) || cardData.flavourText.length > 0 ? 'none' : 'flex',
+                    display: hasEffectText(cardData) ? 'flex' : 'none',
                     marginBottom: 2
                 }}
             />
@@ -317,8 +368,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 value={cardData.flavourText}
                 onChange={handleInputChange('flavourText')}
                 sx={{
-                    display: cardData.cardType !== CardType.MONSTER || cardData.subtype === CardSubtype.EFFECT
-                        || cardData.effectText.length > 0 || (cardData.subtype !== CardSubtype.NORMAL && cardData.costText.length > 0) ? 'none' : 'flex',
+                    display: hasFlavourText(cardData) ? 'flex' : 'none',
                     marginBottom: 2
                 }}
             />
@@ -340,7 +390,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     onChange={handleInputChange('materialsSize')}
                     inputProps={{ min: 1, max: 5 }}
                     sx={{
-                        display: EXTRA_DECK_SUBTYPES.includes(cardData.subtype) ? 'flex' : 'none',
+                        display: isExtraDeckCard(cardData) ? 'flex' : 'none',
                         minWidth: '8rem'
                     }}
                 />

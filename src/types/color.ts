@@ -1,4 +1,5 @@
-import {CardData, CardSubtype, CardType, StatType} from "./card";
+import {CardData, CardSubtype, CardSupertype, CardType, StatType} from "./card";
+import {Card} from "@mui/material";
 
 const ARTWORK_BORDER_THICKNESS = 0.225;
 const EFFECTS_BORDER_THICKNESS = 0.2;
@@ -8,8 +9,8 @@ export enum CardMainFrameColor {
     EFFECT = '#ec8c57',
     FUSION = '#b361e2',
     REVENGE = '#f35a5a',
-    ROYAL_DARK = '#151515',
-    ROYAL_LIGHT = '#575757',
+    ROYAL_DARK = '#1d1d1d',
+    ROYAL_LIGHT = '#616161',
     TIME_TRAVELLER_DARK = '#102058',
     TIME_TRAVELLER_LIGHT = '#2650ea',
     SPELL = '#4cb871',
@@ -41,6 +42,13 @@ export enum TextColor {
     WHITE = '#ffffff',
 }
 
+export enum GradientCutPoint {
+    HAND_TRAP_DROP = 16,
+    HAND_TRAP_EDGE= 64,
+    PENDULUM_DROP = 20,
+    PENDULUM_EDGE = 72,
+}
+
 export const getCardBackgroundColor = (cardData : CardData) => {
     switch (cardData.cardType) {
         case CardType.MONSTER:
@@ -63,6 +71,16 @@ export const getCardBackground = (cardData : CardData) => {
         case CardSubtype.TIME_TRAVELLER:
             darkColor = CardMainFrameColor.TIME_TRAVELLER_DARK;
             lightColor = CardMainFrameColor.TIME_TRAVELLER_LIGHT;
+            break;
+    }
+    switch (cardData.supertype) {
+        case CardSupertype.HAND_TRAP:
+            darkColor = `${CardMainFrameColor.NORMAL} ${GradientCutPoint.HAND_TRAP_DROP}%`;
+            lightColor = `${CardMainFrameColor.TRAP} ${GradientCutPoint.HAND_TRAP_DROP + GradientCutPoint.HAND_TRAP_EDGE}%`;
+            break;
+        case CardSupertype.PENDULUM:
+            darkColor = `${CardMainFrameColor.NORMAL} ${GradientCutPoint.PENDULUM_DROP}%`;
+            lightColor = `${CardMainFrameColor.SPELL} ${GradientCutPoint.PENDULUM_DROP + GradientCutPoint.PENDULUM_EDGE}%`;
             break;
     }
     if (cardData.cardType === CardType.MONSTER && darkColor !== undefined) {
@@ -96,7 +114,7 @@ export const getTrapBackgroundColor = (subtype : CardSubtype) => {
 export const getCardEffectFrameColor = (cardData : CardData) => {
     switch (cardData.cardType) {
         case CardType.MONSTER:
-            return getMonsterEffectFrameColor(cardData.subtype);
+            return getMonsterEffectFrameColor(cardData);
         case CardType.SPELL:
             return CardEffectFrameColor.SPELL;
         case CardType.TRAP:
@@ -104,8 +122,8 @@ export const getCardEffectFrameColor = (cardData : CardData) => {
     }
 };
 
-export const getMonsterEffectFrameColor = (subtype : CardSubtype) => {
-    switch (subtype) {
+export const getMonsterEffectFrameColor = (cardData : CardData) => {
+    switch (cardData.subtype) {
         case CardSubtype.EFFECT:
             return CardEffectFrameColor.EFFECT;
         case CardSubtype.FUSION:
@@ -117,9 +135,20 @@ export const getMonsterEffectFrameColor = (subtype : CardSubtype) => {
         case CardSubtype.TIME_TRAVELLER:
             return CardEffectFrameColor.TIME_TRAVELLER;
         default:
-            return CardEffectFrameColor.NORMAL;
+            return getNormalMonsterEffectFrameColor(cardData.supertype);
     }
 };
+
+export const getNormalMonsterEffectFrameColor = (supertype : CardSupertype) => {
+    switch (supertype) {
+        case CardSupertype.HAND_TRAP:
+            return CardEffectFrameColor.TRAP;
+        case CardSupertype.PENDULUM:
+            return CardEffectFrameColor.SPELL;
+        default:
+            return CardEffectFrameColor.NORMAL;
+    }
+}
 
 export const getTrapEffectFrameColor = (subtype : CardSubtype) => {
     switch (subtype) {

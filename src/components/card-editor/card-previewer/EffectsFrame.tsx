@@ -1,8 +1,17 @@
 import React from 'react';
 import {Box, Typography} from '@mui/material';
-import { CardData } from "../../../types/card";
+import {
+    CardData,
+    CardSubtype,
+    hasCostText,
+    hasEffectText,
+    hasFlavourText,
+    isExtraDeckCard, isHandTrapCard,
+    isPendulumCard
+} from "../../../types/card";
 import {getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
-import {formatText, getFontSize} from "../../../utils/fonts";
+import {addSizeToRichText, formatText, getFontSize} from "../../../utils/fonts";
+import {replaceIfEmpty, starsWithVowel} from "../../../utils/string";
 
 interface EffectsFrameProps {
     cardData: CardData;
@@ -10,32 +19,97 @@ interface EffectsFrameProps {
 }
 
 const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale }) => {
+    const getMaterialsSeparator = () => {
+        switch (cardData.subtype) {
+            case CardSubtype.REVENGE:
+                return 'x';
+            case CardSubtype.ROYAL:
+                return '⋅'
+            case CardSubtype.TIME_TRAVELLER:
+                return '★'
+            case CardSubtype.RITUAL:
+                return '->'
+            default:
+                return '+';
+        }
+    }
+    const getMaterialsSize = () => {
+        return cardData.materialsSize - 1;
+    }
+    const getEffectsSize = () => {
+        return cardData.effectsSize - 1;
+    }
+    const getMaterialsText = () => {
+        const materialsPrefix = `{h=${getMaterialsSize()}}(`;
+        const materialsText =  [replaceIfEmpty(cardData.primaryMaterial, 'Primary'),
+            replaceIfEmpty(cardData.secondaryMaterial, 'Secondary'), cardData.tertiaryMaterial]
+            .filter(material => material.length).join(` ${getMaterialsSeparator()} `);
+        return isExtraDeckCard(cardData) ? materialsPrefix + materialsText + '){/h}\n' : '';
+    }
+    const getCostText = () => {
+        const costPrefix = `{i=${getEffectsSize()}}${isPendulumCard(cardData) ? 'Pendulum>>' : 'Cost:'} {/i}`;
+        const costText = addSizeToRichText(cardData.costText, getEffectsSize());
+        return hasCostText(cardData) ? costPrefix + costText + '\n' : '';
+    }
+    const getEffectText = () => {
+        const effectPrefix = `{i=${getEffectsSize()}}${isHandTrapCard(cardData) ? 'Hand Trap>>' : 'Effect:'} {/i}`;
+        const effectText = addSizeToRichText(cardData.effectText, getEffectsSize());
+        return hasEffectText(cardData) ? effectPrefix + effectText + '\n' : '';
+    }
+    const getFlavourText = () => {
+        const flavourPrefix = `{i=${getEffectsSize()}}`;
+        const flavourText = addSizeToRichText(cardData.flavourText, getEffectsSize());
+        return hasFlavourText(cardData) ? flavourPrefix + (flavourText.length ? flavourText : 'Flavour text...') + '{/i}' + '\n' : '';
+    }
+    const getEffectsText = () => {
+        return getMaterialsText() + getCostText() + getEffectText() + getFlavourText();
+    }
+    const getLineHeight = () => {
+        return 1.4 + (0.01 * (getEffectsSize() + 1));
+    }
+    const getTopPadding = () => {
+        const firstLineSize = isExtraDeckCard(cardData) ? getMaterialsSize() : getEffectsSize();
+        return Math.max(0, 0.25 + 0.06 * (firstLineSize + (isExtraDeckCard(cardData) ? 2 : 1)) - ((getEffectsSize() + 1) * 0.045 * getLineHeight()));
+    }
+    const getCountsAs = () => {
+        const countsAsPrefix = `Counts as ${starsWithVowel(cardData.countsAs) ? 'an' : 'a'} {bi=${getEffectsSize()}}`;
+        const countsAsText = cardData.countsAs;
+        if (!countsAsText.length) {
+            return '';
+        }
+        return (
+            <>
+                {formatText(countsAsPrefix +  countsAsText + '{/bi}.', scale)}
+                <Box
+                    sx={{
+                        flexGrow: 1,
+                        marginTop: `${0.4 * scale}rem`,
+                        height: `${0.12 * scale}rem`,
+                        backgroundColor: 'black',
+                        opacity: 0.2,
+                    }}
+                />
+            </>
+        );
+    }
     return (
         <Typography variant="subtitle1" sx={{
             textAlign: 'left',
             paddingLeft: '0.7rem',
             paddingRight: '0.5rem',
-            paddingTop: '0.3rem',
+            paddingTop: `${getTopPadding()}rem`,
             backgroundColor: getCardEffectFrameColor(cardData),
             borderRadius: '0.4rem',
-            height: '11.6rem',
+            height: `${(11.9 - getTopPadding()) * scale}rem`,
             overflow: 'hidden',
-            fontSize: getFontSize(4, scale),
+            fontSize: getFontSize(getEffectsSize(), scale),
             whiteSpace: 'pre-line',
-            lineHeight: '1.4',
+            lineHeight: `${getLineHeight()}`,
             fontWeight: '400',
             border: getEffectsBorder(cardData, scale),
         }}>
-            {formatText(cardData.effectText, scale)}
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    marginTop: `${0.4 * scale}rem`,
-                    height: `${0.1 * scale}rem`,
-                    backgroundColor: 'black',
-                    opacity: 0.2,
-                }}
-            />
+            {formatText(getEffectsText(), scale)}
+            {getCountsAs()}
         </Typography>
     );
 };

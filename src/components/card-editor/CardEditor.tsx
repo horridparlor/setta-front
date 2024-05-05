@@ -28,10 +28,10 @@ const CardEditor: React.FC = () => {
         artScale: 1,
         artXOffset: 0,
         artYOffset: 0,
-        nameSize: 3,
+        nameSize: 4,
         materialsSize: 5,
         effectsSize: 5,
-        expansionId: 0,
+        expansionId: 1,
     });
 
     const cardRef = useRef<HTMLDivElement>(null);

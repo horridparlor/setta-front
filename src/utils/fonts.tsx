@@ -16,7 +16,8 @@ const FONT_SIZES: {[key: number]: number} = {
     6: 56,
     7: 60,
     8: 64,
-    9: 80
+    9: 68,
+    10: 80
 }
 
 const FONT_SCALE_MULTIPLIER = 0.038;
@@ -38,6 +39,14 @@ const createStyledSpan = (styleProps: { fontWeight: string, fontStyle?: string }
     fontStyle: styleProps.fontStyle,
     fontSize: props.fontSize ? getFontSize(props.fontSize, props.scale) : undefined
 }));
+
+export function addSizeToRichText(richText: string, fontSize: number): string {
+    const regex = /\{([a-zA-Z]+)\}/g;
+    return richText
+        .replace('{i}', ' {i}(')
+        .replace('{/i}', '.){/i}')
+        .replace(regex, `{$1=${fontSize}}`);
+}
 
 const HeavyNormal = createStyledSpan({ fontWeight: '700' });
 const BoldNormal = createStyledSpan({ fontWeight: '600' });

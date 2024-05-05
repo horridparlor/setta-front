@@ -9,8 +9,9 @@ import EffectsFrame from './EffectsFrame';
 import BackFrame from './BackFrame';
 import AttributeCut from "./AttributeCut";
 import AttributeFrame from "./AttributeFrame";
-import {getCardBackgroundColor} from "../../../types/color";
 import {normalizeName} from "../../../utils/string";
+import CopyrightIndicator from "./CopyrightIndicator";
+import AceFrame from "./AceFrame";
 
 
 interface CardPreviewerProps {
@@ -22,15 +23,15 @@ interface CardPreviewerProps {
 const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale }) => {
     const { cardName, level, atk, def, effectText } = cardData;
 
+    console.log(222, normalizeName(cardData.cardName));
     return (
         <Card ref={cardRef} sx={{
             position: 'relative',
             overflow: 'hidden',
-            fontFamily: 'Montserrat, sans-serif',
             backgroundColor: 'transparent',
-            borderRadius: '0.4rem',
+            borderRadius: '1.5rem',
         }}>
-            <ArtFrame imageUrl={'https://setta.fi/rush-api/assets/card-art/' + normalizeName(cardData.cardName) + '.png'} scale={scale} />
+            <ArtFrame cardData={cardData} scale={scale} />
             <BackFrame scale={scale} cardData={cardData} />
             <NameFrame scale={scale} cardData={cardData} />
             <AttributeCut scale={scale} cardData={cardData}/>
@@ -53,6 +54,8 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale 
                 </Box>
                 <EffectsFrame cardData={cardData} scale={scale} />
             </Box>
+            <CopyrightIndicator scale={scale} cardData={cardData}/>
+            <AceFrame scale={scale} cardData={cardData}/>
         </Card>
     );
 };

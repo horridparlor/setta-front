@@ -38,7 +38,7 @@ const LevelFrame: React.FC<LevelFrameProps> = ({ level, scale }) => {
                     top: '50%',
                     transform: 'translateY(-50%)',
                     fontWeight: '700',
-                    fontSize: getFontSize(9, scale)
+                    fontSize: getFontSize(10, scale)
                 }}
             >
                 {level}

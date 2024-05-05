@@ -76,3 +76,32 @@ export enum StatType {
     ATTACK = 'attack',
     DEFENSE = 'defense'
 }
+
+export const isExtraDeckCard = (cardData : CardData) => {
+    return EXTRA_DECK_SUBTYPES.includes(cardData.subtype);
+}
+
+export const hasCostText = (cardData : CardData) => {
+    return cardData.cardType !== CardType.MONSTER || isPendulumCard(cardData) || !((cardData.subtype !== CardSubtype.NORMAL
+        && cardData.flavourText.length > 0) || cardData.subtype === CardSubtype.NORMAL);
+}
+
+export const hasEffectText = (cardData : CardData) => {
+    return cardData.cardType !== CardType.MONSTER || isHandTrapCard(cardData) ||
+        !(cardData.subtype === CardSubtype.NORMAL || cardData.flavourText.length > 0);
+}
+
+export const hasFlavourText = (cardData : CardData) => {
+    return isPendulumCard(cardData) || isHandTrapCard(cardData) || !(cardData.cardType !== CardType.MONSTER
+        || cardData.subtype === CardSubtype.EFFECT
+        || cardData.effectText.length > 0
+        || cardData.costText.length > 0);
+}
+
+export const isPendulumCard = (cardData: CardData) => {
+    return cardData.supertype === CardSupertype.PENDULUM;
+}
+
+export const isHandTrapCard = (cardData: CardData) => {
+    return cardData.supertype === CardSupertype.HAND_TRAP;
+}
