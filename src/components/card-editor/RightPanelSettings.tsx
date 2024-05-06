@@ -23,9 +23,11 @@ import {
     isExtraDeckCard,
     MaximumPiece
 } from "../../types/card";
+import {CardExpansion} from "../../types/expansion";
 
 interface RightPanelSettingsProps {
     cardData: CardData;
+    expansions: {[key: number]: CardExpansion};
     onCardDataChange: (field: keyof CardData, value: string | number) => void;
     onExport: () => void;
     onSave: () => void;
@@ -33,6 +35,7 @@ interface RightPanelSettingsProps {
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     cardData,
+    expansions,
     onCardDataChange,
     onExport,
     onSave,
@@ -413,9 +416,12 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         label="Expansion"
                         onChange={handleSelectChange('expansionId')}
                     >
-                        {Object.entries({1: 'Set 1', 2: 'Set 2'}).map(([id, name]) => (
-                            <MenuItem key={id} value={id.toString()}>{name}</MenuItem>
+                        {Object.entries(expansions)
+                            .sort(([aId, aExpansion], [bId, bExpansion]) => aExpansion.name.localeCompare(bExpansion.name))
+                            .map(([id, expansion]) => (
+                                <MenuItem key={id} value={id}>{expansion.name}</MenuItem>
                         ))}
+
                     </Select>
                 </FormControl>
             </Box>

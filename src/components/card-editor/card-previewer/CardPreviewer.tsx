@@ -15,7 +15,7 @@ import AceFrame from "./AceFrame";
 
 interface CardPreviewerProps {
     cardData: CardData;
-    cardRef: React.RefObject<HTMLDivElement>;
+    cardRef?: React.RefObject<HTMLDivElement>;
     scale: number;
 }
 
@@ -35,9 +35,9 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale 
             <AttributeFrame scale={scale} cardData={cardData}/>
             <Box sx={{
                 position: 'absolute',
-                bottom: 28,
-                left: 28,
-                right: 28
+                bottom: 28 * scale,
+                left: 28 * scale,
+                right: 28 * scale
             }}>
                 <Box sx={{
                     display: 'flex',

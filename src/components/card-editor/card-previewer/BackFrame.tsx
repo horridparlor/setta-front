@@ -25,8 +25,8 @@ const BackFrame: React.FC<BackFrameProps> = ({ scale, cardData }) => {
                 height: '95.5%',
                 backgroundColor: getCardBackgroundColor(cardData),
                 background: getCardBackground(cardData),
-                border: '0.2rem solid black',
-                borderRadius: '0.8rem',
+                border: `${0.2 * scale}rem solid black`,
+                borderRadius: `${0.8 * scale}rem`,
                 clipPath: "polygon(" +
                     "0% 0%, " +
                     "100% 0%, " +

@@ -9,13 +9,18 @@ import {
     CardSubtype,
     CardSupertype,
     CardType,
-    getCardClassId, getCardMaximumPieceId, getCardSubtypeId, getCardTypeId,
+    getCardClassId,
+    getCardSubtypeId, getCardSupertypeId,
+    getCardTypeId, getMaximumPieceId,
     MaximumPiece
 } from "../../types/card";
 import {CardMainFrameColor} from "../../types/color";
 import {toast} from "react-toastify";
+import {AdminEndpoint, getAdminEndpoint} from "../../types/api";
+import useExpansions from "../../hooks/useExpansions";
 
 const CardEditor: React.FC = () => {
+    const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>({
         cardId: 0,
         cardName: '',
@@ -54,17 +59,17 @@ const CardEditor: React.FC = () => {
     };
 
     const handleSave = async () => {
-        const url = 'http://localhost:8000/api/card';
+        const url = getAdminEndpoint(AdminEndpoint.CARD);
         const method = cardData.cardId ? 'PUT' : 'POST';
         const body = JSON.stringify({
             cardId: cardData.cardId,
             cardName: cardData.cardName,
             isAce: cardData.isAce,
-            cardClassId: getCardClassId(cardData),
-            cardTypeId: getCardTypeId(cardData),
-            subtypeId: getCardSubtypeId(cardData),
-            supertypeId: getCardSubtypeId(cardData),
-            maximumPieceId: getCardMaximumPieceId(cardData),
+            cardClassId: getCardClassId(cardData.cardClass),
+            cardTypeId: getCardTypeId(cardData.cardType),
+            subtypeId: getCardSubtypeId(cardData.subtype),
+            supertypeId: getCardSupertypeId(cardData.supertype),
+            maximumPieceId: getMaximumPieceId(cardData.maximumPiece),
             level: cardData.level,
             atk: cardData.atk,
             def: cardData.def,
@@ -101,7 +106,7 @@ const CardEditor: React.FC = () => {
                 ...cardData,
                 cardId: cardId
             }));
-            toast.success('Card saved: ' + cardId);
+            toast.success(`Card ${method === 'POST' ? 'created' : 'updated'}: ` + cardId);
         } catch (error) {
             toast.error('Failed to save card: ' + error);
         }
@@ -150,7 +155,8 @@ const CardEditor: React.FC = () => {
             <Box sx={{ marginRight: '2rem' }}>
                 <CardPreviewer cardData={cardData} cardRef={cardRef} scale={1}/>
             </Box>
-            <RightPanelSettings cardData={cardData} onCardDataChange={handleCardDataChange} onExport={handleExport} onSave={handleSave} />
+            <RightPanelSettings cardData={cardData} expansions={expansions}
+                                onCardDataChange={handleCardDataChange} onExport={handleExport} onSave={handleSave} />
         </Box>
     );
 };

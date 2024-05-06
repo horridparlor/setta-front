@@ -1,8 +1,9 @@
 import React from 'react';
-import {Box, Typography} from '@mui/material';
-import {CardData, CardType} from "../../../types/card";
+import {Typography} from '@mui/material';
+import {CardData} from "../../../types/card";
 import {getFontSize} from "../../../utils/fonts";
-import {getFrameTextColor, TextColor} from "../../../types/color";
+import {TextColor} from "../../../types/color";
+import useExpansions from "../../../hooks/useExpansions";
 
 interface CopyrightIndicatorProps {
     scale: number;
@@ -10,6 +11,7 @@ interface CopyrightIndicatorProps {
 }
 
 const CopyrightIndicator: React.FC<CopyrightIndicatorProps> = ({ scale, cardData }) => {
+    const { expansions } = useExpansions();
     return (
         <Typography
             variant="h6"
@@ -23,7 +25,7 @@ const CopyrightIndicator: React.FC<CopyrightIndicatorProps> = ({ scale, cardData
                 opacity: 0.34
             }}
         >
-            {'©2024 Eero Laine'}
+            {`©${expansions[cardData.expansionId]?.releaseYear} Eero Laine`}
         </Typography>
     );
 };

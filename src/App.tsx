@@ -28,7 +28,7 @@ const App: React.FC<AppProps> = () => {
                 }}>
                     {activeComponent === 'editor' ?
                         <CardEditor /> :
-                        <CardCatalogue cards={{}} />}
+                        <CardCatalogue />}
                 </Box>
             </Box>
             <ToastContainer
