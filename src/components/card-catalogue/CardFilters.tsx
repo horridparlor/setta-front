@@ -51,6 +51,12 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         }
     }
 
+    const getEmptyFilters = () => {
+        return {
+            cardName: '', cardEffects: '', referenceId: '', cardClass: '', cardType: '', cardSubtype: '', cardSupertype: '', expansionId: ''
+        };
+    }
+
     const referenceCard = (cardData: CardData) => {
         const cardId = cardData.cardId.toString();
         const value = referenceId === cardId ? '' : cardId;
@@ -58,7 +64,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
             toast.info('References to card: ' + normalizeName(cardData.cardName));
         }
         setReferenceId(value);
-        onFilterChange({ ...getFilters(), referenceId: value });
+        onFilterChange({ ...getEmptyFilters(), referenceId: value });
     }
     const handleCardNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -117,7 +123,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         setCardSubtype('');
         setCardSupertype('');
         setExpansionId('');
-        onFilterChange({ cardName: '', cardEffects: '', referenceId: '', cardClass: '', cardType: '', cardSubtype: '', cardSupertype: '', expansionId: '' });
+        onFilterChange(getEmptyFilters());
     };
 
     useImperativeHandle(ref, () => ({
