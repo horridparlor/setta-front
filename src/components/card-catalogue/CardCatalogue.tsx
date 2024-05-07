@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
-import { Box, Card } from '@mui/material';
-import {CardData, combineEffectsTexts} from "../../types/card";
+import {Box, Card} from '@mui/material';
+import {CardData, CardType, combineEffectsTexts} from "../../types/card";
 import CardFilters, {CardFiltersRef} from "./CardFilters";
 import CardPreviewer from "../card-editor/card-previewer/CardPreviewer";
 import {CardExpansion} from "../../types/expansion";
@@ -27,7 +27,7 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
     const filtersRef = useRef<CardFiltersRef>(null);
 
     const onGetReferences = (cardData: CardData) => {
-        filtersRef.current?.referenceCard(cardData?.cardId.toString());
+        filtersRef.current?.referenceCard(cardData);
     }
 
     const getReferencesCountsAs = () => {
@@ -49,7 +49,7 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
         && (filters.cardType === '' || card.cardType === filters.cardType)
         && (filters.cardSubtype === '' || card.subtype === filters.cardSubtype)
         && (filters.cardSupertype === '' || card.supertype === filters.cardSupertype)
-        && (filters.cardClass === '' || card.cardClass === filters.cardClass)
+        && (filters.cardClass === '' || (card.cardType === CardType.MONSTER && card.cardClass === filters.cardClass))
         && (filters.expansionId === '' || card.expansionId === parseInt(filters.expansionId))
     );
     const cardScale = 0.55;

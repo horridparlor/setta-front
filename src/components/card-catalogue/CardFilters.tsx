@@ -14,6 +14,7 @@ import {CardClass, CardData, CardSubtype, CardSupertype, CardType} from "../../t
 import {CardExpansion} from "../../types/expansion";
 import Button from "@mui/material/Button";
 import {normalizeName} from "../../utils/string";
+import {toast} from "react-toastify";
 
 interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
@@ -23,7 +24,7 @@ interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
 }
 
 export interface CardFiltersRef {
-    referenceCard: (cardId: string) => void;
+    referenceCard: (cardData: CardData) => void;
 }
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -50,8 +51,12 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         }
     }
 
-    const referenceCard = (cardId: string) => {
-        const value = referenceId == cardId ? '' : cardId;
+    const referenceCard = (cardData: CardData) => {
+        const cardId = cardData.cardId.toString();
+        const value = referenceId === cardId ? '' : cardId;
+        if (value === cardId) {
+            toast.info('References to card: ' + normalizeName(cardData.cardName));
+        }
         setReferenceId(value);
         onFilterChange({ ...getFilters(), referenceId: value });
     }
