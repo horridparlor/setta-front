@@ -22,7 +22,8 @@ const CopyrightIndicator: React.FC<CopyrightIndicatorProps> = ({ scale, cardData
                 top: `${40.2 * scale + (0.6 / scale)}rem`,
                 fontSize: getFontSize(0, scale),
                 color: TextColor.BLACK,
-                opacity: 0.34
+                opacity: 0.34,
+                whiteSpace: 'nowrap',
             }}
         >
             {`©${expansions.find(expansion => expansion.id === cardData.expansionId)?.releaseYear} Eero Laine`}

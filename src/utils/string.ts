@@ -9,7 +9,7 @@ export const normalizeName = (name: any): string => {
 
 export const serializeName = (name: any): string => {
     return normalizeName(name)
-        .replace(/'-/g, '')
+        .replace(/-|'/g, '')
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
