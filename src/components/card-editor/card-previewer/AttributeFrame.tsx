@@ -3,6 +3,7 @@ import {Box, Typography} from '@mui/material';
 import {CardData, CardType} from "../../../types/card";
 import {getFontSize} from "../../../utils/fonts";
 import {getFrameTextColor} from "../../../types/color";
+import {AssetEndpoint, getAsset} from "../../../types/api";
 
 interface AttributeFrameProps {
     scale: number;
@@ -25,7 +26,7 @@ const AttributeFrame: React.FC<AttributeFrameProps> = ({ scale, cardData }) => {
             top: `${1.7 * scale}rem`,
         }}>
             <img
-                src={'https://setta.fi/rush-api/assets/icons/attribute/' + getAttribute() + '.png'}
+                src={getAsset(AssetEndpoint.ATTRIBUTE_FRAME, cardData.cardClass)}
                 alt="Attribute icon"
                 style={{
                     width: `${ICON_SIZE * scale}rem`,

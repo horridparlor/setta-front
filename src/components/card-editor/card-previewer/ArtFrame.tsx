@@ -1,8 +1,9 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { getArtworkBorder } from "../../../types/color";
-import { CardData } from "../../../types/card";
-import { normalizeName } from "../../../utils/string";
+import {getArtworkBorder} from "../../../types/color";
+import {CardData} from "../../../types/card";
+import {normalizeName, serializeName} from "../../../utils/string";
+import {AssetEndpoint, getAsset} from "../../../types/api";
 
 interface ArtFrameProps {
     cardData: CardData;
@@ -11,7 +12,7 @@ interface ArtFrameProps {
 
 const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale }) => {
     const getImageUrl = () => {
-        return 'https://setta.fi/rush-api/assets/card-art/' + normalizeName(cardData.cardName) + '.png';
+        return getAsset(AssetEndpoint.CARD_ART, serializeName(cardData.cardName));
     };
     const getArtScale = () => {
         return 1 + cardData.artScale / 32;

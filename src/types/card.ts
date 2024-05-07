@@ -128,7 +128,7 @@ export const DEFAULT_CARD_DATA = {
     effectText: '',
     flavourText: '',
     countsAsId: null,
-    artScale: 1,
+    artScale: 0,
     artXOffset: 0,
     artYOffset: 0,
     nameSize: 4,

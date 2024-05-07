@@ -1,6 +1,7 @@
 import React from 'react';
-import { Typography, Box } from '@mui/material';
+import {Box, Typography} from '@mui/material';
 import {getFontSize} from "../../../utils/fonts";
+import {AssetEndpoint, getAsset} from "../../../types/api";
 
 interface LevelFrameProps {
     level: number;
@@ -22,7 +23,7 @@ const LevelFrame: React.FC<LevelFrameProps> = ({ level, scale }) => {
             top: `${-1.3 * scale}rem`,
         }}>
             <img
-                src={'https://setta.fi/rush-api/assets/icons/level-frame.png'}
+                src={getAsset(AssetEndpoint.LEVEL_FRAME)}
                 alt="Level icon"
                 style={{
                     width: `${STAR_SIZE * scale}rem`,

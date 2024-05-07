@@ -8,6 +8,7 @@ import {CardMainFrameColor} from "../../types/color";
 import {toast} from "react-toastify";
 import {AdminEndpoint, getAdminEndpoint, RequestMethod} from "../../types/api";
 import useExpansions from "../../hooks/useExpansions";
+import {normalizeName} from "../../utils/string";
 
 interface CardEditorProps {
     closeUpdate: () => void;
@@ -53,7 +54,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 ...cardData,
                 cardId: cardId
             }));
-            toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${cardData.cardName}`);
+            toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData.cardName)}`);
             closeUpdate();
         } catch (error) {
             toast.error('Failed to save card: ' + error);
@@ -79,7 +80,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 toast.error('Network error');
             }
             await response.json();
-            toast.success(`Card deleted: ${cardData.cardName}`);
+            toast.success(`Card deleted: ${normalizeName(cardData.cardName)}`);
             closeUpdate();
         } catch (error) {
             toast.error('Failed to delete card: ' + error);
@@ -115,7 +116,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
 
                 const link = document.createElement('a');
                 link.href = dataUrl;
-                link.download = cardData.cardName + '.png';
+                link.download = normalizeName(cardData.cardName) + '.png';
                 link.click();
                 closeUpdate();
             } catch (err) {

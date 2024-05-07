@@ -4,6 +4,7 @@ import {CardData} from "../../types/card";
 import CardFilters from "./CardFilters";
 import CardPreviewer from "../card-editor/card-previewer/CardPreviewer";
 import {CardExpansion} from "../../types/expansion";
+import {normalizeName} from "../../utils/string";
 
 interface CardCatalogueProps {
     handleCardClick: (cardId: CardData) => void;
@@ -22,12 +23,12 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
     });
 
     const filteredCards = cards.filter(card =>
-        card.cardName.toLowerCase().includes(filters.cardName.toLowerCase())
+        normalizeName(card.cardName).toLowerCase().includes(normalizeName(filters.cardName).toLowerCase())
         && filters.cardEffects.toLowerCase().split(' ').every(word => (card.costText + card.effectText).toLowerCase().includes(word))
         && (filters.referenceId === '' ||
             [card.cardId, card.primaryMaterialId, card.secondaryMaterialId, card.tertiaryMaterialId, card.countsAsId]
                 .includes(parseInt(filters.referenceId)) ||
-            (card.costText + card.effectText + card.flavourText).toLowerCase().includes((cards.find(c => c.cardId === parseInt(filters.referenceId, 10))?.cardName || '').toLowerCase()))
+            (card.costText + card.effectText + card.flavourText).toLowerCase().includes(normalizeName(cards.find(c => c.cardId === parseInt(filters.referenceId, 10))?.cardName || '').toLowerCase()))
         && (filters.cardType === '' || card.cardType === filters.cardType)
         && (filters.cardClass === '' || card.cardClass === filters.cardClass)
         && (filters.expansionId === '' || card.expansionId === parseInt(filters.expansionId))

@@ -13,6 +13,7 @@ import { styled } from '@mui/material/styles';
 import {CardClass, CardData, CardType} from "../../types/card";
 import {CardExpansion} from "../../types/expansion";
 import Button from "@mui/material/Button";
+import {normalizeName} from "../../utils/string";
 
 interface CardFiltersProps {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
@@ -110,7 +111,7 @@ const CardFilters: React.FC<CardFiltersProps> = ({ onFilterChange, cards, expans
                     >
                         <MenuItem key={'none'} value={''}>–</MenuItem>
                         {cards.map(card => (
-                            <MenuItem key={card.cardId} value={card.cardId}>{card.cardName}</MenuItem>
+                            <MenuItem key={card.cardId} value={card.cardId}>{normalizeName(card.cardName)}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>

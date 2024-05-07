@@ -24,6 +24,7 @@ import {
     MaximumPiece
 } from "../../types/card";
 import {CardExpansion} from "../../types/expansion";
+import {normalizeName} from "../../utils/string";
 
 interface RightPanelSettingsProps {
     cardData: CardData;
@@ -47,9 +48,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const cardSelector = () => {
         return [<MenuItem key='none' value=''>–</MenuItem>,
         ...cards
-            .sort((cardA, cardB) => cardA.cardName.localeCompare(cardB.cardName))
+            .sort((cardA, cardB) => normalizeName(cardA.cardName).localeCompare(normalizeName(cardB.cardName)))
             .map(card => (
-                <MenuItem key={card.cardId} value={card.cardId}>{card.cardName}</MenuItem>
+                <MenuItem key={card.cardId} value={card.cardId}>{normalizeName(card.cardName)}</MenuItem>
             ))
         ];
     }
