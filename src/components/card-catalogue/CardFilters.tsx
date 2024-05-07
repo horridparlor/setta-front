@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {forwardRef, useImperativeHandle, useState} from 'react';
 import {
     AppBar,
     TextField,
@@ -7,19 +7,23 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    SelectChangeEvent, // Import SelectChangeEvent
+    SelectChangeEvent,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {CardClass, CardData, CardType} from "../../types/card";
+import {CardClass, CardData, CardSubtype, CardSupertype, CardType} from "../../types/card";
 import {CardExpansion} from "../../types/expansion";
 import Button from "@mui/material/Button";
 import {normalizeName} from "../../utils/string";
 
-interface CardFiltersProps {
+interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
-        cardType: string, expansionId: string }) => void;
+        cardType: string, cardSubtype: string, cardSupertype: string, expansionId: string }) => void;
     expansions: Array<CardExpansion>;
     cards: Array<CardData>;
+}
+
+export interface CardFiltersRef {
+    referenceCard: (cardId: string) => void;
 }
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -30,48 +34,73 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     zIndex: theme.zIndex.appBar,
 }));
 
-const CardFilters: React.FC<CardFiltersProps> = ({ onFilterChange, cards, expansions }) => {
+const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardFiltersProps>(({onFilterChange, expansions, cards}, ref) => {
     const [cardName, setCardName] = useState('');
     const [cardEffects, setCardEffects] = useState('');
     const [referenceId, setReferenceId] = useState('');
     const [cardClass, setCardClass] = useState('');
     const [cardType, setCardType] = useState('');
+    const [cardSubtype, setCardSubtype] = useState('');
+    const [cardSupertype, setCardSupertype] = useState('');
     const [expansionId, setExpansionId] = useState('');
 
+    const getFilters = () => {
+        return {
+            cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, expansionId
+        }
+    }
+
+    const referenceCard = (cardId: string) => {
+        const value = referenceId == cardId ? '' : cardId;
+        setReferenceId(value);
+        onFilterChange({ ...getFilters(), referenceId: value });
+    }
     const handleCardNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setCardName(value);
-        onFilterChange({ cardName: value, cardEffects, referenceId, cardClass, cardType, expansionId });
+        onFilterChange({ ...getFilters(), cardName: value });
     };
 
     const handleCardClassChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardClass(value);
-        onFilterChange({ cardName, cardEffects, referenceId, cardClass: value, cardType, expansionId });
+        onFilterChange({ ...getFilters(), cardClass: value });
     };
 
     const handleCardTypeChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardType(value);
-        onFilterChange({ cardName, cardEffects, referenceId, cardClass, cardType: value, expansionId });
+        onFilterChange({ ...getFilters(), cardType: value });
+    };
+
+    const handleCardSubtypeChange = (event: SelectChangeEvent<string>) => {
+        const value: string = event.target.value;
+        setCardSubtype(value);
+        onFilterChange({ ...getFilters(), cardSubtype: value });
+    };
+
+    const handleCardSupertypeChange = (event: SelectChangeEvent<string>) => {
+        const value: string = event.target.value;
+        setCardSupertype(value);
+        onFilterChange({ ...getFilters(), cardSupertype: value });
     };
 
     const handleExpansionChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setExpansionId(value);
-        onFilterChange({ cardName, cardEffects, referenceId, cardClass, cardType, expansionId: value });
+        onFilterChange({ ...getFilters(), expansionId: value });
     };
 
     const handleCardEffectsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value: string = event.target.value;
         setCardEffects(value);
-        onFilterChange({ cardName, cardEffects: value, referenceId, cardClass, cardType, expansionId });
+        onFilterChange({ ...getFilters(), cardEffects: value });
     };
 
     const handleReferenceIdChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setReferenceId(value);
-        onFilterChange({ cardName, cardEffects, referenceId: value, cardClass, cardType, expansionId });
+        onFilterChange({ ...getFilters(), referenceId: value });
     };
 
     const resetFilters = () => {
@@ -80,9 +109,15 @@ const CardFilters: React.FC<CardFiltersProps> = ({ onFilterChange, cards, expans
         setReferenceId('');
         setCardClass('');
         setCardType('');
+        setCardSubtype('');
+        setCardSupertype('');
         setExpansionId('');
-        onFilterChange({ cardName: '', cardEffects: '', referenceId: '', cardClass: '', cardType: '', expansionId: '' });
+        onFilterChange({ cardName: '', cardEffects: '', referenceId: '', cardClass: '', cardType: '', cardSubtype: '', cardSupertype: '', expansionId: '' });
     };
+
+    useImperativeHandle(ref, () => ({
+        referenceCard
+    }));
 
     return (
         <StyledAppBar position="sticky" sx={{margin: '0.2rem 0'}}>
@@ -111,7 +146,7 @@ const CardFilters: React.FC<CardFiltersProps> = ({ onFilterChange, cards, expans
                     >
                         <MenuItem key={'none'} value={''}>–</MenuItem>
                         {cards.map(card => (
-                            <MenuItem key={card.cardId} value={card.cardId}>{normalizeName(card.cardName)}</MenuItem>
+                            <MenuItem key={card.cardId} value={card.cardId.toString()}>{normalizeName(card.cardName)}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -125,6 +160,34 @@ const CardFilters: React.FC<CardFiltersProps> = ({ onFilterChange, cards, expans
                     >
                         <MenuItem key={'none'} value={''}>–</MenuItem>
                         {Object.values(CardType).map(c => (
+                            <MenuItem key={c} value={c}>{c}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth sx={{marginLeft: '0.4rem'}}>
+                    <InputLabel id="card-subtype-selector-label">Subtype</InputLabel>
+                    <Select
+                        labelId="card-subtype-selector-label"
+                        value={cardSubtype}
+                        label="Subtype"
+                        onChange={handleCardSubtypeChange}
+                    >
+                        <MenuItem key={'none'} value={''}>–</MenuItem>
+                        {Object.values(CardSubtype).map(c => (
+                            <MenuItem key={c} value={c}>{c}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth sx={{marginLeft: '0.4rem'}}>
+                    <InputLabel id="card-supertype-selector-label">Supertype</InputLabel>
+                    <Select
+                        labelId="card-supertype-selector-label"
+                        value={cardSupertype}
+                        label="Supertype"
+                        onChange={handleCardSupertypeChange}
+                    >
+                        <MenuItem key={'none'} value={''}>–</MenuItem>
+                        {Object.values(CardSupertype).map(c => (
                             <MenuItem key={c} value={c}>{c}</MenuItem>
                         ))}
                     </Select>
@@ -162,7 +225,7 @@ const CardFilters: React.FC<CardFiltersProps> = ({ onFilterChange, cards, expans
                 <Button
                     variant="outlined"
                     onClick={resetFilters}
-                    disabled={!cardName && !cardEffects && !referenceId && !cardClass && !cardType && !expansionId}
+                    disabled={!cardName && !cardEffects && !referenceId && !cardClass && !cardType && !cardSubtype && !cardSupertype && !expansionId}
                     sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
                 >
                     Reset
@@ -170,6 +233,6 @@ const CardFilters: React.FC<CardFiltersProps> = ({ onFilterChange, cards, expans
             </Toolbar>
         </StyledAppBar>
     );
-};
+});
 
 export default CardFilters;

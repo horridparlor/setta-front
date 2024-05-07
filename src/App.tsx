@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { ThemeProvider, Box } from '@mui/material';
 import { theme } from './styles/Theme';
 import HomeBar from './components/common/HomeBar';
@@ -31,6 +31,21 @@ const App: React.FC<AppProps> = () => {
         editorRef.current?.setCardData(DEFAULT_CARD_DATA);
     }
     const { expansions } = useExpansions();
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setActiveComponent(AppPage.CardCatalogue);
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Clean up function to remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>

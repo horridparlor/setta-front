@@ -12,7 +12,7 @@ interface ArtFrameProps {
 
 const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale }) => {
     const getImageUrl = () => {
-        return getAsset(AssetEndpoint.CARD_ART, serializeName(cardData.cardName));
+        return getAsset(scale === 1 ? AssetEndpoint.CARD_ART : AssetEndpoint.SMALL_CARD_ART, serializeName(cardData.cardName));
     };
     const getArtScale = () => {
         return 1 + cardData.artScale / 32;

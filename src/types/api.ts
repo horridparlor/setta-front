@@ -17,7 +17,8 @@ export enum RequestMethod {
 export enum AssetEndpoint {
     ATTRIBUTE_FRAME = 'icons/attribute',
     CARD_ART = 'card-art',
-    LEVEL_FRAME = 'icons/level-frame'
+    LEVEL_FRAME = 'icons/level-frame',
+    SMALL_CARD_ART = 'small-art',
 }
 
 export const getAdminEndpoint = (endpoint : AdminEndpoint) => {

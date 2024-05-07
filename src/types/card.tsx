@@ -1,4 +1,5 @@
-import {Card} from "@mui/material";
+import {Card, MenuItem} from "@mui/material";
+import React from "react";
 
 export enum CardClass {
     ABYSS = 'Abyss',
@@ -135,4 +136,57 @@ export const DEFAULT_CARD_DATA = {
     materialsSize: 5,
     effectsSize: 5,
     expansionId: 1,
+}
+
+export const combineEffectsTexts = (cardData: CardData|undefined) => {
+    if (!cardData) {
+        return '';
+    }
+    return cardData.costText + cardData.effectText + cardData.flavourText;
+}
+
+const MONSTER_SUBTYPES = [CardSubtype.NORMAL, CardSubtype.EFFECT,
+    CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER];
+
+const getActiveSubtypes = (cardType: CardType) => {
+    switch (cardType) {
+        case CardType.MONSTER:
+            return MONSTER_SUBTYPES;
+        case CardType.SPELL:
+            return [CardSubtype.NORMAL];
+        case CardType.TRAP:
+            return [CardSubtype.NORMAL, CardSubtype.RITUAL];
+    }
+}
+
+export const getSubtypeOptions = (cardType: CardType): React.ReactNode => {
+    const activeSubtypes = getActiveSubtypes(cardType);
+    return Object.values(CardSubtype)
+        .filter(subtype => activeSubtypes.includes(subtype))
+        .map(subtype => (
+            <MenuItem key={subtype} value={subtype}>{subtype}</MenuItem>
+        ));
+}
+
+const getActiveSupertypes = (cardType: CardType, subtype: CardSubtype) => {
+    if (cardType !== CardType.MONSTER) {
+        return [CardSupertype.NONE];
+    }
+    switch (subtype) {
+        case CardSubtype.NORMAL:
+            return [CardSupertype.NONE, CardSupertype.HAND_TRAP, CardSupertype.PENDULUM];
+        case CardSubtype.EFFECT:
+            return [CardSupertype.NONE, CardSupertype.MAXIMUM];
+        default:
+            return [CardSupertype.NONE];
+    }
+}
+
+export const getSupertypeOptions = (cardType: CardType, subtype: CardSubtype): React.ReactNode => {
+    const activeSupertypes = getActiveSupertypes(cardType, subtype);
+    return Object.values(CardSupertype)
+        .filter(supertype => activeSupertypes.includes(supertype))
+        .map(supertype => (
+            <MenuItem key={supertype} value={supertype}>{supertype}</MenuItem>
+        ));
 }

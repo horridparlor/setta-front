@@ -16,7 +16,7 @@ import {
     CardData,
     CardSubtype,
     CardSupertype,
-    CardType,
+    CardType, getSubtypeOptions, getSupertypeOptions,
     hasCostText,
     hasEffectText,
     hasFlavourText,
@@ -119,29 +119,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             }
         };
 
-    const getActiveSubtypes = () => {
-        switch (cardData.cardType) {
-            case CardType.MONSTER:
-                return [CardSubtype.NORMAL, CardSubtype.EFFECT,
-                    CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER];
-            case CardType.SPELL:
-                return [CardSubtype.NORMAL];
-            case CardType.TRAP:
-                return [CardSubtype.NORMAL, CardSubtype.RITUAL];
-        }
-    }
-
-    const getActiveSupertypes = () => {
-        switch (cardData.subtype) {
-            case CardSubtype.NORMAL:
-                return [CardSupertype.NONE, CardSupertype.HAND_TRAP, CardSupertype.PENDULUM];
-            case CardSubtype.EFFECT:
-                return [CardSupertype.NONE, CardSupertype.MAXIMUM];
-            default:
-                return [CardSupertype.NONE];
-        }
-    }
-
     const rowContainerStyle = {
         flexDirection: 'row',
         alignItems: 'center',
@@ -173,7 +150,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         label="Maximum Piece"
                         onChange={handleSelectChange('maximumPiece')}
                     >
-                        {Object.values(MaximumPiece).map(c => (
+                        {Object.values(MaximumPiece).filter(piece => cardData.supertype !== CardSupertype.MAXIMUM || piece !== MaximumPiece.NONE).map(c => (
                             <MenuItem key={c} value={c}>{c}</MenuItem>
                         ))}
                     </Select>
@@ -269,9 +246,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         label="Subtype"
                         onChange={handleSelectChange('subtype')}
                     >
-                        {Object.values(CardSubtype).filter(s => getActiveSubtypes().includes(s)).map(s => (
-                            <MenuItem key={s} value={s}>{s}</MenuItem>
-                        ))}
+                        {getSubtypeOptions(cardData.cardType)}
                     </Select>
                 </FormControl>
                 <Box sx={{ display: cardData.cardType === CardType.MONSTER &&
@@ -284,9 +259,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             label="Supertype"
                             onChange={handleSelectChange('supertype')}
                         >
-                            {Object.values(CardSupertype).filter(s => getActiveSupertypes().includes(s)).map(c => (
-                                <MenuItem key={c} value={c}>{c}</MenuItem>
-                            ))}
+                            {getSupertypeOptions(cardData.cardType, cardData.subtype)}
                         </Select>
                     </FormControl>
                 </Box>
