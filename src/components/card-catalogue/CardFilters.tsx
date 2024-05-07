@@ -63,6 +63,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         if (value === cardId) {
             toast.info('References to card: ' + normalizeName(cardData.cardName));
         }
+        resetFilters();
         setReferenceId(value);
         onFilterChange({ ...getEmptyFilters(), referenceId: value });
     }
