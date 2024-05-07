@@ -17,16 +17,17 @@ interface CardPreviewerProps {
     cardData: CardData;
     cardRef?: React.RefObject<HTMLDivElement>;
     scale: number;
+    cards: Array<CardData>;
 }
 
-const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale }) => {
+const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale, cards }) => {
     const { cardName, level, atk, def, effectText } = cardData;
     return (
         <Card ref={cardRef} sx={{
             position: 'relative',
             overflow: 'hidden',
             backgroundColor: 'transparent',
-            borderRadius: '1.5rem',
+            borderRadius: `${1.5 * scale}rem`,
         }}>
             <ArtFrame cardData={cardData} scale={scale} />
             <BackFrame scale={scale} cardData={cardData} />
@@ -49,7 +50,7 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale 
                     <StatFrame value={def} statType={StatType.DEFENSE} scale={scale}/>
                     <Box style={{width: '0'}}/>
                 </Box>
-                <EffectsFrame cardData={cardData} scale={scale} />
+                <EffectsFrame cards={cards} cardData={cardData} scale={scale} />
             </Box>
             <CopyrightIndicator scale={scale} cardData={cardData}/>
             <AceFrame scale={scale} cardData={cardData}/>

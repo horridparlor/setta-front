@@ -1,34 +1,56 @@
-import React, { useState } from 'react';
+import React, {useRef, useState} from 'react';
 import { ThemeProvider, Box } from '@mui/material';
 import { theme } from './styles/Theme';
 import HomeBar from './components/common/HomeBar';
-import CardEditor from './components/card-editor/CardEditor';
+import CardEditor, {CardEditorRef} from './components/card-editor/CardEditor';
 import CardCatalogue from './components/card-catalogue/CardCatalogue';
 import './styles/montserrat.css';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {AppPage} from "./types/navigation";
+import {CardData, DEFAULT_CARD_DATA} from "./types/card";
+import useCards from "./hooks/useCards";
+import useExpansions from "./hooks/useExpansions";
 
 interface AppProps {}
 
 const App: React.FC<AppProps> = () => {
-    const [activeComponent, setActiveComponent] = useState<string>('editor');
+    const [activeComponent, setActiveComponent] = useState<string>(AppPage.CardCatalogue);
+    const onCardClicked = (cardData: CardData) => {
+        editorRef.current?.setCardData(cardData);
+        setActiveComponent(AppPage.CardEditor);
+    }
+    const { cards, fetchCards } = useCards();
+    const onCardUpdate = () => {
+        fetchCards();
+        setActiveComponent(AppPage.CardCatalogue);
+    }
+    const editorRef = useRef<CardEditorRef>(null);
+    const changePage = (page: AppPage) => {
+        setActiveComponent(page);
+        editorRef.current?.setCardData(DEFAULT_CARD_DATA);
+    }
+    const { expansions } = useExpansions();
 
     return (
         <ThemeProvider theme={theme}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#244775' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#244775', overflowX: 'hidden' }}>
                 <Box sx={{ width: '100%', p: 2 }}>
-                    <HomeBar setActiveComponent={setActiveComponent} />
+                    <HomeBar setPage={changePage} />
                 </Box>
                 <Box sx={{
                     flex: 1,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    overflow: 'auto'
+                    overflow: 'auto',
                 }}>
-                    {activeComponent === 'editor' ?
-                        <CardEditor /> :
-                        <CardCatalogue />}
+                    <Box sx={{display: activeComponent === AppPage.CardEditor ? 'flex' : 'none'}}>
+                        <CardEditor cards={cards} closeUpdate={onCardUpdate} ref={editorRef} />
+                    </Box>
+                    <Box sx={{display: activeComponent === AppPage.CardCatalogue ? 'flex' : 'none'}}>
+                        <CardCatalogue cards={cards} expansions={expansions} handleCardClick={onCardClicked}/>
+                    </Box>
                 </Box>
             </Box>
             <ToastContainer

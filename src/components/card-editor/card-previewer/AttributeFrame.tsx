@@ -21,7 +21,7 @@ const AttributeFrame: React.FC<AttributeFrameProps> = ({ scale, cardData }) => {
     return (
         <Box sx={{
             position: 'absolute',
-            left: `${22.8 * scale}rem`,
+            left: `${22.5 * scale + (0.3 / scale)}rem`,
             top: `${1.7 * scale}rem`,
         }}>
             <img

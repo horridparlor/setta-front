@@ -21,8 +21,8 @@ const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale }) => {
         <Box
             sx={{
                 position: 'absolute',
-                top: `${42}%`,
-                left: `${50}%`,
+                top: `${18.4 * scale + 0.25 / scale}rem`,
+                left: `${15.35 * scale + 0.2 / scale}rem`,
                 width: `${27 * scale}rem`,
                 height: `${24 * scale}rem`,
                 marginTop: `-${13 * scale}rem`,
@@ -37,10 +37,10 @@ const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale }) => {
                 src={getImageUrl()}
                 alt="Card art"
                 sx={{
-                    width: `${100 * getArtScale()}%`,
-                    height: `${110 * getArtScale()}%`,
+                    width: `${26.95 * getArtScale() * scale}rem`,
+                    height: `${24 * getArtScale() * scale}rem`,
                     objectFit: 'cover',
-                    objectPosition: `${-4 * cardData.artXOffset}px ${-4 * cardData.artYOffset}px`
+                    objectPosition: `${-0.25 * cardData.artXOffset * scale}rem ${-0.25 * cardData.artYOffset * scale}rem`
                 }}
             />
         </Box>

@@ -12,13 +12,15 @@ import {
 import {getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
 import {addSizeToRichText, formatText, getFontSize} from "../../../utils/fonts";
 import {replaceIfEmpty, starsWithVowel} from "../../../utils/string";
+import useCards from "../../../hooks/useCards";
 
 interface EffectsFrameProps {
     cardData: CardData;
     scale: number;
+    cards: Array<CardData>;
 }
 
-const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale }) => {
+const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) => {
     const getMaterialsSeparator = () => {
         switch (cardData.subtype) {
             case CardSubtype.REVENGE:
@@ -41,8 +43,11 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale }) => {
     }
     const getMaterialsText = () => {
         const materialsPrefix = `{h=${getMaterialsSize()}}(`;
-        const materialsText =  [replaceIfEmpty(cardData.primaryMaterial, 'Primary'),
-            replaceIfEmpty(cardData.secondaryMaterial, 'Secondary'), cardData.tertiaryMaterial]
+        const materialsText =  [
+            replaceIfEmpty(cards.find(card => card.cardId === cardData.primaryMaterialId)?.cardName, 'Primary'),
+            replaceIfEmpty(cards.find(card => card.cardId === cardData.secondaryMaterialId)?.cardName, 'Secondary'),
+            cards.find(card => card.cardId === cardData.tertiaryMaterialId)?.cardName ?? '',
+        ]
             .filter(material => material.length).join(` ${getMaterialsSeparator()} `);
         return isExtraDeckCard(cardData) ? materialsPrefix + materialsText + '){/h}\n' : '';
     }
@@ -72,8 +77,8 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale }) => {
         return Math.max(0, 0.25 + 0.06 * (firstLineSize + (isExtraDeckCard(cardData) ? 2 : 1)) - ((getEffectsSize() + 1) * 0.045 * getLineHeight()));
     }
     const getCountsAs = () => {
-        const countsAsPrefix = `Counts as ${starsWithVowel(cardData.countsAs) ? 'an' : 'a'} {bi=${getEffectsSize()}}`;
-        const countsAsText = cardData.countsAs;
+        const countsAsText = cards.find(card => card.cardId === cardData.countsAsId)?.cardName ?? '';
+        const countsAsPrefix = `Counts as ${starsWithVowel(countsAsText) ? 'an' : 'a'} {bi=${getEffectsSize()}}`;
         if (!countsAsText.length) {
             return '';
         }

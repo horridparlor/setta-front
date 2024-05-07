@@ -27,10 +27,12 @@ import {CardExpansion} from "../../types/expansion";
 
 interface RightPanelSettingsProps {
     cardData: CardData;
-    expansions: {[key: number]: CardExpansion};
+    expansions: Array<CardExpansion>;
     onCardDataChange: (field: keyof CardData, value: string | number) => void;
     onExport: () => void;
     onSave: () => void;
+    onDelete: () => void;
+    cards: Array<CardData>;
 }
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
@@ -39,7 +41,18 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     onCardDataChange,
     onExport,
     onSave,
+    onDelete,
+    cards,
 }) => {
+    const cardSelector = () => {
+        return [<MenuItem key='none' value=''>–</MenuItem>,
+        ...cards
+            .sort((cardA, cardB) => cardA.cardName.localeCompare(cardB.cardName))
+            .map(card => (
+                <MenuItem key={card.cardId} value={card.cardId}>{card.cardName}</MenuItem>
+            ))
+        ];
+    }
     const handleSelectChange = (field: keyof CardData) =>
         (event: SelectChangeEvent<string>) => {
             const value = event.target.value;
@@ -50,8 +63,16 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     onCardDataChange('flavourText', '');
                     break;
                 case 'subtype':
-                    if (value === CardSubtype.EFFECT) {
-                        onCardDataChange('flavourText', '');
+                    switch (value) {
+                        case CardSubtype.NORMAL:
+                            if (cardData.cardType === CardType.MONSTER) {
+                                onCardDataChange('costText', '');
+                                onCardDataChange('effectText', '');
+                            }
+                            break;
+                        case CardSubtype.EFFECT:
+                            onCardDataChange('flavourText', '');
+                            break;
                     }
                     if (cardData.flavourText.length) {
                         switch (cardData.supertype) {
@@ -310,33 +331,39 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     display: isExtraDeckCard(cardData) ? 'flex' : 'none',
                 }}
             >
-                <TextField
-                    fullWidth
-                    label="Primary Material"
-                    variant="outlined"
-                    value={cardData.primaryMaterial}
-                    onChange={handleInputChange('primaryMaterial')}
-                    sx={{ marginBottom: 2 }}
-                />
-                <TextField
-                    fullWidth
-                    label="Secondary Material"
-                    variant="outlined"
-                    value={cardData.secondaryMaterial}
-                    onChange={handleInputChange('secondaryMaterial')}
-                    sx={{ marginBottom: 2 }}
-                />
-                <TextField
-                    fullWidth
-                    label="Tertiary Material"
-                    variant="outlined"
-                    value={cardData.tertiaryMaterial}
-                    onChange={handleInputChange('tertiaryMaterial')}
-                    sx={{
-                        display: cardData.subtype === CardSubtype.RITUAL || cardData.secondaryMaterial.length === 0 ? 'none' : 'flex',
-                        marginBottom: 2
-                    }}
-                />
+                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                    <InputLabel id="primary-material-selector-label">Primary material</InputLabel>
+                    <Select
+                        labelId="primary-material-selector-label"
+                        value={cardData.primaryMaterialId ? cardData.primaryMaterialId.toString() : ''}
+                        label="Primary material"
+                        onChange={handleSelectChange('primaryMaterialId')}
+                    >
+                        {cardSelector()}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                    <InputLabel id="secondary-material-selector-label">Secondary material</InputLabel>
+                    <Select
+                        labelId="secondary-material-selector-label"
+                        value={cardData.secondaryMaterialId ? cardData.secondaryMaterialId.toString() : ''}
+                        label="Secondary material"
+                        onChange={handleSelectChange('secondaryMaterialId')}
+                    >
+                        {cardSelector()}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                    <InputLabel id="tertiary-material-selector-label">Tertiary material</InputLabel>
+                    <Select
+                        labelId="tertiary-material-selector-label"
+                        value={cardData.tertiaryMaterialId ? cardData.tertiaryMaterialId.toString() : ''}
+                        label="Tertiary material"
+                        onChange={handleSelectChange('tertiaryMaterialId')}
+                    >
+                        {cardSelector()}
+                    </Select>
+                </FormControl>
             </Box>
             <TextField
                 fullWidth
@@ -380,13 +407,18 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             <Box
                 sx={rowContainerStyle}
             >
-                <TextField
-                    fullWidth
-                    label="Counts as"
-                    variant="outlined"
-                    value={cardData.countsAs}
-                    onChange={handleInputChange('countsAs')}
-                />
+                <FormControl fullWidth>
+                    <InputLabel id="counts-as-selector-label">Counts as</InputLabel>
+                    <Select
+                        labelId="counts-as-selector-label"
+                        value={cardData.countsAsId ? cardData.countsAsId.toString() : ''}
+                        label="Counts as"
+                        onChange={handleSelectChange('countsAsId')}
+                    >
+                        {cardSelector()}
+
+                    </Select>
+                </FormControl>
                 <TextField
                     type="number"
                     label="Materials Size"
@@ -416,10 +448,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         label="Expansion"
                         onChange={handleSelectChange('expansionId')}
                     >
-                        {Object.entries(expansions)
-                            .sort(([aId, aExpansion], [bId, bExpansion]) => aExpansion.name.localeCompare(bExpansion.name))
-                            .map(([id, expansion]) => (
-                                <MenuItem key={id} value={id}>{expansion.name}</MenuItem>
+                        {expansions
+                            .sort((expansionA, expansionB) => expansionA.name.localeCompare(expansionB.name))
+                            .map(expansion => (
+                                <MenuItem key={expansion.id} value={expansion.id}>{expansion.name}</MenuItem>
                         ))}
 
                     </Select>
@@ -431,6 +463,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 </Button>
                 <Button onClick={onExport} variant="contained" color="secondary">
                     Export as PNG
+                </Button>
+                <Button onClick={onDelete} variant="contained" color="error" disabled={cardData.cardId === 0}>
+                    Delete
                 </Button>
             </Box>
         </Box>

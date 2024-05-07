@@ -1,53 +1,26 @@
-import React, {useRef, useState} from 'react';
+import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
 import domtoimage from 'dom-to-image';
 import {Box} from "@mui/material";
-import {
-    CardClass,
-    CardData,
-    CardSubtype,
-    CardSupertype,
-    CardType,
-    getCardClassId,
-    getCardSubtypeId, getCardSupertypeId,
-    getCardTypeId, getMaximumPieceId,
-    MaximumPiece
-} from "../../types/card";
+import {CardData, DEFAULT_CARD_DATA} from "../../types/card";
 import {CardMainFrameColor} from "../../types/color";
 import {toast} from "react-toastify";
-import {AdminEndpoint, getAdminEndpoint} from "../../types/api";
+import {AdminEndpoint, getAdminEndpoint, RequestMethod} from "../../types/api";
 import useExpansions from "../../hooks/useExpansions";
 
-const CardEditor: React.FC = () => {
+interface CardEditorProps {
+    closeUpdate: () => void;
+    cards: Array<CardData>;
+}
+
+export interface CardEditorRef {
+    setCardData: (cardData: CardData) => void;
+}
+
+const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards}, ref) => {
     const { expansions } = useExpansions();
-    const [cardData, setCardData] = useState<CardData>({
-        cardId: 0,
-        cardName: '',
-        isAce: false,
-        cardClass: CardClass.ABYSS,
-        cardType: CardType.MONSTER,
-        subtype: CardSubtype.FUSION,
-        supertype: CardSupertype.NONE,
-        maximumPiece: MaximumPiece.NONE,
-        level: 1,
-        atk: 0,
-        def: 0,
-        primaryMaterial: '',
-        secondaryMaterial: '',
-        tertiaryMaterial: '',
-        costText: '',
-        effectText: '',
-        flavourText: '',
-        countsAs: '',
-        artScale: 1,
-        artXOffset: 0,
-        artYOffset: 0,
-        nameSize: 4,
-        materialsSize: 5,
-        effectsSize: 5,
-        expansionId: 1,
-    });
+    const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
 
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -60,34 +33,8 @@ const CardEditor: React.FC = () => {
 
     const handleSave = async () => {
         const url = getAdminEndpoint(AdminEndpoint.CARD);
-        const method = cardData.cardId ? 'PUT' : 'POST';
-        const body = JSON.stringify({
-            cardId: cardData.cardId,
-            cardName: cardData.cardName,
-            isAce: cardData.isAce,
-            cardClassId: getCardClassId(cardData.cardClass),
-            cardTypeId: getCardTypeId(cardData.cardType),
-            subtypeId: getCardSubtypeId(cardData.subtype),
-            supertypeId: getCardSupertypeId(cardData.supertype),
-            maximumPieceId: getMaximumPieceId(cardData.maximumPiece),
-            level: cardData.level,
-            atk: cardData.atk,
-            def: cardData.def,
-            primaryMaterialId: null,
-            secondaryMaterialId: null,
-            tertiaryMaterialId: null,
-            costText: cardData.costText,
-            effectText: cardData.effectText,
-            flavourText: cardData.flavourText,
-            countsAsId: null,
-            artScale: cardData.artScale,
-            artXOffset: cardData.artXOffset,
-            artYOffset: cardData.artYOffset,
-            nameSize: cardData.nameSize,
-            materialsSize: cardData.materialsSize,
-            effectsSize: cardData.effectsSize,
-            expansionId: cardData.expansionId
-        });
+        const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
+        const body = JSON.stringify(cardData);
 
         try {
             const response = await fetch(url, {
@@ -106,9 +53,36 @@ const CardEditor: React.FC = () => {
                 ...cardData,
                 cardId: cardId
             }));
-            toast.success(`Card ${method === 'POST' ? 'created' : 'updated'}: ` + cardId);
+            toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${cardData.cardName}`);
+            closeUpdate();
         } catch (error) {
             toast.error('Failed to save card: ' + error);
+        }
+    }
+
+    const handleDelete = async () => {
+        const url = getAdminEndpoint(AdminEndpoint.CARD);
+        const method = RequestMethod.DELETE;
+        const body = JSON.stringify({
+            'cardId': cardData.cardId
+        });
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            });
+            if (!response.ok) {
+                toast.error('Network error');
+            }
+            await response.json();
+            toast.success(`Card deleted: ${cardData.cardName}`);
+            closeUpdate();
+        } catch (error) {
+            toast.error('Failed to delete card: ' + error);
         }
     }
 
@@ -143,22 +117,27 @@ const CardEditor: React.FC = () => {
                 link.href = dataUrl;
                 link.download = cardData.cardName + '.png';
                 link.click();
+                closeUpdate();
             } catch (err) {
                 console.error('oops, something went wrong!', err);
             }
         }
     };
 
+    useImperativeHandle(ref, () => ({
+        setCardData
+    }));
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', margin: '20px' }}>
+        <Box ref={ref} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', margin: '20px' }}>
             <Box sx={{ marginRight: '2rem' }}>
-                <CardPreviewer cardData={cardData} cardRef={cardRef} scale={1}/>
+                <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1}/>
             </Box>
-            <RightPanelSettings cardData={cardData} expansions={expansions}
-                                onCardDataChange={handleCardDataChange} onExport={handleExport} onSave={handleSave} />
+            <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions}
+                                onCardDataChange={handleCardDataChange} onExport={handleExport}
+                                onSave={handleSave} onDelete={handleDelete} />
         </Box>
     );
-};
+});
 
 export default CardEditor;

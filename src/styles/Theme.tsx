@@ -11,5 +11,14 @@ export const theme = createTheme({
         secondary: {
             main: '#19857b',
         },
+        info: {
+            main: '#2196f3',
+        },
+        warning: {
+            main: '#ff9800',
+        },
+        error: {
+            main: '#f44336',
+        }
     },
 });
