@@ -48,6 +48,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
             replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.secondaryMaterialId)?.cardName), 'Secondary'),
             normalizeName(cards.find(card => card.cardId === cardData.tertiaryMaterialId)?.cardName) ?? '',
         ]
+            .sort((a, b) => a.localeCompare(b))
             .filter(material => material.length).join(` ${getMaterialsSeparator()} `);
         return isExtraDeckCard(cardData) ? materialsPrefix + materialsText + '){/h}\n' : '';
     }
