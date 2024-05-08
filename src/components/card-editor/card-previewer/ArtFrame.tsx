@@ -1,18 +1,25 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import {getArtworkBorder} from "../../../types/color";
-import {CardData} from "../../../types/card";
+import {CardData, getOwnerId} from "../../../types/card";
 import {normalizeName, serializeName} from "../../../utils/string";
 import {AssetEndpoint, getAsset} from "../../../types/api";
+import Cookies from "js-cookie";
+import {AuthCookie} from "../../../types/cookie";
 
 interface ArtFrameProps {
     cardData: CardData;
     scale: number;
+    overwriteArt?: File;
 }
 
-const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale }) => {
+const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale, overwriteArt }) => {
     const getImageUrl = () => {
-        return getAsset(scale === 1 ? AssetEndpoint.CARD_ART : AssetEndpoint.SMALL_CARD_ART, serializeName(cardData.cardName));
+        if (overwriteArt) {
+            return URL.createObjectURL(overwriteArt);
+        }
+        return getAsset(scale === 1 ? AssetEndpoint.CARD_ART : AssetEndpoint.SMALL_CARD_ART,
+            + getOwnerId(cardData) + '/' + serializeName(cardData.cardName));
     };
     const getArtScale = () => {
         return 1 + cardData.artScale / 32;

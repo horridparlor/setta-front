@@ -1,10 +1,18 @@
+import {toast} from "react-toastify";
+import Cookies from "js-cookie";
+import {AuthCookie} from "./cookie";
+
 export enum AdminEndpoint {
-    CARD = 'card'
+    CARD = 'card',
+    IMAGE = 'image'
 }
 
 export enum UserEndpoint {
+    AUTHENTICATE = 'authenticate',
     CARDS = 'cards',
-    EXPANSIONS = 'expansions'
+    CHANGE_PASSWORD = 'change-password',
+    EXPANSIONS = 'expansions',
+    USER = 'user',
 }
 
 export enum RequestMethod {
@@ -31,4 +39,17 @@ export const getUserEndpoint = (endpoint : UserEndpoint) => {
 
 export const getAsset = (endpoint: AssetEndpoint, filename: string|null = null) => {
     return `${process.env.REACT_APP_ASSET_DOMAIN}${endpoint}${filename ? '/' + filename : ''}.png`;
+}
+
+export const showError = (responseData: {[key: string]: string}) => {
+    const errorMessage = 'Error: ' + responseData.error || 'Network error';
+    toast.error(errorMessage);
+}
+
+export const getHeaders = () => {
+    const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+    return {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+    };
 }

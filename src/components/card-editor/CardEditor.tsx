@@ -1,14 +1,16 @@
-import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
+import React, {ChangeEvent, forwardRef, useImperativeHandle, useRef, useState} from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
 import domtoimage from 'dom-to-image';
 import {Box} from "@mui/material";
-import {CardData, DEFAULT_CARD_DATA} from "../../types/card";
+import {CardData, DEFAULT_CARD_DATA, getOwnerId} from "../../types/card";
 import {CardMainFrameColor} from "../../types/color";
 import {toast} from "react-toastify";
-import {AdminEndpoint, getAdminEndpoint, RequestMethod} from "../../types/api";
+import {AdminEndpoint, getAdminEndpoint, getHeaders, RequestMethod, showError} from "../../types/api";
 import useExpansions from "../../hooks/useExpansions";
-import {normalizeName} from "../../utils/string";
+import {normalizeName, serializeName} from "../../utils/string";
+import {convertToBase64} from "../../types/files";
+import axios from "axios";
 
 interface CardEditorProps {
     closeUpdate: () => void;
@@ -16,12 +18,13 @@ interface CardEditorProps {
 }
 
 export interface CardEditorRef {
-    setCardData: (cardData: CardData) => void;
+    setCard: (cardData: CardData) => void;
 }
 
 const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards}, ref) => {
     const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
+    const [imageFile, setImageFile] = useState<File | undefined>(undefined);
 
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -40,15 +43,14 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         try {
             const response = await fetch(url, {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: getHeaders(),
                 body: body
             });
-            if (!response.ok) {
-                toast.error('Network error');
-            }
             const responseData = await response.json();
+            if (!response.ok) {
+                showError(responseData);
+                return;
+            }
             const cardId = responseData.cardId;
             setCardData(cardData => ({
                 ...cardData,
@@ -71,15 +73,14 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         try {
             const response = await fetch(url, {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: getHeaders(),
                 body: body
             });
+            const responseData = await response.json();
             if (!response.ok) {
-                toast.error('Network error');
+                showError(responseData);
+                return;
             }
-            await response.json();
             toast.success(`Card deleted: ${normalizeName(cardData.cardName)}`);
             closeUpdate();
         } catch (error) {
@@ -125,18 +126,61 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         }
     };
 
+    const handleImageFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            setImageFile(files[0]);
+        }
+    };
+
+    const handleUploadImage = async () => {
+        if (!imageFile) {
+            toast.warning("No image loaded!");
+            return;
+        }
+        try {
+            const base64String = await convertToBase64(imageFile);
+            const data = {
+                ownerId: getOwnerId(cardData),
+                imageName: serializeName(cardData.cardName),
+                imageMime: imageFile.type,
+                base64String: base64String
+            };
+            const body = JSON.stringify(data);
+            const response = await fetch(getAdminEndpoint(AdminEndpoint.IMAGE), {
+                method: RequestMethod.POST,
+                headers: getHeaders(),
+                body: body
+            });
+            const responseData = await response.json();
+            if (!response.ok) {
+                showError(responseData);
+                return;
+            }
+            setImageFile(undefined);
+            toast.success('Saved image: ' + serializeName(cardData.cardName) + '.png');
+        } catch (error) {
+            toast.error('Error storing image: ' + error);
+        }
+    };
+
+    const setCard = (card: CardData) => {
+        setImageFile(undefined);
+        setCardData(card);
+    }
+
     useImperativeHandle(ref, () => ({
-        setCardData
+        setCard
     }));
 
     return (
         <Box ref={ref} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', margin: '20px' }}>
             <Box sx={{ marginRight: '2rem' }}>
-                <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1}/>
+                <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1} overwriteArt={imageFile}/>
             </Box>
-            <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions}
-                                onCardDataChange={handleCardDataChange} onExport={handleExport}
-                                onSave={handleSave} onDelete={handleDelete} />
+            <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions} canUpload={!!imageFile}
+                                onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
+                                onSave={handleSave} onUploadImage={handleUploadImage} onDelete={handleDelete} />
         </Box>
     );
 });

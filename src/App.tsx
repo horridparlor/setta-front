@@ -17,7 +17,7 @@ interface AppProps {}
 const App: React.FC<AppProps> = () => {
     const [activeComponent, setActiveComponent] = useState<string>(AppPage.CardCatalogue);
     const onCardClicked = (cardData: CardData) => {
-        editorRef.current?.setCardData(cardData);
+        editorRef.current?.setCard(cardData);
         setActiveComponent(AppPage.CardEditor);
     }
     const { cards, fetchCards } = useCards();
@@ -28,7 +28,7 @@ const App: React.FC<AppProps> = () => {
     const editorRef = useRef<CardEditorRef>(null);
     const changePage = (page: AppPage) => {
         setActiveComponent(page);
-        editorRef.current?.setCardData(DEFAULT_CARD_DATA);
+        editorRef.current?.setCard(DEFAULT_CARD_DATA);
     }
     const { expansions } = useExpansions();
 

@@ -1,5 +1,7 @@
 import {Card, MenuItem} from "@mui/material";
 import React from "react";
+import Cookies from "js-cookie";
+import {AuthCookie} from "./cookie";
 
 export enum CardClass {
     ABYSS = 'Abyss',
@@ -50,6 +52,7 @@ export const EXTRA_DECK_SUBTYPES = [
 
 export interface CardData {
     cardId: number;
+    ownerId: number;
     cardName: string;
     isAce: boolean;
     cardClass: CardClass;
@@ -112,6 +115,7 @@ export const isHandTrapCard = (cardData: CardData) => {
 
 export const DEFAULT_CARD_DATA = {
     cardId: 0,
+    ownerId: 0,
     cardName: '',
     isAce: false,
     cardClass: CardClass.ABYSS,
@@ -189,4 +193,9 @@ export const getSupertypeOptions = (cardType: CardType, subtype: CardSubtype): R
         .map(supertype => (
             <MenuItem key={supertype} value={supertype}>{supertype}</MenuItem>
         ));
+}
+
+export const getOwnerId = (cardData: CardData) => {
+    const userId = Cookies.get(AuthCookie.USER_ID);
+    return cardData.ownerId ? cardData.ownerId : userId ?? 0;
 }
