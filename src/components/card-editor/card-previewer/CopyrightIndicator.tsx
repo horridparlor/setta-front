@@ -1,6 +1,6 @@
 import React from 'react';
 import {Typography} from '@mui/material';
-import {CardData} from "../../../types/card";
+import {CardData, getOwnerName} from "../../../types/card";
 import {getFontSize} from "../../../utils/fonts";
 import {TextColor} from "../../../types/color";
 import useExpansions from "../../../hooks/useExpansions";
@@ -26,7 +26,7 @@ const CopyrightIndicator: React.FC<CopyrightIndicatorProps> = ({ scale, cardData
                 whiteSpace: 'nowrap',
             }}
         >
-            {`©${expansions.find(expansion => expansion.id === cardData.expansionId)?.releaseYear} Eero Laine`}
+            {`©${expansions.find(expansion => expansion.id === cardData.expansionId)?.releaseYear} ${getOwnerName(cardData)}`}
         </Typography>
     );
 };

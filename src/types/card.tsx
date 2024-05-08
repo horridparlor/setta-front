@@ -53,6 +53,8 @@ export const EXTRA_DECK_SUBTYPES = [
 export interface CardData {
     cardId: number;
     ownerId: number;
+    ownerFirstname: string,
+    ownerLastname: string,
     cardName: string;
     isAce: boolean;
     cardClass: CardClass;
@@ -116,6 +118,8 @@ export const isHandTrapCard = (cardData: CardData) => {
 export const DEFAULT_CARD_DATA = {
     cardId: 0,
     ownerId: 0,
+    ownerFirstname: '',
+    ownerLastname: '',
     cardName: '',
     isAce: false,
     cardClass: CardClass.ABYSS,
@@ -198,4 +202,10 @@ export const getSupertypeOptions = (cardType: CardType, subtype: CardSubtype): R
 export const getOwnerId = (cardData: CardData) => {
     const userId = Cookies.get(AuthCookie.USER_ID);
     return cardData.ownerId ? cardData.ownerId : userId ?? 0;
+}
+
+export const getOwnerName = (cardData: CardData) => {
+    const firstname = cardData.ownerFirstname.length ? cardData.ownerFirstname : Cookies.get(AuthCookie.FIRSTNAME);
+    const lastname = cardData.ownerLastname.length ? cardData.ownerLastname : Cookies.get(AuthCookie.LASTNAME);
+    return [firstname, lastname].join(' ');
 }
