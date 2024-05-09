@@ -439,7 +439,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 <Button onClick={onSave} variant="contained" color="primary" disabled={cardData.cardName.length === 0}>
                     Save
                 </Button>
-                <Button onClick={onExport} variant="contained" color="secondary">
+                <Button onClick={onExport} variant="contained" color="secondary" disabled={cardData.cardName.length === 0}>
                     Export as PNG
                 </Button>
                 <Button variant="contained" color="info" component="label">

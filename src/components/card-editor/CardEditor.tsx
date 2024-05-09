@@ -101,6 +101,10 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     }
 
     const handleExport = async () => {
+        if (!cardData.cardName) {
+            toast.warning('Name the card before exporting');
+            return;
+        }
         if (cardRef.current && cardRef.current.parentNode) {
             const wrapper = document.createElement('div');
             wrapper.style.backgroundColor = CardMainFrameColor.FRAME;

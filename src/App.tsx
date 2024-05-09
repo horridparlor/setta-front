@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { ThemeProvider, Box } from '@mui/material';
 import { theme } from './styles/Theme';
-import HomeBar from './components/common/HomeBar';
+import HomeBar, {HomeBarRef} from './components/common/HomeBar';
 import CardEditor, {CardEditorRef} from './components/card-editor/CardEditor';
 import CardCatalogue from './components/card-catalogue/CardCatalogue';
 import './styles/montserrat.css';
@@ -26,6 +26,7 @@ const App: React.FC<AppProps> = () => {
         setActiveComponent(AppPage.CardCatalogue);
     }
     const editorRef = useRef<CardEditorRef>(null);
+    const homeBarRef = useRef<HomeBarRef>(null);
     const changePage = (page: AppPage) => {
         setActiveComponent(page);
         editorRef.current?.setCard(DEFAULT_CARD_DATA);
@@ -55,6 +56,9 @@ const App: React.FC<AppProps> = () => {
                     case 'e':
                         commitExport();
                         break;
+                    case 'l':
+                        homeBarRef.current?.toggleLoginOpen();
+                        break;
 
                 }
             } else if (activeComponent === AppPage.CardEditor && event.key === 'Escape') {
@@ -73,7 +77,7 @@ const App: React.FC<AppProps> = () => {
         <ThemeProvider theme={theme}>
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#244775', overflowX: 'hidden' }}>
                 <Box sx={{ width: '100%', p: 2 }}>
-                    <HomeBar setPage={changePage} />
+                    <HomeBar ref={homeBarRef} setPage={changePage} />
                 </Box>
                 <Box sx={{
                     flex: 1,
