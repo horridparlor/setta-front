@@ -40,7 +40,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
         Cookies.set(AuthCookie.FIRSTNAME, responseData.firstname, { expires: 7 });
         Cookies.set(AuthCookie.LASTNAME, responseData.lastname, { expires: 7 });
         Cookies.set(AuthCookie.USER_ID, responseData.userId, { expires: 7 });
-        toast.success('Authenticated');
+        toast.success(`Authenticated: ${responseData.firstname} ${responseData.lastname}`);
         onClose();
     };
 

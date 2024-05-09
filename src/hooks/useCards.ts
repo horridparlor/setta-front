@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {UpdateFrequencies} from "../types/time";
-import {getUserEndpoint, UserEndpoint} from "../types/api";
+import {getHeaders, getUserEndpoint, RequestMethod, UserEndpoint} from "../types/api";
 import {CardData} from "../types/card";
 
 const useCards = () => {
@@ -13,8 +13,12 @@ const useCards = () => {
     const fetchCards = async () => {
         setIsLoading(true);
         try {
-            const response = await axios.get(url);
-            setCards(response.data.cards);
+            const response = await fetch(url, {
+                method: RequestMethod.GET,
+                headers: getHeaders()
+            });
+            const responseData = await response.json();
+            setCards(responseData.cards);
             setIsLoading(false);
         } catch (err: any) {
             setError(err.message);
