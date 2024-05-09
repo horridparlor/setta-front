@@ -25,6 +25,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
 
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -36,6 +37,11 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     };
 
     const handleSave = async () => {
+        if (isSaving) {
+            toast.info('Saving card... Please wait');
+            return;
+        }
+        setIsSaving(true);
         await handleUploadImage();
         const url = getAdminEndpoint(AdminEndpoint.CARD);
         const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
@@ -50,6 +56,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             const responseData = await response.json();
             if (!response.ok) {
                 showError(responseData);
+                setIsSaving(false);
                 return;
             }
             const cardId = responseData.cardId;
@@ -58,9 +65,11 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 cardId: cardId
             }));
             toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData.cardName)}`);
+            setIsSaving(false);
             closeUpdate();
         } catch (error) {
             toast.error('Failed to save card: ' + error);
+            setIsSaving(false);
         }
     }
 
@@ -141,6 +150,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             }
             return;
         }
+        toast.info('Saving image...');
         try {
             const base64String = await convertToBase64(imageFile);
             const data = {
