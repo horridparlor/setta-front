@@ -48,15 +48,16 @@ const App: React.FC<AppProps> = () => {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.ctrlKey) {
-                event.preventDefault();
                 switch (event.key) {
                     case 's':
+                        event.preventDefault();
                         commitSave();
                         break;
                     case 'e':
+                        event.preventDefault();
                         commitExport();
                         break;
-                    case 'l':
+                    case 'a':
                         homeBarRef.current?.toggleLoginOpen();
                         break;
 
