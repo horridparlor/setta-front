@@ -45,6 +45,7 @@ const NameFrame: React.FC<TopFrameProps> = ({ cardData, scale }) => {
             left: `${1.9 * scale}rem`,
             zIndex: 1000,
             color: getFrameTextColor(cardData),
+            whiteSpace: 'nowrap',
         }}>
             {formatText(enrichName(cardData.cardName), scale)}
         </Typography>
