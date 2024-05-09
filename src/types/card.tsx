@@ -143,7 +143,7 @@ export const DEFAULT_CARD_DATA = {
     nameSize: 4,
     materialsSize: 5,
     effectsSize: 5,
-    expansionId: 1,
+    expansionId: 8,
 }
 
 export const combineEffectsTexts = (cardData: CardData|undefined) => {
