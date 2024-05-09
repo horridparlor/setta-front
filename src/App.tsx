@@ -31,10 +31,19 @@ const App: React.FC<AppProps> = () => {
         editorRef.current?.setCard(DEFAULT_CARD_DATA);
     }
     const { expansions } = useExpansions();
+    const commitSave = () => {
+        switch (activeComponent) {
+            case AppPage.CardEditor:
+                editorRef.current?.handleSave();
+        }
+    }
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
+            if (event.ctrlKey && event.key === 's') {
+                event.preventDefault();
+                commitSave();
+            } else if (event.key === 'Escape') {
                 setActiveComponent(AppPage.CardCatalogue);
             }
         };
