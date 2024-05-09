@@ -33,7 +33,6 @@ interface RightPanelSettingsProps {
     onExport: () => void;
     onSave: () => void;
     onImageFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    onUploadImage: () => void;
     onDelete: () => void;
     cards: Array<CardData>;
     canUpload: boolean;
@@ -46,7 +45,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     onExport,
     onSave,
     onImageFileChange,
-    onUploadImage,
     onDelete,
     cards,
     canUpload,
@@ -445,16 +443,13 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     Export as PNG
                 </Button>
                 <Button variant="contained" color="info" component="label">
-                    Select Image
+                    Upload Image
                     <input
                         type="file"
                         hidden
                         accept="image/*"
                         onChange={onImageFileChange}
                     />
-                </Button>
-                <Button onClick={onUploadImage} variant="contained" color="primary" disabled={!canUpload || cardData.cardName.length === 0}>
-                    Upload
                 </Button>
                 <Button onClick={onDelete} variant="contained" color="error" disabled={cardData.cardId === 0}>
                     Delete

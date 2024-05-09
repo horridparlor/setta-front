@@ -36,6 +36,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     };
 
     const handleSave = async () => {
+        await handleUploadImage();
         const url = getAdminEndpoint(AdminEndpoint.CARD);
         const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
         const body = JSON.stringify(cardData);
@@ -135,7 +136,9 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
 
     const handleUploadImage = async () => {
         if (!imageFile) {
-            toast.warning("No image loaded!");
+            if (!cardData.cardId) {
+                toast.warning("No image selected!");
+            }
             return;
         }
         try {
@@ -180,7 +183,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             </Box>
             <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions} canUpload={!!imageFile}
                                 onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
-                                onSave={handleSave} onUploadImage={handleUploadImage} onDelete={handleDelete} />
+                                onSave={handleSave} onDelete={handleDelete} />
         </Box>
     );
 });
