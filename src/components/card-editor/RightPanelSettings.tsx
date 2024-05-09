@@ -190,7 +190,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.artScale}
                     onChange={handleInputChange('artScale')}
-                    inputProps={{ min: 0, max: 20 }}
+                    inputProps={{ min: 0, max: 40 }}
                 />
                 <TextField
                     fullWidth
