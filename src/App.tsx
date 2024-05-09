@@ -57,7 +57,7 @@ const App: React.FC<AppProps> = () => {
                         event.preventDefault();
                         commitExport();
                         break;
-                    case 'a':
+                    case 'l':
                         homeBarRef.current?.toggleLoginOpen();
                         break;
 
