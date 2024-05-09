@@ -49,7 +49,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
             toast.error("Passwords do not match");
             return;
         }
-        const data = { username, newPassword };
+        const data = {
+            password: newPassword
+        };
         const body = JSON.stringify(data);
         const response = await fetch(getUserEndpoint(UserEndpoint.CHANGE_PASSWORD), {
             method: RequestMethod.POST,
