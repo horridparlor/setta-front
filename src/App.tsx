@@ -43,18 +43,17 @@ const App: React.FC<AppProps> = () => {
             if (event.ctrlKey && event.key === 's') {
                 event.preventDefault();
                 commitSave();
-            } else if (event.key === 'Escape') {
+            } else if (activeComponent === AppPage.CardEditor && event.key === 'Escape') {
                 setActiveComponent(AppPage.CardCatalogue);
             }
         };
 
         document.addEventListener('keydown', handleKeyDown);
 
-        // Clean up function to remove the event listener
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [activeComponent]);
 
     return (
         <ThemeProvider theme={theme}>
