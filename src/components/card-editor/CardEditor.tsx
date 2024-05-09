@@ -20,6 +20,7 @@ interface CardEditorProps {
 export interface CardEditorRef {
     setCard: (cardData: CardData) => void;
     handleSave: () => void;
+    handleExport: () => void;
 }
 
 const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards}, ref) => {
@@ -188,7 +189,8 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
 
     useImperativeHandle(ref, () => ({
         setCard,
-        handleSave
+        handleSave,
+        handleExport,
     }));
 
     return (

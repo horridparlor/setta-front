@@ -37,12 +37,26 @@ const App: React.FC<AppProps> = () => {
                 editorRef.current?.handleSave();
         }
     }
+    const commitExport = () => {
+        switch (activeComponent) {
+            case AppPage.CardEditor:
+                editorRef.current?.handleExport();
+        }
+    }
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.ctrlKey && event.key === 's') {
+            if (event.ctrlKey) {
                 event.preventDefault();
-                commitSave();
+                switch (event.key) {
+                    case 's':
+                        commitSave();
+                        break;
+                    case 'e':
+                        commitExport();
+                        break;
+
+                }
             } else if (activeComponent === AppPage.CardEditor && event.key === 'Escape') {
                 setActiveComponent(AppPage.CardCatalogue);
             }
