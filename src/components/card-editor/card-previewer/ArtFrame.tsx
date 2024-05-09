@@ -25,6 +25,10 @@ const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale, overwriteArt }) =>
         return scale === 1 ?  1 + cardData.artScale / 32 : 1;
     }
 
+    const getOffsetPixelScale = () => {
+        return scale === 1 ? -0.25 : 0;
+    }
+
     return (
         <Box
             sx={{
@@ -48,7 +52,7 @@ const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale, overwriteArt }) =>
                     width: `${26.95 * getArtScale() * scale}rem`,
                     height: `${24 * getArtScale() * scale}rem`,
                     objectFit: 'cover',
-                    objectPosition: `${-0.25 * cardData.artXOffset * scale}rem ${-0.25 * cardData.artYOffset * scale}rem`
+                    objectPosition: `${getOffsetPixelScale() * cardData.artXOffset * scale}rem ${getOffsetPixelScale() * cardData.artYOffset * scale}rem`
                 }}
             />
         </Box>
