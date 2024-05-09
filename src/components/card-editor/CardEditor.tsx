@@ -45,7 +45,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         await handleUploadImage();
         const url = getAdminEndpoint(AdminEndpoint.CARD);
         const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
-        const body = JSON.stringify(cardData);
+        const body = JSON.stringify({...cardData, serializedName: serializeName(cardData.cardName)});
 
         try {
             const response = await fetch(url, {
