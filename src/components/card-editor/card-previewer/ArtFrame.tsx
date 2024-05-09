@@ -22,7 +22,7 @@ const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale, overwriteArt }) =>
             + getOwnerId(cardData) + '/' + serializeName(cardData.cardName));
     };
     const getArtScale = () => {
-        return 1 + cardData.artScale / 32;
+        return scale === 1 ?  1 + cardData.artScale / 32 : 1;
     }
 
     return (

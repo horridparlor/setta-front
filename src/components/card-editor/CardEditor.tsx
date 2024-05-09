@@ -157,6 +157,9 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 ownerId: getOwnerId(cardData),
                 imageName: serializeName(cardData.cardName),
                 imageMime: imageFile.type,
+                artScale: cardData.artScale,
+                artXOffset: cardData.artXOffset,
+                artYOffset: cardData.artYOffset,
                 base64String: base64String
             };
             const body = JSON.stringify(data);

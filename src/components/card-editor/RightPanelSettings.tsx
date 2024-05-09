@@ -199,7 +199,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.artXOffset}
                     onChange={handleInputChange('artXOffset')}
-                    inputProps={{ min: 0, max: 50 }}
+                    inputProps={{ min: 0, max: 200 }}
                 />
                 <TextField
                     fullWidth
