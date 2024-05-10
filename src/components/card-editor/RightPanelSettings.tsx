@@ -17,7 +17,7 @@ import {
     CardData,
     CardSubtype,
     CardSupertype,
-    CardType,
+    CardType, DefaultTextSize,
     EXTRA_DECK_SUBTYPES,
     getSubtypeOptions,
     getSupertypeOptions,
@@ -122,6 +122,15 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             break;
                     }
                     onCardDataChange('maximumPiece', value === CardSupertype.MAXIMUM ? MaximumPiece.LEFT : MaximumPiece.NONE);
+                    break;
+                case 'primaryMaterialId':
+                    onCardDataChange('materialsSize', DefaultTextSize.EFFECTS_BOX.toString());
+                    break;
+                case 'secondaryMaterialId':
+                    onCardDataChange('materialsSize', DefaultTextSize.EFFECTS_BOX.toString());
+                    break;
+                case "tertiaryMaterialId":
+                    onCardDataChange('materialsSize', DefaultTextSize.EFFECTS_BOX.toString());
                     break;
             }
             onCardDataChange(field, event.target.value as any);

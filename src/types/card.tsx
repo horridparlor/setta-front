@@ -125,6 +125,11 @@ export const isHandTrapCard = (cardData: CardData) => {
     return cardData.supertype === CardSupertype.HAND_TRAP;
 }
 
+export enum DefaultTextSize {
+    NAME = 4,
+    EFFECTS_BOX = 5,
+}
+
 export const DEFAULT_CARD_DATA = {
     cardId: 0,
     ownerId: 0,
@@ -150,9 +155,9 @@ export const DEFAULT_CARD_DATA = {
     artScale: 0,
     artXOffset: 0,
     artYOffset: 0,
-    nameSize: 4,
-    materialsSize: 5,
-    effectsSize: 5,
+    nameSize: DefaultTextSize.NAME,
+    materialsSize: DefaultTextSize.EFFECTS_BOX,
+    effectsSize: DefaultTextSize.EFFECTS_BOX,
     expansionId: 8,
 }
 
