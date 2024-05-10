@@ -44,9 +44,9 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
     const getMaterialsText = () => {
         const materialsPrefix = `{h=${getMaterialsSize()}}(`;
         const materialsText =  [
-            replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.primaryMaterialId)?.cardName), 'Primary'),
-            replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.secondaryMaterialId)?.cardName), 'Secondary'),
-            normalizeName(cards.find(card => card.cardId === cardData.tertiaryMaterialId)?.cardName) ?? '',
+            replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.primaryMaterialId)), 'Primary'),
+            replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.secondaryMaterialId)), 'Secondary'),
+            normalizeName(cards.find(card => card.cardId === cardData.tertiaryMaterialId)) ?? '',
         ]
             .sort((a, b) => a.localeCompare(b))
             .filter(material => material.length).join(` ${getMaterialsSeparator()} `);
@@ -78,7 +78,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return Math.max(0, 0.25 + 0.06 * (firstLineSize + (isExtraDeckCard(cardData) ? 2 : 1)) - ((getEffectsSize() + 1) * 0.045 * getLineHeight()));
     }
     const getCountsAs = () => {
-        const countsAsText = normalizeName(cards.find(card => card.cardId === cardData.countsAsId)?.cardName) ?? '';
+        const countsAsText = normalizeName(cards.find(card => card.cardId === cardData.countsAsId)) ?? '';
         const countsAsPrefix = `Counts as ${starsWithVowel(countsAsText) ? 'an' : 'a'} {bi=${getEffectsSize()}}`;
         if (!countsAsText.length) {
             return '';

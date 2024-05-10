@@ -52,9 +52,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const cardSelector = () => {
         return [<MenuItem key='none' value=''>–</MenuItem>,
         ...cards
-            .sort((cardA, cardB) => normalizeName(cardA.cardName).localeCompare(normalizeName(cardB.cardName)))
+            .sort((cardA, cardB) => normalizeName(cardA).localeCompare(normalizeName(cardB)))
             .map(card => (
-                <MenuItem key={card.cardId} value={card.cardId}>{normalizeName(card.cardName)}</MenuItem>
+                <MenuItem key={card.cardId} value={card.cardId}>{normalizeName(card)}</MenuItem>
             ))
         ];
     }

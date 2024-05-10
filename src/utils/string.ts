@@ -1,15 +1,22 @@
-export const normalizeName = (name: any): string => {
-    if (typeof name !== 'string') {
+import {CardData, getMaximumExtension} from "../types/card";
+
+export const normalizeName = (cardData: CardData|any): string => {
+    if (typeof cardData === 'undefined') {
         return '';
     }
+    const name = typeof cardData === 'string' ? cardData : cardData.cardName + getMaximumExtension(cardData);
     return name.replace(/^({i}The)/i, '{i}')
         .replace(/{[^}]*}/g, '')
-        .replace(/[^a-zA-Z0-9\s'-]/g, '');
+        .replace(/[^a-zA-Z0-9\s-'!?áäéö$[\]]/g, '');
 };
 
-export const serializeName = (name: any): string => {
-    return normalizeName(name)
-        .replace(/-|'/g, '')
+export const serializeName = (cardData: CardData|any): string => {
+    return normalizeName(cardData)
+        .replace(/á|ä/g, 'a')
+        .replace(/é|€/g, 'e')
+        .replace(/ó|ö/g, 'ö')
+        .replace(/ś|\$/g, 's')
+        .replace(/-|'|!|\?|\[|\]/g, '')
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')

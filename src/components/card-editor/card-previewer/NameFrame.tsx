@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { formatText, getFontSize } from "../../../utils/fonts";
-import {CardData, MaximumPiece} from "../../../types/card";
+import {CardData, getMaximumExtension, MaximumPiece} from "../../../types/card";
 import { getFrameTextColor } from "../../../types/color";
 
 interface TopFrameProps {
@@ -13,23 +13,11 @@ const NameFrame: React.FC<TopFrameProps> = ({ cardData, scale }) => {
     const getNameSize = () => {
         return 5 + cardData.nameSize;
     }
-    const getMaximumExtension = () => {
-        switch (cardData.maximumPiece) {
-            case MaximumPiece.NONE:
-                return '';
-            case MaximumPiece.LEFT:
-                return ' [L]';
-            case MaximumPiece.MIDDLE:
-                return ' [M]';
-            case MaximumPiece.RIGHT:
-                return ' [R]';
-        }
-    }
     const enrichName = (cardName: string) => {
         return (cardName.length ? cardName : 'Name')
             .replace(/{i}/g, `{bi=${getNameSize() - 1}}`)
             .replace(/{\/i}/g, " {/bi}")
-            + getMaximumExtension();
+            + getMaximumExtension(cardData);
     }
 
     return (

@@ -47,7 +47,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         await handleUploadImage();
         const url = getAdminEndpoint(AdminEndpoint.CARD);
         const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
-        const body = JSON.stringify({...cardData, serializedName: serializeName(cardData.cardName)});
+        const body = JSON.stringify({...cardData, serializedName: serializeName(cardData)});
 
         try {
             const response = await fetch(url, {
@@ -66,7 +66,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 ...cardData,
                 cardId: cardId
             }));
-            toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData.cardName)}`);
+            toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`);
             setIsSaving(false);
             closeUpdate();
         } catch (error) {
@@ -93,7 +93,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 showError(responseData);
                 return;
             }
-            toast.success(`Card deleted: ${normalizeName(cardData.cardName)}`);
+            toast.success(`Card deleted: ${normalizeName(cardData)}`);
             closeUpdate();
         } catch (error) {
             toast.error('Failed to delete card: ' + error);
@@ -133,7 +133,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
 
                 const link = document.createElement('a');
                 link.href = dataUrl;
-                link.download = normalizeName(cardData.cardName) + '.png';
+                link.download = normalizeName(cardData) + '.png';
                 link.click();
                 closeUpdate();
             } catch (err) {
@@ -161,7 +161,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             const base64String = await convertToBase64(imageFile);
             const data = {
                 ownerId: getOwnerId(cardData),
-                imageName: serializeName(cardData.cardName),
+                imageName: serializeName(cardData),
                 imageMime: imageFile.type,
                 artScale: cardData.artScale,
                 artXOffset: cardData.artXOffset,
@@ -180,11 +180,12 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 return;
             }
             setImageFile(undefined);
-            toast.success('Saved image: ' + serializeName(cardData.cardName) + '.png');
+            toast.success('Saved image: ' + serializeName(cardData) + '.png');
         } catch (error) {
             toast.error('Error storing image: ' + error);
         }
     };
+    console.log(serializeName(cardData));
 
     const setCard = (card: CardData) => {
         setImageFile(undefined);

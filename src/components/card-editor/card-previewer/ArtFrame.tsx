@@ -19,7 +19,7 @@ const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale, overwriteArt }) =>
             return URL.createObjectURL(overwriteArt);
         }
         return getAsset(scale === 1 ? AssetEndpoint.CARD_ART : AssetEndpoint.SMALL_CARD_ART,
-            + getOwnerId(cardData) + '/' + serializeName(cardData.cardName));
+            + getOwnerId(cardData) + '/' + serializeName(cardData));
     };
     const getArtScale = () => {
         return scale === 1 ?  1 + cardData.artScale / 32 : 1;

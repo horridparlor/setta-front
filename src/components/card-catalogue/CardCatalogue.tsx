@@ -35,7 +35,7 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
     }
 
     const filteredCards = cards.filter(card =>
-        normalizeName(card.cardName).toLowerCase().includes(normalizeName(filters.cardName).toLowerCase())
+        normalizeName(card).toLowerCase().includes(normalizeName(filters.cardName).toLowerCase())
         && filters.cardEffects.toLowerCase().split(' ').every(word => (card.costText + card.effectText).toLowerCase().includes(word))
         && (filters.referenceId === '' ||
             [card.cardId, card.primaryMaterialId, card.secondaryMaterialId, card.tertiaryMaterialId, card.countsAsId]

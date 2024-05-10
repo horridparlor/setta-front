@@ -209,3 +209,16 @@ export const getOwnerName = (cardData: CardData) => {
     const lastname = cardData.ownerLastname.length ? cardData.ownerLastname : Cookies.get(AuthCookie.LASTNAME);
     return [firstname, lastname].join(' ');
 }
+
+export const getMaximumExtension = (cardData: CardData) => {
+    switch (cardData.maximumPiece) {
+        case MaximumPiece.NONE:
+            return '';
+        case MaximumPiece.LEFT:
+            return ' [L]';
+        case MaximumPiece.MIDDLE:
+            return ' [M]';
+        case MaximumPiece.RIGHT:
+            return ' [R]';
+    }
+}
