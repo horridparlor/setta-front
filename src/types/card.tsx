@@ -42,6 +42,15 @@ export enum MaximumPiece {
     RIGHT = 'Right',
 }
 
+export const MONSTER_CARD_TYPES = [
+    CardType.MONSTER
+]
+
+export const BACKROW_CARD_TYPES = [
+    CardType.SPELL,
+    CardType.TRAP
+]
+
 export const EXTRA_DECK_SUBTYPES = [
   CardSubtype.FUSION,
   CardSubtype.REVENGE,
@@ -87,6 +96,7 @@ export enum StatType {
 }
 
 export const isExtraDeckCard = (cardData : CardData) => {
+    return EXTRA_DECK_SUBTYPES.includes(cardData.subtype);
     return EXTRA_DECK_SUBTYPES.includes(cardData.subtype);
 }
 
@@ -221,4 +231,8 @@ export const getMaximumExtension = (cardData: CardData) => {
         case MaximumPiece.RIGHT:
             return ' [R]';
     }
+}
+
+export const isRitual = (cardData: CardData) => {
+    return cardData.subtype === CardSubtype.RITUAL;
 }

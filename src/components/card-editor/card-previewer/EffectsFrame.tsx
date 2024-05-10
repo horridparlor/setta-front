@@ -6,13 +6,13 @@ import {
     hasCostText,
     hasEffectText,
     hasFlavourText,
-    isExtraDeckCard, isHandTrapCard,
-    isPendulumCard
+    isExtraDeckCard,
+    isHandTrapCard,
+    isPendulumCard, isRitual
 } from "../../../types/card";
 import {getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
 import {addSizeToRichText, formatText, getFontSize} from "../../../utils/fonts";
 import {normalizeName, replaceIfEmpty, starsWithVowel} from "../../../utils/string";
-import useCards from "../../../hooks/useCards";
 
 interface EffectsFrameProps {
     cardData: CardData;
@@ -43,13 +43,15 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
     }
     const getMaterialsText = () => {
         const materialsPrefix = `{h=${getMaterialsSize()}}(`;
-        const materialsText =  [
+        let materials =  [
             replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.primaryMaterialId)), 'Primary'),
             replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.secondaryMaterialId)), 'Secondary'),
             normalizeName(cards.find(card => card.cardId === cardData.tertiaryMaterialId)) ?? '',
-        ]
-            .sort((a, b) => a.localeCompare(b))
-            .filter(material => material.length).join(` ${getMaterialsSeparator()} `);
+        ];
+        if (!isRitual(cardData)) {
+            materials = materials.sort((a, b) => a.localeCompare(b));
+        }
+        const materialsText = materials.filter(material => material.length).join(` ${getMaterialsSeparator()} `);
         return isExtraDeckCard(cardData) ? materialsPrefix + materialsText + '){/h}\n' : '';
     }
     const getCostText = () => {

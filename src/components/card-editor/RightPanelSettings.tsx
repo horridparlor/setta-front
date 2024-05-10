@@ -12,16 +12,20 @@ import {
     TextField
 } from '@mui/material';
 import {
+    BACKROW_CARD_TYPES,
     CardClass,
     CardData,
     CardSubtype,
     CardSupertype,
-    CardType, getSubtypeOptions, getSupertypeOptions,
+    CardType,
+    EXTRA_DECK_SUBTYPES,
+    getSubtypeOptions,
+    getSupertypeOptions,
     hasCostText,
     hasEffectText,
     hasFlavourText,
-    isExtraDeckCard,
-    MaximumPiece
+    isExtraDeckCard, isRitual,
+    MaximumPiece, MONSTER_CARD_TYPES
 } from "../../types/card";
 import {CardExpansion} from "../../types/expansion";
 import {normalizeName} from "../../utils/string";
@@ -49,14 +53,20 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     cards,
     canUpload,
 }) => {
-    const cardSelector = () => {
+    const cardSelector = (source: Array<CardData> = cards) => {
         return [<MenuItem key='none' value=''>–</MenuItem>,
-        ...cards
+        ...source
             .sort((cardA, cardB) => normalizeName(cardA).localeCompare(normalizeName(cardB)))
             .map(card => (
                 <MenuItem key={card.cardId} value={card.cardId}>{normalizeName(card)}</MenuItem>
             ))
         ];
+    }
+    const monsterCardSelector = () => {
+        return cardSelector(cards.filter(card => MONSTER_CARD_TYPES.includes(card.cardType)));
+    }
+    const backrowCardSelector = () => {
+        return cardSelector(cards.filter(card => BACKROW_CARD_TYPES.includes(card.cardType)));
     }
     const handleSelectChange = (field: keyof CardData) =>
         (event: SelectChangeEvent<string>) => {
@@ -66,6 +76,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     onCardDataChange('subtype', value === CardType.MONSTER ? CardSubtype.EFFECT : CardSubtype.NORMAL);
                     onCardDataChange('supertype', CardSupertype.NONE);
                     onCardDataChange('flavourText', '');
+                    onCardDataChange('primaryMaterialId', '');
+                    onCardDataChange('secondaryMaterialId', '');
+                    onCardDataChange('tertiaryMaterialId', '');
                     break;
                 case 'subtype':
                     switch (value) {
@@ -78,6 +91,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         case CardSubtype.EFFECT:
                             onCardDataChange('flavourText', '');
                             break;
+                        case CardSubtype.RITUAL:
+                            onCardDataChange('tertiaryMaterialId', '');
+                            break;
                     }
                     if (cardData.flavourText.length) {
                         switch (cardData.supertype) {
@@ -88,6 +104,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                                 onCardDataChange('costText', '');
                                 break;
                         }
+                    }
+                    if (!EXTRA_DECK_SUBTYPES.includes(value as CardSubtype)) {
+                        onCardDataChange('primaryMaterialId', '');
+                        onCardDataChange('secondaryMaterialId', '');
+                        onCardDataChange('tertiaryMaterialId', '');
                     }
                     onCardDataChange('supertype', CardSupertype.NONE);
                     break;
@@ -317,7 +338,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         label="Primary material"
                         onChange={handleSelectChange('primaryMaterialId')}
                     >
-                        {cardSelector()}
+                        {isRitual(cardData) ? monsterCardSelector() : cardSelector()}
                     </Select>
                 </FormControl>
                 <FormControl fullWidth sx={{ marginBottom: 2 }}>
@@ -328,10 +349,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         label="Secondary material"
                         onChange={handleSelectChange('secondaryMaterialId')}
                     >
-                        {cardSelector()}
+                        {isRitual(cardData) ? backrowCardSelector() : cardSelector()}
                     </Select>
                 </FormControl>
-                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                <FormControl fullWidth sx={{ marginBottom: 2, display: !isRitual(cardData) ? 'flex' : 'none', }}>
                     <InputLabel id="tertiary-material-selector-label">Tertiary material</InputLabel>
                     <Select
                         labelId="tertiary-material-selector-label"
