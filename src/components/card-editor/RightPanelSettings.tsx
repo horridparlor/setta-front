@@ -17,7 +17,7 @@ import {
     CardData,
     CardSubtype,
     CardSupertype,
-    CardType, DefaultTextSize,
+    CardType, combineEffectsTexts, DefaultTextSize,
     EXTRA_DECK_SUBTYPES,
     getSubtypeOptions,
     getSupertypeOptions,
@@ -38,6 +38,7 @@ interface RightPanelSettingsProps {
     onSave: () => void;
     onImageFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
     onDelete: () => void;
+    onEncode: () => void;
     cards: Array<CardData>;
     canUpload: boolean;
 }
@@ -50,6 +51,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     onSave,
     onImageFileChange,
     onDelete,
+    onEncode,
     cards,
     canUpload,
 }) => {
@@ -480,6 +482,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         accept="image/*"
                         onChange={onImageFileChange}
                     />
+                </Button>
+                <Button onClick={onEncode} variant="contained" color="secondary" disabled={combineEffectsTexts(cardData).length === 0}>
+                    ENCODE
                 </Button>
                 <Button onClick={onDelete} variant="contained" color="error" disabled={cardData.cardId === 0}>
                     Delete

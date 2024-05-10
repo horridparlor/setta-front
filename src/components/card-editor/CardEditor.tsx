@@ -8,7 +8,7 @@ import {CardMainFrameColor} from "../../types/color";
 import {toast} from "react-toastify";
 import {AdminEndpoint, getAdminEndpoint, getHeaders, RequestMethod, showError} from "../../types/api";
 import useExpansions from "../../hooks/useExpansions";
-import {normalizeName, serializeName} from "../../utils/string";
+import {encodeEffectsString, normalizeName, serializeName} from "../../utils/string";
 import {convertToBase64} from "../../types/files";
 import axios from "axios";
 
@@ -192,6 +192,14 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         setCardData(card);
     }
 
+    const encodeEffects = () => {
+        setCardData({
+            ...cardData,
+            costText: encodeEffectsString(cardData.costText),
+            effectText: encodeEffectsString(cardData.effectText)
+        });
+    }
+
     useImperativeHandle(ref, () => ({
         setCard,
         handleSave,
@@ -203,7 +211,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             <Box sx={{ marginRight: '2rem' }}>
                 <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1} overwriteArt={imageFile}/>
             </Box>
-            <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions} canUpload={!!imageFile}
+            <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
                                 onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
                                 onSave={handleSave} onDelete={handleDelete} />
         </Box>

@@ -33,3 +33,16 @@ export const starsWithVowel = (message: string): boolean => {
 export const replaceIfEmpty = (message: string|undefined, defaultTo: string) => {
     return message && message.length ? message : defaultTo;
 }
+
+export const encodeEffectsString = (message: string) => {
+    const tagPattern = /(\{[isb]*\}.*?\{\/[isb]*\})|(\b(normal|revenge|royal|fusion|ritual|defense|attack|face-up|face-down|\d+)\b)|(\b(Spell|Trap|atk|def|Abyss|Dragon|Dragons|Kawaii|Slime|Slimes|Sparks|Zombie|Zombies)\b)/gi;
+    return message
+        .replace('(', '{i}')
+        .replace(')', '{/i}')
+        .replace(tagPattern, (match, p1, p2, p3, p4) => {
+        if (p1) return p1;
+        if (p3) return `{sb}${match}{/sb}`;
+        if (p4) return `{b}${match}{/b}`;
+        return match;
+    });
+}
