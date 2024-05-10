@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import {
     AppBar,
     TextField,
@@ -15,6 +15,7 @@ import {CardExpansion} from "../../types/expansion";
 import Button from "@mui/material/Button";
 import {normalizeName} from "../../utils/string";
 import {toast} from "react-toastify";
+import Cookies from "js-cookie";
 
 interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
@@ -36,14 +37,28 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 }));
 
 const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardFiltersProps>(({onFilterChange, expansions, cards}, ref) => {
-    const [cardName, setCardName] = useState('');
-    const [cardEffects, setCardEffects] = useState('');
-    const [referenceId, setReferenceId] = useState('');
-    const [cardClass, setCardClass] = useState('');
-    const [cardType, setCardType] = useState('');
-    const [cardSubtype, setCardSubtype] = useState('');
-    const [cardSupertype, setCardSupertype] = useState('');
-    const [expansionId, setExpansionId] = useState('');
+    const loadFiltersFromCookies = () => {
+        return {
+            cardName: Cookies.get('cardName') || '',
+            cardEffects: Cookies.get('cardEffects') || '',
+            referenceId: Cookies.get('referenceId') || '',
+            cardClass: Cookies.get('cardClass') || '',
+            cardType: Cookies.get('cardType') || '',
+            cardSubtype: Cookies.get('cardSubtype') || '',
+            cardSupertype: Cookies.get('cardSupertype') || '',
+            expansionId: Cookies.get('expansionId') || ''
+        };
+    }
+
+    const initialState = loadFiltersFromCookies();
+    const [cardName, setCardName] = useState(initialState.cardName);
+    const [cardEffects, setCardEffects] = useState(initialState.cardEffects);
+    const [referenceId, setReferenceId] = useState(initialState.referenceId);
+    const [cardClass, setCardClass] = useState(initialState.cardClass);
+    const [cardType, setCardType] = useState(initialState.cardType);
+    const [cardSubtype, setCardSubtype] = useState(initialState.cardSubtype);
+    const [cardSupertype, setCardSupertype] = useState(initialState.cardSupertype);
+    const [expansionId, setExpansionId] = useState(initialState.expansionId);
 
     const getFilters = () => {
         return {
@@ -56,6 +71,12 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
             cardName: '', cardEffects: '', referenceId: '', cardClass: '', cardType: '', cardSubtype: '', cardSupertype: '', expansionId: ''
         };
     }
+
+    useEffect(() => {
+        onFilterChange({
+            cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, expansionId
+        });
+    }, [cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, expansionId]);
 
     const referenceCard = (cardData: CardData) => {
         const cardId = cardData.cardId.toString();
@@ -70,60 +91,68 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     const handleCardNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setCardName(value);
-        onFilterChange({ ...getFilters(), cardName: value });
+        Cookies.set('cardName', value);
     };
 
     const handleCardClassChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardClass(value);
-        onFilterChange({ ...getFilters(), cardClass: value });
+        Cookies.set('cardClass', value);
     };
 
     const handleCardTypeChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardType(value);
-        onFilterChange({ ...getFilters(), cardType: value });
+        Cookies.set('cardType', value);
     };
 
     const handleCardSubtypeChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardSubtype(value);
-        onFilterChange({ ...getFilters(), cardSubtype: value });
+        Cookies.set('cardSubtype', value);
     };
 
     const handleCardSupertypeChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardSupertype(value);
-        onFilterChange({ ...getFilters(), cardSupertype: value });
+        Cookies.set('cardSupertype', value);
     };
 
     const handleExpansionChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setExpansionId(value);
-        onFilterChange({ ...getFilters(), expansionId: value });
+        Cookies.set('expansionId', value);
     };
 
     const handleCardEffectsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value: string = event.target.value;
         setCardEffects(value);
-        onFilterChange({ ...getFilters(), cardEffects: value });
+        Cookies.set('cardEffects', value);
     };
 
     const handleReferenceIdChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setReferenceId(value);
-        onFilterChange({ ...getFilters(), referenceId: value });
+        Cookies.set('referenceId', value);
     };
 
     const resetFilters = () => {
         setCardName('');
+        Cookies.remove('cardName');
         setCardEffects('');
+        Cookies.remove('cardEffects');
         setReferenceId('');
+        Cookies.remove('referenceId');
         setCardClass('');
+        Cookies.remove('cardClass');
         setCardType('');
+        Cookies.remove('cardType');
         setCardSubtype('');
+        Cookies.remove('cardSubtype');
         setCardSupertype('');
+        Cookies.remove('cardSupertype');
         setExpansionId('');
+        Cookies.remove('expansionId');
         onFilterChange(getEmptyFilters());
     };
 
