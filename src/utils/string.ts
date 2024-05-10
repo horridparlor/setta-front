@@ -35,7 +35,7 @@ export const replaceIfEmpty = (message: string|undefined, defaultTo: string) => 
 }
 
 export const encodeEffectsString = (message: string) => {
-    const tagPattern = /(\{[isb]*\}.*?\{\/[isb]*\})|(\b(normal|revenge|royal|fusion|ritual|defense|attack|face-up|face-down|percing|chain-attack|triple-attack|sleeptalk|armor-up|\d+)\b)|(\b(Spell|Trap|atk|def|Abyss|Dragon|Dragons|Kawaii|Slime|Slimes|Sparks|Zombie|Zombies)\b)/gi;
+    const tagPattern = /(\{[isb]*\}.*?\{\/[isb]*\})|(\b(normal|revenge|royal|fusion|ritual|time traveller|pendulum|hand trap|maximum|defense|attack|face-up|face-down|percing|chain-attack|triple-attack|sleeptalk|armor-up|\d+)\b)|(\b(Spell|Trap|atk|def|Abyss|Dragon|Dragons|Kawaii|Slime|Slimes|Sparks|Zombie|Zombies)\b)/gi;
     return message
         .replace('(', '{i}')
         .replace(')', '{/i}')
