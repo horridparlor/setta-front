@@ -195,6 +195,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     const encodeEffects = () => {
         setCardData({
             ...cardData,
+            cardName: encodeEffectsString(cardData.cardName),
             costText: encodeEffectsString(cardData.costText),
             effectText: encodeEffectsString(cardData.effectText)
         });
