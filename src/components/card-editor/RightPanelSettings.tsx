@@ -220,7 +220,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.artScale}
                     onChange={handleInputChange('artScale')}
-                    inputProps={{ min: 0, max: 40 }}
+                    inputProps={{ min: 0, max: 50 }}
                 />
                 <TextField
                     fullWidth
@@ -229,7 +229,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.artXOffset}
                     onChange={handleInputChange('artXOffset')}
-                    inputProps={{ min: 0, max: 240 }}
+                    inputProps={{ min: 0, max: 250 }}
                 />
                 <TextField
                     fullWidth
@@ -238,7 +238,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.artYOffset}
                     onChange={handleInputChange('artYOffset')}
-                    inputProps={{ min: 0, max: 50 }}
+                    inputProps={{ min: 0, max: 100 }}
                 />
             </Box>
             <Box
