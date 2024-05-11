@@ -87,7 +87,6 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         }
         return (
             <>
-                {formatText(countsAsPrefix +  countsAsText + '{/bi}.', scale)}
                 <Box
                     sx={{
                         flexGrow: 1,
@@ -97,6 +96,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
                         opacity: 0.2,
                     }}
                 />
+                {formatText(countsAsPrefix +  countsAsText + '{/bi}.', scale)}
             </>
         );
     }
