@@ -20,7 +20,7 @@ const App: React.FC<AppProps> = () => {
         editorRef.current?.setCard(cardData);
         setActiveComponent(AppPage.CardEditor);
     }
-    const { cards, fetchCards } = useCards();
+    const { cards, cardOwners, fetchCards } = useCards();
     const onCardUpdate = () => {
         fetchCards();
         setActiveComponent(AppPage.CardCatalogue);
@@ -91,7 +91,7 @@ const App: React.FC<AppProps> = () => {
                         <CardEditor cards={cards} closeUpdate={onCardUpdate} ref={editorRef} />
                     </Box>
                     <Box sx={{display: activeComponent === AppPage.CardCatalogue ? 'flex' : 'none'}}>
-                        <CardCatalogue cards={cards} expansions={expansions} handleCardClick={onCardClicked}/>
+                        <CardCatalogue cards={cards} cardOwners={cardOwners} expansions={expansions} handleCardClick={onCardClicked}/>
                     </Box>
                 </Box>
             </Box>

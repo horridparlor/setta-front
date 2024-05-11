@@ -252,3 +252,17 @@ export const canEditCard = (cardData: CardData, expansions: Array<CardExpansion>
     const expansion = expansions.find(expansion => expansion.id === cardData.expansionId);
     return expansion?.ownerId === EXPANSION_NO_OWNER || expansion?.ownerId === getUserId();
 }
+
+export const isMonster = (cardData: CardData) => {
+    return cardData.cardType === CardType.MONSTER;
+}
+
+export const getFullTypeString = (cardData: CardData) => {
+    const subtype = cardData.subtype === CardSubtype.NORMAL ? 'AAA' : cardData.subtype;
+    const supertype = cardData.supertype === CardSupertype.NONE ? 'ZZZ' : cardData.supertype;
+    return cardData.cardType + subtype + supertype;
+}
+
+export const getCombinedStats = (cardData: CardData) => {
+    return cardData.atk + cardData.def;
+}

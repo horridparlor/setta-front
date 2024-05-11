@@ -1,18 +1,28 @@
 import React, {useRef, useState} from 'react';
 import {Box, Card} from '@mui/material';
-import {CardData, CardType, combineEffectsTexts} from "../../types/card";
+import {
+    CardData,
+    CardType,
+    combineEffectsTexts,
+    getCombinedStats,
+    getFullTypeString,
+    isMonster
+} from "../../types/card";
 import CardFilters, {CardFiltersRef} from "./CardFilters";
 import CardPreviewer from "../card-editor/card-previewer/CardPreviewer";
 import {CardExpansion} from "../../types/expansion";
 import {normalizeName} from "../../utils/string";
+import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
+import {CardOwner} from "../../types/user";
 
 interface CardCatalogueProps {
     handleCardClick: (cardData: CardData) => void;
     cards: Array<CardData>;
+    cardOwners: Array<CardOwner>;
     expansions: Array<CardExpansion>;
 }
 
-const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, expansions }) => {
+const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, cardOwners, expansions }) => {
     const [filters, setFilters] = useState({
         cardName: '',
         cardEffects: '',
@@ -21,8 +31,20 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
         cardSubtype: '',
         cardSupertype: '',
         cardClass: '',
-        expansionId: ''
+        expansionId: '',
+        sortOrder: '',
+        sortBy: '',
+        level: 1,
+        levelOperation: '',
+        atk: 0,
+        atkOperation: '',
+        def: 0,
+        defOperation: '',
+        isAce: false,
+        ownerId: ''
     });
+
+    console.log(444, filters.sortOrder);
 
     const filtersRef = useRef<CardFiltersRef>(null);
 
@@ -34,10 +56,37 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
         return cards.find(c => c.cardId.toString() === filters.referenceId)?.countsAsId;
     }
 
+    const isInReferenceMode = () => {
+        return filters.referenceId !== '';
+    }
+
+    const checkStat = (stat: number, comparedStat: number, operation: string) => {
+        switch (operation) {
+            case ComparisonType.MORE:
+                return stat >= comparedStat;
+            case ComparisonType.EQUAL:
+                return stat === comparedStat;
+            case ComparisonType.LESS:
+                return stat <= comparedStat;
+        }
+    }
+
+    const checkLevel = (cardData: CardData) => {
+        return checkStat(cardData.level, filters.level, filters.levelOperation);
+    }
+
+    const checkAtk = (cardData: CardData) => {
+        return checkStat(cardData.atk, filters.atk, filters.atkOperation);
+    }
+
+    const checkDef = (cardData: CardData) => {
+        return checkStat(cardData.def, filters.def, filters.defOperation);
+    }
+
     const filteredCards = cards.filter(card =>
-        normalizeName(card).toLowerCase().includes(normalizeName(filters.cardName).toLowerCase())
-        && filters.cardEffects.toLowerCase().split(' ').every(word => (card.costText + card.effectText).toLowerCase().includes(word))
-        && (filters.referenceId === '' ||
+        (isInReferenceMode() || normalizeName(card).toLowerCase().includes(normalizeName(filters.cardName).toLowerCase()))
+        && filters.cardEffects.toLowerCase().split(' ').every(word => isInReferenceMode() || (card.costText + card.effectText).toLowerCase().includes(word))
+        && (!isInReferenceMode() ||
             [card.cardId, card.primaryMaterialId, card.secondaryMaterialId, card.tertiaryMaterialId, card.countsAsId]
                 .includes(parseInt(filters.referenceId)) ||
             !!cards.find(c => c.cardId === parseInt(filters.referenceId)
@@ -46,12 +95,45 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
                     (card.countsAsId && combineEffectsTexts(c).toLowerCase().includes(normalizeName(cards.find(c2 => c2.cardId === card.countsAsId)?.cardName.toLowerCase()))))) ||
                 cards.find(c => c.cardId.toString() === filters.referenceId) && combineEffectsTexts(card).includes(cards.find(c => c.cardId.toString() === filters.referenceId)!.cardName) ||
                 cards.find(c => c.cardId.toString() === getReferencesCountsAs()?.toString()) && combineEffectsTexts(card).includes(cards.find(c => c.cardId.toString() === getReferencesCountsAs()?.toString())!.cardName))
-        && (filters.cardType === '' || card.cardType === filters.cardType)
-        && (filters.cardSubtype === '' || card.subtype === filters.cardSubtype)
-        && (filters.cardSupertype === '' || card.supertype === filters.cardSupertype)
-        && (filters.cardClass === '' || (card.cardType === CardType.MONSTER && card.cardClass === filters.cardClass))
-        && (filters.expansionId === '' || card.expansionId === parseInt(filters.expansionId))
+        && (isInReferenceMode() || filters.cardType === '' || card.cardType === filters.cardType)
+        && (isInReferenceMode() || filters.cardSubtype === '' || card.subtype === filters.cardSubtype)
+        && (isInReferenceMode() || filters.cardSupertype === '' || card.supertype === filters.cardSupertype)
+        && (isInReferenceMode() || filters.cardClass === '' || (card.cardType === CardType.MONSTER && card.cardClass === filters.cardClass))
+        && (isInReferenceMode() || filters.expansionId === '' || card.expansionId === parseInt(filters.expansionId))
+        && (![SortOption.CARD_CLASS, SortOption.LEVEL, SortOption.ATK, SortOption.DEF, SortOption.COMBINED].includes(filters.sortBy as SortOption)
+            || (filters.levelOperation !== '' || filters.atkOperation !== '' || filters.defOperation !== '') || isMonster(card))
+        && (isInReferenceMode() || filters.levelOperation === '' || checkLevel(card))
+        && (isInReferenceMode() || filters.atkOperation === '' || checkAtk(card))
+        && (isInReferenceMode() || filters.defOperation === '' || checkDef(card))
+        && (isInReferenceMode() || !filters.isAce || card.isAce)
+        && (isInReferenceMode() || filters.ownerId === '' || card.ownerId === parseInt(filters.ownerId))
     );
+    const doSortAscending = () => {
+        return filters.sortOrder !== SortOrder.DESCENDING;
+    }
+    const getSortedCards = () => {
+        switch (filters.sortBy as SortOption) {
+            case SortOption.LEVEL:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.level - cardB.level : cardB.level - cardA.level);
+            case SortOption.ATK:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.atk - cardB.atk : cardB.atk - cardA.atk);
+            case SortOption.DEF:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.def - cardB.def : cardB.def - cardA.def);
+            case SortOption.COMBINED:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? getCombinedStats(cardA) - getCombinedStats(cardB) : getCombinedStats(cardB) - getCombinedStats(cardA));
+            case SortOption.CARD_CLASS:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.cardClass.localeCompare(cardB.cardClass) : cardB.cardClass.localeCompare(cardA.cardClass));
+            case SortOption.CARD_TYPE:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? getFullTypeString(cardA).localeCompare(getFullTypeString(cardB)) : getFullTypeString(cardB).localeCompare(getFullTypeString(cardA)));
+            case SortOption.OWNER:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.ownerId - cardB.ownerId : cardB.ownerId - cardA.ownerId);
+            case SortOption.EXPANSION:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.expansionId - cardB.expansionId : cardB.expansionId - cardA.expansionId);
+            default:
+                return filteredCards.sort((cardA, cardB) =>
+                    doSortAscending() ? normalizeName(cardA).localeCompare(normalizeName(cardB)) : -normalizeName(cardA).localeCompare(normalizeName(cardB)));
+        }
+    }
     const cardScale = 0.55;
 
     return (
@@ -60,7 +142,7 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
                 padding: 2,
             }}
         >
-            <CardFilters ref={filtersRef} cards={cards} expansions={expansions} onFilterChange={setFilters} />
+            <CardFilters ref={filtersRef} cards={cards} cardOwners={cardOwners} expansions={expansions} onFilterChange={setFilters} />
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -72,7 +154,7 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, e
                 height: '100vh',
                 marginTop: '12rem',
             }}>
-                {filteredCards.map((cardData, index) => (
+                {getSortedCards().map((cardData, index) => (
                     <Card
                         key={index}
                         onClick={() => handleCardClick(cardData)}
