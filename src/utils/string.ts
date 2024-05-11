@@ -38,6 +38,7 @@ export const encodeEffectsString = (message: string) => {
     const tagPattern = /(\{[isb]*\}.*?\{\/[isb]*\})|(\b(normal|revenge|royal|fusion|ritual|time traveller|pendulum|hand trap|maximum|defense|attack|face-up|face-down|percing|chain-attack|triple-attack|sleeptalk|armor-up|\d+|(?<=or\s+)lower|(?<=or\s+)higher|this(?=\s+turn))\b)|(\b(Spell|Trap|atk|def|Abyss|Dragon|Dragons|Kawaii|Slime|Slimes|Sparks|Zombie|Zombies)\b)/g;
     return message
         .replace('(', '{i}')
+        .replace('.)', ')')
         .replace(')', '{/i}')
         .replace(tagPattern, (match, p1, p2, p3, p4) => {
         if (p1) return p1;
