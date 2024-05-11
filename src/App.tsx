@@ -3,7 +3,7 @@ import { ThemeProvider, Box } from '@mui/material';
 import { theme } from './styles/Theme';
 import HomeBar, {HomeBarRef} from './components/common/HomeBar';
 import CardEditor, {CardEditorRef} from './components/card-editor/CardEditor';
-import CardCatalogue from './components/card-catalogue/CardCatalogue';
+import CardCatalogue, {CardCatalogueRef} from './components/card-catalogue/CardCatalogue';
 import './styles/montserrat.css';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,6 +11,7 @@ import {AppPage} from "./types/navigation";
 import {CardData, DEFAULT_CARD_DATA} from "./types/card";
 import useCards from "./hooks/useCards";
 import useExpansions from "./hooks/useExpansions";
+import cardCatalogue from "./components/card-catalogue/CardCatalogue";
 
 interface AppProps {}
 
@@ -26,6 +27,7 @@ const App: React.FC<AppProps> = () => {
         setActiveComponent(AppPage.CardCatalogue);
     }
     const editorRef = useRef<CardEditorRef>(null);
+    const catalogueRef = useRef<CardCatalogueRef>(null);
     const homeBarRef = useRef<HomeBarRef>(null);
     const changePage = (page: AppPage) => {
         setActiveComponent(page);
@@ -36,12 +38,35 @@ const App: React.FC<AppProps> = () => {
         switch (activeComponent) {
             case AppPage.CardEditor:
                 editorRef.current?.handleSave();
+                break;
+            case AppPage.CardCatalogue:
+                catalogueRef.current?.toggleFilters();
+                break;
         }
     }
     const commitExport = () => {
         switch (activeComponent) {
             case AppPage.CardEditor:
                 editorRef.current?.handleExport();
+                break;
+        }
+    }
+    const commitReset = () => {
+        switch (activeComponent) {
+            case AppPage.CardCatalogue:
+                catalogueRef.current?.resetFilters();
+                break;
+        }
+    }
+    const commitEscape = () => {
+        switch (activeComponent) {
+            case AppPage.CardEditor:
+                setActiveComponent(AppPage.CardCatalogue);
+                break;
+            case AppPage.CardCatalogue:
+                console.log(551);
+                catalogueRef.current?.backdownFilters();
+                break;
         }
     }
 
@@ -58,12 +83,16 @@ const App: React.FC<AppProps> = () => {
                         commitExport();
                         break;
                     case 'l':
+                        event.preventDefault();
                         homeBarRef.current?.toggleLoginOpen();
                         break;
-
+                    case 'r':
+                        event.preventDefault();
+                        commitReset();
+                        break;
                 }
-            } else if (activeComponent === AppPage.CardEditor && event.key === 'Escape') {
-                setActiveComponent(AppPage.CardCatalogue);
+            } else if (event.key === 'Escape') {
+                commitEscape();
             }
         };
 
@@ -91,7 +120,8 @@ const App: React.FC<AppProps> = () => {
                         <CardEditor cards={cards} closeUpdate={onCardUpdate} ref={editorRef} />
                     </Box>
                     <Box sx={{display: activeComponent === AppPage.CardCatalogue ? 'flex' : 'none'}}>
-                        <CardCatalogue cards={cards} cardOwners={cardOwners} expansions={expansions} handleCardClick={onCardClicked}/>
+                        <CardCatalogue cards={cards} cardOwners={cardOwners} expansions={expansions}
+                                       ref={catalogueRef} handleCardClick={onCardClicked}/>
                     </Box>
                 </Box>
             </Box>

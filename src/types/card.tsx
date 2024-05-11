@@ -245,10 +245,8 @@ export const isRitual = (cardData: CardData) => {
 
 export const canEditCard = (cardData: CardData, expansions: Array<CardExpansion>) => {
     if (cardData.cardId === 0) {
-        console.log(222);
         return true;
     }
-    console.log(555, cardData.cardId);
     const expansion = expansions.find(expansion => expansion.id === cardData.expansionId);
     return expansion?.ownerId === EXPANSION_NO_OWNER || expansion?.ownerId === getUserId();
 }

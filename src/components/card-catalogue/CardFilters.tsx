@@ -34,6 +34,9 @@ interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
 
 export interface CardFiltersRef {
     referenceCard: (cardData: CardData) => void;
+    resetFilters: () => void;
+    clearReference: () => void;
+    toggleFilters: () => void;
 }
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -300,8 +303,19 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         Cookies.remove(CardCatalogueCookie.OWNER_ID);
     }
 
+    const clearReference = () => {
+        setReferenceId('');
+        onFilterChange({ ...getEmptyFilters(), referenceId: '' });
+    };
+    const toggleFilters = () => {
+        setModalOpen(!isModalOpen);
+    };
+
     useImperativeHandle(ref, () => ({
-        referenceCard
+        referenceCard,
+        resetFilters,
+        clearReference,
+        toggleFilters,
     }));
 
     return (

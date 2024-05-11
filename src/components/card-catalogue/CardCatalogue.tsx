@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
 import {Box, Card} from '@mui/material';
 import {
     CardData,
@@ -22,7 +22,13 @@ interface CardCatalogueProps {
     expansions: Array<CardExpansion>;
 }
 
-const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, cardOwners, expansions }) => {
+export interface CardCatalogueRef {
+    resetFilters: () => void;
+    backdownFilters: () => void;
+    toggleFilters: () => void;
+}
+
+const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handleCardClick, cards, cardOwners, expansions }, ref) => {
     const [filters, setFilters] = useState({
         cardName: '',
         cardEffects: '',
@@ -43,8 +49,6 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, c
         isAce: false,
         ownerId: ''
     });
-
-    console.log(444, filters.sortOrder);
 
     const filtersRef = useRef<CardFiltersRef>(null);
 
@@ -136,6 +140,24 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, c
     }
     const cardScale = 0.55;
 
+    const resetFilters = () => {
+        filtersRef.current?.resetFilters();
+    };
+    const backdownFilters = () => {
+        if (isInReferenceMode()) {
+            filtersRef.current?.clearReference();
+        }
+    };
+    const toggleFilters = () => {
+        filtersRef.current?.toggleFilters();
+    };
+
+    useImperativeHandle(ref, () => ({
+        resetFilters,
+        backdownFilters,
+        toggleFilters,
+    }));
+
     return (
         <Box
             sx={{
@@ -176,6 +198,6 @@ const CardCatalogue: React.FC<CardCatalogueProps> = ({ handleCardClick, cards, c
             </Box>
         </Box>
     );
-};
+});
 
 export default CardCatalogue;
