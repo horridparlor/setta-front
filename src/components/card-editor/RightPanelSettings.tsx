@@ -12,7 +12,7 @@ import {
     TextField
 } from '@mui/material';
 import {
-    BACKROW_CARD_TYPES,
+    BACKROW_CARD_TYPES, canEditCard,
     CardClass,
     CardData,
     CardSubtype,
@@ -27,8 +27,10 @@ import {
     isExtraDeckCard, isRitual,
     MaximumPiece, MONSTER_CARD_TYPES
 } from "../../types/card";
-import {CardExpansion} from "../../types/expansion";
+import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
 import {normalizeName} from "../../utils/string";
+import Cookies from "js-cookie";
+import {getUserId} from "../../types/cookie";
 
 interface RightPanelSettingsProps {
     cardData: CardData;
@@ -141,10 +143,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const handleInputChange = (field: keyof CardData) =>
         (event: React.ChangeEvent<HTMLInputElement>) => {
             const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+            const mustBeString = ['cardName', 'costText', 'effectText', 'flavourText'].includes(field);
             if (value === "") {
                 onCardDataChange(field, "");
             } else {
-                onCardDataChange(field, typeof value === 'boolean' ? (value ? 1 : 0) : (isNaN(+value) ? value : +value));
+                onCardDataChange(field, typeof value === 'boolean' ? (value ? 1 : 0) : (mustBeString || isNaN(+value) ? value : +value));
             }
             switch (field) {
                 case "costText":
@@ -154,6 +157,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     break;
             }
         };
+
+    const cannotEdit = () => {
+        return !canEditCard(cardData, expansions);
+    }
 
     const rowContainerStyle = {
         flexDirection: 'row',
@@ -174,6 +181,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.cardName}
                     onChange={handleInputChange('cardName')}
+                    disabled={cannotEdit()}
                 />
                 <FormControl sx={{
                     minWidth: '9rem',
@@ -185,6 +193,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         value={cardData.maximumPiece}
                         label="Maximum Piece"
                         onChange={handleSelectChange('maximumPiece')}
+                        disabled={cannotEdit()}
                     >
                         {Object.values(MaximumPiece).filter(piece => cardData.supertype !== CardSupertype.MAXIMUM || piece !== MaximumPiece.NONE).map(c => (
                             <MenuItem key={c} value={c}>{c}</MenuItem>
@@ -199,6 +208,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     onChange={handleInputChange('nameSize')}
                     inputProps={{ min: 1, max: 4 }}
                     sx={{ minWidth: '8rem' }}
+                    disabled={cannotEdit()}
                 />
                 <FormControlLabel
                     control={
@@ -206,6 +216,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             checked={cardData.isAce}
                             onChange={handleInputChange('isAce')}
                             name="isAce"
+                            disabled={cannotEdit()}
                         />
                     }
                     label="Is Ace"
@@ -223,6 +234,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.artScale}
                     onChange={handleInputChange('artScale')}
                     inputProps={{ min: 0, max: 50 }}
+                    disabled={cannotEdit()}
                 />
                 <TextField
                     fullWidth
@@ -232,6 +244,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.artXOffset}
                     onChange={handleInputChange('artXOffset')}
                     inputProps={{ min: 0, max: 250 }}
+                    disabled={cannotEdit()}
                 />
                 <TextField
                     fullWidth
@@ -241,6 +254,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.artYOffset}
                     onChange={handleInputChange('artYOffset')}
                     inputProps={{ min: 0, max: 100 }}
+                    disabled={cannotEdit()}
                 />
             </Box>
             <Box
@@ -254,6 +268,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             value={cardData.cardClass}
                             label="Class"
                             onChange={handleSelectChange('cardClass')}
+                            disabled={cannotEdit()}
                         >
                             {Object.values(CardClass).map(c => (
                                 <MenuItem key={c} value={c}>{c}</MenuItem>
@@ -268,6 +283,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         value={cardData.cardType}
                         label="Card Type"
                         onChange={handleSelectChange('cardType')}
+                        disabled={cannotEdit()}
                     >
                         {Object.values(CardType).map(t => (
                             <MenuItem key={t} value={t}>{t}</MenuItem>
@@ -281,6 +297,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         value={cardData.subtype}
                         label="Subtype"
                         onChange={handleSelectChange('subtype')}
+                        disabled={cannotEdit()}
                     >
                         {getSubtypeOptions(cardData.cardType)}
                     </Select>
@@ -294,6 +311,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             value={cardData.supertype}
                             label="Supertype"
                             onChange={handleSelectChange('supertype')}
+                            disabled={cannotEdit()}
                         >
                             {getSupertypeOptions(cardData.cardType, cardData.subtype)}
                         </Select>
@@ -314,6 +332,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.level}
                     onChange={handleInputChange('level')}
                     inputProps={{ min: 1, max: 9 }}
+                    disabled={cannotEdit()}
                 />
                 <TextField
                     fullWidth
@@ -323,6 +342,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.atk}
                     onChange={handleInputChange('atk')}
                     inputProps={{ min: 0, max: 2600, step: 100 }}
+                    disabled={cannotEdit()}
                 />
                 <TextField
                     fullWidth
@@ -332,6 +352,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.def}
                     onChange={handleInputChange('def')}
                     inputProps={{ min: 0, max: 2500, step: 100 }}
+                    disabled={cannotEdit()}
                 />
             </Box>
 
@@ -348,6 +369,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         value={cardData.primaryMaterialId ? cardData.primaryMaterialId.toString() : ''}
                         label="Primary material"
                         onChange={handleSelectChange('primaryMaterialId')}
+                        disabled={cannotEdit()}
                     >
                         {isRitual(cardData) ? monsterCardSelector() : cardSelector()}
                     </Select>
@@ -359,6 +381,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         value={cardData.secondaryMaterialId ? cardData.secondaryMaterialId.toString() : ''}
                         label="Secondary material"
                         onChange={handleSelectChange('secondaryMaterialId')}
+                        disabled={cannotEdit()}
                     >
                         {isRitual(cardData) ? backrowCardSelector() : cardSelector()}
                     </Select>
@@ -370,6 +393,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         value={cardData.tertiaryMaterialId ? cardData.tertiaryMaterialId.toString() : ''}
                         label="Tertiary material"
                         onChange={handleSelectChange('tertiaryMaterialId')}
+                        disabled={cannotEdit()}
                     >
                         {cardSelector()}
                     </Select>
@@ -383,6 +407,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 rows={2}
                 value={cardData.costText}
                 onChange={handleInputChange('costText')}
+                disabled={cannotEdit()}
                 sx={{
                     display: hasCostText(cardData) ? 'flex' : 'none',
                     marginBottom: 2
@@ -396,6 +421,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 rows={2}
                 value={cardData.effectText}
                 onChange={handleInputChange('effectText')}
+                disabled={cannotEdit()}
                 sx={{
                     display: hasEffectText(cardData) ? 'flex' : 'none',
                     marginBottom: 2
@@ -409,6 +435,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 rows={2}
                 value={cardData.flavourText}
                 onChange={handleInputChange('flavourText')}
+                disabled={cannotEdit()}
                 sx={{
                     display: hasFlavourText(cardData) ? 'flex' : 'none',
                     marginBottom: 2
@@ -424,6 +451,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         value={cardData.countsAsId ? cardData.countsAsId.toString() : ''}
                         label="Counts as"
                         onChange={handleSelectChange('countsAsId')}
+                        disabled={cannotEdit()}
                     >
                         {cardSelector()}
 
@@ -436,6 +464,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.materialsSize}
                     onChange={handleInputChange('materialsSize')}
                     inputProps={{ min: 1, max: 5 }}
+                    disabled={cannotEdit()}
                     sx={{
                         display: isExtraDeckCard(cardData) ? 'flex' : 'none',
                         minWidth: '8rem'
@@ -448,6 +477,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     value={cardData.effectsSize}
                     onChange={handleInputChange('effectsSize')}
                     inputProps={{ min: 1, max: 5 }}
+                    disabled={cannotEdit()}
                     sx={{ minWidth: '8rem' }}
                 />
                 <FormControl fullWidth>
@@ -459,6 +489,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         onChange={handleSelectChange('expansionId')}
                     >
                         {expansions
+                            .filter(expansion => expansion.id === cardData.expansionId || expansion.ownerId === getUserId() || expansion.ownerId === EXPANSION_NO_OWNER)
                             .sort((expansionA, expansionB) => expansionA.name.localeCompare(expansionB.name))
                             .map(expansion => (
                                 <MenuItem key={expansion.id} value={expansion.id}>{expansion.name}</MenuItem>
@@ -468,13 +499,13 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 </FormControl>
             </Box>
             <Box sx={{...rowContainerStyle, marginBottom: 0}}>
-                <Button onClick={onSave} variant="contained" color="primary" disabled={cardData.cardName.length === 0}>
+                <Button onClick={onSave} variant="contained" color="primary" disabled={cannotEdit() || cardData.cardName.length === 0}>
                     Save
                 </Button>
                 <Button onClick={onExport} variant="contained" color="secondary" disabled={cardData.cardName.length === 0}>
                     Export as PNG
                 </Button>
-                <Button variant="contained" color="info" component="label">
+                <Button variant="contained" color="info" component="label" disabled={cannotEdit()}>
                     Upload Image
                     <input
                         type="file"
@@ -483,10 +514,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         onChange={onImageFileChange}
                     />
                 </Button>
-                <Button onClick={onEncode} variant="contained" color="secondary" disabled={combineEffectsTexts(cardData).length === 0}>
+                <Button onClick={onEncode} variant="contained" color="secondary" disabled={cannotEdit() || combineEffectsTexts(cardData).length === 0}>
                     ENCODE
                 </Button>
-                <Button onClick={onDelete} variant="contained" color="error" disabled={cardData.cardId === 0}>
+                <Button onClick={onDelete} variant="contained" color="error" disabled={cannotEdit() || cardData.cardId === 0}>
                     Delete
                 </Button>
             </Box>

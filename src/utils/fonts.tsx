@@ -40,8 +40,11 @@ const createStyledSpan = (styleProps: { fontWeight: string, fontStyle?: string }
     fontSize: props.fontSize ? getFontSize(props.fontSize, props.scale) : undefined
 }));
 
-export function addSizeToRichText(richText: string, fontSize: number): string {
+export function addSizeToRichText(richText: string|number, fontSize: number): string {
     const regex = /\{([a-zA-Z]+)\}/g;
+    if (typeof richText === 'number') {
+        richText = richText.toString();
+    }
     return richText
         .replace('{i}', ' {i}(')
         .replace('{/i}', '.){/i}')
