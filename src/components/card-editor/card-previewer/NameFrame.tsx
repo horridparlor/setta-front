@@ -16,7 +16,7 @@ const NameFrame: React.FC<TopFrameProps> = ({ cardData, scale }) => {
     const enrichName = (cardName: string) => {
         return (cardName.length ? cardName : 'Name')
             .replace(/{i}/g, `{bi=${getNameSize() - 1}}`)
-            .replace(/{\/i}/g, "{/bi}")
+            .replace(/The{\/i}/g, "The {/bi}")
             + getMaximumExtension(cardData);
     }
 
