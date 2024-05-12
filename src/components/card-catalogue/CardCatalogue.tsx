@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useRef, useState} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {Box, Card} from '@mui/material';
 import {
     CardData,
@@ -14,6 +14,7 @@ import {CardExpansion} from "../../types/expansion";
 import {normalizeName} from "../../utils/string";
 import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
+import Button from "@mui/material/Button";
 
 interface CardCatalogueProps {
     handleCardClick: (cardData: CardData) => void;
@@ -50,7 +51,15 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
         ownerId: ''
     });
 
+    const cardScale = 0.55;
     const filtersRef = useRef<CardFiltersRef>(null);
+    const initialCardsShown = 24;
+    const showMoreCards = 42;
+    const [visibleCardCount, setVisibleCardCount] = useState(initialCardsShown);
+
+    useEffect(() => {
+        setVisibleCardCount(initialCardsShown);
+    }, [filters]);
 
     const onGetReferences = (cardData: CardData) => {
         filtersRef.current?.referenceCard(cardData);
@@ -138,7 +147,6 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
                     doSortAscending() ? normalizeName(cardA).localeCompare(normalizeName(cardB)) : -normalizeName(cardA).localeCompare(normalizeName(cardB)));
         }
     }
-    const cardScale = 0.55;
 
     const resetFilters = () => {
         filtersRef.current?.resetFilters();
@@ -176,7 +184,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
                 height: '100vh',
                 marginTop: '12rem',
             }}>
-                {getSortedCards().map((cardData, index) => (
+                {getSortedCards().slice(0, visibleCardCount).map((cardData, index) => (
                     <Card
                         key={index}
                         onClick={() => handleCardClick(cardData)}
@@ -195,6 +203,14 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
                         <CardPreviewer cards={cards} cardData={cardData} scale={cardScale} />
                     </Card>
                 ))}
+            </Box>
+            <Box sx={{ textAlign: 'center', padding: 2, display: getSortedCards().length > visibleCardCount ? 'flex' : 'none', justifyContent: 'center' }}>
+                {visibleCardCount < cards.length && (
+                    <Button variant="contained"
+                            onClick={() => setVisibleCardCount(prevCount => prevCount + showMoreCards)}>
+                        Load More
+                    </Button>
+                )}
             </Box>
         </Box>
     );
