@@ -7,7 +7,7 @@ export const normalizeName = (cardData: CardData|any): string => {
     const name = typeof cardData === 'string' ? cardData : cardData.cardName + getMaximumExtension(cardData);
     return name.replace(/^({i}The)/i, '{i}')
         .replace(/{[^}]*}/g, '')
-        .replace(/[^a-zA-Z0-9\s-'!?áäéö$[\]]/g, '');
+        .replace(/[^a-zA-Z0-9\s-'!?–áäéö$[\]]/g, '');
 };
 
 export const serializeName = (cardData: CardData|any): string => {
@@ -16,7 +16,7 @@ export const serializeName = (cardData: CardData|any): string => {
         .replace(/é|€/g, 'e')
         .replace(/ó|ö/g, 'ö')
         .replace(/ś|\$/g, 's')
-        .replace(/-|'|!|\?|\[|\]/g, '')
+        .replace(/-|'|!|\?|–|\[|\]/g, '')
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
@@ -45,5 +45,5 @@ export const encodeEffectsString = (message: string) => {
         if (p3) return `{sb}${match}{/sb}`;
         if (p4) return `{b}${match}{/b}`;
         return match;
-    });
+    }).replace('{/sb} {sb}normal{/sb} {b}', '{/sb} normal {b}');
 }
