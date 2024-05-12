@@ -11,7 +11,6 @@ import {AppPage} from "./types/navigation";
 import {CardData, DEFAULT_CARD_DATA} from "./types/card";
 import useCards from "./hooks/useCards";
 import useExpansions from "./hooks/useExpansions";
-import cardCatalogue from "./components/card-catalogue/CardCatalogue";
 
 interface AppProps {}
 
@@ -64,7 +63,6 @@ const App: React.FC<AppProps> = () => {
                 setActiveComponent(AppPage.CardCatalogue);
                 break;
             case AppPage.CardCatalogue:
-                console.log(551);
                 catalogueRef.current?.backdownFilters();
                 break;
         }
