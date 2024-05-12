@@ -15,6 +15,7 @@ import {normalizeName} from "../../utils/string";
 import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 import Button from "@mui/material/Button";
+import {toast} from "react-toastify";
 
 interface CardCatalogueProps {
     handleCardClick: (cardData: CardData) => void;
@@ -222,7 +223,11 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
             <Box sx={{ textAlign: 'center', padding: 2, display: getSortedCards().length > visibleCardCount ? 'flex' : 'none', justifyContent: 'center' }}>
                 {visibleCardCount < cards.length && (
                     <Button variant="contained"
-                            onClick={() => setVisibleCardCount(prevCount => prevCount + showMoreCards)}>
+                            onClick={() => {
+                                setVisibleCardCount(prevCount => prevCount + showMoreCards)
+                                toast.success('Great, scroll down for more cards')
+                            }
+                            }>
                         Load More
                     </Button>
                 )}
