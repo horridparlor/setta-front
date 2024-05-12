@@ -26,7 +26,7 @@ const AttributeFrame: React.FC<AttributeFrameProps> = ({ scale, cardData }) => {
             top: `${1.7 * scale}rem`,
         }}>
             <img
-                src={getAsset(AssetEndpoint.ATTRIBUTE_FRAME, getAttribute())}
+                src={getAsset(AssetEndpoint.ATTRIBUTE_FRAME, getAttribute().toLowerCase())}
                 alt="Attribute icon"
                 style={{
                     width: `${ICON_SIZE * scale}rem`,
