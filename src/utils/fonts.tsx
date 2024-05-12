@@ -59,7 +59,7 @@ const RegularNormal = createStyledSpan({ fontWeight: '400' });
 const LightItalic = createStyledSpan({ fontWeight: '300', fontStyle: 'italic' });
 
 export const formatText = (text: string, scale: number): JSX.Element[] => {
-    const regex = /\{(h|b|bi|sb|r|i)=?(\d+)?\}(.*?)\{\/(h|b|bi|sb|r|i)\}/g;
+    const regex = /\{(h|b|bi|sb|r|i|bs)=?(\d+)?\}(.*?)\{\/(h|b|bi|sb|r|i|bs)\}/g;
     let result: JSX.Element[] = [];
     let lastEnd = 0;
 
@@ -89,6 +89,9 @@ export const formatText = (text: string, scale: number): JSX.Element[] => {
                 break;
             case 'i':
                 result.push(<LightItalic {...elementProps}>{content}</LightItalic>);
+                break;
+            case 'bs':
+                result.push(<BoldItalic sx={{ textDecoration: 'line-through' }} {...elementProps}>{content}</BoldItalic>);
                 break;
         }
         lastEnd = offset + match.length;

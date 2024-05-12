@@ -146,11 +146,11 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <FormControl fullWidth sx={{ m: 1 }}>
-                            <InputLabel id="owner-selector-label">Owner</InputLabel>
+                            <InputLabel id="owner-selector-label">Creator</InputLabel>
                             <Select
                                 labelId="owner-selector-label"
                                 value={ownerId}
-                                label="Owner"
+                                label="Creator"
                                 onChange={handleOwnerIdChange}
                             >
                                 <MenuItem value="">–</MenuItem>

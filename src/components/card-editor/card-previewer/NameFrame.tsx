@@ -17,6 +17,8 @@ const NameFrame: React.FC<TopFrameProps> = ({ cardData, scale }) => {
         return (cardName.length ? cardName : 'Name')
             .replace(/{i}/g, `{bi=${getNameSize() - 1}}`)
             .replace(/The{\/i}/g, "The {/bi}")
+                .replace(/{is}/g, `{bs=${getNameSize() - 1}}`)
+                .replace(/{\/is}/g, "{/bs} ")
             + getMaximumExtension(cardData);
     }
 

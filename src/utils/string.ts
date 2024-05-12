@@ -35,7 +35,7 @@ export const replaceIfEmpty = (message: string|undefined, defaultTo: string) => 
 }
 
 export const encodeEffectsString = (message: string) => {
-    const tagPattern = /(\{[isb]*\}.*?\{\/[isb]*\})|(\b(normal|revenge|royal|fusion|ritual|time traveller|pendulum|hand trap|maximum|defense|attack|face-up|face-down|piercing|chain-attack|triple-attack|sleeptalk|armor-up|goaded|ruler|except|\d+|(?<=or\s+)lower|(?<=or\s+)higher|(?<=and\s+)lower|(?<=and\s+)higher|(?<=you\s+)may|(?<=opponent\s+)may|(?<=If\s+)set|(?<=copies of the\s+)same|this(?=\s+turn)|cannot(?=\s+be)|don't(?=\s+have)|(?<=with\s+)same(?=\s+level)|(?<=as\s+)discarded(?=\s+card))\b)|(\b(Spell|Spells|Trap|Traps|atk|def|Abyss|Dragon|Dragons|Kawaii|Slime|Slimes|Sparks|Zombie|Zombies|cannot)\b)/g;
+    const tagPattern = /(\{[isb]*\}.*?\{\/[isb]*\})|(\b(normal|revenge|royal|fusion|ritual|time traveller|pendulum|hand trap|maximum|defense|attack|face-up|face-down|extra|main|piercing|chain-attack|triple-attack|sleeptalk|armor-up|goaded|ruler|except|\d+|(?<=or\s+)lower|(?<=or\s+)higher|(?<=and\s+)lower|(?<=and\s+)higher|(?<=or\s+)less|(?<=and\s+)less|(?<=equal to its\s+)level|(?<=When it is\s+)destroyed|(?<=you\s+)may|(?<=opponent\s+)may|(?<=If\s+)set|(?<=copies of the\s+)same|this(?=\s+turn)|End(?=\s+of turn)|set(?=\s+monster)|set(?=\s+monsters)|cannot(?=\s+be)|don't(?=\s+have)|(?<=with\s+)same(?=\s+level)|(?<=as\s+)discarded(?=\s+card))\b)|(\b(Spell|Spells|Trap|Traps|atk|def|Abyss|Dragon|Dragons|Kawaii|Slime|Slimes|Sparks|Zombie|Zombies|cannot|listing)\b)/g;
     return message
         .replace('(', '{i}')
         .replace('.)', ')')
@@ -45,5 +45,9 @@ export const encodeEffectsString = (message: string) => {
         if (p3) return `{sb}${match}{/sb}`;
         if (p4) return `{b}${match}{/b}`;
         return match;
-    }).replace('{/sb} {sb}normal{/sb} {b}', '{/sb} normal {b}');
+    })
+        .replace('{/sb} {sb}normal{/sb} {b}', '{/sb} normal {b}')
+        .replace('/i}{sb}', '/i}')
+        .replace('/i}{b}', '/i}')
+        ;
 }
