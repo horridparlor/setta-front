@@ -89,6 +89,8 @@ export interface CardData {
     materialsSize: number;
     effectsSize: number;
     expansionId: number;
+    created_at: string;
+    updated_at: string;
 }
 
 export enum StatType {
@@ -160,6 +162,8 @@ export const DEFAULT_CARD_DATA = {
     materialsSize: DefaultTextSize.EFFECTS_BOX,
     effectsSize: DefaultTextSize.EFFECTS_BOX,
     expansionId: 8,
+    created_at: '',
+    updated_at: ''
 }
 
 export const combineEffectsTexts = (cardData: CardData|undefined) => {

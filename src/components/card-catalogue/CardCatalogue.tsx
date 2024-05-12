@@ -151,6 +151,10 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
             case SortOption.RANDOM:
                 shuffleArray(filteredCards);
                 return filteredCards;
+            case SortOption.CREATED_AT:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.created_at.localeCompare(cardB.created_at) : cardB.created_at.localeCompare(cardA.created_at));
+            case SortOption.UPDATED_AT:
+                return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.updated_at.localeCompare(cardB.updated_at) : cardB.updated_at.localeCompare(cardA.updated_at));
             default:
                 return filteredCards.sort((cardA, cardB) =>
                     doSortAscending() ? normalizeName(cardA).localeCompare(normalizeName(cardB)) : -normalizeName(cardA).localeCompare(normalizeName(cardB)));

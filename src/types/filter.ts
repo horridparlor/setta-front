@@ -22,5 +22,7 @@ export enum SortOption {
     CARD_CLASS = 'Class',
     OWNER = 'Owner',
     EXPANSION = 'Expansion',
-    RANDOM = 'Random'
+    RANDOM = 'Random',
+    CREATED_AT = 'Created At',
+    UPDATED_AT = 'Updated At',
 }
