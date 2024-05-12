@@ -185,7 +185,9 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
                 padding: 2,
             }}
         >
-            <CardFilters ref={filtersRef} cards={cards} cardOwners={cardOwners} expansions={expansions} onFilterChange={setFilters} />
+            <CardFilters
+                ref={filtersRef} cards={cards} cardOwners={cardOwners} expansions={expansions} onFilterChange={setFilters}
+            />
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -195,7 +197,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
                 justifyContent: 'center',
                 overflowY: 'auto',
                 height: '100vh',
-                marginTop: '12rem',
+                marginTop: '16rem',
             }}>
                 {getSortedCards().slice(0, visibleCardCount).map((cardData, index) => (
                     <Card
