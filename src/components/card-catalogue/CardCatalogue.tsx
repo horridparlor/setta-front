@@ -124,6 +124,12 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
     const doSortAscending = () => {
         return filters.sortOrder !== SortOrder.DESCENDING;
     }
+    const shuffleArray = (source: Array<any>) => {
+        for (let i = source.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [source[i], source[j]] = [source[j], source[i]];
+        }
+    }
     const getSortedCards = () => {
         switch (filters.sortBy as SortOption) {
             case SortOption.LEVEL:
@@ -142,6 +148,9 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
                 return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.ownerId - cardB.ownerId : cardB.ownerId - cardA.ownerId);
             case SortOption.EXPANSION:
                 return filteredCards.sort((cardA, cardB) => doSortAscending() ? cardA.expansionId - cardB.expansionId : cardB.expansionId - cardA.expansionId);
+            case SortOption.RANDOM:
+                shuffleArray(filteredCards);
+                return filteredCards;
             default:
                 return filteredCards.sort((cardA, cardB) =>
                     doSortAscending() ? normalizeName(cardA).localeCompare(normalizeName(cardB)) : -normalizeName(cardA).localeCompare(normalizeName(cardB)));

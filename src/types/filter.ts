@@ -21,5 +21,6 @@ export enum SortOption {
     COMBINED = 'Combined',
     CARD_CLASS = 'Class',
     OWNER = 'Owner',
-    EXPANSION = 'Expansion'
+    EXPANSION = 'Expansion',
+    RANDOM = 'Random'
 }
