@@ -7,7 +7,7 @@ export const normalizeName = (cardData: CardData|any): string => {
     const name = typeof cardData === 'string' ? cardData : cardData.cardName + getMaximumExtension(cardData);
     return name.replace(/^({i}The)/i, '{i}')
         .replace(/{[^}]*}/g, '')
-        .replace(/[^a-zA-Z0-9\s-'!?–áäéö$[\]]/g, '');
+        .replace(/[^a-zA-Z0-9\s-'!?–,áäéö$[\]]/g, '');
 };
 
 export const serializeName = (cardData: CardData|any): string => {
@@ -16,7 +16,7 @@ export const serializeName = (cardData: CardData|any): string => {
         .replace(/é|€/g, 'e')
         .replace(/ó|ö/g, 'ö')
         .replace(/ś|\$/g, 's')
-        .replace(/-|'|!|\?|–|\[|\]/g, '')
+        .replace(/-|'|!|\?|–|,|\[|\]/g, '')
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
@@ -35,7 +35,7 @@ export const replaceIfEmpty = (message: string|undefined, defaultTo: string) => 
 }
 
 export const encodeEffectsString = (message: string) => {
-    const tagPattern = /(\{[isb]*\}.*?\{\/[isb]*\})|(\b(normal|revenge|royal|fusion|ritual|time traveller|pendulum|hand trap|maximum|defense|attack|face-up|face-down|extra|main|piercing|chain-attack|triple-attack|sleeptalk|armor-up|life-gain|goaded|ruler|except|\d+|(?<=or\s+)lower|(?<=or\s+)higher|(?<=and\s+)lower|(?<=and\s+)higher|(?<=or\s+)less|(?<=and\s+)less|(?<=equal to its\s+)level|(?<=When it is\s+)destroyed|(?<=you\s+)may|(?<=opponent\s+)may|(?<=If\s+)set|(?<=copies of the\s+)same|(?<=times the\s+)lower|(?<=times the\s+)higher|(?<=of the\s+)levels|this(?=\s+turn)|End(?=\s+of turn)|set(?=\s+monster)|set(?=\s+monsters)|cannot(?=\s+be)|don't(?=\s+have)|(?<=with\s+)same(?=\s+level)|(?<=as\s+)discarded(?=\s+card))\b)|(\b(Spell|Spells|Trap|Traps|atk|def|Abyss|Dragon|Dragons|Kawaii|Slime|Slimes|Sparks|Zombie|Zombies|cannot|listing)\b)/g;
+    const tagPattern = /(\{[isb]*\}.*?\{\/[isb]*\})|(\b(normal|revenge|royal|fusion|ritual|time traveller|pendulum|hand trap|maximum|defense|attack|face-up|face-down|extra|main|piercing|chain-attack|triple-attack|sleeptalk|armor-up|life-gain|goaded|ruler|except|\d+|(?<=or\s+)lower|(?<=or\s+)higher|(?<=and\s+)lower|(?<=and\s+)higher|(?<=or\s+)less|(?<=and\s+)less|(?<=You can\s+)set|(?<=Opponent can\s+)set|(?<=your\s+)set|(?<=opponent's\s+)set|(?<=equal to its\s+)level|(?<=When it is\s+)destroyed|(?<=you\s+)may|(?<=opponent\s+)may|(?<=If\s+)set|(?<=copies of the\s+)same|(?<=times the\s+)lower|(?<=times the\s+)higher|(?<=of the\s+)levels|this(?=\s+turn)|End(?=\s+of turn)|set(?=\s+monster)|set(?=\s+monsters)|cannot(?=\s+be)|don't(?=\s+have)|(?<=with\s+)same(?=\s+level)|(?<=as\s+)discarded(?=\s+card))\b)|(\b(Spell|Spells|Trap|Traps|atk|def|Abyss|Dragon|Dragons|Kawaii|Slime|Slimes|Sparks|Zombie|Zombies|cannot|listing|can)\b)/g;
     return message
         .replace('(', '{i}')
         .replace('.)', ')')

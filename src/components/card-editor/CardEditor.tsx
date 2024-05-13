@@ -69,7 +69,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 cardId: cardId
             }));
             toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`);
-            await handleUploadImage();
+            await handleUploadImage(cardId);
             setIsSaving(false);
             closeUpdate();
         } catch (error) {
@@ -152,7 +152,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         }
     };
 
-    const handleUploadImage = async () => {
+    const handleUploadImage = async (cardId: number) => {
         if (!imageFile) {
             if (!cardData.cardId) {
                 toast.warning("No image selected!");
@@ -163,7 +163,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         try {
             const base64String = await convertToBase64(imageFile);
             const data = {
-                cardId: cardData.cardId,
+                cardId: cardId,
                 ownerId: getOwnerId(cardData),
                 imageName: serializeName(cardData),
                 imageMime: imageFile.type,
