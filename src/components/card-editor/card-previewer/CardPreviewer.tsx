@@ -19,9 +19,11 @@ interface CardPreviewerProps {
     scale: number;
     cards: Array<CardData>;
     overwriteArt?: File;
+    oldName?: string;
 }
 
-const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale, cards, overwriteArt }) => {
+const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale,
+                                                         cards, overwriteArt, oldName }) => {
     const { cardName, level, atk, def, effectText } = cardData;
     return (
         <Card ref={cardRef} sx={{
@@ -30,7 +32,7 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale,
             backgroundColor: 'transparent',
             borderRadius: `${1.5 * scale}rem`,
         }}>
-            <ArtFrame cardData={cardData} scale={scale} overwriteArt={overwriteArt} />
+            <ArtFrame cardData={cardData} scale={scale} overwriteArt={overwriteArt} oldName={oldName} />
             <BackFrame scale={scale} cardData={cardData} />
             <NameFrame scale={scale} cardData={cardData} />
             <AttributeCut scale={scale} cardData={cardData}/>

@@ -28,6 +28,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [oldName, setOldName] = useState<string>('');
 
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +48,9 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         await handleUploadImage();
         const url = getAdminEndpoint(AdminEndpoint.CARD);
         const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
-        const body = JSON.stringify({...cardData, serializedName: serializeName(cardData)});
+        const body = JSON.stringify({
+            ...cardData, serializedName: serializeName(cardData), oldSerializedName: serializeName(oldName)
+        });
 
         try {
             const response = await fetch(url, {
@@ -189,6 +192,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
 
     const setCard = (card: CardData) => {
         setImageFile(undefined);
+        setOldName(card.cardName);
         setCardData(card);
     }
 
@@ -210,7 +214,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     return (
         <Box ref={ref} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', margin: '20px' }}>
             <Box sx={{ marginRight: '2rem' }}>
-                <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1} overwriteArt={imageFile}/>
+                <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1} overwriteArt={imageFile} oldName={oldName}/>
             </Box>
             <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
                                 onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}

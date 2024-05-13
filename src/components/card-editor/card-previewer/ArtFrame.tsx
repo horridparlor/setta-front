@@ -11,16 +11,18 @@ interface ArtFrameProps {
     cardData: CardData;
     scale: number;
     overwriteArt?: File;
+    oldName?: string;
 }
 
-const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale, overwriteArt }) => {
+const ArtFrame: React.FC<ArtFrameProps> = ({ cardData, scale, overwriteArt, oldName }) => {
     const getImageUrl = () => {
         if (overwriteArt) {
             return URL.createObjectURL(overwriteArt);
         }
         return getAsset(scale === 1 ? AssetEndpoint.CARD_ART : AssetEndpoint.SMALL_CARD_ART,
-            + getOwnerId(cardData) + '/' + serializeName(cardData));
+            + getOwnerId(cardData) + '/' + (oldName ? serializeName(oldName) : serializeName(cardData)));
     };
+    console.log(555, getImageUrl());
     const getArtScale = () => {
         return scale === 1 ?  1 + cardData.artScale / 32 : 1;
     }
