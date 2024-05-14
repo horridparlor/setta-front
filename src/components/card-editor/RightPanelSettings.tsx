@@ -20,7 +20,7 @@ import {
     CardType, combineEffectsTexts, DefaultTextSize,
     EXTRA_DECK_SUBTYPES,
     getSubtypeOptions,
-    getSupertypeOptions,
+    getSupertypeOptions, hasAllMaterials,
     hasCostText,
     hasEffectText,
     hasFlavourText,
@@ -399,20 +399,38 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </Select>
                 </FormControl>
             </Box>
-            <TextField
-                fullWidth
-                label="Cost Text"
-                variant="outlined"
-                multiline
-                rows={2}
-                value={cardData.costText}
-                onChange={handleInputChange('costText')}
-                disabled={cannotEdit()}
-                sx={{
-                    display: hasCostText(cardData) ? 'flex' : 'none',
-                    marginBottom: 2
-                }}
-            />
+            <Box
+                sx={rowContainerStyle}
+            >
+                <TextField
+                    fullWidth
+                    label="Cost Text"
+                    variant="outlined"
+                    multiline
+                    rows={2}
+                    value={cardData.costText}
+                    onChange={handleInputChange('costText')}
+                    disabled={cannotEdit()}
+                    sx={{
+                        display: hasCostText(cardData) ? 'flex' : 'none',
+                        marginBottom: 2
+                    }}
+                />
+                <TextField
+                    fullWidth
+                    label="Materials Reminder"
+                    variant="outlined"
+                    multiline
+                    rows={2}
+                    value={cardData.materialsReminder}
+                    onChange={handleInputChange('materialsReminder')}
+                    disabled={cannotEdit()}
+                    sx={{
+                        display: hasAllMaterials(cardData) ? 'flex' : 'none',
+                        marginBottom: 2
+                    }}
+                />
+            </Box>
             <TextField
                 fullWidth
                 label="Effect Text"

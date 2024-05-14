@@ -78,6 +78,7 @@ export interface CardData {
     primaryMaterialId: number|null;
     secondaryMaterialId: number|null;
     tertiaryMaterialId: number|null;
+    materialsReminder: string;
     costText: string;
     effectText: string;
     flavourText: string;
@@ -151,6 +152,7 @@ export const DEFAULT_CARD_DATA = {
     primaryMaterialId: null,
     secondaryMaterialId: null,
     tertiaryMaterialId: null,
+    materialsReminder: '',
     costText: '',
     effectText: '',
     flavourText: '',
@@ -267,4 +269,9 @@ export const getFullTypeString = (cardData: CardData) => {
 
 export const getCombinedStats = (cardData: CardData) => {
     return cardData.atk + cardData.def;
+}
+
+export const hasAllMaterials = (cardData: CardData) => {
+    const materials = [cardData.primaryMaterialId, cardData.secondaryMaterialId, cardData.tertiaryMaterialId];
+    return materials.filter(material => !material).length === 0;
 }

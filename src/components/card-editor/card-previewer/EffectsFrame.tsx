@@ -41,6 +41,12 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
     const getEffectsSize = () => {
         return cardData.effectsSize - 1;
     }
+    const getMaterialsReminder = () => {
+        if (!cardData.materialsReminder.length) {
+            return '';
+        }
+        return ` {i=${getMaterialsSize()}}(${cardData.materialsReminder}.){/i}`;
+    }
     const getMaterialsText = () => {
         const materialsPrefix = `{h=${getMaterialsSize()}}(`;
         let materials =  [
@@ -52,7 +58,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
             materials = materials.sort((a, b) => a.localeCompare(b));
         }
         const materialsText = materials.filter(material => material.length).join(` ${getMaterialsSeparator()} `);
-        return isExtraDeckCard(cardData) ? materialsPrefix + materialsText + '){/h}\n' : '';
+        return isExtraDeckCard(cardData) ? materialsPrefix + materialsText + `){/h}${(getMaterialsReminder())}\n` : '';
     }
     const getCostText = () => {
         const costPrefix = `{i=${getEffectsSize()}}${isPendulumCard(cardData) ? 'Pendulum>>' : 'Cost:'} {/i}`;
