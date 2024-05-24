@@ -42,10 +42,10 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return cardData.effectsSize - 1;
     }
     const getMaterialsReminder = () => {
-        if (!cardData.materialsReminder.length) {
+        if (!cardData.materialsReminder.length || !cardData.tertiaryMaterialId) {
             return '';
         }
-        return ` {i=${getMaterialsSize()}}(${cardData.materialsReminder}.){/i}`;
+        return ` {i=${getEffectsSize()}}(${cardData.materialsReminder}.){/i}`;
     }
     const getMaterialsText = () => {
         const materialsPrefix = `{h=${getMaterialsSize()}}(`;
