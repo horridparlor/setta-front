@@ -8,13 +8,14 @@ import {CardEditorRef} from "../card-editor/CardEditor";
 
 interface HomeBarProps {
     setPage: (page: AppPage) => void;
+    refetch: () => Promise<void>;
 }
 
 export interface HomeBarRef {
     toggleLoginOpen: () => void;
 }
 
-const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({setPage}, ref) => {
+const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({setPage, refetch}, ref) => {
     const [isLoginOpen, setLoginOpen] = useState(false);
 
     const toggleLoginOpen = () => {
@@ -35,7 +36,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({setPage}, ref) => {
             <Button variant="contained" color="info" onClick={() => setLoginOpen(true)} sx={{marginLeft: '0.4rem'}}>
                 Login
             </Button>
-            <LoginModal open={isLoginOpen} onClose={() => setLoginOpen(false)} />
+            <LoginModal open={isLoginOpen} onClose={() => setLoginOpen(false)} refetch={refetch} />
         </Box>
     );
 });

@@ -250,7 +250,7 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                             <InputLabel id="sort-by-selector-label">Sort By</InputLabel>
                             <Select
                                 labelId="sort-by-selector-label"
-                                value={sortBy.length ? sortBy : SortOption.NAME}
+                                value={sortBy.length ? sortBy : SortOption.UPDATED_AT}
                                 label="Sort By"
                                 onChange={handleSortByChange}
                             >

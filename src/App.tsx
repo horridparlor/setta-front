@@ -20,7 +20,12 @@ const App: React.FC<AppProps> = () => {
         editorRef.current?.setCard(cardData);
         setActiveComponent(AppPage.CardEditor);
     }
+    const { expansions, fetchExpansions } = useExpansions();
     const { cards, cardOwners, fetchCards } = useCards();
+    const refetch = async() => {
+        await fetchExpansions();
+        await fetchCards();
+    }
     const onCardUpdate = () => {
         fetchCards();
         setActiveComponent(AppPage.CardCatalogue);
@@ -32,7 +37,6 @@ const App: React.FC<AppProps> = () => {
         setActiveComponent(page);
         editorRef.current?.setCard(DEFAULT_CARD_DATA);
     }
-    const { expansions } = useExpansions();
     const commitSave = () => {
         switch (activeComponent) {
             case AppPage.CardEditor:
@@ -105,7 +109,7 @@ const App: React.FC<AppProps> = () => {
         <ThemeProvider theme={theme}>
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#244775', overflowX: 'hidden' }}>
                 <Box sx={{ width: '100%', p: 2 }}>
-                    <HomeBar ref={homeBarRef} setPage={changePage} />
+                    <HomeBar ref={homeBarRef} setPage={changePage} refetch={refetch} />
                 </Box>
                 <Box sx={{
                     flex: 1,

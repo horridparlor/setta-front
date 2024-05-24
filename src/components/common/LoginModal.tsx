@@ -14,9 +14,10 @@ import {AuthCookie} from "../../types/cookie";
 interface LoginModalProps {
     open: boolean;
     onClose: () => void;
+    refetch: () => Promise<void>;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [changePasswordOpen, setChangePasswordOpen] = useState(false);
@@ -41,6 +42,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
         Cookies.set(AuthCookie.LASTNAME, responseData.lastname, { expires: 7 });
         Cookies.set(AuthCookie.USER_ID, responseData.userId, { expires: 7 });
         toast.success(`Authenticated: ${responseData.firstname} ${responseData.lastname}`);
+        await refetch();
         onClose();
     };
 
