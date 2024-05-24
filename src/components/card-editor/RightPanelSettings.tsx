@@ -12,7 +12,7 @@ import {
     TextField
 } from '@mui/material';
 import {
-    BACKROW_CARD_TYPES, canEditCard,
+    BACKROW_CARD_TYPES, canEditCard, canErrataCard,
     CardClass,
     CardData,
     CardSubtype,
@@ -72,6 +72,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const backrowCardSelector = () => {
         return cardSelector(cards.filter(card => BACKROW_CARD_TYPES.includes(card.cardType)));
     }
+    console.log(500, canErrataCard(cardData, expansions));
     const handleSelectChange = (field: keyof CardData) =>
         (event: SelectChangeEvent<string>) => {
             const value = event.target.value;
@@ -168,6 +169,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         gap: 2,
         marginBottom: 2,
         display: 'flex',
+    }
+
+    const hideHiddenButton = () => {
+        return {display: cannotEdit() ? 'none' : 'flex'};
     }
 
     return (
@@ -504,6 +509,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         labelId="expansion-selector-label"
                         value={cardData.expansionId.toString()}
                         label="Expansion"
+                        disabled={cannotEdit()}
                         onChange={handleSelectChange('expansionId')}
                     >
                         {expansions
@@ -517,13 +523,13 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 </FormControl>
             </Box>
             <Box sx={{...rowContainerStyle, marginBottom: 0}}>
-                <Button onClick={onSave} variant="contained" color="primary" disabled={cannotEdit() || cardData.cardName.length === 0}>
+                <Button onClick={onSave} variant="contained" color="primary" disabled={cardData.cardName.length === 0} sx={hideHiddenButton()}>
                     Save
                 </Button>
                 <Button onClick={onExport} variant="contained" color="secondary" disabled={cardData.cardName.length === 0}>
                     Export as PNG
                 </Button>
-                <Button variant="contained" color="info" component="label" disabled={cannotEdit()}>
+                <Button variant="contained" color="info" component="label" sx={hideHiddenButton()}>
                     Upload Image
                     <input
                         type="file"
@@ -532,11 +538,14 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         onChange={onImageFileChange}
                     />
                 </Button>
-                <Button onClick={onEncode} variant="contained" color="secondary" disabled={cannotEdit() || combineEffectsTexts(cardData).length === 0}>
+                <Button onClick={onEncode} variant="contained" color="secondary" disabled={(cardData.cardName + combineEffectsTexts(cardData)).length === 0} sx={hideHiddenButton()}>
                     ENCODE
                 </Button>
-                <Button onClick={onDelete} variant="contained" color="error" disabled={cannotEdit() || cardData.cardId === 0}>
+                <Button onClick={onDelete} variant="contained" color="error" disabled={cardData.cardId === 0} sx={hideHiddenButton()}>
                     Delete
+                </Button>
+                <Button onClick={() => console.log(222)} variant="contained" color="primary" sx={{display: canErrataCard(cardData, expansions) ? 'flex' : 'none'}}>
+                    Errata
                 </Button>
             </Box>
         </Box>

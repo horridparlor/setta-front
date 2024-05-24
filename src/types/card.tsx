@@ -249,12 +249,24 @@ export const isRitual = (cardData: CardData) => {
     return cardData.subtype === CardSubtype.RITUAL;
 }
 
+export const getCardsExpansion = (cardData: CardData, expansions: Array<CardExpansion>) => {
+    return expansions.find(expansion => expansion.id === cardData.expansionId);
+}
+
 export const canEditCard = (cardData: CardData, expansions: Array<CardExpansion>) => {
+    return canAlterCard(cardData, expansions, false);
+}
+
+export const canErrataCard = (cardData: CardData, expansions: Array<CardExpansion>) => {
+    return canAlterCard(cardData, expansions, true);
+}
+
+const canAlterCard = (cardData: CardData, expansions: Array<CardExpansion>, releaseState: boolean) => {
     if (cardData.cardId === 0) {
-        return true;
+        return !releaseState;
     }
-    const expansion = expansions.find(expansion => expansion.id === cardData.expansionId);
-    return expansion?.ownerId === EXPANSION_NO_OWNER || expansion?.ownerId === getUserId();
+    const expansion = getCardsExpansion(cardData, expansions);
+    return !!expansion?.isReleased === releaseState && (expansion?.ownerId === EXPANSION_NO_OWNER || expansion?.ownerId === getUserId());
 }
 
 export const isMonster = (cardData: CardData) => {
