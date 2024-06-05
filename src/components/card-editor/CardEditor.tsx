@@ -67,7 +67,8 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             const cardId = responseData.cardId;
             setCardData(cardData => ({
                 ...cardData,
-                cardId: cardId
+                cardId: cardId,
+                serializedName: serializeName(cardData)
             }));
             toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`);
             await handleUploadImage(cardId);
