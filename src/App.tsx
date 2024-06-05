@@ -119,7 +119,7 @@ const App: React.FC<AppProps> = () => {
                     overflow: 'auto',
                 }}>
                     <Box sx={{display: activeComponent === AppPage.CardEditor ? 'flex' : 'none'}}>
-                        <CardEditor cards={cards} closeUpdate={onCardUpdate} ref={editorRef} />
+                        <CardEditor cards={cards} closeUpdate={onCardUpdate} ref={editorRef} refetch={refetch} />
                     </Box>
                     <Box sx={{display: activeComponent === AppPage.CardCatalogue ? 'flex' : 'none'}}>
                         <CardCatalogue cards={cards} cardOwners={cardOwners} expansions={expansions}

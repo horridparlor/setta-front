@@ -15,6 +15,7 @@ import axios from "axios";
 interface CardEditorProps {
     closeUpdate: () => void;
     cards: Array<CardData>;
+    refetch: () => Promise<void>;
 }
 
 export interface CardEditorRef {
@@ -23,7 +24,7 @@ export interface CardEditorRef {
     handleExport: () => void;
 }
 
-const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards}, ref) => {
+const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards, refetch}, ref) => {
     const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
@@ -100,6 +101,32 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             closeUpdate();
         } catch (error) {
             toast.error('Failed to delete card: ' + error);
+        }
+    }
+
+    const handleErrata = async () => {
+        const url = getAdminEndpoint(AdminEndpoint.ERRATA_CARD);
+        const method = RequestMethod.POST;
+        const body = JSON.stringify({
+            'cardId': cardData.cardId
+        });
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: getHeaders(),
+                body: body
+            });
+            const responseData = await response.json();
+            if (!response.ok) {
+                showError(responseData);
+                return;
+            }
+            toast.success(`New errata of card: ${normalizeName(cardData)}`);
+            await refetch();
+            setCard(responseData);
+        } catch (error) {
+            toast.error('Failed to errata card: ' + error);
         }
     }
 
@@ -192,7 +219,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
 
     const setCard = (card: CardData) => {
         setImageFile(undefined);
-        setOldName(card.cardName);
+        setOldName(serializeName(card));
         setCardData(card);
     }
 
@@ -218,7 +245,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             </Box>
             <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
                                 onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
-                                onSave={handleSave} onDelete={handleDelete} />
+                                onSave={handleSave} onDelete={handleDelete} onErrata={handleErrata} />
         </Box>
     );
 });

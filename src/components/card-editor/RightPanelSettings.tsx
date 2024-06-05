@@ -29,7 +29,6 @@ import {
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
 import {normalizeName} from "../../utils/string";
-import Cookies from "js-cookie";
 import {getUserId} from "../../types/cookie";
 
 interface RightPanelSettingsProps {
@@ -43,6 +42,7 @@ interface RightPanelSettingsProps {
     onEncode: () => void;
     cards: Array<CardData>;
     canUpload: boolean;
+    onErrata: () => void;
 }
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
@@ -56,6 +56,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     onEncode,
     cards,
     canUpload,
+    onErrata,
 }) => {
     const cardSelector = (source: Array<CardData> = cards) => {
         return [<MenuItem key='none' value=''>–</MenuItem>,
@@ -72,7 +73,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const backrowCardSelector = () => {
         return cardSelector(cards.filter(card => BACKROW_CARD_TYPES.includes(card.cardType)));
     }
-    console.log(500, canErrataCard(cardData, expansions));
     const handleSelectChange = (field: keyof CardData) =>
         (event: SelectChangeEvent<string>) => {
             const value = event.target.value;
@@ -544,7 +544,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 <Button onClick={onDelete} variant="contained" color="error" disabled={cardData.cardId === 0} sx={hideHiddenButton()}>
                     Delete
                 </Button>
-                <Button onClick={() => console.log(222)} variant="contained" color="primary" sx={{display: canErrataCard(cardData, expansions) ? 'flex' : 'none'}}>
+                <Button onClick={onErrata} variant="contained" color="primary" sx={{display: canErrataCard(cardData, expansions) ? 'flex' : 'none'}}>
                     Errata
                 </Button>
             </Box>
