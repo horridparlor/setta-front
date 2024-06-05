@@ -109,7 +109,8 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         const url = getAdminEndpoint(AdminEndpoint.ERRATA_CARD);
         const method = RequestMethod.POST;
         const body = JSON.stringify({
-            'cardId': cardData.cardId
+            'cardId': cardData.cardId,
+            'serializedName': serializeName(cardData)
         });
 
         try {
