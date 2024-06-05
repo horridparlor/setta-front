@@ -10,7 +10,7 @@ import {
     SelectChangeEvent,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {CardData} from "../../types/card";
+import {CardData, getPointerId} from "../../types/card";
 import {CardExpansion} from "../../types/expansion";
 import Button from "@mui/material/Button";
 import {normalizeName} from "../../utils/string";
@@ -128,7 +128,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         atkOperation, def, defOperation, isAce, ownerId]);
 
     const referenceCard = (cardData: CardData) => {
-        const cardId = cardData.cardId.toString();
+        const cardId = getPointerId(cardData).toString();
         const value = referenceId === cardId ? '' : cardId;
         if (value === cardId) {
             toast.info('References to card: ' + normalizeName(cardData.cardName));

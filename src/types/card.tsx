@@ -63,6 +63,7 @@ export const EXTRA_DECK_SUBTYPES = [
 export interface CardData {
     cardId: number;
     ownerId: number;
+    errataOfId: number|null;
     ownerFirstname: string,
     ownerLastname: string,
     cardName: string;
@@ -137,6 +138,7 @@ export enum DefaultTextSize {
 export const DEFAULT_CARD_DATA = {
     cardId: 0,
     ownerId: 0,
+    errataOfId: null,
     ownerFirstname: '',
     ownerLastname: '',
     cardName: '',
@@ -286,4 +288,8 @@ export const getCombinedStats = (cardData: CardData) => {
 export const hasAllMaterials = (cardData: CardData) => {
     const materials = [cardData.primaryMaterialId, cardData.secondaryMaterialId, cardData.tertiaryMaterialId];
     return materials.filter(material => !material).length === 0;
+}
+
+export const getPointerId = (cardData: CardData): number => {
+    return cardData.errataOfId ?? cardData.cardId;
 }
