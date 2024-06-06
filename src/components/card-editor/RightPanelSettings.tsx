@@ -43,6 +43,7 @@ interface RightPanelSettingsProps {
     cards: Array<CardData>;
     canUpload: boolean;
     onErrata: () => void;
+    onCopy: () => void;
 }
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
@@ -57,6 +58,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     cards,
     canUpload,
     onErrata,
+    onCopy,
 }) => {
     const cardSelector = (source: Array<CardData> = cards) => {
         return [<MenuItem key='none' value=''>–</MenuItem>,
@@ -546,6 +548,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 </Button>
                 <Button onClick={onErrata} variant="contained" color="primary" sx={{display: canErrataCard(cardData, expansions) ? 'flex' : 'none'}}>
                     Errata
+                </Button>
+                <Button onClick={onCopy} variant="contained" color="secondary">
+                    Copy
                 </Button>
             </Box>
         </Box>

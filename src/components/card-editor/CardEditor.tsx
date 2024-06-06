@@ -106,12 +106,22 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     }
 
     const handleErrata = async () => {
-        const url = getAdminEndpoint(AdminEndpoint.ERRATA_CARD);
+        await copyCard(true);
+    }
+
+    const handleCopy = async () => {
+        await copyCard();
+    }
+
+    const copyCard = async (doErrata = false) => {
+        const url = getAdminEndpoint(AdminEndpoint.COPY_CARD);
         const method = RequestMethod.POST;
         const body = JSON.stringify({
             'cardId': cardData.cardId,
-            'serializedName': serializeName(cardData)
+            'serializedName': serializeName(cardData),
+            'doErrata': doErrata
         });
+        const actionWord = doErrata ? 'errata' : 'copy';
 
         try {
             const response = await fetch(url, {
@@ -124,11 +134,11 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 showError(responseData);
                 return;
             }
-            toast.success(`New errata of card: ${normalizeName(cardData)}`);
+            toast.success(`New ${actionWord} of card: ${normalizeName(cardData)}`);
             await refetch();
             setCard(responseData);
         } catch (error) {
-            toast.error('Failed to errata card: ' + error);
+            toast.error(`Failed to ${actionWord} card: ` + error);
         }
     }
 
@@ -247,7 +257,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             </Box>
             <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
                                 onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
-                                onSave={handleSave} onDelete={handleDelete} onErrata={handleErrata} />
+                                onSave={handleSave} onDelete={handleDelete} onErrata={handleErrata} onCopy={handleCopy} />
         </Box>
     );
 });

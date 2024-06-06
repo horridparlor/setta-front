@@ -4,7 +4,7 @@ import {AuthCookie} from "./cookie";
 
 export enum AdminEndpoint {
     CARD = 'card',
-    ERRATA_CARD = 'errata-card',
+    COPY_CARD = 'copy-card',
     IMAGE = 'image'
 }
 
