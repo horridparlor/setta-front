@@ -188,7 +188,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     variant="outlined"
                     value={cardData.cardName}
                     onChange={handleInputChange('cardName')}
-                    disabled={cannotEdit()}
+                    disabled={cannotEdit() || !!cardData.errataOfId}
                 />
                 <FormControl sx={{
                     minWidth: '9rem',
