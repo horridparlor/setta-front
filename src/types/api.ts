@@ -30,16 +30,19 @@ export enum AssetEndpoint {
     SMALL_CARD_ART = 'small-art',
 }
 
+const APP_DOMAIN = 'http://localhost:3200/';
+const ASSET_DOMAIN = 'http://localhost:3200/assets/';
+
 export const getAdminEndpoint = (endpoint : AdminEndpoint) => {
-    return `${process.env.REACT_APP_DOMAIN}api/admin/${endpoint}`
+    return `${APP_DOMAIN}api/admin/${endpoint}`
 }
 
 export const getUserEndpoint = (endpoint : UserEndpoint) => {
-    return `${process.env.REACT_APP_DOMAIN}api/user/${endpoint}`
+    return `${APP_DOMAIN}api/user/${endpoint}`
 }
 
 export const getAsset = (endpoint: AssetEndpoint, filename: string|null = null) => {
-    return `${process.env.REACT_APP_ASSET_DOMAIN}${endpoint}${filename ? '/' + filename : ''}${endpoint === AssetEndpoint.CARD_ART ? '' : '.webp'}`;
+    return `${ASSET_DOMAIN}${endpoint}${filename ? '/' + filename : ''}${endpoint === AssetEndpoint.CARD_ART ? '' : '.webp'}`;
 }
 
 export const showError = (responseData: {[key: string]: string}) => {
