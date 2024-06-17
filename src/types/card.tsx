@@ -25,7 +25,7 @@ export enum CardSubtype {
     FUSION = 'Fusion',
     REVENGE = 'Revenge',
     ROYAL = 'Royal',
-    TIME_TRAVELLER = 'Time Traveller',
+    TIME_TRAVELLER = 'Time traveller',
     RITUAL = 'Ritual'
 }
 
