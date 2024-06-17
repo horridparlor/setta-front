@@ -39,6 +39,7 @@ export const getUserEndpoint = (endpoint : UserEndpoint) => {
 }
 
 export const getAsset = (endpoint: AssetEndpoint, filename: string|null = null) => {
+    console.log(222, endpoint, filename);
     return `${process.env.REACT_APP_ASSET_DOMAIN}${endpoint}${filename ? '/' + filename : ''}${endpoint === AssetEndpoint.CARD_ART ? '' : '.webp'}`;
 }
 
