@@ -79,7 +79,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return getMaterialsText() + getCostText() + getEffectText() + getFlavourText();
     }
     const getLineHeight = () => {
-        return 1.3 + (0.01 * (getEffectsSize() + 1));
+        return 1.4 + (0.01 * (getEffectsSize() + 1));
     }
     const getTopPadding = () => {
         const firstLineSize = isExtraDeckCard(cardData) ? getMaterialsSize() : getEffectsSize();
