@@ -6,11 +6,11 @@ export enum FontSize {
 }
 
 const FONT_SIZES: {[key: number]: number} = {
-    0: 28,
-    1: 32,
-    2: 36,
-    3: 40,
-    4: 44,
+    0: 30,
+    1: 34,
+    2: 38,
+    3: 42,
+    4: 46,
 
     5: 52,
     6: 56,
