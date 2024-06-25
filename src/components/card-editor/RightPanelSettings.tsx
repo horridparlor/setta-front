@@ -60,6 +60,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     onErrata,
     onCopy,
 }) => {
+    const STATS_TAB = 0;
+    const EFFECTS_TAB = 1;
     const [tabId, setTabId] = useState<number>(0);
     const cardSelector = (source: Array<CardData> = cards) => {
         return [<MenuItem key='none' value=''>–</MenuItem>,
@@ -188,7 +190,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 <Tab label="Stats" />
                 <Tab label="Effects" />
             </Tabs>
-            <Box sx={{display: tabId === 0 ? 'block' : 'none'}}>
+            <Box sx={{display: tabId === STATS_TAB ? 'block' : 'none'}}>
                 <Box
                     sx={rowContainerStyle}
                 >
@@ -530,6 +532,25 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                                 .map(expansion => (
                                     <MenuItem key={expansion.id} value={expansion.id}>{expansion.name}</MenuItem>
                             ))}
+
+                        </Select>
+                    </FormControl>
+                </Box>
+            </Box>
+            <Box sx={{display: tabId === EFFECTS_TAB ? 'block' : 'none'}}>
+                <Box
+                    sx={rowContainerStyle}
+                >
+                    <FormControl fullWidth>
+                        <InputLabel id="cost-type-selector-label">Cost type</InputLabel>
+                        <Select
+                            labelId="cost-type-selector-label"
+                            value={cardData.countsAsId ? cardData.countsAsId.toString() : ''}
+                            label="Cost type"
+                            onChange={handleSelectChange('countsAsId')}
+                            disabled={cannotEdit()}
+                        >
+                            {cardSelector()}
 
                         </Select>
                     </FormControl>
