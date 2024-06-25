@@ -1,33 +1,39 @@
 export enum CostType {
     CONTINUOUS = 'Continuous',
-    COUNT_CARDS = 'Count cards',
-    COUNTS_AS_MULTIPLE_TRIBUTES = 'Counts as multiple tributes',
-    DISCARD = 'Discard',
     FLIPPED_WHEN_ATTACKED = 'Flipped when attacked',
+    IN_MAXIMUM_MODE = 'In maximum mode',
+    MAXIMUM_SUMMONED = 'Maximum summoned',
     NONE = 'None',
-    PAY_LIFE = 'Pay life',
     YOU_CONTROL_ONLY_THIS = 'You control only this',
 }
 
 export enum EffectType {
     CHECK_IF = 'Check if',
+    COUNTS_AS_MULTIPLE_TRIBUTES = 'Counts as multiple tributes',
+    DISCARD = 'Discard',
     EXTRAMILL = 'Extramill',
+    CAN_SET_FACE_UP = 'Can set face-up',
     CANNOT_ATTACK_DIRECTLY = 'Cannot attack directly',
+    CANNOT_BE_ACTIVATED = 'Cannot be activated',
+    CHANGE_POSITION = 'Change position',
     COUNT_CARDS = 'Count cards',
     DESTROY = 'Destroy',
     KEYWORD = 'Keyword',
     MILL = 'Mill',
+    PAY_LIFE = 'Pay life',
     REBORN = 'Reborn',
     RETRIEVE = 'Retrieve',
+    REVERSE_ATTACK_GIVING = 'Reverse attack-giving',
     STAT = 'Stat',
 }
 
 export enum EffectRelation {
     ANY_POSITION = 'Any position',
-    ATTACK_POSITION = 'In attack',
-    DEFENSE_POSITION = 'In defense',
+    ATTACK_POSITION = 'Attack',
+    DEFENSE_POSITION = 'Defense',
     GAIN = 'Gain',
     LOSE = 'Lose',
+    WHEN_ATTACKS = 'When attacks',
 }
 
 export enum TargetType {
@@ -47,7 +53,8 @@ export enum TargetType {
 }
 
 export interface EffectsCost {
-    costType: CostType;
+    costType: CostType|EffectType;
+    relation: EffectRelation|null;
     target: EffectTarget;
 
     amount: number|null;
@@ -62,7 +69,8 @@ export enum CardTag {
 }
 
 export enum MonsterKeyword {
-    PIERCING = 'Piercing'
+    PIERCING = 'Piercing',
+    SLEEPTALK = 'Sleeptalk',
 }
 
 export enum FilterType {
@@ -74,9 +82,12 @@ export enum FilterType {
     CARD_TAG = 'Tag',
     CARD_TYPE = 'Type',
     DEF = 'Def',
+    DIFFERENT = 'Different',
+    FACE = 'Face',
     KEYWORD = 'Keyword',
     LEVEL = 'Level',
     LIFE = 'Life',
+    POSITION = 'Position',
 }
 
 export interface TargetFilter {
@@ -90,10 +101,12 @@ export interface TargetFilter {
 export interface EffectTarget {
     targetType: TargetType;
     filters: Array<TargetFilter>;
+    selfFilters: Array<TargetFilter>;
 }
 
 export enum CountType {
     CARDS_IN_GRAVE = 'Cards in grave',
+    THIS = 'This',
 }
 
 export interface CountedAmount {
