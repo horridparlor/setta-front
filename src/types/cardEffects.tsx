@@ -1,4 +1,6 @@
 export enum CostType {
+    ATTACKS = 'Attacks',
+    ENDS_TURN = 'Ends turn',
     EQUIP = 'Equip',
     FLIPPED_WHEN_ATTACKED = 'Flipped when attacked',
     IN_MAXIMUM_MODE = 'In maximum mode',
@@ -6,6 +8,8 @@ export enum CostType {
     NO_MONSTERS = 'No monsters',
     NONE = 'None',
     SUMMONED_THIS_TURN = 'Summoned this turn',
+    SUMMONS = 'Summons',
+    TAKE_DAMAGE = 'Take damage',
     WHEN_REMOVED = 'When removed',
     WHEN_EQUIPPED_REMOVED = 'When equipped removed',
     WHENEVER = 'Whenever',
@@ -15,21 +19,27 @@ export enum CostType {
 export enum EffectType {
     ACTIVATE = 'Activate',
     ARMOR_UP = 'Armor-up',
-    CHECK_IF = 'Check if',
-    COUNTS_AS_MULTIPLE_TRIBUTES = 'Counts as multiple tributes',
-    DISCARD = 'Discard',
-    DONT_HAVE_TO_TRIBUTE = 'Don\'t have to tribute',
-    EXTRAMILL = 'Extramill',
+    CAN_ATTACK_DIRECTLY = 'Can attack directly',
     CAN_BE_ANY_MATERIAL = 'Can be any material',
     CAN_SET_FACE_UP = 'Can set face-up',
+    CANNOT_ATTACK = 'Cannot attack',
     CANNOT_ATTACK_DIRECTLY = 'Cannot attack directly',
     CANNOT_BE_ACTIVATED = 'Cannot be activated',
     CHANGE_FACE = 'Change face',
     CHANGE_POSITION = 'Change position',
+    CHECK_IF = 'Check if',
     COUNT_CARDS = 'Count cards',
+    COUNTS_AS_MULTIPLE_TRIBUTES = 'Counts as multiple tributes',
     DESTROY = 'Destroy',
+    DISCARD = 'Discard',
+    DONT_HAVE_TO_TRIBUTE = 'Don\'t have to tribute',
     DRAW = 'Draw',
+    EXTRAMILL = 'Extramill',
+    EXILE = 'Exile',
     FUSE_FROM_HAND = 'Fuse from hand',
+    GAIN_CONTROL = 'Gain control',
+    GIVE_CHOICE = 'Give choice',
+    INSTEAD = 'Instead',
     KEYWORD = 'Keyword',
     MILL = 'Mill',
     NEGATE_EFFECT = 'Negate effects',
@@ -43,13 +53,18 @@ export enum EffectType {
     RETRIEVE = 'Retrieve',
     REVERSE_ATTACK_GIVING = 'Reverse attack-giving',
     SACRIFICE = 'Sacrifice',
+    SEND_BOTTOM = 'Send bottom',
     SET = 'Set',
     SHOOT = 'Shoot',
     SHUFFLE = 'Shuffle',
+    SHUFFLE_STEAL = 'Shuffle-steal',
     STAT = 'Stat',
     STEALS = 'Steals',
     SUMMON = 'Summon',
     SWITCH_ATTACK_TARGET = 'Switch attack target',
+    TARGET = 'Target',
+    TOKENIZE = 'Tokenize',
+    TOP_SUMMON = 'Top summon',
 }
 
 export enum EffectRelation {
@@ -62,6 +77,7 @@ export enum EffectRelation {
     GAIN = 'Gain',
     LOSE = 'Lose',
     NONE = 'None',
+    SUMMONED = 'Summoned',
     SWAP = 'Swap',
     SWITCH = 'Switch',
     UNTIL = 'Until',
@@ -72,6 +88,7 @@ export enum EffectRelation {
 export enum TargetType {
     ALL_CARDS = 'All cards',
     ALL_MONSTERS = 'All monsters',
+    ANY_TARGETS = 'Any targets',
     ATTACKER = 'Attacker',
     BOTH_PLAYERS = 'Both players',
     DEFENDER = 'Defender',
@@ -112,11 +129,13 @@ export interface EffectsCost {
 
 export enum CardTag {
     LIFE_GAIN = 'Life-gain',
+    PIERCING = 'Piercing',
     TURN_ENDING = 'Turn ending',
 }
 
 export enum MonsterKeyword {
     CHAIN_ATTACK = 'Chain-attack',
+    GOADED = 'Goaded',
     PIERCING = 'Piercing',
     SLEEPTALK = 'Sleeptalk',
     TRIPLE_ATTACK = 'Triple-attack',
@@ -124,6 +143,7 @@ export enum MonsterKeyword {
 }
 
 export enum Zone {
+    ANY_FIELD = 'Any field',
     ARMOR_STACK = 'Armor stack',
     DECK = 'Deck',
     EXILE = 'Exile',
@@ -141,6 +161,23 @@ export enum RemovalSource {
     EFFECT = 'Effect'
 }
 
+export enum MaximumPiece {
+    FULL = 'Full',
+    LEFT = 'Left',
+    Middle = 'Middle',
+    NONE = 'None',
+    RIGHT = 'Right',
+}
+
+export enum FilterRelation {
+    DIFFERENT = 'Different',
+    EQUALS = 'Equals',
+    LESS = 'Less',
+    MORE = 'More',
+    NONE = 'None',
+    SAME = 'Same',
+}
+
 export enum FilterType {
     ATK = 'Atk',
     CARD = 'Card',
@@ -151,18 +188,17 @@ export enum FilterType {
     CARD_TYPE = 'Type',
     COST_TYPE = 'Cost type',
     DEF = 'Def',
+    DO_OWN = 'Do own',
     REMOVAL_SOURCE = 'Removal source',
-    DIFFERENT = 'Different',
     EFFECT_TYPE = 'Effect type',
     FACE = 'Face',
     KEYWORD = 'Keyword',
-    LESS = 'Less',
     LEVEL = 'Level',
     LIFE = 'Life',
-    MORE = 'More',
+    MAXIMUM = 'Maximum',
+    MAXIMUM_PIECE = 'Maximum piece',
     NAME = 'Name',
     POSITION = 'Position',
-    SAME = 'Same',
     ZONE = 'Zone'
 }
 
@@ -172,6 +208,7 @@ export interface TargetFilter {
     max: number|null;
     min: number|null;
     notIncluded: Array<number|string>
+    thanThis: boolean|null;
 }
 
 export interface EffectTarget {
@@ -185,8 +222,11 @@ export interface EffectTarget {
 export enum CountType {
     CARDS_DISCARDED = 'Cards discarded',
     CARDS_IN_ZONE = 'Cards in grave',
+    CARDS_SUMMONED = 'Cards summoned',
+    DIFFERENCE_BETWEEN_PLAYERS = 'Difference between players',
     FIELD_ONLY_HAS = 'Field only has',
     INCLUDES_ALL = 'Includes all',
+    REFERENCE_COMBINED = 'Reference combined',
     REFERENCE_HIGHEST = 'Reference highest',
     REFERENCE_LOWEST = 'Reference lowest',
     REFERENCE_PREVIOUS_EFFECT = 'Reference previous effect',
@@ -197,6 +237,7 @@ export interface CountedAmount {
     countType: CountType;
     target: EffectTarget;
     multiplier: number;
+    byThis: boolean;
 }
 
 export interface EffectsEffect {
