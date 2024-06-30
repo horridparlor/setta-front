@@ -285,9 +285,17 @@ export const getCombinedStats = (cardData: CardData) => {
     return cardData.atk + cardData.def;
 }
 
-export const hasAllMaterials = (cardData: CardData) => {
+export const countMaterials = (cardData: CardData) => {
     const materials = [cardData.primaryMaterialId, cardData.secondaryMaterialId, cardData.tertiaryMaterialId];
-    return materials.filter(material => !material).length === 0;
+    return materials.filter(material => !!material).length;
+}
+
+export const hasAllMaterials = (cardData: CardData) => {
+    return countMaterials(cardData) === 3;
+}
+
+export const hasTwoMaterials = (cardData: CardData) => {
+    return countMaterials(cardData) >= 2;
 }
 
 export const getPointerId = (cardData: CardData): number => {

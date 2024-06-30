@@ -42,7 +42,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return cardData.effectsSize - 1;
     }
     const getMaterialsReminder = () => {
-        if (!cardData.materialsReminder.length || !cardData.tertiaryMaterialId) {
+        if (!cardData.materialsReminder.length) {
             return '';
         }
         return ` {i=${getEffectsSize()}}(${cardData.materialsReminder}.){/i}`;

@@ -23,7 +23,7 @@ import {
     getSupertypeOptions, hasAllMaterials,
     hasCostText,
     hasEffectText,
-    hasFlavourText,
+    hasFlavourText, hasTwoMaterials,
     isExtraDeckCard, isRitual,
     MaximumPiece, MONSTER_CARD_TYPES
 } from "../../types/card";
@@ -445,7 +445,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         onChange={handleInputChange('materialsReminder')}
                         disabled={cannotEdit()}
                         sx={{
-                            display: hasAllMaterials(cardData) ? 'flex' : 'none',
+                            display: hasTwoMaterials(cardData) ? 'flex' : 'none',
                             marginBottom: 2
                         }}
                     />
