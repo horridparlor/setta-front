@@ -186,7 +186,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
 
     return (
         <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
-            <Tabs value={tabId} onChange={onTabClicked} aria-label="form tabs" sx={{marginBottom: '2rem', marginTop: '-1rem'}}>
+            <Tabs value={tabId} onChange={onTabClicked} aria-label="form tabs" sx={{marginBottom: '2rem', marginTop: '0rem'}}>
                 <Tab label="Stats" />
                 <Tab label="Effects" />
             </Tabs>
