@@ -11,9 +11,9 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <MetaTags
-            title="Cardnot"
+            title="Setta"
             description="Rush card game enabling making custom cards with AI art."
-            keywords="Cardnot, Rush Duel, Card Games, Online Card Games, Trading Card Games, Yugioh"
+            keywords="Setta, Rush Duel, Card Games, Online Card Games, Trading Card Games, Yugioh"
         />
         <App/>
     </React.StrictMode>
