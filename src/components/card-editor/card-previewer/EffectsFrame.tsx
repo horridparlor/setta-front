@@ -12,7 +12,7 @@ import {
 } from "../../../types/card";
 import {getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
 import {addSizeToRichText, formatText, getFontSize} from "../../../utils/fonts";
-import {normalizeName, replaceIfEmpty, starsWithVowel} from "../../../utils/string";
+import {endsSentence, normalizeName, replaceIfEmpty, starsWithVowel} from "../../../utils/string";
 
 interface EffectsFrameProps {
     cardData: CardData;
@@ -102,7 +102,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
                         opacity: 0.2,
                     }}
                 />
-                {formatText(countsAsPrefix +  countsAsText + '{/bi}.', scale)}
+                {formatText(countsAsPrefix +  countsAsText + `{/bi}${endsSentence(countsAsText) ? '' : '.'}`, scale)}
             </>
         );
     }
