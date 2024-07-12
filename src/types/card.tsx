@@ -26,7 +26,7 @@ export enum CardSubtype {
     REVENGE = 'Revenge',
     ROYAL = 'Royal',
     TIME_TRAVELLER = 'Time Traveller',
-    RITUAL = 'Ritual'
+    KILLER_MOVE = 'Killer Move'
 }
 
 export enum CardSupertype {
@@ -57,7 +57,7 @@ export const EXTRA_DECK_SUBTYPES = [
   CardSubtype.REVENGE,
   CardSubtype.ROYAL,
   CardSubtype.TIME_TRAVELLER,
-  CardSubtype.RITUAL,
+  CardSubtype.KILLER_MOVE,
 ];
 
 export interface CardData {
@@ -187,7 +187,7 @@ const getActiveSubtypes = (cardType: CardType) => {
         case CardType.SPELL:
             return [CardSubtype.NORMAL];
         case CardType.TRAP:
-            return [CardSubtype.NORMAL, CardSubtype.RITUAL];
+            return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
     }
 }
 
@@ -247,8 +247,8 @@ export const getMaximumExtension = (cardData: CardData) => {
     }
 }
 
-export const isRitual = (cardData: CardData) => {
-    return cardData.subtype === CardSubtype.RITUAL;
+export const isKiller = (cardData: CardData) => {
+    return cardData.subtype === CardSubtype.KILLER_MOVE;
 }
 
 export const getCardsExpansion = (cardData: CardData, expansions: Array<CardExpansion>) => {

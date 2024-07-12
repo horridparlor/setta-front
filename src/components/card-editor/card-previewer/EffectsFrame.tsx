@@ -7,8 +7,8 @@ import {
     hasEffectText,
     hasFlavourText,
     isExtraDeckCard,
-    isHandTrapCard,
-    isPendulumCard, isRitual
+    isHandTrapCard, isKiller,
+    isPendulumCard
 } from "../../../types/card";
 import {getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
 import {addSizeToRichText, formatText, getFontSize} from "../../../utils/fonts";
@@ -29,7 +29,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
                 return '⋅'
             case CardSubtype.TIME_TRAVELLER:
                 return '★'
-            case CardSubtype.RITUAL:
+            case CardSubtype.KILLER_MOVE:
                 return '->'
             default:
                 return '+';
@@ -54,7 +54,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
             replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.secondaryMaterialId)), 'Secondary'),
             normalizeName(cards.find(card => card.cardId === cardData.tertiaryMaterialId)) ?? '',
         ];
-        if (!isRitual(cardData)) {
+        if (!isKiller(cardData)) {
             materials = materials.sort((a, b) => a.localeCompare(b));
         }
         const materialsText = materials.filter(material => material.length).join(` ${getMaterialsSeparator()} `);

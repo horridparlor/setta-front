@@ -20,11 +20,11 @@ import {
     CardType, combineEffectsTexts, DefaultTextSize,
     EXTRA_DECK_SUBTYPES,
     getSubtypeOptions,
-    getSupertypeOptions, hasAllMaterials,
+    getSupertypeOptions,
     hasCostText,
     hasEffectText,
     hasFlavourText, hasTwoMaterials,
-    isExtraDeckCard, isRitual,
+    isExtraDeckCard, isKiller,
     MaximumPiece, MONSTER_CARD_TYPES
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
@@ -101,7 +101,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         case CardSubtype.EFFECT:
                             onCardDataChange('flavourText', '');
                             break;
-                        case CardSubtype.RITUAL:
+                        case CardSubtype.KILLER_MOVE:
                             onCardDataChange('tertiaryMaterialId', '');
                             break;
                     }
@@ -390,7 +390,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             onChange={handleSelectChange('primaryMaterialId')}
                             disabled={cannotEdit()}
                         >
-                            {isRitual(cardData) ? monsterCardSelector() : cardSelector()}
+                            {isKiller(cardData) ? monsterCardSelector() : cardSelector()}
                         </Select>
                     </FormControl>
                     <FormControl fullWidth sx={{ marginBottom: 2 }}>
@@ -402,10 +402,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             onChange={handleSelectChange('secondaryMaterialId')}
                             disabled={cannotEdit()}
                         >
-                            {isRitual(cardData) ? backrowCardSelector() : cardSelector()}
+                            {isKiller(cardData) ? backrowCardSelector() : cardSelector()}
                         </Select>
                     </FormControl>
-                    <FormControl fullWidth sx={{ marginBottom: 2, display: !isRitual(cardData) ? 'flex' : 'none', }}>
+                    <FormControl fullWidth sx={{ marginBottom: 2, display: !isKiller(cardData) ? 'flex' : 'none', }}>
                         <InputLabel id="tertiary-material-selector-label">Tertiary material</InputLabel>
                         <Select
                             labelId="tertiary-material-selector-label"

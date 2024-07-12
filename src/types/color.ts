@@ -15,7 +15,7 @@ export enum CardMainFrameColor {
     TIME_TRAVELLER_LIGHT = '#2650ea',
     SPELL = '#4cb871',
     TRAP = '#e77c9b',
-    RITUAL = '#5f9bdb',
+    KILLER_MOVE = '#5f9bdb',
     FRAME = '#171717'
 }
 
@@ -28,7 +28,7 @@ export enum CardEffectFrameColor {
     TIME_TRAVELLER = '#e9ecf6',
     SPELL = '#e3f5ea',
     TRAP = '#f5e0e6',
-    RITUAL = '#e7f0f7',
+    KILLER_MOVE = '#e7f0f7',
 }
 
 export enum StatBoxColor {
@@ -104,8 +104,8 @@ export const getMonsterBackgroundColor = (subtype : CardSubtype) => {
 
 export const getTrapBackgroundColor = (subtype : CardSubtype) => {
     switch (subtype) {
-        case CardSubtype.RITUAL:
-            return CardMainFrameColor.RITUAL;
+        case CardSubtype.KILLER_MOVE:
+            return CardMainFrameColor.KILLER_MOVE;
         default:
             return CardMainFrameColor.TRAP;
     }
@@ -152,8 +152,8 @@ export const getNormalMonsterEffectFrameColor = (supertype : CardSupertype) => {
 
 export const getTrapEffectFrameColor = (subtype : CardSubtype) => {
     switch (subtype) {
-        case CardSubtype.RITUAL:
-            return CardEffectFrameColor.RITUAL;
+        case CardSubtype.KILLER_MOVE:
+            return CardEffectFrameColor.KILLER_MOVE;
         default:
             return CardEffectFrameColor.TRAP;
     }
