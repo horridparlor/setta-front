@@ -86,7 +86,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return Math.max(0, 0.25 + 0.06 * (firstLineSize + (isExtraDeckCard(cardData) ? 2 : 1)) - ((getEffectsSize() + 1) * 0.045 * getLineHeight()));
     }
     const getCountsAs = () => {
-        const countsAsText = normalizeName(cards.find(card => card.cardId === cardData.countsAsId)) ?? '';
+        const countsAsText = normalizeName(cards.find(card => card.cardId === cardData.countsAsId || card.errataOfId === cardData.countsAsId)) ?? '';
         const countsAsPrefix = `Counts as ${starsWithVowel(countsAsText) ? 'an' : 'a'} {bi=${getEffectsSize()}}`;
         if (!countsAsText.length) {
             return '';
