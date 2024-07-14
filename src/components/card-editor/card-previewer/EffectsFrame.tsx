@@ -5,7 +5,7 @@ import {
     CardSubtype,
     hasCostText,
     hasEffectText,
-    hasFlavourText,
+    hasFlavourText, isCardId,
     isExtraDeckCard,
     isHandTrapCard, isKiller,
     isPendulumCard
@@ -50,9 +50,9 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
     const getMaterialsText = () => {
         const materialsPrefix = `{h=${getMaterialsSize()}}(`;
         let materials =  [
-            replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.primaryMaterialId)), 'Primary'),
-            replaceIfEmpty(normalizeName(cards.find(card => card.cardId === cardData.secondaryMaterialId)), 'Secondary'),
-            normalizeName(cards.find(card => card.cardId === cardData.tertiaryMaterialId)) ?? '',
+            replaceIfEmpty(normalizeName(cards.find(card => isCardId(card, cardData.primaryMaterialId))), 'Primary'),
+            replaceIfEmpty(normalizeName(cards.find(card => isCardId(card, cardData.secondaryMaterialId))), 'Secondary'),
+            normalizeName(cards.find(card => isCardId(card, cardData.tertiaryMaterialId))) ?? '',
         ];
         if (!isKiller(cardData)) {
             materials = materials.sort((a, b) => a.localeCompare(b));
@@ -86,7 +86,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return Math.max(0, 0.25 + 0.06 * (firstLineSize + (isExtraDeckCard(cardData) ? 2 : 1)) - ((getEffectsSize() + 1) * 0.045 * getLineHeight()));
     }
     const getCountsAs = () => {
-        const countsAsText = normalizeName(cards.find(card => card.cardId === cardData.countsAsId || card.errataOfId === cardData.countsAsId)) ?? '';
+        const countsAsText = normalizeName(cards.find(card => isCardId(card, cardData.countsAsId))) ?? '';
         const countsAsPrefix = `Counts as ${starsWithVowel(countsAsText) ? 'an' : 'a'} {bi=${getEffectsSize()}}`;
         if (!countsAsText.length) {
             return '';

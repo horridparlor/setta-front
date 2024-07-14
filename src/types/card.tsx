@@ -301,3 +301,10 @@ export const hasTwoMaterials = (cardData: CardData) => {
 export const getPointerId = (cardData: CardData): number => {
     return cardData.errataOfId ?? cardData.cardId;
 }
+
+export const isCardId = (cardData: CardData, cardId: number|null): boolean => {
+    if (cardId === null) {
+        return false;
+    }
+    return cardData.cardId === cardId || cardData.errataOfId === cardId;
+}
