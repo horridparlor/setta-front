@@ -30,13 +30,15 @@ import {
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
 import {normalizeName} from "../../utils/string";
 import {getUserId} from "../../types/cookie";
-import {CardEffects, CostType} from "../../types/cardEffects";
+import {CardEffects, CostType, EffectType, isCostType, isEffectType} from "../../types/cardEffects";
+import {getEnumSelector} from "../../utils/enum";
 
 interface RightPanelSettingsProps {
     cardData: CardData;
     cardEffects: CardEffects;
     expansions: Array<CardExpansion>;
     onCardDataChange: (field: keyof CardData, value: string | number) => void;
+    updateEffects: (newEffects: CardEffects) => void;
     onExport: () => void;
     onSave: () => void;
     onImageFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -53,6 +55,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     cardEffects,
     expansions,
     onCardDataChange,
+    updateEffects,
     onExport,
     onSave,
     onImageFileChange,
@@ -72,13 +75,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             .sort((cardA, cardB) => normalizeName(cardA).localeCompare(normalizeName(cardB)))
             .map(card => (
                 <MenuItem key={card.cardId} value={card.cardId}>{normalizeName(card)}</MenuItem>
-            ))
-        ];
-    }
-    const costTypeSelector = () => {
-        return [<MenuItem key='none' value=''>–</MenuItem>,
-            Object.values(CostType).map(costType => (
-                <MenuItem key={costType} value={costType}>{costType}</MenuItem>
             ))
         ];
     }
@@ -206,10 +202,16 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             labelId="cost-type-selector-label"
                             value={cardEffects.cost.costType}
                             label="Cost type"
-                            onChange={handleSelectChange('countsAsId')}
+                            onChange={(event: SelectChangeEvent<string>) => {
+                                const costType = event.target.value;
+                                if (!isCostType(costType)) {
+                                    return;
+                                }
+                                updateEffects({...cardEffects, cost: {...cardEffects.cost, costType: costType} })
+                            }}
                             disabled={cannotEdit()}
                         >
-                            {costTypeSelector()}
+                            {getEnumSelector([CostType, EffectType], EffectType.NONE)}
 
                         </Select>
                     </FormControl>
@@ -223,10 +225,16 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             labelId="effect-type-selector-label"
                             value={cardEffects.effect.effectType}
                             label="Effect type"
-                            onChange={handleSelectChange('countsAsId')}
+                            onChange={(event: SelectChangeEvent<string>) => {
+                                const effectType = event.target.value;
+                                if (!isEffectType(effectType)) {
+                                    return;
+                                }
+                                updateEffects({...cardEffects, effect: {...cardEffects.effect, effectType: effectType} })
+                            }}
                             disabled={cannotEdit()}
                         >
-                            {costTypeSelector()}
+                            {getEnumSelector([EffectType], EffectType.NONE)}
 
                         </Select>
                     </FormControl>

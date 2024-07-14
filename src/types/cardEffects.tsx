@@ -9,7 +9,6 @@ export enum CostType {
     IN_MAXIMUM_MODE = 'In maximum mode',
     MAXIMUM_SUMMONED = 'Maximum summoned',
     NO_MONSTERS = 'No monsters',
-    NONE = 'None',
     SUMMONED_THIS_TURN = 'Summoned this turn',
     SUMMONS = 'Summons',
     TAKE_DAMAGE = 'Take damage',
@@ -46,6 +45,7 @@ export enum EffectType {
     KEYWORD = 'Keyword',
     MILL = 'Mill',
     NEGATE_EFFECT = 'Negate effects',
+    NONE = 'None',
     PAY_LIFE = 'Pay life',
     REBORN = 'Reborn',
     REPEAT = 'Repeat',
@@ -264,7 +264,7 @@ export interface CardEffects {
 
 export const DEFAULT_CARD_EFFECTS: CardEffects = {
     cost: {
-        costType: CostType.NONE,
+        costType: EffectType.NONE,
         relation: EffectRelation.NONE,
         target: {
             targetType: null,
@@ -282,7 +282,7 @@ export const DEFAULT_CARD_EFFECTS: CardEffects = {
         trigger: null
     },
     effect: {
-        effectType: EffectType.DRAW,
+        effectType: EffectType.NONE,
         relation: EffectRelation.NONE,
         target: {
             targetType: null,
@@ -298,4 +298,12 @@ export const DEFAULT_CARD_EFFECTS: CardEffects = {
         countedMax: null,
         chainedEffect: null
     }
+}
+
+export function isCostType(costType: any): costType is CostType {
+    return Object.values(CostType).includes(costType) || isEffectType(costType);
+}
+
+export function isEffectType(effectType: any): effectType is EffectType {
+    return Object.values(EffectType).includes(effectType);
 }

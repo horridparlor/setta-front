@@ -42,6 +42,10 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         }));
     };
 
+    const updateEffects = (newEffects: CardEffects) => {
+        setCardEffects(newEffects);
+    }
+
     const handleSave = async () => {
         if (isSaving) {
             toast.info('Saving card... Please wait');
@@ -257,7 +261,8 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             <Box sx={{ marginRight: '2rem' }}>
                 <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1} overwriteArt={imageFile} oldName={oldName}/>
             </Box>
-            <RightPanelSettings cards={cards} cardData={cardData} cardEffects={cardEffects} expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
+            <RightPanelSettings cards={cards} cardData={cardData} cardEffects={cardEffects} updateEffects={updateEffects}
+                                expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
                                 onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
                                 onSave={handleSave} onDelete={handleDelete} onErrata={handleErrata} onCopy={handleCopy} />
         </Box>
