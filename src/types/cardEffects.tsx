@@ -1,3 +1,6 @@
+import {CardData} from "./card";
+import CardEditor from "../components/card-editor/CardEditor";
+
 export enum CostType {
     ATTACKS = 'Attacks',
     ENDS_TURN = 'Ends turn',
@@ -51,7 +54,7 @@ export enum EffectType {
     RESHUFFLE = 'Reshuffle',
     RESTACK = 'Restack',
     RETRIEVE = 'Retrieve',
-    REVERSE_ATTACK_GIVING = 'Reverse attack-giving',
+    REVERSE_ATTACK_GIVING = 'Reverse stat-giving',
     SACRIFICE = 'Sacrifice',
     SEND_BOTTOM = 'Send bottom',
     SET = 'Set',
@@ -257,4 +260,42 @@ export interface EffectsEffect {
 export interface CardEffects {
     cost: EffectsCost;
     effect: EffectsEffect;
+}
+
+export const DEFAULT_CARD_EFFECTS: CardEffects = {
+    cost: {
+        costType: CostType.NONE,
+        relation: EffectRelation.NONE,
+        target: {
+            targetType: null,
+            filters: null,
+            sourceTargetType: null,
+            sourceFilters: null,
+            selfFilters: null
+        },
+        amount: null,
+        minAmount: null,
+        countedAmount: null,
+        countedMin: null,
+        countedMax: null,
+        payment: null,
+        trigger: null
+    },
+    effect: {
+        effectType: EffectType.DRAW,
+        relation: EffectRelation.NONE,
+        target: {
+            targetType: null,
+            filters: null,
+            sourceTargetType: null,
+            sourceFilters: null,
+            selfFilters: null
+        },
+        timing: EffectTiming.IMMEDIATE,
+        amount: null,
+        countedAmount: null,
+        countedMin: null,
+        countedMax: null,
+        chainedEffect: null
+    }
 }

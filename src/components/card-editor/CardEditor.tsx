@@ -11,6 +11,7 @@ import useExpansions from "../../hooks/useExpansions";
 import {encodeEffectsString, normalizeName, serializeName} from "../../utils/string";
 import {convertToBase64} from "../../types/files";
 import axios from "axios";
+import {CardEffects, DEFAULT_CARD_EFFECTS} from "../../types/cardEffects";
 
 interface CardEditorProps {
     closeUpdate: () => void;
@@ -27,6 +28,7 @@ export interface CardEditorRef {
 const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards, refetch}, ref) => {
     const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
+    const [cardEffects, setCardEffects ] = useState<CardEffects>(DEFAULT_CARD_EFFECTS);
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [oldName, setOldName] = useState<string>('');
@@ -255,7 +257,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             <Box sx={{ marginRight: '2rem' }}>
                 <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1} overwriteArt={imageFile} oldName={oldName}/>
             </Box>
-            <RightPanelSettings cards={cards} cardData={cardData} expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
+            <RightPanelSettings cards={cards} cardData={cardData} cardEffects={cardEffects} expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
                                 onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
                                 onSave={handleSave} onDelete={handleDelete} onErrata={handleErrata} onCopy={handleCopy} />
         </Box>

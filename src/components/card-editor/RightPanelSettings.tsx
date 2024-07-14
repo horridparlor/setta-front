@@ -30,9 +30,11 @@ import {
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
 import {normalizeName} from "../../utils/string";
 import {getUserId} from "../../types/cookie";
+import {CardEffects, CostType} from "../../types/cardEffects";
 
 interface RightPanelSettingsProps {
     cardData: CardData;
+    cardEffects: CardEffects;
     expansions: Array<CardExpansion>;
     onCardDataChange: (field: keyof CardData, value: string | number) => void;
     onExport: () => void;
@@ -48,6 +50,7 @@ interface RightPanelSettingsProps {
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     cardData,
+    cardEffects,
     expansions,
     onCardDataChange,
     onExport,
@@ -69,6 +72,13 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             .sort((cardA, cardB) => normalizeName(cardA).localeCompare(normalizeName(cardB)))
             .map(card => (
                 <MenuItem key={card.cardId} value={card.cardId}>{normalizeName(card)}</MenuItem>
+            ))
+        ];
+    }
+    const costTypeSelector = () => {
+        return [<MenuItem key='none' value=''>–</MenuItem>,
+            Object.values(CostType).map(costType => (
+                <MenuItem key={costType} value={costType}>{costType}</MenuItem>
             ))
         ];
     }
@@ -183,6 +193,47 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const onTabClicked = (event: React.ChangeEvent<{}>, newId: number) => {
         setTabId(newId);
     };
+
+    const getEffectsTab = () => {
+        return (
+            <>
+                <Box
+                    sx={rowContainerStyle}
+                >
+                    <FormControl fullWidth>
+                        <InputLabel id="cost-type-selector-label">Cost type</InputLabel>
+                        <Select
+                            labelId="cost-type-selector-label"
+                            value={cardEffects.cost.costType}
+                            label="Cost type"
+                            onChange={handleSelectChange('countsAsId')}
+                            disabled={cannotEdit()}
+                        >
+                            {costTypeSelector()}
+
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box
+                    sx={rowContainerStyle}
+                >
+                     <FormControl fullWidth>
+                        <InputLabel id="effect-type-selector-label">Effect type</InputLabel>
+                        <Select
+                            labelId="effect-type-selector-label"
+                            value={cardEffects.effect.effectType}
+                            label="Effect type"
+                            onChange={handleSelectChange('countsAsId')}
+                            disabled={cannotEdit()}
+                        >
+                            {costTypeSelector()}
+
+                        </Select>
+                    </FormControl>
+                </Box>
+            </>
+        );
+    }
 
     return (
         <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
@@ -538,23 +589,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 </Box>
             </Box>
             <Box sx={{display: tabId === EFFECTS_TAB ? 'block' : 'none'}}>
-                <Box
-                    sx={rowContainerStyle}
-                >
-                    <FormControl fullWidth>
-                        <InputLabel id="cost-type-selector-label">Cost type</InputLabel>
-                        <Select
-                            labelId="cost-type-selector-label"
-                            value={cardData.countsAsId ? cardData.countsAsId.toString() : ''}
-                            label="Cost type"
-                            onChange={handleSelectChange('countsAsId')}
-                            disabled={cannotEdit()}
-                        >
-                            {cardSelector()}
-
-                        </Select>
-                    </FormControl>
-                </Box>
+                {getEffectsTab()}
             </Box>
             <Box sx={{...rowContainerStyle, marginBottom: 0}}>
                 <Button onClick={onSave} variant="contained" color="primary" disabled={cardData.cardName.length === 0} sx={hideHiddenButton()}>
