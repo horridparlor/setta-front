@@ -8,24 +8,33 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    SelectChangeEvent, Tab, Tabs,
+    SelectChangeEvent,
+    Tab,
+    Tabs,
     TextField
 } from '@mui/material';
 import {
-    BACKROW_CARD_TYPES, canEditCard, canErrataCard,
+    BACKROW_CARD_TYPES,
+    canEditCard,
+    canErrataCard,
     CardClass,
     CardData,
     CardSubtype,
     CardSupertype,
-    CardType, combineEffectsTexts, DefaultTextSize,
+    CardType,
+    combineEffectsTexts,
+    DefaultTextSize,
     EXTRA_DECK_SUBTYPES,
     getSubtypeOptions,
     getSupertypeOptions,
     hasCostText,
     hasEffectText,
-    hasFlavourText, hasTwoMaterials,
-    isExtraDeckCard, isKiller,
-    MaximumPiece, MONSTER_CARD_TYPES
+    hasFlavourText,
+    hasTwoMaterials,
+    isExtraDeckCard,
+    isKiller,
+    MaximumPiece,
+    MONSTER_CARD_TYPES
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
 import {getStringSelector, normalizeName} from "../../utils/string";
@@ -33,7 +42,7 @@ import {getUserId} from "../../types/cookie";
 import {
     CardEffects,
     CostMetaType,
-    CostType, CostTypesByMetaType,
+    CostTypesByMetaType,
     EffectType,
     isCostMetaType,
     isCostType,
@@ -217,7 +226,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                                 if (!isCostMetaType(cost)) {
                                     return;
                                 }
-                                updateEffects({...cardEffects, cost: {...cardEffects.cost, metaType: cost} })
+                                updateEffects({...cardEffects, cost: {...cardEffects.cost, metaType: cost, costType: EffectType.NONE} })
                             }}
                             disabled={cannotEdit()}
                         >
