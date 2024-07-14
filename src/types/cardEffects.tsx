@@ -116,6 +116,7 @@ export enum EffectTiming {
 }
 
 export interface EffectsCost {
+    metaType: CostMetaType;
     costType: CostType|EffectType;
     relation: EffectRelation|null;
     target: EffectTarget;
@@ -262,8 +263,54 @@ export interface CardEffects {
     effect: EffectsEffect;
 }
 
+export function isCostType(costType: any): costType is CostType {
+    return Object.values(CostType).includes(costType) || isEffectType(costType);
+}
+
+export function isEffectType(effectType: any): effectType is EffectType {
+    return Object.values(EffectType).includes(effectType);
+}
+
+export enum CostMetaType {
+   ACTION = 'Action',
+   CONDITION = 'Condition',
+   CONTINUOUS = 'Continuous',
+   NONE = 'None',
+   PAYMENT = 'Payment',
+   TRIGGER = 'Trigger'
+}
+
+export const CostTypesByMetaType = {
+    [CostMetaType.ACTION]: [
+        CostType.EQUIP,
+        EffectType.NONE
+    ],
+    [CostMetaType.CONDITION]: [
+        CostType.IN_MAXIMUM_MODE,
+        EffectType.NONE
+    ],
+    [CostMetaType.CONTINUOUS]: [],
+    [CostMetaType.NONE]: [],
+    [CostMetaType.PAYMENT]: [
+        EffectType.MILL,
+        EffectType.NONE,
+        EffectType.PAY_LIFE
+    ],
+    [CostMetaType.TRIGGER]: [
+        CostType.ATTACKS,
+        CostType.ENDS_TURN,
+        CostType.FLIPPED_WHEN_ATTACKED,
+        EffectType.NONE
+    ],
+}
+
+export function isCostMetaType(metaType: any): metaType is CostMetaType {
+    return Object.values(CostMetaType).includes(metaType);
+}
+
 export const DEFAULT_CARD_EFFECTS: CardEffects = {
     cost: {
+        metaType: CostMetaType.NONE,
         costType: EffectType.NONE,
         relation: EffectRelation.NONE,
         target: {
@@ -298,12 +345,4 @@ export const DEFAULT_CARD_EFFECTS: CardEffects = {
         countedMax: null,
         chainedEffect: null
     }
-}
-
-export function isCostType(costType: any): costType is CostType {
-    return Object.values(CostType).includes(costType) || isEffectType(costType);
-}
-
-export function isEffectType(effectType: any): effectType is EffectType {
-    return Object.values(EffectType).includes(effectType);
 }

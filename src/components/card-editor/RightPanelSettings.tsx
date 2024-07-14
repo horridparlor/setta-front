@@ -28,9 +28,17 @@ import {
     MaximumPiece, MONSTER_CARD_TYPES
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
-import {normalizeName} from "../../utils/string";
+import {getStringSelector, normalizeName} from "../../utils/string";
 import {getUserId} from "../../types/cookie";
-import {CardEffects, CostType, EffectType, isCostType, isEffectType} from "../../types/cardEffects";
+import {
+    CardEffects,
+    CostMetaType,
+    CostType, CostTypesByMetaType,
+    EffectType,
+    isCostMetaType,
+    isCostType,
+    isEffectType
+} from "../../types/cardEffects";
 import {getEnumSelector} from "../../utils/enum";
 
 interface RightPanelSettingsProps {
@@ -190,6 +198,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         setTabId(newId);
     };
 
+    const costTypeOptions = CostTypesByMetaType[cardEffects.cost.metaType];
+
     const getEffectsTab = () => {
         return (
             <>
@@ -197,6 +207,25 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     sx={rowContainerStyle}
                 >
                     <FormControl fullWidth>
+                        <InputLabel id="cost-selector-label">Cost</InputLabel>
+                        <Select
+                            labelId="cost-selector-label"
+                            value={cardEffects.cost.metaType}
+                            label="Cost"
+                            onChange={(event: SelectChangeEvent<string>) => {
+                                const cost = event.target.value;
+                                if (!isCostMetaType(cost)) {
+                                    return;
+                                }
+                                updateEffects({...cardEffects, cost: {...cardEffects.cost, metaType: cost} })
+                            }}
+                            disabled={cannotEdit()}
+                        >
+                            {getEnumSelector([CostMetaType], CostMetaType.NONE)}
+
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: costTypeOptions.length ? 'flex' : 'none'}}>
                         <InputLabel id="cost-type-selector-label">Cost type</InputLabel>
                         <Select
                             labelId="cost-type-selector-label"
@@ -211,7 +240,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             }}
                             disabled={cannotEdit()}
                         >
-                            {getEnumSelector([CostType, EffectType], EffectType.NONE)}
+                            {getStringSelector(costTypeOptions, EffectType.NONE)}
 
                         </Select>
                     </FormControl>

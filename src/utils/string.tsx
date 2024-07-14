@@ -1,4 +1,5 @@
 import {CardData, getMaximumExtension} from "../types/card";
+import {MenuItem} from "@mui/material";
 
 export const normalizeName = (cardData: CardData|any): string => {
     if (typeof cardData === 'undefined') {
@@ -58,4 +59,12 @@ export const endsSentence = (message: String) => {
     }
     const lastChar = message.charAt(message.length - 1);
     return ['.', '!', '?'].includes(lastChar);
+}
+
+export const getStringSelector = (values: Array<string>, defaultTo: string) => {
+    return [<MenuItem key='none' value={defaultTo}>–</MenuItem>,
+        values.sort().map(value => (
+            <MenuItem key={value} value={value}>{value}</MenuItem>
+        ))
+    ];
 }
