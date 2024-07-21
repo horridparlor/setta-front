@@ -44,7 +44,7 @@ export enum MaximumPiece {
 }
 
 export enum SpecialCountsAs {
-    NORMAL_ZOMBIE_IN_GRAVE = 'Is a {sb=$EFFECTS_SIZE}normal{/sb} {b}Zombie{/b} in grave.'
+    NORMAL_ZOMBIE_IN_GRAVE = 'Is a {sb=$EFFECTS_SIZE}normal{/sb} {b=$EFFECTS_SIZE}Zombie{/b} in grave.'
 }
 
 export const SpecialCountsAsId = {
