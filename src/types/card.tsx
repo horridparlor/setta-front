@@ -44,11 +44,11 @@ export enum MaximumPiece {
 }
 
 export enum SpecialCountsAs {
-    NORMAL_IN_GRAVE = '{sb=$EFFECTS_SIZE}normal{/sb} monster in grave. {i}(Yellow.){/i}'
+    NORMAL_ZOMBIE_IN_GRAVE = '{sb=$EFFECTS_SIZE}normal{/sb} {b}Zombie{/b} in grave. {i}(Yellow.){/i}'
 }
 
 export const SpecialCountsAsId = {
-    [SpecialCountsAs.NORMAL_IN_GRAVE]: -1
+    [SpecialCountsAs.NORMAL_ZOMBIE_IN_GRAVE]: -1
 }
 
 export const MONSTER_CARD_TYPES = [
