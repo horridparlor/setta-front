@@ -95,8 +95,8 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         const usesSpecialCountsAs = cardData.countsAsId !== null && cardData.countsAsId < 0;
         const countsAsText = usesSpecialCountsAs ? getSpecialCountsAsText(cardData.countsAsId || 0)
             : normalizeName(cards.find(card => isCardId(card, cardData.countsAsId))) ?? '';
-        const countsAsPrefix = `Counts as ${starsWithVowel(countsAsText) ? 'an'
-            : 'a'} ${ usesSpecialCountsAs ? '' : `{bi}=${getEffectsSize()}`}`;
+        const countsAsPrefix = usesSpecialCountsAs ? '' : `Counts as ${starsWithVowel(countsAsText) ? 'an'
+            : 'a'} {bi}=${getEffectsSize()}`;
         if (!countsAsText.length) {
             return '';
         }
@@ -111,7 +111,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
                         opacity: 0.2,
                     }}
                 />
-                {formatText(countsAsPrefix +  countsAsText + `${usesSpecialCountsAs ? ''
+                {formatText(countsAsPrefix + countsAsText + `${usesSpecialCountsAs ? ''
                     : '{/bi}'}${endsSentence(countsAsText) || usesSpecialCountsAs ? '' : '.'}`, scale)}
             </>
         );
