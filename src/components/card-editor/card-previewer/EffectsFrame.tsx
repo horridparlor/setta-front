@@ -8,11 +8,12 @@ import {
     hasFlavourText, isCardId,
     isExtraDeckCard,
     isHandTrapCard, isKiller,
-    isPendulumCard
+    isPendulumCard, SpecialCountsAsId
 } from "../../../types/card";
 import {getCardEffectFrameColor, getEffectsBorder} from "../../../types/color";
 import {addSizeToRichText, formatText, getFontSize} from "../../../utils/fonts";
 import {endsSentence, normalizeName, replaceIfEmpty, starsWithVowel} from "../../../utils/string";
+import {isNull} from "node:util";
 
 interface EffectsFrameProps {
     cardData: CardData;
@@ -85,9 +86,17 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         const firstLineSize = isExtraDeckCard(cardData) ? getMaterialsSize() : getEffectsSize();
         return Math.max(0, 0.25 + 0.06 * (firstLineSize + (isExtraDeckCard(cardData) ? 2 : 1)) - ((getEffectsSize() + 1) * 0.045 * getLineHeight()));
     }
+    const getSpecialCountsAsText = (id: number): string => {
+        const entry = Object.entries(SpecialCountsAsId).find(([key, value]) => value === id);
+        return (entry ? entry[0] : '')
+            .replace('$EFFECTS_SIZE', getEffectsSize().toString());
+    }
     const getCountsAs = () => {
-        const countsAsText = normalizeName(cards.find(card => isCardId(card, cardData.countsAsId))) ?? '';
-        const countsAsPrefix = `Counts as ${starsWithVowel(countsAsText) ? 'an' : 'a'} {bi=${getEffectsSize()}}`;
+        const usesSpecialCountsAs = cardData.countsAsId !== null && cardData.countsAsId < 0;
+        const countsAsText = usesSpecialCountsAs ? getSpecialCountsAsText(cardData.countsAsId || 0)
+            : normalizeName(cards.find(card => isCardId(card, cardData.countsAsId))) ?? '';
+        const countsAsPrefix = `Counts as ${starsWithVowel(countsAsText) ? 'an'
+            : 'a'} ${ usesSpecialCountsAs ? '' : `{bi}=${getEffectsSize()}`}`;
         if (!countsAsText.length) {
             return '';
         }
@@ -102,7 +111,8 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
                         opacity: 0.2,
                     }}
                 />
-                {formatText(countsAsPrefix +  countsAsText + `{/bi}${endsSentence(countsAsText) ? '' : '.'}`, scale)}
+                {formatText(countsAsPrefix +  countsAsText + `${usesSpecialCountsAs ? ''
+                    : '{/bi}'}${endsSentence(countsAsText) || usesSpecialCountsAs ? '' : '.'}`, scale)}
             </>
         );
     }

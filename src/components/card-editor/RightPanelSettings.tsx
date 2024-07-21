@@ -34,7 +34,7 @@ import {
     isExtraDeckCard,
     isKiller,
     MaximumPiece,
-    MONSTER_CARD_TYPES
+    MONSTER_CARD_TYPES, SpecialCountsAs, SpecialCountsAsId
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
 import {getStringSelector, normalizeName} from "../../utils/string";
@@ -86,8 +86,18 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const STATS_TAB = 0;
     const EFFECTS_TAB = 1;
     const [tabId, setTabId] = useState<number>(0);
-    const cardSelector = (source: Array<CardData> = cards) => {
+    const countsAsSelector = () => {
+        const countsAsOptions = Object.values(SpecialCountsAs).map(countsAs => {
+            const id = SpecialCountsAsId[countsAs];
+            return (
+                <MenuItem key={id} value={id}>{normalizeName(countsAs)}</MenuItem>
+            );
+        });
+        return cardSelector(cards, countsAsOptions);
+    }
+    const cardSelector = (source: Array<CardData> = cards, additionalOptions: Array<JSX.Element> = []) => {
         return [<MenuItem key='none' value=''>–</MenuItem>,
+            ...additionalOptions,
         ...source
             .sort((cardA, cardB) => normalizeName(cardA).localeCompare(normalizeName(cardB)))
             .map(card => (
@@ -587,7 +597,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             onChange={handleSelectChange('countsAsId')}
                             disabled={cannotEdit()}
                         >
-                            {cardSelector()}
+                            {countsAsSelector()}
 
                         </Select>
                     </FormControl>
