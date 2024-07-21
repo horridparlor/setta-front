@@ -12,6 +12,8 @@ export enum CardMainFrameColor {
     ROYAL_LIGHT = '#616161',
     TIME_TRAVELLER_DARK = '#102058',
     TIME_TRAVELLER_LIGHT = '#2650ea',
+    SWORDMASTER_DARK = '#320a77',
+    SWORDMASTER_LIGHT = '#c85e5e',
     SPELL = '#4cb871',
     TRAP = '#e77c9b',
     KILLER_MOVE = '#5f9bdb',
@@ -25,6 +27,7 @@ export enum CardEffectFrameColor {
     REVENGE = '#f6dcdc',
     ROYAL = '#e5e5e5',
     TIME_TRAVELLER = '#e9ecf6',
+    SWORDMASTER = '#dac1ca',
     SPELL = '#e3f5ea',
     TRAP = '#f5e0e6',
     KILLER_MOVE = '#e7f0f7',
@@ -74,6 +77,10 @@ export const getCardBackground = (cardData : CardData) => {
         case CardSubtype.TIME_TRAVELLER:
             darkColor = CardMainFrameColor.TIME_TRAVELLER_DARK;
             lightColor = CardMainFrameColor.TIME_TRAVELLER_LIGHT;
+            break;
+        case CardSubtype.SWORDMASTER:
+            darkColor = CardMainFrameColor.SWORDMASTER_DARK;
+            lightColor = CardMainFrameColor.SWORDMASTER_LIGHT;
             break;
     }
     switch (cardData.supertype) {
@@ -137,6 +144,8 @@ export const getMonsterEffectFrameColor = (cardData : CardData) => {
             return CardEffectFrameColor.ROYAL;
         case CardSubtype.TIME_TRAVELLER:
             return CardEffectFrameColor.TIME_TRAVELLER;
+        case CardSubtype.SWORDMASTER:
+            return CardEffectFrameColor.SWORDMASTER;
         default:
             return getNormalMonsterEffectFrameColor(cardData.supertype);
     }
@@ -188,6 +197,8 @@ export const getFrameTextColor = (cardData: CardData) => {
         case CardSubtype.ROYAL:
             return TextColor.PEARL_WHITE;
         case CardSubtype.TIME_TRAVELLER:
+            return TextColor.PEARL_WHITE;
+        case CardSubtype.SWORDMASTER:
             return TextColor.PEARL_WHITE;
         default:
             return TextColor.BLACK;

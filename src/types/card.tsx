@@ -67,6 +67,7 @@ export const EXTRA_DECK_SUBTYPES = [
   CardSubtype.REVENGE,
   CardSubtype.ROYAL,
   CardSubtype.TIME_TRAVELLER,
+  CardSubtype.SWORDMASTER,
   CardSubtype.KILLER_MOVE,
 ];
 
