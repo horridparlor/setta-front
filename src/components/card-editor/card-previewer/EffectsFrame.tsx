@@ -97,7 +97,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         const countsAsText = usesSpecialCountsAs ? getSpecialCountsAsText(cardData.countsAsId || 0)
             : normalizeName(cards.find(card => isCardId(card, cardData.countsAsId))) ?? '';
         const countsAsPrefix = usesSpecialCountsAs ? '' : `Counts as ${starsWithVowel(countsAsText) ? 'an'
-            : 'a'} {bi}=${getEffectsSize()}{/bi}`;
+            : 'a'} {bi=${getEffectsSize()}}`;
         if (!countsAsText.length) {
             return '';
         }
