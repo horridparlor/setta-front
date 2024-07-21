@@ -1,5 +1,4 @@
 import {CardData, CardSubtype, CardSupertype, CardType, StatType} from "./card";
-import {Card} from "@mui/material";
 
 const ARTWORK_BORDER_THICKNESS = 0.225;
 const EFFECTS_BORDER_THICKNESS = 0.2;
@@ -64,6 +63,10 @@ export const getCardBackground = (cardData : CardData) => {
     let darkColor;
     let lightColor;
     switch (cardData.subtype) {
+        case CardSubtype.DOMAIN:
+            darkColor = `${CardMainFrameColor.TRAP} ${GradientCutPoint.HAND_TRAP_DROP}%`;
+            lightColor = `${CardMainFrameColor.SPELL} ${GradientCutPoint.HAND_TRAP_DROP + GradientCutPoint.HAND_TRAP_EDGE}%`;
+            break;
         case CardSubtype.ROYAL:
             darkColor = CardMainFrameColor.ROYAL_DARK;
             lightColor = CardMainFrameColor.ROYAL_LIGHT;
@@ -83,7 +86,7 @@ export const getCardBackground = (cardData : CardData) => {
             lightColor = `${CardMainFrameColor.SPELL} ${GradientCutPoint.PENDULUM_DROP + GradientCutPoint.PENDULUM_EDGE}%`;
             break;
     }
-    if (cardData.cardType === CardType.MONSTER && darkColor !== undefined) {
+    if (darkColor !== undefined) {
         return `linear-gradient(to bottom, ${darkColor}, ${lightColor})`;
     }
     return '';
@@ -152,6 +155,8 @@ export const getNormalMonsterEffectFrameColor = (supertype : CardSupertype) => {
 
 export const getTrapEffectFrameColor = (subtype : CardSubtype) => {
     switch (subtype) {
+        case CardSubtype.DOMAIN:
+            return CardEffectFrameColor.SPELL;
         case CardSubtype.KILLER_MOVE:
             return CardEffectFrameColor.KILLER_MOVE;
         default:

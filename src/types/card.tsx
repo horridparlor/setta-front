@@ -26,7 +26,9 @@ export enum CardSubtype {
     REVENGE = 'Revenge',
     ROYAL = 'Royal',
     TIME_TRAVELLER = 'Time Traveller',
-    KILLER_MOVE = 'Killer Move'
+    SWORDMASTER = 'Swordmaster',
+    KILLER_MOVE = 'Killer Move',
+    DOMAIN = 'Domain'
 }
 
 export enum CardSupertype {
@@ -186,7 +188,7 @@ export const combineEffectsTexts = (cardData: CardData|undefined) => {
 }
 
 const MONSTER_SUBTYPES = [CardSubtype.NORMAL, CardSubtype.EFFECT,
-    CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER];
+    CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER, CardSubtype.SWORDMASTER];
 
 const getActiveSubtypes = (cardType: CardType) => {
     switch (cardType) {
@@ -195,7 +197,7 @@ const getActiveSubtypes = (cardType: CardType) => {
         case CardType.SPELL:
             return [CardSubtype.NORMAL];
         case CardType.TRAP:
-            return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
+            return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE, CardSubtype.DOMAIN];
     }
 }
 
@@ -257,6 +259,10 @@ export const getMaximumExtension = (cardData: CardData) => {
 
 export const isKiller = (cardData: CardData) => {
     return cardData.subtype === CardSubtype.KILLER_MOVE;
+}
+
+export const isDomain = (cardData: CardData) => {
+    return cardData.subtype === CardSubtype.DOMAIN;
 }
 
 export const getCardsExpansion = (cardData: CardData, expansions: Array<CardExpansion>) => {
