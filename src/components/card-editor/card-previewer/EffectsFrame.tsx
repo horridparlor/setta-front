@@ -67,7 +67,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return hasCostText(cardData) ? costPrefix + costText + '\n' : '';
     }
     const getEffectText = () => {
-        const effectOpener = isHandTrapCard(cardData) ? 'Hand Trap>>' : isDomain(cardData) ? 'Continuous>>' : 'Effect:';
+        const effectOpener = isHandTrapCard(cardData) ? 'Hand Trap>>' : isDomain(cardData) ? 'Continuous:' : 'Effect:';
         const effectPrefix = `{i=${getEffectsSize()}}${effectOpener} {/i}`;
         const effectText = addSizeToRichText(cardData.effectText, getEffectsSize());
         return hasEffectText(cardData) ? effectPrefix + effectText + '\n' : '';

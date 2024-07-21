@@ -178,8 +178,9 @@ export const getArtworkBorder = (scale: number) => {
 }
 
 export const getEffectsBorder = (cardData: CardData, scale: number) => {
-    return `solid ${EFFECTS_BORDER_THICKNESS * scale}rem ${cardData.cardType === CardType.MONSTER
-        && [CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER].includes(cardData.subtype) ? 'black' : 'transparent'}`;
+    return `solid ${EFFECTS_BORDER_THICKNESS * scale}rem ${
+        [CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER]
+        .includes(cardData.subtype) ? 'black' : 'transparent'}`;
 }
 
 export const getFrameTextColor = (cardData: CardData) => {
