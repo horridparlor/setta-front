@@ -89,7 +89,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
     const getSpecialCountsAsText = (id: number): string => {
         const entry = Object.entries(SpecialCountsAsId).find(([key, value]) => value === id);
         return (entry ? entry[0] : '')
-            .replace('$EFFECTS_SIZE', getEffectsSize().toString());
+            .replaceAll('$EFFECTS_SIZE', getEffectsSize().toString());
     }
     const getCountsAs = () => {
         const usesSpecialCountsAs = cardData.countsAsId !== null && cardData.countsAsId < 0;
