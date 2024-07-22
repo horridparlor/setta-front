@@ -3,7 +3,8 @@ import Button from '@mui/material/Button';
 import {Box} from "@mui/material";
 import {AppPage} from "../../types/navigation";
 import LoginModal from "./LoginModal";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
+import {PageCookie} from "../../types/cookie";
 
 interface HomeBarProps {
     refetch: () => Promise<void>;
@@ -16,6 +17,7 @@ export interface HomeBarRef {
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({refetch}, ref) => {
     const [isLoginOpen, setLoginOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const toggleLoginOpen = () => {
         setLoginOpen(!isLoginOpen);
@@ -26,7 +28,13 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({refetch}, ref) => {
 
     return (
         <Box>
-            <Button variant="contained" color="primary" onClick={() => navigate(AppPage.CardEditor)}>
+            <Button variant="contained" color="primary" onClick={() => {
+                if (location.pathname.startsWith(AppPage.CardCatalogue)) {
+                    const params = new URLSearchParams(location.search);
+                    sessionStorage.setItem(PageCookie.CARD_CATALOGUE_FILTERS, params.toString());
+                }
+                navigate(AppPage.CardEditor);
+            }}>
                 Card Editor
             </Button>
             <Button variant="contained" color="secondary" onClick={() => navigate(AppPage.CardCatalogue)} sx={{marginLeft: '0.4rem'}}>
