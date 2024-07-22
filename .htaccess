@@ -11,6 +11,6 @@
 
 <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "https://www.setta.fi"
-    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Methods "CREATE, GET, PUT, DELETE"
     Header set Access-Control-Allow-Headers "Content-Type, Authorization"
 </IfModule>
