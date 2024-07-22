@@ -17,10 +17,10 @@ import {normalizeName} from "../../utils/string";
 import {toast} from "react-toastify";
 import Cookies from "js-cookie";
 import FiltersModal from "./FiltersModal";
-import {CardCatalogueCookie} from "../../types/cookie";
+import {CardCatalogueCookie, PageCookie} from "../../types/cookie";
 import {ComparisonType} from "../../types/filter";
 import {CardOwner} from "../../types/user";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
@@ -52,7 +52,9 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     cards, cardOwners}, ref) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const params = new URLSearchParams(location.search);
+    const urlParams = new URLSearchParams(location.search);
+    const cookieParams = sessionStorage.getItem(PageCookie.CARD_CATALOGUE_FILTERS) || '';
+    const params = urlParams.size ? urlParams : new URLSearchParams(cookieParams);
     const loadFiltersFromCookies = () => {
         return {
             cardName: params.get(CardCatalogueCookie.CARD_NAME) || '',
@@ -149,6 +151,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     }
     const updateNavigate = () => {
         navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+        sessionStorage.setItem(PageCookie.CARD_CATALOGUE_FILTERS, params.toString());
     }
     const handleCookieChange = (key : string, value: any) => {
         params.set(key, value);
@@ -345,6 +348,10 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     const toggleFilters = () => {
         setModalOpen(!isModalOpen);
     };
+
+    useEffect(() => {
+        updateNavigate();
+    }, [params]);
 
     useImperativeHandle(ref, () => ({
         referenceCard,

@@ -30,6 +30,10 @@ export enum CardCatalogueCookie {
     IS_ERRATA = 'isErrata',
 }
 
+export enum PageCookie {
+    CARD_CATALOGUE_FILTERS = 'cardCatalogueFilters'
+}
+
 export const getUserId = () => {
     return parseInt(Cookies.get(AuthCookie.USER_ID) || '');
 }
