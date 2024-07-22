@@ -359,7 +359,9 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         toggleFilters,
     }));
 
-    updateUrlParams();
+    useEffect(() => {
+        updateUrlParams();
+    }, []);
 
     return (
         <StyledAppBar position="sticky" sx={{margin: '0.2rem 0'}}>
