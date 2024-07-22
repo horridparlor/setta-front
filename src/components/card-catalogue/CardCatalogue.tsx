@@ -99,6 +99,15 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
         return checkStat(cardData.def, filters.def, filters.defOperation);
     }
 
+    const isNewestReleased = (cardData : CardData) => {
+        if (!cardData.errataOfId) {
+            return true;
+        }
+        return cardData.cardId === Math.max(...cards
+            .filter(card => card.errataOfId === cardData.errataOfId)
+            .map(card => card.cardId));
+    }
+
     const filteredCards = cards.filter(card =>
         (isInReferenceMode() || normalizeName(card).toLowerCase().includes(normalizeName(filters.cardName).toLowerCase()))
         && filters.cardEffects.toLowerCase().split(' ').every(word => isInReferenceMode() || (card.costText + card.effectText).toLowerCase().includes(word))
@@ -123,7 +132,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
         && (isInReferenceMode() || filters.defOperation === '' || checkDef(card))
         && (isInReferenceMode() || !filters.isAce || card.isAce)
         && (isInReferenceMode() || filters.ownerId === '' || card.ownerId === parseInt(filters.ownerId))
-        && (isInReferenceMode() || !filters.isReleased || getCardsExpansion(card, expansions)?.isReleased)
+        && (isInReferenceMode() || !filters.isReleased || (getCardsExpansion(card, expansions)?.isReleased && isNewestReleased(card)))
         && (isInReferenceMode() || !filters.isErrata || (card.errataOfId && card.errataOfId !== card.cardId))
     );
     const doSortAscending = () => {
