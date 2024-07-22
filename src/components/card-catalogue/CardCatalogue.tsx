@@ -3,7 +3,7 @@ import {Box, Card} from '@mui/material';
 import {
     CardData,
     CardType,
-    combineEffectsTexts,
+    combineEffectsTexts, getCardsExpansion,
     getCombinedStats,
     getFullTypeString, getPointerId,
     isMonster
@@ -49,7 +49,9 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
         def: 0,
         defOperation: '',
         isAce: false,
-        ownerId: ''
+        ownerId: '',
+        isReleased: false,
+        isErrata: false,
     });
 
     const cardScale = 0.55;
@@ -121,6 +123,8 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
         && (isInReferenceMode() || filters.defOperation === '' || checkDef(card))
         && (isInReferenceMode() || !filters.isAce || card.isAce)
         && (isInReferenceMode() || filters.ownerId === '' || card.ownerId === parseInt(filters.ownerId))
+        && (isInReferenceMode() || !filters.isReleased || getCardsExpansion(card, expansions)?.isReleased)
+        && (isInReferenceMode() || !filters.isErrata || (card.errataOfId && card.errataOfId !== card.cardId))
     );
     const doSortAscending = () => {
         return filters.sortOrder !== SortOrder.DESCENDING;

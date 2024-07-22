@@ -48,7 +48,10 @@ interface FiltersModalProps {
     handleIsAceChange: (value: boolean) => void;
     ownerId: string;
     handleOwnerIdChange: (event: SelectChangeEvent<string>) => void;
-
+    isReleased: boolean;
+    handleIsReleasedChange: (value: boolean) => void;
+    isErrata: boolean;
+    handleIsErrataChange: (value: boolean) => void;
 }
 
 const getComparisonTypeToggleOptions = (): React.ReactElement => {
@@ -73,7 +76,8 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
     handleCardClassChange, handleCardTypeChange, handleCardSubtypeChange, handleCardSupertypeChange,
     handleSortOrderChange, handleSortByChange, level, handleLevelChange, levelOperation, handleLevelOperationChange,
     atk, handleAtkChange, atkOperation, handleAtkOperationChange, def, handleDefChange, defOperation, handleDefOperationChange,
-    isAce, handleIsAceChange, ownerId, handleOwnerIdChange
+    isAce, handleIsAceChange, ownerId, handleOwnerIdChange,
+    isReleased, handleIsReleasedChange, isErrata, handleIsErrataChange
                                                    }) => {
     return (
         <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="md">
@@ -278,6 +282,32 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                                 DESC
                             </ToggleButton>
                         </ToggleButtonGroup>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth sx={{ m: 1 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={isReleased}
+                                        onChange={(e) => handleIsReleasedChange(e.target.checked)}
+                                    />
+                                }
+                                label="Released"
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth sx={{ m: 1 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={isErrata}
+                                        onChange={(e) => handleIsErrataChange(e.target.checked)}
+                                    />
+                                }
+                                label="Errata"
+                            />
+                        </FormControl>
                     </Grid>
                 </Grid>
             </DialogContent>

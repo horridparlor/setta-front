@@ -26,6 +26,8 @@ export enum CardCatalogueCookie {
     DEF_OPERATION = 'defOperation',
     IS_ACE = 'isAce',
     OWNER_ID = 'ownerId',
+    IS_RELEASED = 'isReleased',
+    IS_ERRATA = 'isErrata',
 }
 
 export const getUserId = () => {

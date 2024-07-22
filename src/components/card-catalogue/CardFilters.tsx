@@ -25,7 +25,7 @@ interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
         cardType: string, cardSubtype: string, cardSupertype: string, expansionId: string, sortOrder: string,
         sortBy: string, level: number, levelOperation: string, atk: number, atkOperation: string, def: number,
-        defOperation: string, isAce: boolean, ownerId: string
+        defOperation: string, isAce: boolean, ownerId: string, isReleased: boolean, isErrata: boolean
     }) => void;
     expansions: Array<CardExpansion>;
     cards: Array<CardData>;
@@ -69,6 +69,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
             defOperation: Cookies.get(CardCatalogueCookie.DEF_OPERATION) || '',
             isAce: Cookies.get(CardCatalogueCookie.IS_ACE) || false,
             ownerId: Cookies.get(CardCatalogueCookie.OWNER_ID) || '',
+            isReleased: Cookies.get(CardCatalogueCookie.IS_RELEASED) || false,
+            isErrata: Cookies.get(CardCatalogueCookie.IS_ERRATA) || false,
         };
     }
 
@@ -91,13 +93,15 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     const [defOperation, setDefOperation] = useState(initialState.defOperation);
     const [isAce, setIsAce] = useState(initialState.isAce);
     const [ownerId, setOwnerId] = useState(initialState.ownerId);
+    const [isReleased, setIsReleased] = useState(initialState.isReleased);
+    const [isErrata, setIsErrata] = useState(initialState.isErrata);
 
     const [isModalOpen, setModalOpen] = useState(false);
 
     const getFilters = () => {
         return {
             cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, expansionId, sortOrder, sortBy,
-            level, levelOperation, atk, atkOperation, def, defOperation, isAce, ownerId
+            level, levelOperation, atk, atkOperation, def, defOperation, isAce, ownerId, isReleased, isErrata
         }
     }
 
@@ -106,7 +110,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
             cardName: '', cardEffects: '', referenceId: '', cardClass: '',
             cardType: '', cardSubtype: '', cardSupertype: '', expansionId: '',
             sortOrder: '', sortBy: '', level: 1, levelOperation: '',
-            atk: 0, atkOperation: '', def: 0, defOperation: '', isAce: false, ownerId: ''
+            atk: 0, atkOperation: '', def: 0, defOperation: '', isAce: false, ownerId: '',
+            isReleased: false, isErrata: false
         };
     }
 
@@ -121,11 +126,13 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         onFilterChange({
             cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype,
             expansionId, sortOrder, sortBy, level: makeInt(level), levelOperation, atk: makeInt(atk),
-            atkOperation, def: makeInt(def), defOperation, isAce: (typeof isAce === 'boolean' ? isAce : isAce.toLowerCase() === "true"), ownerId
+            atkOperation, def: makeInt(def), defOperation, isAce: (typeof isAce === 'boolean' ? isAce : isAce.toLowerCase() === "true"), ownerId,
+            isReleased: (typeof isReleased === 'boolean' ? isReleased : isReleased.toLowerCase() === "true"),
+            isErrata: (typeof isErrata === 'boolean' ? isErrata : isErrata.toLowerCase() === "true")
         });
     }, [cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype,
         cardSupertype, expansionId, sortOrder, sortBy, level, levelOperation, atk,
-        atkOperation, def, defOperation, isAce, ownerId]);
+        atkOperation, def, defOperation, isAce, ownerId, isReleased, isErrata]);
 
     const referenceCard = (cardData: CardData) => {
         const cardId = getPointerId(cardData).toString();
@@ -257,6 +264,15 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         Cookies.set(CardCatalogueCookie.OWNER_ID, value);
     };
 
+    const handleIsReleasedChange = (value: boolean) => {
+        setIsReleased(value);
+        Cookies.set(CardCatalogueCookie.IS_RELEASED, String(value));
+    };
+
+    const handleIsErrataChange = (value: boolean) => {
+        setIsErrata(value);
+        Cookies.set(CardCatalogueCookie.IS_ERRATA, String(value));
+    };
 
     const resetFilters = () => {
         setCardName('');
@@ -277,6 +293,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         setDefOperation('');
         setIsAce(false);
         setOwnerId('');
+        setIsReleased(false);
+        setIsErrata(false);
 
         onFilterChange(getEmptyFilters());
         resetFilterCookies();
@@ -301,6 +319,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         Cookies.remove(CardCatalogueCookie.DEF_OPERATION);
         Cookies.remove(CardCatalogueCookie.IS_ACE);
         Cookies.remove(CardCatalogueCookie.OWNER_ID);
+        Cookies.remove(CardCatalogueCookie.IS_RELEASED);
+        Cookies.remove(CardCatalogueCookie.IS_ERRATA);
     }
 
     const clearReference = () => {
@@ -399,8 +419,10 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
                               atkOperation={atkOperation} handleAtkOperationChange={handleAtkOperationChange}
                               def={def as number} handleDefChange={handleDefChange}
                               defOperation={defOperation} handleDefOperationChange={handleDefOperationChange}
-                              isAce={isAce as boolean} handleIsAceChange={handleIsAceChange}
+                              isAce={isAce === true || isAce === 'true'} handleIsAceChange={handleIsAceChange}
                               ownerId={ownerId} handleOwnerIdChange={handleOwnerIdChange}
+                              isReleased={isReleased === true || isReleased === 'true'} handleIsReleasedChange={handleIsReleasedChange}
+                              isErrata={isErrata === true || isErrata === 'true'} handleIsErrataChange={handleIsErrataChange}
                 />
             </Toolbar>
         </StyledAppBar>
