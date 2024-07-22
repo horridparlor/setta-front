@@ -149,8 +149,11 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         setReferenceId(value);
         onFilterChange({ ...getEmptyFilters(), referenceId: value });
     }
-    const updateNavigate = () => {
+    const updateUrlParams = () => {
         navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+    }
+    const updateNavigate = () => {
+        updateUrlParams();
         sessionStorage.setItem(PageCookie.CARD_CATALOGUE_FILTERS, params.toString());
     }
     const handleCookieChange = (key : string, value: any) => {
@@ -355,6 +358,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         clearReference,
         toggleFilters,
     }));
+
+    updateUrlParams();
 
     return (
         <StyledAppBar position="sticky" sx={{margin: '0.2rem 0'}}>
