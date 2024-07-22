@@ -115,11 +115,17 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
             [getPointerId(card), card.primaryMaterialId, card.secondaryMaterialId, card.tertiaryMaterialId, card.countsAsId]
                 .includes(parseInt(filters.referenceId)) ||
             !!cards.find(c => getPointerId(c) === parseInt(filters.referenceId)
-                && ([c.primaryMaterialId, c.secondaryMaterialId, c.tertiaryMaterialId, c.countsAsId].some(reference => reference === getPointerId(card) || (card.countsAsId && reference === card.countsAsId)) ||
-                    combineEffectsTexts(c).toLowerCase().includes(normalizeName(card.cardName).toLowerCase()) ||
-                    (card.countsAsId && combineEffectsTexts(c).toLowerCase().includes(normalizeName(cards.find(c2 => getPointerId(c2) === card.countsAsId)?.cardName.toLowerCase()))))) ||
-                cards.find(c => getPointerId(c).toString() === filters.referenceId) && combineEffectsTexts(card).includes(cards.find(c => getPointerId(c).toString() === filters.referenceId)!.cardName) ||
-                cards.find(c => getPointerId(c).toString() === getReferencesCountsAs()?.toString()) && combineEffectsTexts(card).includes(cards.find(c => getPointerId(c).toString() === getReferencesCountsAs()?.toString())!.cardName))
+                && ([c.primaryMaterialId, c.secondaryMaterialId, c.tertiaryMaterialId, c.countsAsId].some(
+                        reference => reference === getPointerId(card) || (card.countsAsId && reference === card.countsAsId)
+                    )
+                    || combineEffectsTexts(c).toLowerCase().includes(normalizeName(card.cardName).toLowerCase())
+                    || (card.countsAsId && card.countsAsId > 0 && combineEffectsTexts(c).toLowerCase().includes(
+                        normalizeName(cards.find(c2 => getPointerId(c2) === card.countsAsId)?.cardName.toLowerCase()))
+                    )
+                )
+            )
+            || cards.find(c => getPointerId(c).toString() === filters.referenceId) && combineEffectsTexts(card).includes(cards.find(c => getPointerId(c).toString() === filters.referenceId)!.cardName)
+            || cards.find(c => getPointerId(c).toString() === getReferencesCountsAs()?.toString()) && combineEffectsTexts(card).includes(cards.find(c => getPointerId(c).toString() === getReferencesCountsAs()?.toString())!.cardName))
         && (isInReferenceMode() || filters.cardType === '' || card.cardType === filters.cardType)
         && (isInReferenceMode() || filters.cardSubtype === '' || card.subtype === filters.cardSubtype)
         && (isInReferenceMode() || filters.cardSupertype === '' || card.supertype === filters.cardSupertype)

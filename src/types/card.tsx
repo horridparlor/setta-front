@@ -315,7 +315,10 @@ export const hasTwoMaterials = (cardData: CardData) => {
 }
 
 export const getPointerId = (cardData: CardData): number => {
-    return cardData.errataOfId ?? cardData.cardId;
+    if (cardData.errataOfId === null || cardData.errataOfId < 0) {
+        return cardData.cardId;
+    }
+    return cardData.errataOfId;
 }
 
 export const isCardId = (cardData: CardData, cardId: number|null): boolean => {
