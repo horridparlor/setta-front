@@ -349,10 +349,6 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         setModalOpen(!isModalOpen);
     };
 
-    useEffect(() => {
-        updateNavigate();
-    }, [params]);
-
     useImperativeHandle(ref, () => ({
         referenceCard,
         resetFilters,
