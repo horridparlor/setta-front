@@ -10,7 +10,6 @@ import {AdminEndpoint, getAdminEndpoint, getHeaders, RequestMethod, showError} f
 import useExpansions from "../../hooks/useExpansions";
 import {encodeEffectsString, normalizeName, serializeName} from "../../utils/string";
 import {convertToBase64} from "../../types/files";
-import {CardEffects, DEFAULT_CARD_EFFECTS} from "../../types/cardEffects";
 import {useParams} from "react-router-dom";
 
 interface CardEditorProps {
@@ -27,7 +26,6 @@ export interface CardEditorRef {
 const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards, refetch}, ref) => {
     const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
-    const [cardEffects, setCardEffects ] = useState<CardEffects>(DEFAULT_CARD_EFFECTS);
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [oldName, setOldName] = useState<string>('');
@@ -41,10 +39,6 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             [field]: value
         }));
     };
-
-    const updateEffects = (newEffects: CardEffects) => {
-        setCardEffects(newEffects);
-    }
 
     const handleSave = async () => {
         if (isSaving) {
@@ -264,7 +258,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             <Box sx={{ marginRight: '2rem' }}>
                 <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1} overwriteArt={imageFile} oldName={oldName}/>
             </Box>
-            <RightPanelSettings cards={cards} cardData={cardData} cardEffects={cardEffects} updateEffects={updateEffects}
+            <RightPanelSettings cards={cards} cardData={cardData}
                                 expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
                                 onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
                                 onSave={handleSave} onDelete={handleDelete} onErrata={handleErrata} onCopy={handleCopy} />

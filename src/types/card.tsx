@@ -1,4 +1,4 @@
-import {Card, MenuItem} from "@mui/material";
+import {MenuItem} from "@mui/material";
 import React from "react";
 import Cookies from "js-cookie";
 import {AuthCookie, getUserId} from "./cookie";

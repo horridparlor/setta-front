@@ -37,25 +37,13 @@ import {
     MONSTER_CARD_TYPES, SpecialCountsAs, SpecialCountsAsId
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
-import {getStringSelector, normalizeName} from "../../utils/string";
+import {normalizeName} from "../../utils/string";
 import {getUserId} from "../../types/cookie";
-import {
-    CardEffects,
-    CostMetaType,
-    CostTypesByMetaType,
-    EffectType,
-    isCostMetaType,
-    isCostType,
-    isEffectType
-} from "../../types/cardEffects";
-import {getEnumSelector} from "../../utils/enum";
 
 interface RightPanelSettingsProps {
     cardData: CardData;
-    cardEffects: CardEffects;
     expansions: Array<CardExpansion>;
     onCardDataChange: (field: keyof CardData, value: string | number) => void;
-    updateEffects: (newEffects: CardEffects) => void;
     onExport: () => void;
     onSave: () => void;
     onImageFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -69,10 +57,8 @@ interface RightPanelSettingsProps {
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     cardData,
-    cardEffects,
     expansions,
     onCardDataChange,
-    updateEffects,
     onExport,
     onSave,
     onImageFileChange,
@@ -217,75 +203,18 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         setTabId(newId);
     };
 
-    const costTypeOptions = CostTypesByMetaType[cardEffects.cost.metaType];
-
     const getEffectsTab = () => {
         return (
             <>
                 <Box
                     sx={rowContainerStyle}
                 >
-                    <FormControl fullWidth>
-                        <InputLabel id="cost-selector-label">Cost</InputLabel>
-                        <Select
-                            labelId="cost-selector-label"
-                            value={cardEffects.cost.metaType}
-                            label="Cost"
-                            onChange={(event: SelectChangeEvent<string>) => {
-                                const cost = event.target.value;
-                                if (!isCostMetaType(cost)) {
-                                    return;
-                                }
-                                updateEffects({...cardEffects, cost: {...cardEffects.cost, metaType: cost, costType: EffectType.NONE} })
-                            }}
-                            disabled={cannotEdit()}
-                        >
-                            {getEnumSelector([CostMetaType], CostMetaType.NONE)}
 
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth sx={{display: costTypeOptions.length ? 'flex' : 'none'}}>
-                        <InputLabel id="cost-type-selector-label">Cost type</InputLabel>
-                        <Select
-                            labelId="cost-type-selector-label"
-                            value={cardEffects.cost.costType}
-                            label="Cost type"
-                            onChange={(event: SelectChangeEvent<string>) => {
-                                const costType = event.target.value;
-                                if (!isCostType(costType)) {
-                                    return;
-                                }
-                                updateEffects({...cardEffects, cost: {...cardEffects.cost, costType: costType} })
-                            }}
-                            disabled={cannotEdit()}
-                        >
-                            {getStringSelector(costTypeOptions, EffectType.NONE)}
-
-                        </Select>
-                    </FormControl>
                 </Box>
                 <Box
                     sx={rowContainerStyle}
                 >
-                     <FormControl fullWidth>
-                        <InputLabel id="effect-type-selector-label">Effect type</InputLabel>
-                        <Select
-                            labelId="effect-type-selector-label"
-                            value={cardEffects.effect.effectType}
-                            label="Effect type"
-                            onChange={(event: SelectChangeEvent<string>) => {
-                                const effectType = event.target.value;
-                                if (!isEffectType(effectType)) {
-                                    return;
-                                }
-                                updateEffects({...cardEffects, effect: {...cardEffects.effect, effectType: effectType} })
-                            }}
-                            disabled={cannotEdit()}
-                        >
-                            {getEnumSelector([EffectType], EffectType.NONE)}
 
-                        </Select>
-                    </FormControl>
                 </Box>
             </>
         );
