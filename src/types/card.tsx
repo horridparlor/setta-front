@@ -26,16 +26,15 @@ export enum CardSubtype {
     REVENGE = 'Revenge',
     ROYAL = 'Royal',
     TIME_TRAVELLER = 'Time Traveller',
-    SWORDMASTER = 'Swordmaster',
     KILLER_MOVE = 'Killer Move',
-    DOMAIN = 'Domain'
 }
 
 export enum CardSupertype {
     NONE = 'None',
     HAND_TRAP = 'Hand Trap',
     MAXIMUM = 'Maximum',
-    PENDULUM = 'Pendulum'
+    PENDULUM = 'Pendulum',
+    DOMAIN = 'Domain'
 }
 
 export enum MaximumPiece {
@@ -67,7 +66,6 @@ export const EXTRA_DECK_SUBTYPES = [
   CardSubtype.REVENGE,
   CardSubtype.ROYAL,
   CardSubtype.TIME_TRAVELLER,
-  CardSubtype.SWORDMASTER,
   CardSubtype.KILLER_MOVE,
 ];
 
@@ -189,7 +187,7 @@ export const combineEffectsTexts = (cardData: CardData|undefined) => {
 }
 
 const MONSTER_SUBTYPES = [CardSubtype.NORMAL, CardSubtype.EFFECT,
-    CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER, CardSubtype.SWORDMASTER];
+    CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER];
 
 const getActiveSubtypes = (cardType: CardType) => {
     switch (cardType) {
@@ -198,7 +196,7 @@ const getActiveSubtypes = (cardType: CardType) => {
         case CardType.SPELL:
             return [CardSubtype.NORMAL];
         case CardType.TRAP:
-            return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE, CardSubtype.DOMAIN];
+            return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
     }
 }
 
@@ -212,6 +210,9 @@ export const getSubtypeOptions = (cardType: CardType): React.ReactNode => {
 }
 
 const getActiveSupertypes = (cardType: CardType, subtype: CardSubtype) => {
+    if (cardType === CardType.TRAP && subtype === CardSubtype.NORMAL) {
+        return [CardSupertype.NONE, CardSupertype.DOMAIN];
+    }
     if (cardType !== CardType.MONSTER) {
         return [CardSupertype.NONE];
     }
@@ -263,7 +264,7 @@ export const isKiller = (cardData: CardData) => {
 }
 
 export const isDomain = (cardData: CardData) => {
-    return cardData.subtype === CardSubtype.DOMAIN;
+    return cardData.supertype === CardSupertype.DOMAIN;
 }
 
 export const getCardsExpansion = (cardData: CardData, expansions: Array<CardExpansion>) => {

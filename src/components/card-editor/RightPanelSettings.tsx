@@ -428,7 +428,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             {getSubtypeOptions(cardData.cardType)}
                         </Select>
                     </FormControl>
-                    <Box sx={{ display: cardData.cardType === CardType.MONSTER &&
+                    <Box sx={{ display: [CardType.MONSTER, CardType.TRAP].includes(cardData.cardType) &&
                         [CardSubtype.NORMAL, CardSubtype.EFFECT].includes(cardData.subtype) ? 'inline' : 'none' }}>
                         <FormControl fullWidth>
                             <InputLabel id="supertype-selector-label">Supertype</InputLabel>

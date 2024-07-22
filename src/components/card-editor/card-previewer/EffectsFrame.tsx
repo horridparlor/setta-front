@@ -29,8 +29,6 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
                 return '⋅'
             case CardSubtype.TIME_TRAVELLER:
                 return '★'
-            case CardSubtype.SWORDMASTER:
-                return '⚙';
             case CardSubtype.KILLER_MOVE:
                 return '->'
             default:

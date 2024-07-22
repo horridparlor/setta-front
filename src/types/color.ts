@@ -12,7 +12,6 @@ export enum CardMainFrameColor {
     ROYAL_LIGHT = '#616161',
     TIME_TRAVELLER_DARK = '#102058',
     TIME_TRAVELLER_LIGHT = '#2650ea',
-    SWORDMASTER = '#9ea0a6',
     SPELL = '#4cb871',
     TRAP = '#e77c9b',
     KILLER_MOVE = '#5f9bdb',
@@ -26,7 +25,6 @@ export enum CardEffectFrameColor {
     REVENGE = '#f6dcdc',
     ROYAL = '#e5e5e5',
     TIME_TRAVELLER = '#e9ecf6',
-    SWORDMASTER = '#e2e5ec',
     SPELL = '#e3f5ea',
     TRAP = '#f5e0e6',
     KILLER_MOVE = '#e7f0f7',
@@ -65,10 +63,6 @@ export const getCardBackground = (cardData : CardData) => {
     let darkColor;
     let lightColor;
     switch (cardData.subtype) {
-        case CardSubtype.DOMAIN:
-            darkColor = `${CardMainFrameColor.TRAP} ${GradientCutPoint.HAND_TRAP_DROP}%`;
-            lightColor = `${CardMainFrameColor.SPELL} ${GradientCutPoint.HAND_TRAP_DROP + GradientCutPoint.HAND_TRAP_EDGE}%`;
-            break;
         case CardSubtype.ROYAL:
             darkColor = CardMainFrameColor.ROYAL_DARK;
             lightColor = CardMainFrameColor.ROYAL_LIGHT;
@@ -87,6 +81,10 @@ export const getCardBackground = (cardData : CardData) => {
             darkColor = `${CardMainFrameColor.NORMAL} ${GradientCutPoint.PENDULUM_DROP}%`;
             lightColor = `${CardMainFrameColor.SPELL} ${GradientCutPoint.PENDULUM_DROP + GradientCutPoint.PENDULUM_EDGE}%`;
             break;
+        case CardSupertype.DOMAIN:
+            darkColor = `${CardMainFrameColor.TRAP} ${GradientCutPoint.HAND_TRAP_DROP}%`;
+            lightColor = `${CardMainFrameColor.SPELL} ${GradientCutPoint.HAND_TRAP_DROP + GradientCutPoint.HAND_TRAP_EDGE}%`;
+            break;
     }
     if (darkColor !== undefined) {
         return `linear-gradient(to bottom, ${darkColor}, ${lightColor})`;
@@ -102,8 +100,6 @@ export const getMonsterBackgroundColor = (subtype : CardSubtype) => {
             return CardMainFrameColor.FUSION;
         case CardSubtype.REVENGE:
             return CardMainFrameColor.REVENGE;
-        case CardSubtype.SWORDMASTER:
-            return CardMainFrameColor.SWORDMASTER;
         default:
             return CardMainFrameColor.NORMAL;
     }
@@ -125,7 +121,7 @@ export const getCardEffectFrameColor = (cardData : CardData) => {
         case CardType.SPELL:
             return CardEffectFrameColor.SPELL;
         case CardType.TRAP:
-            return getTrapEffectFrameColor(cardData.subtype);
+            return getTrapEffectFrameColor(cardData);
     }
 };
 
@@ -141,8 +137,6 @@ export const getMonsterEffectFrameColor = (cardData : CardData) => {
             return CardEffectFrameColor.ROYAL;
         case CardSubtype.TIME_TRAVELLER:
             return CardEffectFrameColor.TIME_TRAVELLER;
-        case CardSubtype.SWORDMASTER:
-            return CardEffectFrameColor.SWORDMASTER;
         default:
             return getNormalMonsterEffectFrameColor(cardData.supertype);
     }
@@ -159,10 +153,12 @@ export const getNormalMonsterEffectFrameColor = (supertype : CardSupertype) => {
     }
 }
 
-export const getTrapEffectFrameColor = (subtype : CardSubtype) => {
-    switch (subtype) {
-        case CardSubtype.DOMAIN:
+export const getTrapEffectFrameColor = (cardData: CardData) => {
+    switch (cardData.supertype) {
+        case CardSupertype.DOMAIN:
             return CardEffectFrameColor.SPELL;
+    }
+    switch (cardData.subtype) {
         case CardSubtype.KILLER_MOVE:
             return CardEffectFrameColor.KILLER_MOVE;
         default:
@@ -185,7 +181,7 @@ export const getArtworkBorder = (scale: number) => {
 
 export const getEffectsBorder = (cardData: CardData, scale: number) => {
     return `solid ${EFFECTS_BORDER_THICKNESS * scale}rem ${
-        [CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER, CardSubtype.SWORDMASTER]
+        [CardSubtype.REVENGE, CardSubtype.ROYAL, CardSubtype.TIME_TRAVELLER]
         .includes(cardData.subtype) ? 'black' : 'transparent'}`;
 }
 
