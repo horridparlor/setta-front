@@ -173,9 +173,10 @@ export type EffectsEffect = {
     subtype: string|null;
     supertype: string|null;
     amount: number|EffectsCount|null;
+    maxAmount: number|null;
     target: EffectsTarget|null;
     direction: EffectsDirection;
     hindrance: EffectsHindrance;
     benefit: EffectsBenefit;
-    chain: EffectsEffect|null;
+    chainedEffect: EffectsEffect|null;
 }
