@@ -5,8 +5,9 @@ import {CardOwner} from "../../types/user";
 import {CardExpansion} from "../../types/expansion";
 import HomeBar, {HomeBarRef} from "../../components/common/HomeBar";
 import CardCatalogue, {CardCatalogueRef} from "../../components/card-catalogue/CardCatalogue";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {AppPage} from "../../types/navigation";
+import {PageCookie} from "../../types/cookie";
 
 interface CardCataloguePageProps {
     cards: Array<CardData>;
@@ -21,6 +22,7 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
     const catalogueRef = useRef<CardCatalogueRef>(null);
     const homeBarRef = useRef<HomeBarRef>(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const commitSave = () => {
         catalogueRef.current?.toggleFilters();
@@ -32,6 +34,8 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
        catalogueRef.current?.backdownFilters();
     }
     const handleCardClick = (card: CardData) => {
+        const params = new URLSearchParams(location.search);
+        sessionStorage.setItem(PageCookie.CARD_CATALOGUE_FILTERS, params.toString());
         const cardRoute = `${AppPage.CardEditor}/${card.cardId.toString()}`;
         navigate(cardRoute);
     }

@@ -15,7 +15,6 @@ import {CardExpansion} from "../../types/expansion";
 import Button from "@mui/material/Button";
 import {normalizeName} from "../../utils/string";
 import {toast} from "react-toastify";
-import Cookies from "js-cookie";
 import FiltersModal from "./FiltersModal";
 import {CardCatalogueCookie, PageCookie} from "../../types/cookie";
 import {ComparisonType} from "../../types/filter";
