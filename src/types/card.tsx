@@ -100,6 +100,7 @@ export interface CardData {
     materialsSize: number;
     effectsSize: number;
     expansionId: number;
+    originalExpansionId: number;
     created_at: string;
     updated_at: string;
 }
@@ -175,6 +176,7 @@ export const DEFAULT_CARD_DATA = {
     materialsSize: DefaultTextSize.EFFECTS_BOX,
     effectsSize: DefaultTextSize.EFFECTS_BOX,
     expansionId: 8,
+    originalExpansionId: 8,
     created_at: '',
     updated_at: ''
 }
@@ -327,3 +329,6 @@ export const isCardId = (cardData: CardData, cardId: number|null): boolean => {
     }
     return cardData.cardId === cardId || cardData.errataOfId === cardId;
 }
+export const getCardsExpansionIds = (cardData: CardData): Set<number> => {
+    return new Set([cardData.expansionId, cardData.originalExpansionId]);
+};

@@ -3,7 +3,7 @@ import {Box, Card} from '@mui/material';
 import {
     CardData,
     CardType,
-    combineEffectsTexts, getCardsExpansion,
+    combineEffectsTexts, getCardsExpansion, getCardsExpansionIds,
     getCombinedStats,
     getFullTypeString, getPointerId,
     isMonster
@@ -130,7 +130,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
         && (isInReferenceMode() || filters.cardSubtype === '' || card.subtype === filters.cardSubtype)
         && (isInReferenceMode() || filters.cardSupertype === '' || card.supertype === filters.cardSupertype)
         && (isInReferenceMode() || filters.cardClass === '' || (card.cardType === CardType.MONSTER && card.cardClass === filters.cardClass))
-        && (isInReferenceMode() || filters.expansionId === '' || card.expansionId === parseInt(filters.expansionId))
+        && (isInReferenceMode() || filters.expansionId === '' || getCardsExpansionIds(card).has(parseInt(filters.expansionId)))
         && ((![SortOption.CARD_CLASS, SortOption.LEVEL, SortOption.ATK, SortOption.DEF, SortOption.COMBINED].includes(filters.sortBy as SortOption)
             && (filters.levelOperation === '' && filters.atkOperation === '' && filters.defOperation === '')) || isMonster(card))
         && (isInReferenceMode() || filters.levelOperation === '' || checkLevel(card))
