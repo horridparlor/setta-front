@@ -1,4 +1,4 @@
-import React, {ChangeEvent, forwardRef, useImperativeHandle, useRef, useState} from 'react';
+import React, {ChangeEvent, forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
 import domtoimage from 'dom-to-image';
@@ -10,8 +10,8 @@ import {AdminEndpoint, getAdminEndpoint, getHeaders, RequestMethod, showError} f
 import useExpansions from "../../hooks/useExpansions";
 import {encodeEffectsString, normalizeName, serializeName} from "../../utils/string";
 import {convertToBase64} from "../../types/files";
-import axios from "axios";
 import {CardEffects, DEFAULT_CARD_EFFECTS} from "../../types/cardEffects";
+import {useParams} from "react-router-dom";
 
 interface CardEditorProps {
     closeUpdate: () => void;
@@ -20,7 +20,6 @@ interface CardEditorProps {
 }
 
 export interface CardEditorRef {
-    setCard: (cardData: CardData) => void;
     handleSave: () => void;
     handleExport: () => void;
 }
@@ -32,6 +31,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [oldName, setOldName] = useState<string>('');
+    const { cardId } = useParams();
 
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -142,7 +142,6 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
             }
             toast.success(`New ${actionWord} of card: ${normalizeName(cardData)}`);
             await refetch();
-            setCard(responseData);
         } catch (error) {
             toast.error(`Failed to ${actionWord} card: ` + error);
         }
@@ -241,6 +240,11 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
         setCardData(card);
     }
 
+    useEffect(() => {
+        const card = cardId === undefined ? undefined : cards.find(card => card.cardId === parseInt(cardId));
+        setCard(card || DEFAULT_CARD_DATA);
+    }, [cardId, cards]);
+
     const encodeEffects = () => {
         setCardData({
             ...cardData,
@@ -251,7 +255,6 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     }
 
     useImperativeHandle(ref, () => ({
-        setCard,
         handleSave,
         handleExport,
     }));

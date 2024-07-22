@@ -3,11 +3,9 @@ import Button from '@mui/material/Button';
 import {Box} from "@mui/material";
 import {AppPage} from "../../types/navigation";
 import LoginModal from "./LoginModal";
-import {CardData} from "../../types/card";
-import {CardEditorRef} from "../card-editor/CardEditor";
+import {useNavigate} from "react-router-dom";
 
 interface HomeBarProps {
-    setPage: (page: AppPage) => void;
     refetch: () => Promise<void>;
 }
 
@@ -15,8 +13,9 @@ export interface HomeBarRef {
     toggleLoginOpen: () => void;
 }
 
-const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({setPage, refetch}, ref) => {
+const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({refetch}, ref) => {
     const [isLoginOpen, setLoginOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleLoginOpen = () => {
         setLoginOpen(!isLoginOpen);
@@ -27,10 +26,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({setPage, refetch}, ref) =
 
     return (
         <Box>
-            <Button variant="contained" color="primary" onClick={() => setPage(AppPage.CardEditor)}>
+            <Button variant="contained" color="primary" onClick={() => navigate(AppPage.CardEditor)}>
                 Card Editor
             </Button>
-            <Button variant="contained" color="secondary" onClick={() => setPage(AppPage.CardCatalogue)} sx={{marginLeft: '0.4rem'}}>
+            <Button variant="contained" color="secondary" onClick={() => navigate(AppPage.CardCatalogue)} sx={{marginLeft: '0.4rem'}}>
                 Card Catalogue
             </Button>
             <Button variant="contained" color="info" onClick={() => setLoginOpen(true)} sx={{marginLeft: '0.4rem'}}>

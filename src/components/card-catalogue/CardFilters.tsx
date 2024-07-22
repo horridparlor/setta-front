@@ -20,6 +20,7 @@ import FiltersModal from "./FiltersModal";
 import {CardCatalogueCookie} from "../../types/cookie";
 import {ComparisonType} from "../../types/filter";
 import {CardOwner} from "../../types/user";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
@@ -49,28 +50,31 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 
 const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardFiltersProps>(({onFilterChange, expansions,
     cards, cardOwners}, ref) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
     const loadFiltersFromCookies = () => {
         return {
-            cardName: Cookies.get(CardCatalogueCookie.CARD_NAME) || '',
-            cardEffects: Cookies.get(CardCatalogueCookie.CARD_EFFECTS) || '',
-            referenceId: Cookies.get(CardCatalogueCookie.REFERENCE_ID) || '',
-            cardClass: Cookies.get(CardCatalogueCookie.CARD_CLASS) || '',
-            cardType: Cookies.get(CardCatalogueCookie.CARD_TYPE) || '',
-            cardSubtype: Cookies.get(CardCatalogueCookie.CARD_SUBTYPE) || '',
-            cardSupertype: Cookies.get(CardCatalogueCookie.CARD_SUPERTYPE) || '',
-            expansionId: Cookies.get(CardCatalogueCookie.EXPANSION_ID) || '',
-            sortOrder: Cookies.get(CardCatalogueCookie.SORT_ORDER) || '',
-            sortBy: Cookies.get(CardCatalogueCookie.SORT_BY) || '',
-            level: Cookies.get(CardCatalogueCookie.LEVEL) || 1,
-            levelOperation: Cookies.get(CardCatalogueCookie.LEVEL_OPERATION) || '',
-            atk: Cookies.get(CardCatalogueCookie.ATK) || 0,
-            atkOperation: Cookies.get(CardCatalogueCookie.ATK_OPERATION) || '',
-            def: Cookies.get(CardCatalogueCookie.DEF) || 0,
-            defOperation: Cookies.get(CardCatalogueCookie.DEF_OPERATION) || '',
-            isAce: Cookies.get(CardCatalogueCookie.IS_ACE) || false,
-            ownerId: Cookies.get(CardCatalogueCookie.OWNER_ID) || '',
-            isReleased: Cookies.get(CardCatalogueCookie.IS_RELEASED) || false,
-            isErrata: Cookies.get(CardCatalogueCookie.IS_ERRATA) || false,
+            cardName: params.get(CardCatalogueCookie.CARD_NAME) || '',
+            cardEffects: params.get(CardCatalogueCookie.CARD_EFFECTS) || '',
+            referenceId: params.get(CardCatalogueCookie.REFERENCE_ID) || '',
+            cardClass: params.get(CardCatalogueCookie.CARD_CLASS) || '',
+            cardType: params.get(CardCatalogueCookie.CARD_TYPE) || '',
+            cardSubtype: params.get(CardCatalogueCookie.CARD_SUBTYPE) || '',
+            cardSupertype: params.get(CardCatalogueCookie.CARD_SUPERTYPE) || '',
+            expansionId: params.get(CardCatalogueCookie.EXPANSION_ID) || '',
+            sortOrder: params.get(CardCatalogueCookie.SORT_ORDER) || '',
+            sortBy: params.get(CardCatalogueCookie.SORT_BY) || '',
+            level: params.get(CardCatalogueCookie.LEVEL) || 1,
+            levelOperation: params.get(CardCatalogueCookie.LEVEL_OPERATION) || '',
+            atk: params.get(CardCatalogueCookie.ATK) || 0,
+            atkOperation: params.get(CardCatalogueCookie.ATK_OPERATION) || '',
+            def: params.get(CardCatalogueCookie.DEF) || 0,
+            defOperation: params.get(CardCatalogueCookie.DEF_OPERATION) || '',
+            isAce: params.get(CardCatalogueCookie.IS_ACE) || false,
+            ownerId: params.get(CardCatalogueCookie.OWNER_ID) || '',
+            isReleased: params.get(CardCatalogueCookie.IS_RELEASED) || false,
+            isErrata: params.get(CardCatalogueCookie.IS_ERRATA) || false,
         };
     }
 
@@ -143,52 +147,63 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         setReferenceId(value);
         onFilterChange({ ...getEmptyFilters(), referenceId: value });
     }
+    const updateNavigate = () => {
+        navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+    }
+    const handleCookieChange = (key : string, value: any) => {
+        params.set(key, value);
+        updateNavigate();
+    }
+    const removeCookie = (key : string) => {
+        params.delete(key);
+        updateNavigate();
+    }
     const handleCardNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setCardName(value);
-        Cookies.set(CardCatalogueCookie.CARD_NAME, value);
+        handleCookieChange(CardCatalogueCookie.CARD_NAME, value);
     };
 
     const handleCardClassChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardClass(value);
-        Cookies.set(CardCatalogueCookie.CARD_CLASS, value);
+        handleCookieChange(CardCatalogueCookie.CARD_CLASS, value);
     };
 
     const handleCardTypeChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardType(value);
-        Cookies.set(CardCatalogueCookie.CARD_TYPE, value);
+        handleCookieChange(CardCatalogueCookie.CARD_TYPE, value);
     };
 
     const handleCardSubtypeChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardSubtype(value);
-        Cookies.set(CardCatalogueCookie.CARD_SUBTYPE, value);
+        handleCookieChange(CardCatalogueCookie.CARD_SUBTYPE, value);
     };
 
     const handleCardSupertypeChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setCardSupertype(value);
-        Cookies.set(CardCatalogueCookie.CARD_SUPERTYPE, value);
+        handleCookieChange(CardCatalogueCookie.CARD_SUPERTYPE, value);
     };
 
     const handleExpansionChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setExpansionId(value);
-        Cookies.set(CardCatalogueCookie.EXPANSION_ID, value);
+        handleCookieChange(CardCatalogueCookie.EXPANSION_ID, value);
     };
 
     const handleCardEffectsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value: string = event.target.value;
         setCardEffects(value);
-        Cookies.set(CardCatalogueCookie.CARD_EFFECTS, value);
+        handleCookieChange(CardCatalogueCookie.CARD_EFFECTS, value);
     };
 
     const handleReferenceIdChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setReferenceId(value);
-        Cookies.set(CardCatalogueCookie.REFERENCE_ID, value);
+        handleCookieChange(CardCatalogueCookie.REFERENCE_ID, value);
     };
 
     const handleSortOrderChange = (event: React.MouseEvent<HTMLElement>, value: string | null ) => {
@@ -196,13 +211,13 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
             value = sortOrder;
         }
         setSortOrder(value);
-        Cookies.set(CardCatalogueCookie.SORT_ORDER, value);
+        handleCookieChange(CardCatalogueCookie.SORT_ORDER, value);
     };
 
     const handleSortByChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setSortBy(value);
-        Cookies.set(CardCatalogueCookie.SORT_BY, value);
+        handleCookieChange(CardCatalogueCookie.SORT_BY, value);
     };
 
     const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,14 +226,14 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         if (levelOperation === '') {
             setLevelOperation(ComparisonType.EQUAL);
         }
-        Cookies.set(CardCatalogueCookie.LEVEL, value.toString());
+        handleCookieChange(CardCatalogueCookie.LEVEL, value.toString());
     };
     const handleLevelOperationChange = (event: React.MouseEvent<HTMLElement>, value: string | null ) => {
         if (value === null) {
             value = '';
         }
         setLevelOperation(value);
-        Cookies.set(CardCatalogueCookie.LEVEL_OPERATION, value);
+        handleCookieChange(CardCatalogueCookie.LEVEL_OPERATION, value);
     };
 
     const handleAtkChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,14 +242,14 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         if (atkOperation === '') {
             setAtkOperation(ComparisonType.EQUAL);
         }
-        Cookies.set(CardCatalogueCookie.ATK, value.toString());
+        handleCookieChange(CardCatalogueCookie.ATK, value.toString());
     };
     const handleAtkOperationChange = (event: React.MouseEvent<HTMLElement>, value: string | null ) => {
         if (value === null) {
             value = '';
         }
         setAtkOperation(value);
-        Cookies.set(CardCatalogueCookie.ATK_OPERATION, value);
+        handleCookieChange(CardCatalogueCookie.ATK_OPERATION, value);
     };
 
     const handleDefChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -243,35 +258,35 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         if (defOperation === '') {
             setDefOperation(ComparisonType.EQUAL);
         }
-        Cookies.set(CardCatalogueCookie.DEF, value.toString());
+        handleCookieChange(CardCatalogueCookie.DEF, value.toString());
     };
     const handleDefOperationChange = (event: React.MouseEvent<HTMLElement>, value: string | null ) => {
         if (value === null) {
             value = '';
         }
         setDefOperation(value);
-        Cookies.set(CardCatalogueCookie.DEF_OPERATION, value);
+        handleCookieChange(CardCatalogueCookie.DEF_OPERATION, value);
     };
 
     const handleIsAceChange = (value: boolean) => {
         setIsAce(value);
-        Cookies.set(CardCatalogueCookie.IS_ACE, String(value));
+        handleCookieChange(CardCatalogueCookie.IS_ACE, String(value));
     };
 
     const handleOwnerIdChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
         setOwnerId(value);
-        Cookies.set(CardCatalogueCookie.OWNER_ID, value);
+        handleCookieChange(CardCatalogueCookie.OWNER_ID, value);
     };
 
     const handleIsReleasedChange = (value: boolean) => {
         setIsReleased(value);
-        Cookies.set(CardCatalogueCookie.IS_RELEASED, String(value));
+        handleCookieChange(CardCatalogueCookie.IS_RELEASED, String(value));
     };
 
     const handleIsErrataChange = (value: boolean) => {
         setIsErrata(value);
-        Cookies.set(CardCatalogueCookie.IS_ERRATA, String(value));
+        handleCookieChange(CardCatalogueCookie.IS_ERRATA, String(value));
     };
 
     const resetFilters = () => {
@@ -301,26 +316,26 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     };
 
     const resetFilterCookies = () => {
-        Cookies.remove(CardCatalogueCookie.CARD_NAME);
-        Cookies.remove(CardCatalogueCookie.CARD_EFFECTS);
-        Cookies.remove(CardCatalogueCookie.REFERENCE_ID);
-        Cookies.remove(CardCatalogueCookie.CARD_CLASS);
-        Cookies.remove(CardCatalogueCookie.CARD_TYPE);
-        Cookies.remove(CardCatalogueCookie.CARD_SUBTYPE);
-        Cookies.remove(CardCatalogueCookie.CARD_SUPERTYPE);
-        Cookies.remove(CardCatalogueCookie.EXPANSION_ID);
-        Cookies.remove(CardCatalogueCookie.SORT_ORDER);
-        Cookies.remove(CardCatalogueCookie.SORT_BY);
-        Cookies.remove(CardCatalogueCookie.LEVEL);
-        Cookies.remove(CardCatalogueCookie.LEVEL_OPERATION);
-        Cookies.remove(CardCatalogueCookie.ATK);
-        Cookies.remove(CardCatalogueCookie.ATK_OPERATION);
-        Cookies.remove(CardCatalogueCookie.DEF);
-        Cookies.remove(CardCatalogueCookie.DEF_OPERATION);
-        Cookies.remove(CardCatalogueCookie.IS_ACE);
-        Cookies.remove(CardCatalogueCookie.OWNER_ID);
-        Cookies.remove(CardCatalogueCookie.IS_RELEASED);
-        Cookies.remove(CardCatalogueCookie.IS_ERRATA);
+        removeCookie(CardCatalogueCookie.CARD_NAME);
+        removeCookie(CardCatalogueCookie.CARD_EFFECTS);
+        removeCookie(CardCatalogueCookie.REFERENCE_ID);
+        removeCookie(CardCatalogueCookie.CARD_CLASS);
+        removeCookie(CardCatalogueCookie.CARD_TYPE);
+        removeCookie(CardCatalogueCookie.CARD_SUBTYPE);
+        removeCookie(CardCatalogueCookie.CARD_SUPERTYPE);
+        removeCookie(CardCatalogueCookie.EXPANSION_ID);
+        removeCookie(CardCatalogueCookie.SORT_ORDER);
+        removeCookie(CardCatalogueCookie.SORT_BY);
+        removeCookie(CardCatalogueCookie.LEVEL);
+        removeCookie(CardCatalogueCookie.LEVEL_OPERATION);
+        removeCookie(CardCatalogueCookie.ATK);
+        removeCookie(CardCatalogueCookie.ATK_OPERATION);
+        removeCookie(CardCatalogueCookie.DEF);
+        removeCookie(CardCatalogueCookie.DEF_OPERATION);
+        removeCookie(CardCatalogueCookie.IS_ACE);
+        removeCookie(CardCatalogueCookie.OWNER_ID);
+        removeCookie(CardCatalogueCookie.IS_RELEASED);
+        removeCookie(CardCatalogueCookie.IS_ERRATA);
     }
 
     const clearReference = () => {
