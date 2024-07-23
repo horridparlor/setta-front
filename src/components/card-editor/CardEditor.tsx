@@ -17,6 +17,7 @@ interface CardEditorProps {
     closeUpdate: () => void;
     cards: Array<CardData>;
     refetch: () => Promise<void>;
+    goToCard: (cardId: number) => void;
 }
 
 export interface CardEditorRef {
@@ -25,7 +26,9 @@ export interface CardEditorRef {
     handleDelete: () => void;
 }
 
-const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards, refetch}, ref) => {
+const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({
+                                                                   closeUpdate, cards, refetch, goToCard
+                                                               }, ref) => {
     const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
@@ -137,6 +140,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
                 return;
             }
             toast.success(`New ${actionWord} of card: ${normalizeName(cardData)}`);
+            goToCard(responseData.cardId);
             await refetch();
         } catch (error) {
             toast.error(`Failed to ${actionWord} card: ` + error);

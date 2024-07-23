@@ -22,6 +22,10 @@ const CardEditorPage = (props: CardEditorPageProps) => {
         onClose();
     }
 
+    const goToCard = (cardId: number) => {
+        navigate(`${AppPage.CardEditor}/${cardId.toString()}`);
+    }
+
     const onClose = () => {
         navigate(AppPage.CardCatalogue);
     }
@@ -81,7 +85,9 @@ const CardEditorPage = (props: CardEditorPageProps) => {
                 alignItems: 'center',
                 overflow: 'auto',
             }}>
-                <CardEditor cards={cards} closeUpdate={onCardSaved} ref={editorRef} refetch={refetch} />
+                <CardEditor cards={cards} closeUpdate={onCardSaved} ref={editorRef} refetch={refetch}
+                    goToCard={goToCard}
+                />
             </Box>
         </Box>
     );
