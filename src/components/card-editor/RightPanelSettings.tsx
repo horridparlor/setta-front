@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, ReactNode, useState} from 'react';
 import {
     Box,
     Button,
@@ -11,7 +11,7 @@ import {
     SelectChangeEvent,
     Tab,
     Tabs,
-    TextField
+    TextField, Typography
 } from '@mui/material';
 import {
     BACKROW_CARD_TYPES,
@@ -37,13 +37,15 @@ import {
     MONSTER_CARD_TYPES, SpecialCountsAs, SpecialCountsAsId
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
-import {normalizeName} from "../../utils/string";
+import {getStringSelector, normalizeName} from "../../utils/string";
 import {getUserId} from "../../types/cookie";
+import {CardEffects, CostType, isCostType} from "../../types/cardEffects";
+import {menuTitleStyle} from "../../utils/fonts";
 
 interface RightPanelSettingsProps {
     cardData: CardData;
     expansions: Array<CardExpansion>;
-    onCardDataChange: (field: keyof CardData, value: string | number) => void;
+    onCardDataChange: (field: keyof CardData, value: string | number | CardEffects) => void;
     onExport: () => void;
     onSave: () => void;
     onImageFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -203,14 +205,34 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         setTabId(newId);
     };
 
+    const handleCostTypeChange = (event: SelectChangeEvent<CostType>, child: ReactNode) => {
+        const value = event.target.value;
+        const costType: CostType = isCostType(value) ? value : CostType.NONE;
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, cost: {...cardData.cardEffects.cost, costType: costType}});
+    }
+
     const getEffectsTab = () => {
         return (
             <>
+                <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Cost:</Typography>
                 <Box
                     sx={rowContainerStyle}
                 >
-
+                    <FormControl fullWidth>
+                        <InputLabel id="cost-type-selector-label">Type</InputLabel>
+                        <Select
+                            labelId="cost-type-selector-label"
+                            value={cardData.cardEffects.cost?.costType}
+                            label="Type"
+                            onChange={handleCostTypeChange}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(Object.values(CostType), CostType.NONE)}
+                        </Select>
+                    </FormControl>
                 </Box>
+                <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Effect:</Typography>
                 <Box
                     sx={rowContainerStyle}
                 >

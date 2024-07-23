@@ -37,6 +37,9 @@ export enum StatBoxColor {
 
 export enum TextColor {
     BLACK = '#000000',
+    FADED = '#3E3E3E',
+    LESS_IMPORTANT = '#151515',
+    SHINING = '#cdcdcd',
     PEARL_WHITE = '#f3f3f3',
     WHITE = '#ffffff',
 }

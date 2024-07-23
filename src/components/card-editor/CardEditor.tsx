@@ -11,6 +11,7 @@ import useExpansions from "../../hooks/useExpansions";
 import {encodeEffectsString, normalizeName, serializeName} from "../../utils/string";
 import {convertToBase64} from "../../types/files";
 import {useParams} from "react-router-dom";
+import {CardEffects} from "../../types/cardEffects";
 
 interface CardEditorProps {
     closeUpdate: () => void;
@@ -21,6 +22,7 @@ interface CardEditorProps {
 export interface CardEditorRef {
     handleSave: () => void;
     handleExport: () => void;
+    handleDelete: () => void;
 }
 
 const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, cards, refetch}, ref) => {
@@ -33,7 +35,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
 
     const cardRef = useRef<HTMLDivElement>(null);
 
-    const handleCardDataChange = (field: keyof CardData, value: string | number) => {
+    const handleCardDataChange = (field: keyof CardData, value: string | number | CardEffects) => {
         setCardData(prev => ({
             ...prev,
             [field]: value
@@ -251,6 +253,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({closeUpdate, car
     useImperativeHandle(ref, () => ({
         handleSave,
         handleExport,
+        handleDelete,
     }));
 
     return (

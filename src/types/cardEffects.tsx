@@ -8,6 +8,10 @@ export enum CostType {
     TRIGGER = 'Trigger',
 }
 
+export const isCostType = (value: string): value is CostType => {
+    return Object.values(CostType).includes(value as CostType);
+}
+
 export enum PaymentCostType {
     DISCARD = 'Discard',
     LIFE = 'Life',
@@ -89,21 +93,11 @@ export type PostCount = {
     subtype: string|null;
 }
 
-export type EffectsCost = {
-    preState: StateCostType|null;
-    costType: CostType;
-    subtype: string|null;
-    supertype: string|null;
-    amount: number|null;
-    target: EffectsTarget|null;
-    payment: EffectsPayment|null;
-    postCount: PostCount|null;
-}
-
 export enum EffectType {
     EVIL = 'Evil',
     KEYWORD = 'Keyword',
     MOVE_CARD = 'Move card',
+    NONE = 'None',
     STAT = 'Stat'
 }
 
@@ -168,6 +162,17 @@ export enum EffectsBenefit {
     DRAW = 'Draw a card'
 }
 
+export type EffectsCost = {
+    preState: StateCostType|null;
+    costType: CostType;
+    subtype: string|null;
+    supertype: string|null;
+    amount: number|null;
+    target: EffectsTarget|null;
+    payment: EffectsPayment|null;
+    postCount: PostCount|null;
+}
+
 export type EffectsEffect = {
     effectType: EffectType;
     subtype: string|null;
@@ -175,8 +180,38 @@ export type EffectsEffect = {
     amount: number|EffectsCount|null;
     maxAmount: number|null;
     target: EffectsTarget|null;
-    direction: EffectsDirection;
-    hindrance: EffectsHindrance;
-    benefit: EffectsBenefit;
+    direction: EffectsDirection|null;
+    hindrance: EffectsHindrance|null;
+    benefit: EffectsBenefit|null;
     chainedEffect: EffectsEffect|null;
+}
+
+export type CardEffects = {
+    cost: EffectsCost;
+    effect: EffectsEffect;
+}
+
+export const DEFAULT_CARD_EFFECTS: CardEffects = {
+    cost: {
+        preState: null,
+        costType: CostType.NONE,
+        subtype: null,
+        supertype: null,
+        amount: null,
+        target: null,
+        payment: null,
+        postCount: null
+    },
+    effect: {
+        effectType: EffectType.NONE,
+        subtype: null,
+        supertype: null,
+        amount: null,
+        maxAmount: null,
+        target: null,
+        direction: null,
+        hindrance: null,
+        benefit: null,
+        chainedEffect: null
+    }
 }

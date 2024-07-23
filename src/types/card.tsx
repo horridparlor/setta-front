@@ -3,6 +3,7 @@ import React from "react";
 import Cookies from "js-cookie";
 import {AuthCookie, getUserId} from "./cookie";
 import {CardExpansion, EXPANSION_NO_OWNER} from "./expansion";
+import {CardEffects, DEFAULT_CARD_EFFECTS} from "./cardEffects";
 
 export enum CardClass {
     ABYSS = 'Abyss',
@@ -101,6 +102,7 @@ export interface CardData {
     effectsSize: number;
     expansionId: number;
     originalExpansionId: number;
+    cardEffects: CardEffects;
     created_at: string;
     updated_at: string;
 }
@@ -177,8 +179,9 @@ export const DEFAULT_CARD_DATA = {
     effectsSize: DefaultTextSize.EFFECTS_BOX,
     expansionId: 8,
     originalExpansionId: 8,
+    cardEffects: DEFAULT_CARD_EFFECTS,
     created_at: '',
-    updated_at: ''
+    updated_at: '',
 }
 
 export const combineEffectsTexts = (cardData: CardData|undefined) => {

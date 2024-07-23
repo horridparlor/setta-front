@@ -32,6 +32,9 @@ const CardEditorPage = (props: CardEditorPageProps) => {
     const commitExport = () => {
         editorRef.current?.handleExport();
     }
+    const commitDelete = () => {
+        editorRef.current?.handleDelete();
+    }
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -48,6 +51,10 @@ const CardEditorPage = (props: CardEditorPageProps) => {
                     case 'l':
                         event.preventDefault();
                         homeBarRef.current?.toggleLoginOpen();
+                        break;
+                    case 'd':
+                        event.preventDefault();
+                        commitDelete();
                         break;
                 }
             } else if (event.key === 'Escape') {

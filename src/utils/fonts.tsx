@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import React from "react";
+import {TextColor} from "../types/color";
 
 export enum FontSize {
     NAME = 56
@@ -104,3 +105,11 @@ export const formatText = (text: string, scale: number): JSX.Element[] => {
 
     return result;
 };
+
+
+export const menuTitleStyle = {
+    color: TextColor.SHINING,
+    fontSize: '1.05rem',
+    fontWeight: 400,
+    fontStyle: 'italic'
+}
