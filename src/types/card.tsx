@@ -3,7 +3,7 @@ import React from "react";
 import Cookies from "js-cookie";
 import {AuthCookie, getUserId} from "./cookie";
 import {CardExpansion, EXPANSION_NO_OWNER} from "./expansion";
-import {CardEffects, DEFAULT_CARD_EFFECTS} from "./cardEffects";
+import {CardEffects, CostType, DEFAULT_CARD_EFFECTS} from "./cardEffects";
 
 export enum CardClass {
     ABYSS = 'Abyss',
@@ -332,6 +332,11 @@ export const isCardId = (cardData: CardData, cardId: number|null): boolean => {
     }
     return cardData.cardId === cardId || cardData.errataOfId === cardId;
 }
+
 export const getCardsExpansionIds = (cardData: CardData): Set<number> => {
     return new Set([cardData.expansionId, cardData.originalExpansionId]);
 };
+
+export const isContinuous = (cardData: CardData): boolean => {
+    return cardData.cardEffects.cost.costType === CostType.CONTINUOUS;
+}

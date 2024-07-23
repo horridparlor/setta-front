@@ -5,7 +5,7 @@ import {
     CardSubtype,
     hasCostText,
     hasEffectText,
-    hasFlavourText, isCardId, isDomain,
+    hasFlavourText, isCardId, isContinuous, isDomain,
     isExtraDeckCard,
     isHandTrapCard, isKiller,
     isPendulumCard, SpecialCountsAsId
@@ -61,7 +61,8 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return isExtraDeckCard(cardData) ? materialsPrefix + materialsText + `){/h}${(getMaterialsReminder())}\n` : '';
     }
     const getCostText = () => {
-        const costOpener = isPendulumCard(cardData) ? 'Pendulum>>' : isDomain(cardData) ? 'Domain>>' : 'Cost:';
+        const costOpener = isPendulumCard(cardData) ? 'Pendulum>>' : isDomain(cardData) ? 'Domain>>'
+            : isContinuous(cardData) ? 'Continuous:' : 'Cost:';
         const costPrefix = `{i=${getEffectsSize()}}${costOpener} {/i}`;
         const costText = addSizeToRichText(cardData.costText, getEffectsSize());
         return hasCostText(cardData) ? costPrefix + costText + '\n' : '';
