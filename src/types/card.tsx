@@ -123,7 +123,7 @@ export const hasCostText = (cardData : CardData) => {
 }
 
 export const hasEffectText = (cardData : CardData) => {
-    if (isContinuous(cardData)) {
+    if (isContinuous(cardData) && !isDomain(cardData)) {
         return false;
     }
     return cardData.cardType !== CardType.MONSTER || isHandTrapCard(cardData) ||
