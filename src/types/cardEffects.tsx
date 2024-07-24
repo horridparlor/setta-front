@@ -208,7 +208,7 @@ export type EffectsEffect = {
     direction: EffectsDirection|null;
     hindrance: EffectsHindrance|null;
     benefit: EffectsBenefit|null;
-    chainedEffect: ChainEffect|null;
+    chainEffect: ChainEffect|null;
 }
 
 export type CardEffects = {
