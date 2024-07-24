@@ -68,3 +68,7 @@ export const getStringSelector = (values: Array<string>, defaultTo: string) => {
         ))
     ];
 }
+
+export const isString = (value: any): value is string => {
+    return typeof value === 'string';
+}

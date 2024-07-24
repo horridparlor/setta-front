@@ -3,7 +3,7 @@ import React from "react";
 import Cookies from "js-cookie";
 import {AuthCookie, getUserId} from "./cookie";
 import {CardExpansion, EXPANSION_NO_OWNER} from "./expansion";
-import {CardEffects, CostType, DEFAULT_CARD_EFFECTS} from "./cardEffects";
+import {CardEffects, CostType, DEFAULT_CARD_EFFECTS, EffectsCost, EffectsEffect} from "./cardEffects";
 
 export enum CardClass {
     ABYSS = 'Abyss',
@@ -18,6 +18,10 @@ export enum CardType {
     MONSTER = 'Monster',
     SPELL = 'Spell',
     TRAP = 'Trap'
+}
+
+export const isCardType = (value: string): value is CardType => {
+    return Object.values(CardType).includes(value as CardType);
 }
 
 export enum CardSubtype {
@@ -342,4 +346,20 @@ export const getCardsExpansionIds = (cardData: CardData): Set<number> => {
 
 export const isContinuous = (cardData: CardData): boolean => {
     return cardData.cardEffects.cost.costType === CostType.CONTINUOUS;
+}
+
+export const isSpell = (cardData: CardData): boolean => {
+    return cardData.cardType === CardType.SPELL;
+}
+
+export const isTrap = (cardData: CardData): boolean => {
+    return cardData.cardType === CardType.TRAP;
+}
+
+export const getEffectsCost = (cardData: CardData): EffectsCost => {
+    return cardData.cardEffects.cost;
+}
+
+export const getEffectsEffect = (cardData: CardData): EffectsEffect => {
+    return cardData.cardEffects.effect;
 }

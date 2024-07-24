@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ReactNode, useState} from 'react';
+import React, {ChangeEvent, ReactNode, useMemo, useState} from 'react';
 import {
     Box,
     Button,
@@ -11,7 +11,8 @@ import {
     SelectChangeEvent,
     Tab,
     Tabs,
-    TextField, Typography
+    TextField,
+    Typography
 } from '@mui/material';
 import {
     BACKROW_CARD_TYPES,
@@ -24,22 +25,31 @@ import {
     CardType,
     combineEffectsTexts,
     DefaultTextSize,
-    EXTRA_DECK_SUBTYPES,
+    EXTRA_DECK_SUBTYPES, getEffectsCost,
     getSubtypeOptions,
     getSupertypeOptions,
     hasCostText,
     hasEffectText,
     hasFlavourText,
-    hasTwoMaterials,
+    hasTwoMaterials, isCardType,
     isExtraDeckCard,
     isKiller,
     MaximumPiece,
-    MONSTER_CARD_TYPES, SpecialCountsAs, SpecialCountsAsId
+    MONSTER_CARD_TYPES,
+    SpecialCountsAs,
+    SpecialCountsAsId
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
 import {getStringSelector, normalizeName} from "../../utils/string";
 import {getUserId} from "../../types/cookie";
-import {CardEffects, CostType, isCostType} from "../../types/cardEffects";
+import {
+    CardEffects,
+    CostType, getCostAmountProps,
+    getCostSubtypeOptions, getCostSupertypeOptions, getCostTypeOptions,
+    getDefaultCostSubtype, getDefaultCostSupertype, getDefaultCostType,
+    isCostType, MonsterSpecificStateCostTypes,
+    PaymentCostType, SpellSpecificStateCostTypes, StateCostType, TriggerCostType
+} from "../../types/cardEffects";
 import {menuTitleStyle} from "../../utils/fonts";
 
 interface RightPanelSettingsProps {
@@ -102,14 +112,57 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const handleSelectChange = (field: keyof CardData) =>
         (event: SelectChangeEvent<string>) => {
             const value = event.target.value;
+            let card;
+            let cost;
             switch (field) {
                 case 'cardType':
+                    card = {...cardData, cardType: isCardType(value) ? value : cardData.cardType};
+                    cost = getEffectsCost(card);
                     onCardDataChange('subtype', value === CardType.MONSTER ? CardSubtype.EFFECT : CardSubtype.NORMAL);
                     onCardDataChange('supertype', CardSupertype.NONE);
                     onCardDataChange('flavourText', '');
                     onCardDataChange('primaryMaterialId', '');
                     onCardDataChange('secondaryMaterialId', '');
                     onCardDataChange('tertiaryMaterialId', '');
+                    switch (value) {
+                        case CardType.MONSTER:
+                            switch (cost.costType) {
+                                case CostType.STATE:
+                                    if (cost.subtype && SpellSpecificStateCostTypes.includes(cost.subtype)) {
+                                        handleCostSubtypeChange(StateCostType.YOU_CONTROL_ONLY_THIS, card);
+                                    }
+                                    break;
+                                case CostType.TRIGGER:
+                                    if (cost.subtype === TriggerCostType.OPPONENT) {
+                                        handleCostSubtypeChange(TriggerCostType.SELF_TRIGGERED, card);
+                                    }
+                                    break;
+                            }
+                            break;
+                        case CardType.SPELL:
+                            switch (cost.costType) {
+                                case CostType.STATE:
+                                    if (cost.subtype && MonsterSpecificStateCostTypes.includes(cost.subtype)) {
+                                        handleCostTypeChange(CostType.NONE, card);
+                                    }
+                                    break;
+                                case CostType.TRIGGER:
+                                    handleCostTypeChange(CostType.NONE, card);
+                                    break;
+                            }
+                            break;
+                        case CardType.TRAP:
+                            switch (cost.costType) {
+                                case CostType.TRIGGER:
+                                    if (cost.subtype === TriggerCostType.SELF_TRIGGERED) {
+                                        handleCostSubtypeChange(TriggerCostType.OPPONENT, card);
+                                    }
+                                    break;
+                                default:
+                                    handleCostTypeChange(CostType.TRIGGER, card);
+                            }
+                            break;
+                    }
                     break;
                 case 'subtype':
                     switch (value) {
@@ -205,12 +258,67 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         setTabId(newId);
     };
 
-    const handleCostTypeChange = (event: SelectChangeEvent<CostType>, child: ReactNode) => {
-        const value = event.target.value;
+    const handleCostTypeChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
         const costType: CostType = isCostType(value) ? value : CostType.NONE;
+        const card = {...prevCard};
+        card.cardEffects.cost.costType = costType;
+        const subtype = getDefaultCostSubtype(card);
+        const cost = {...handleCostSubtypeChange(subtype, card, true),
+            costType: costType
+        };
+        if (justReturn) {
+            return cost;
+        }
         onCardDataChange('cardEffects',
-            {...cardData.cardEffects, cost: {...cardData.cardEffects.cost, costType: costType}});
+            {...cardData.cardEffects, cost: cost});
+        return cost;
     }
+
+    const handleCostSubtypeChange = (subtype: string, prevCard : CardData = cardData, justReturn: boolean = false) => {
+        const card = {...prevCard};
+        card.cardEffects.cost.subtype = subtype;
+        const supertype = getDefaultCostSupertype(card);
+        const cost = {...handleCostSupertypeChange(supertype, true),
+            subtype: subtype
+        };
+        if (justReturn) {
+            return cost;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, cost: cost});
+        return cost;
+    }
+
+    const handleCostSupertypeChange = (supertype: string, justReturn: boolean = false) => {
+        const cost = {...getEffectsCost(cardData),
+            supertype: supertype
+        };
+        if (justReturn) {
+            return cost;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, cost: cost});
+        return cost;
+    }
+
+    const handleCostAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const amount = parseInt(event.target.value);
+        const cost = {...getEffectsCost(cardData), amount: amount};
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, cost: cost});
+        return cost;
+    }
+
+
+    const costSubtypeOptions = useMemo(() => {
+        return getCostSubtypeOptions(cardData);
+    }, [cardData.cardEffects.cost.costType, cardData.cardType]);
+    const costSupertypeOptions = useMemo(() => {
+        return getCostSupertypeOptions(cardData);
+    }, [cardData.cardEffects.cost.subtype, cardData.cardType]);
+    const costAmountProps = useMemo(() => {
+        return getCostAmountProps(cardData);
+    }, [cardData.cardEffects.cost]);
 
     const getEffectsTab = () => {
         return (
@@ -225,12 +333,53 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             labelId="cost-type-selector-label"
                             value={cardData.cardEffects.cost?.costType}
                             label="Type"
-                            onChange={handleCostTypeChange}
+                            onChange={(event: SelectChangeEvent<CostType>, child: ReactNode) => handleCostTypeChange(event.target.value)}
                             disabled={cannotEdit()}
                         >
-                            {getStringSelector(Object.values(CostType), CostType.NONE)}
+                            {getStringSelector(getCostTypeOptions(cardData), getDefaultCostType(cardData))}
                         </Select>
                     </FormControl>
+                    <FormControl sx={{display: costSubtypeOptions.length ? 'flex' : 'none'}}
+                        fullWidth>
+                        <InputLabel id="cost-subtype-selector-label">Subtype</InputLabel>
+                        <Select
+                            labelId="cost-subtype-selector-label"
+                            value={cardData.cardEffects.cost?.subtype || ''}
+                            label="Subtype"
+                            onChange={(event: SelectChangeEvent<string>, child: ReactNode) => handleCostSubtypeChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(costSubtypeOptions, getDefaultCostSubtype(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{display: costSupertypeOptions.length ? 'flex' : 'none'}}
+                        fullWidth>
+                        <InputLabel id="cost-supertype-selector-label">Supertype</InputLabel>
+                        <Select
+                            labelId="cost-supertype-selector-label"
+                            value={cardData.cardEffects.cost?.supertype || ''}
+                            label="Supertype"
+                            onChange={(event: SelectChangeEvent<string>, child: ReactNode) => handleCostSupertypeChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(costSupertypeOptions, getDefaultCostSupertype(cardData))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box
+                    sx={rowContainerStyle}
+                >
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Amount"
+                        variant="outlined"
+                        value={cardData.cardEffects.cost.amount || costAmountProps.default}
+                        onChange={handleCostAmountChange}
+                        inputProps={costAmountProps}
+                        disabled={cannotEdit()}
+                        sx={{display: costAmountProps.visible ? 'flex' : 'none'}}
+                    />
                 </Box>
                 <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Effect:</Typography>
                 <Box

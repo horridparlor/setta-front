@@ -1,4 +1,4 @@
-import {CardClass, CardSubtype, CardType} from "./card";
+import {CardClass, CardData, CardSubtype, CardType, getEffectsCost, isMonster, isSpell, isTrap} from "./card";
 
 export enum CostType {
     NONE = 'None',
@@ -26,6 +26,15 @@ export enum StateCostType {
     SUMMONED_THIS_TURN = 'Summoned this turn',
     YOU_CONTROL_ONLY_THIS = 'You control only this'
 }
+
+export const MonsterSpecificStateCostTypes: Array<string> = [
+    StateCostType.SUMMONED_THIS_TURN,
+    StateCostType.YOU_CONTROL_ONLY_THIS
+]
+
+export const SpellSpecificStateCostTypes: Array<string> = [
+    StateCostType.NO_MONSTERS,
+]
 
 export enum TriggerCostType {
     OPPONENT = 'Opponent',
@@ -214,4 +223,145 @@ export const DEFAULT_CARD_EFFECTS: CardEffects = {
         benefit: null,
         chainedEffect: null
     }
+}
+
+export const getCostSubtypeOptions = (cardData: CardData): Array<string> => {
+    let costTypes;
+    switch (cardData.cardEffects.cost.costType) {
+        case CostType.PAYMENT:
+            return Object.values(PaymentCostType);
+        case CostType.STATE:
+            costTypes = Object.values(StateCostType);
+            const notAvailable = isMonster(cardData) ? SpellSpecificStateCostTypes : MonsterSpecificStateCostTypes;
+            return costTypes.filter(costType => !notAvailable.includes(costType));
+        case CostType.TRIGGER:
+            costTypes = Object.values(TriggerCostType);
+            return costTypes.filter(costType => costType !==
+                (isMonster(cardData) ? TriggerCostType.OPPONENT : TriggerCostType.SELF_TRIGGERED));
+    }
+    return [];
+}
+
+export const getDefaultCostSubtype = (cardData: CardData) => {
+    switch (cardData.cardEffects.cost.costType) {
+        case CostType.PAYMENT:
+            return PaymentCostType.MILL;
+        case CostType.STATE:
+            return isMonster(cardData) ? StateCostType.SUMMONED_THIS_TURN : StateCostType.COUNT_CARDS;
+        case CostType.TRIGGER:
+            return isTrap(cardData) ? TriggerCostType.OPPONENT : TriggerCostType.SELF_TRIGGERED;
+        default:
+            return '';
+    }
+}
+
+export const getCostSupertypeOptions = (cardData: CardData): Array<string> => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.TRIGGER:
+            switch (cost.subtype) {
+                case TriggerCostType.SELF_TRIGGERED:
+                    return Object.values(SelfTriggeredCostType);
+                case TriggerCostType.OPPONENT:
+                    return Object.values(OpponentTriggerCostType);
+            }
+    }
+    return [];
+}
+
+export const getDefaultCostSupertype = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.TRIGGER:
+            switch (cost.subtype) {
+                case TriggerCostType.SELF_TRIGGERED:
+                    return SelfTriggeredCostType.FLIPPED_WHEN_ATTACKED;
+                case TriggerCostType.OPPONENT:
+                    return OpponentTriggerCostType.ATTACKS;
+            }
+            break;
+    }
+    return '';
+}
+
+export interface AmountProps {
+    visible: boolean;
+    min: number;
+    max: number;
+    step: number;
+    default: number;
+}
+
+export const DEFAULT_AMOUNT_PROPS = {
+    visible: false,
+    min: 0,
+    max: 0,
+    step: 0,
+    default: 0
+}
+
+export const CARD_AMOUNT_PROPS = {
+    visible: true,
+    min: 1,
+    max: 10,
+    step: 1,
+    default: 1
+}
+
+export const LEVEL_AMOUNT_PROPS = {
+    visible: true,
+    min: 1,
+    max: 9,
+    step: 1,
+    default: 1
+}
+
+export const STAT_AMOUNT_PROPS = {
+    visible: true,
+    min: 0,
+    max: 2600,
+    step: 100,
+    default: 100
+}
+
+export const getCostAmountProps = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.PAYMENT:
+            switch (cost.subtype) {
+                case PaymentCostType.DISCARD:
+                    return CARD_AMOUNT_PROPS;
+                case PaymentCostType.LIFE:
+                    return STAT_AMOUNT_PROPS;
+                case PaymentCostType.MILL:
+                    return CARD_AMOUNT_PROPS;
+                case PaymentCostType.RESHUFFLE:
+                    return CARD_AMOUNT_PROPS;
+                case PaymentCostType.SACRIFICE:
+                    return CARD_AMOUNT_PROPS;
+            }
+            break;
+        case CostType.STATE:
+            switch (cost.subtype) {
+                case StateCostType.COUNT_CARDS:
+                    return CARD_AMOUNT_PROPS;
+            }
+            break;
+    }
+    return DEFAULT_AMOUNT_PROPS;
+}
+
+export const getCostTypeOptions = (cardData: CardData) => {
+    const options = Object.values(CostType);
+    switch (cardData.cardType) {
+        case CardType.SPELL:
+            return options.filter(option => ![CostType.TRIGGER].includes(option));
+        case CardType.TRAP:
+            return [CostType.TRIGGER];
+    }
+    return options;
+}
+
+export const getDefaultCostType = (cardData: CardData) => {
+    return isTrap(cardData) ? CostType.TRIGGER : CostType.NONE;
 }
