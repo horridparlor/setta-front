@@ -182,6 +182,22 @@ export type EffectsCost = {
     postCount: PostCount|null;
 }
 
+export enum ChainType {
+    ALTER_SUMMONED = 'Alter summoned'
+}
+
+export enum AlterSummonedChainType {
+    ATK = 'Atk',
+    DEF = 'Def'
+}
+
+export type ChainEffect = {
+    chainType: ChainType;
+    subtype: string|null;
+    direction: EffectsDirection|null;
+    amount: number|null;
+}
+
 export type EffectsEffect = {
     effectType: EffectType;
     subtype: string|null;
@@ -192,7 +208,7 @@ export type EffectsEffect = {
     direction: EffectsDirection|null;
     hindrance: EffectsHindrance|null;
     benefit: EffectsBenefit|null;
-    chainedEffect: EffectsEffect|null;
+    chainedEffect: ChainEffect|null;
 }
 
 export type CardEffects = {
