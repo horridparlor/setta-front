@@ -402,9 +402,11 @@ export const ALL_CARDS_AMOUNT_PROPS = {
 export enum SelectionType {
     NONE = 'None',
     ALL_CARDS = 'All cards',
+    ALL_PRIVATE_CARDS = 'All private cards',
     CARD = 'Card',
     HIDDEN_CARD = 'Hidden card',
     LEVEL = 'Level',
+    PRIVATE_CARD = 'Private card',
     STAT = 'Stat'
 }
 
@@ -415,27 +417,42 @@ export const getAmountProps = (selectionType: SelectionType) => {
             return DEFAULT_AMOUNT_PROPS;
         case SelectionType.ALL_CARDS:
             return ALL_CARDS_AMOUNT_PROPS;
+        case SelectionType.ALL_PRIVATE_CARDS:
+            return ALL_CARDS_AMOUNT_PROPS;
         case SelectionType.CARD:
             return CARD_AMOUNT_PROPS;
         case SelectionType.HIDDEN_CARD:
             return CARD_AMOUNT_PROPS;
         case SelectionType.LEVEL:
             return LEVEL_AMOUNT_PROPS;
+        case SelectionType.PRIVATE_CARD:
+            return CARD_AMOUNT_PROPS;
         case SelectionType.STAT:
             return STAT_AMOUNT_PROPS;
     }
 }
 
+
 export const getCostSelectionType = (cardData: CardData) => {
     const cost = getEffectsCost(cardData);
+    const selectionType = routeCostSelectionType(cost);
     if (cost?.target?.targetType === TargetType.ALL) {
-        return SelectionType.ALL_CARDS;
+        switch (selectionType) {
+            case SelectionType.CARD:
+                return SelectionType.ALL_CARDS;
+            case SelectionType.PRIVATE_CARD:
+                return SelectionType.ALL_PRIVATE_CARDS;
+        }
     }
+    return selectionType;
+}
+
+const routeCostSelectionType = (cost: EffectsCost) => {
     switch (cost.costType) {
         case CostType.PAYMENT:
             switch (cost.subtype) {
                 case PaymentCostType.DISCARD:
-                    return SelectionType.CARD;
+                    return SelectionType.PRIVATE_CARD;
                 case PaymentCostType.LIFE:
                     return SelectionType.STAT;
                 case PaymentCostType.MILL:
@@ -450,6 +467,17 @@ export const getCostSelectionType = (cardData: CardData) => {
             switch (cost.subtype) {
                 case StateCostType.COUNT_CARDS:
                     return SelectionType.CARD;
+            }
+            break;
+        case CostType.TRIGGER:
+            switch (cost.subtype) {
+                case TriggerCostType.OPPONENT:
+                    switch (cost.supertype) {
+                        case OpponentTriggerCostType.ATTACKS:
+                        case OpponentTriggerCostType.SUMMONS:
+                            return SelectionType.CARD;
+                    }
+                    break;
             }
             break;
     }

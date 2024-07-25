@@ -468,10 +468,15 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return getAmountProps(costSelectionType);
     }, [costSelectionType]);
 
+    const isCostCardSelectable = [SelectionType.CARD, SelectionType.ALL_CARDS, SelectionType.PRIVATE_CARD]
+        .includes(costSelectionType);
+
     const costCardSelectionVisible = {
-        display: [SelectionType.CARD, SelectionType.ALL_CARDS]
-            .includes(costSelectionType) ? 'flex' : 'none'
+        display: isCostCardSelectable ? 'flex' : 'none'
     }
+
+    const isCostAmountSelectable = costAmountProps.min !== costAmountProps.max
+        && getEffectsCost(cardData).costType !== CostType.TRIGGER;
 
     const resetCost = () => {
         const cost = {...handleCostTypeChange(getDefaultCostType(cardData), cardData, true),
@@ -530,7 +535,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: costAmountProps.visible ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: costAmountProps.visible && isCostCardSelectable ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
@@ -541,7 +546,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         onChange={handleCostAmountChange}
                         inputProps={costAmountProps}
                         disabled={cannotEdit()}
-                        sx={{display: costAmountProps.min !== costAmountProps.max ? 'flex' : 'none'}}
+                        sx={{display: isCostAmountSelectable ? 'flex' : 'none'}}
                     />
                      <FormControl fullWidth sx={costCardSelectionVisible}>
                         <InputLabel id="cost-target-class-selector-label">Class</InputLabel>
@@ -571,7 +576,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, ...costCardSelectionVisible}}
+                    sx={{...rowContainerStyle, display: [SelectionType.CARD, SelectionType.ALL_CARDS, SelectionType.PRIVATE_CARD].includes(costSelectionType) ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
