@@ -1,4 +1,5 @@
 import {CardClass, CardData, CardSubtype, CardType, getEffectsCost, isMonster, isSpell, isTrap} from "./card";
+import {Payment} from "@mui/icons-material";
 
 export enum CostType {
     NONE = 'None',
@@ -57,13 +58,19 @@ export type EffectsPayment = {
 }
 
 export enum Zone {
+    NONE = 'None',
     DECK = 'Deck',
     FIELD = 'Field',
     GRAVE = 'Grave',
     HAND = 'Hand'
 }
 
+export const isZone = (value: string): value is Zone => {
+    return Object.values(Zone).includes(value as Zone);
+}
+
 export enum TargetType {
+    NONE = 'None',
     ALL = 'All',
     ATTACKER = 'Attacker',
     OTHER = 'Other',
@@ -71,11 +78,21 @@ export enum TargetType {
     THIS = 'This'
 }
 
+export const isTargetType = (value: string): value is TargetType => {
+    return Object.values(TargetType).includes(value as TargetType);
+}
+
 export enum TargetOwner {
+    NONE = 'None',
     ANY = 'Any',
     OPPONENT = 'Opponent',
     YOU = 'You'
 }
+
+export const isTargetOwner = (value: string): value is TargetOwner => {
+    return Object.values(TargetOwner).includes(value as TargetOwner);
+}
+
 
 export type EffectsTarget = {
     cardClass: CardClass|null,
@@ -374,8 +391,17 @@ export const NULLABLE_STAT_AMOUNT_PROPS = {
     default: -100
 }
 
+export const ALL_CARDS_AMOUNT_PROPS = {
+    visible: true,
+    min: 0,
+    max: 0,
+    step: 0,
+    default: 0
+}
+
 export enum SelectionType {
     NONE = 'None',
+    ALL_CARDS = 'All cards',
     CARD = 'Card',
     HIDDEN_CARD = 'Hidden card',
     LEVEL = 'Level',
@@ -387,6 +413,8 @@ export const getAmountProps = (selectionType: SelectionType) => {
     switch (selectionType) {
         case SelectionType.NONE:
             return DEFAULT_AMOUNT_PROPS;
+        case SelectionType.ALL_CARDS:
+            return ALL_CARDS_AMOUNT_PROPS;
         case SelectionType.CARD:
             return CARD_AMOUNT_PROPS;
         case SelectionType.HIDDEN_CARD:
@@ -400,6 +428,9 @@ export const getAmountProps = (selectionType: SelectionType) => {
 
 export const getCostSelectionType = (cardData: CardData) => {
     const cost = getEffectsCost(cardData);
+    if (cost?.target?.targetType === TargetType.ALL) {
+        return SelectionType.ALL_CARDS;
+    }
     switch (cost.costType) {
         case CostType.PAYMENT:
             switch (cost.subtype) {
@@ -438,4 +469,46 @@ export const getCostTypeOptions = (cardData: CardData) => {
 
 export const getDefaultCostType = (cardData: CardData) => {
     return isTrap(cardData) ? CostType.TRIGGER : CostType.NONE;
+}
+
+export const getCostTargetTypeOptions = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.PAYMENT:
+            switch(cost.subtype) {
+                case PaymentCostType.DISCARD:
+                    return [TargetType.ALL, TargetType.TARGET];
+            }
+            break;
+    }
+    return [];
+}
+
+export const getDefaultCostTargetType = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.PAYMENT:
+            switch(cost.subtype) {
+                case PaymentCostType.DISCARD:
+                    return TargetType.TARGET;
+            }
+            break;
+    }
+    return TargetType.NONE;
+}
+
+export const getCostTargetOwnerOptions = (cardData: CardData) => {
+    return [];
+}
+
+export const getDefaultCostTargetOwner = (cardData: CardData) => {
+    return TargetOwner.NONE;
+}
+
+export const getCostTargetZoneOptions = (cardData: CardData) => {
+    return [];
+}
+
+export const getDefaultCostTargetZone = (cardData: CardData) => {
+    return Zone.NONE;
 }

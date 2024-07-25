@@ -66,7 +66,7 @@ export const endsSentence = (message: String) => {
 export const getStringSelector = (values: Array<string>, defaultTo: string|undefined = undefined) => {
     const sorted = defaultTo === undefined ? values : values.sort();
     return [<MenuItem key='none' value={defaultTo ?? NONE_STRING}>{defaultTo === undefined ? NONE_STRING : '–'}</MenuItem>,
-        sorted.filter(value => value !== 'None').map(value => (
+        sorted.filter(value => !!defaultTo || value !== 'None').map(value => (
             <MenuItem key={value} value={value}>{value}</MenuItem>
         ))
     ];

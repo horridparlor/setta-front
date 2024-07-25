@@ -53,19 +53,20 @@ import {
     getAmountProps,
     getCostSelectionType,
     getCostSubtypeOptions,
-    getCostSupertypeOptions,
+    getCostSupertypeOptions, getCostTargetOwnerOptions, getCostTargetTypeOptions, getCostTargetZoneOptions,
     getCostTypeOptions,
     getDefaultCostSubtype,
-    getDefaultCostSupertype,
+    getDefaultCostSupertype, getDefaultCostTargetOwner, getDefaultCostTargetType, getDefaultCostTargetZone,
     getDefaultCostType,
-    isCostType, LEVEL_AMOUNT_PROPS,
+    isCostType, isTargetOwner, isTargetType, isZone,
     MonsterSpecificStateCostTypes, NULLABLE_LEVEL_AMOUNT_PROPS, NULLABLE_STAT_AMOUNT_PROPS,
     SelectionType,
     SpellSpecificStateCostTypes,
-    StateCostType,
-    TriggerCostType
+    StateCostType, TargetOwner, TargetType,
+    TriggerCostType, Zone
 } from "../../types/cardEffects";
 import {menuTitleStyle} from "../../utils/fonts";
+import { isEqual } from 'lodash';
 
 interface RightPanelSettingsProps {
     cardData: CardData;
@@ -410,6 +411,42 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         handle(target);
         return target;
     }
+    const handleTargetTypeChange = (value: string, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const targetType = isTargetType(value) ? value : TargetType.NONE;
+        const target = {...prevTarget,
+            targetType: targetType
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
+    const handleTargetOwnerChange = (value: string, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const owner = isTargetOwner(value) ? value : TargetOwner.NONE;
+        const target = {...prevTarget,
+            owner: owner
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
+    const handleTargetZoneChange = (value: string, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const zone = isZone(value) ? value : Zone.NONE;
+        const target = {...prevTarget,
+            zone: zone
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
 
     const costSubtypeOptions = useMemo(() => {
         return getCostSubtypeOptions(cardData);
@@ -425,7 +462,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     }, [costSelectionType]);
 
     const costCardSelectionVisible = {
-        display: costSelectionType === SelectionType.CARD ? 'flex' : 'none'
+        display: [SelectionType.CARD, SelectionType.ALL_CARDS]
+            .includes(costSelectionType) ? 'flex' : 'none'
     }
 
     const resetCost = () => {
@@ -435,9 +473,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             payment: null,
             postCount: null
         };
-        console.log(222, cost);
         onCardDataChange('cardEffects', {...cardData.cardEffects, cost: cost});
     }
+    console.log(111, costAmountProps);
 
     const getEffectsTab = () => {
         return (
@@ -486,7 +524,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={rowContainerStyle}
+                    sx={{...rowContainerStyle, display: costAmountProps.visible ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
@@ -497,7 +535,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         onChange={handleCostAmountChange}
                         inputProps={costAmountProps}
                         disabled={cannotEdit()}
-                        sx={{display: costAmountProps.visible ? 'flex' : 'none'}}
+                        sx={{display: costAmountProps.min !== costAmountProps.max ? 'flex' : 'none'}}
                     />
                      <FormControl fullWidth sx={costCardSelectionVisible}>
                         <InputLabel id="cost-target-class-selector-label">Class</InputLabel>
@@ -527,7 +565,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={rowContainerStyle}
+                    sx={{...rowContainerStyle, ...costCardSelectionVisible}}
                 >
                     <TextField
                         fullWidth
@@ -539,7 +577,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             handleTargetMinLevelChange(parseInt(event.target.value), getEffectsCostTarget(cardData), handleCostTargetChange)}
                         inputProps={NULLABLE_LEVEL_AMOUNT_PROPS}
                         disabled={cannotEdit()}
-                        sx={costCardSelectionVisible}
                     />
                     <TextField
                         fullWidth
@@ -551,7 +588,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             handleTargetMaxLevelChange(parseInt(event.target.value), getEffectsCostTarget(cardData), handleCostTargetChange)}
                         inputProps={NULLABLE_LEVEL_AMOUNT_PROPS}
                         disabled={cannotEdit()}
-                        sx={costCardSelectionVisible}
                     />
                     <TextField
                         fullWidth
@@ -563,7 +599,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             handleTargetAtkChange(parseInt(event.target.value), getEffectsCostTarget(cardData), handleCostTargetChange)}
                         inputProps={NULLABLE_STAT_AMOUNT_PROPS}
                         disabled={cannotEdit()}
-                        sx={costCardSelectionVisible}
                     />
                     <TextField
                         fullWidth
@@ -575,8 +610,54 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             handleTargetDefChange(parseInt(event.target.value), getEffectsCostTarget(cardData), handleCostTargetChange)}
                         inputProps={NULLABLE_STAT_AMOUNT_PROPS}
                         disabled={cannotEdit()}
-                        sx={costCardSelectionVisible}
                     />
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display:
+                            getCostTargetTypeOptions(cardData).length
+                            || getCostTargetOwnerOptions(cardData).length
+                            || getCostTargetZoneOptions(cardData).length
+                                ? 'flex' : 'none'}}
+                >
+                    <FormControl fullWidth sx={{display: getCostTargetTypeOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="cost-target-type-selector-label">Target</InputLabel>
+                        <Select
+                            labelId="cost-target-type-selector-label"
+                            value={cardData.cardEffects.cost?.target?.targetType || getDefaultCostTargetType(cardData)}
+                            label="Target"
+                            onChange={(event: SelectChangeEvent<TargetType>, child: ReactNode) =>
+                                handleTargetTypeChange(event.target.value, getEffectsCostTarget(cardData), handleCostTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getCostTargetTypeOptions(cardData), getDefaultCostTargetType(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getCostTargetOwnerOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="cost-target-owner-selector-label">Owner</InputLabel>
+                        <Select
+                            labelId="cost-target-owner-selector-label"
+                            value={cardData.cardEffects.cost?.target?.owner || getDefaultCostTargetOwner(cardData)}
+                            label="Owner"
+                            onChange={(event: SelectChangeEvent<TargetOwner>, child: ReactNode) =>
+                                handleTargetOwnerChange(event.target.value, getEffectsCostTarget(cardData), handleCostTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getCostTargetOwnerOptions(cardData), getDefaultCostTargetOwner(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getCostTargetZoneOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="cost-target-zone-selector-label">Zone</InputLabel>
+                        <Select
+                            labelId="cost-target-zone-selector-label"
+                            value={cardData.cardEffects.cost?.target?.zone || getDefaultCostTargetZone(cardData)}
+                            label="Zone"
+                            onChange={(event: SelectChangeEvent<Zone>, child: ReactNode) =>
+                                handleTargetZoneChange(event.target.value, getEffectsCostTarget(cardData), handleCostTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getCostTargetZoneOptions(cardData), getDefaultCostTargetZone(cardData))}
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Box
                     sx={rowContainerStyle}
@@ -587,7 +668,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         color="error"
                         onClick={resetCost}
                         disabled={
-                            cannotEdit()
+                            cannotEdit() || isEqual(getEffectsCost(cardData), {...DEFAULT_EFFECTS_COST, costType: getDefaultCostType(cardData),
+                                subtype: getDefaultCostSubtype(cardData), supertype: getDefaultCostSupertype(cardData)})
                         }
                         sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
                     >
