@@ -48,7 +48,7 @@ import {getStringSelector, isNoneString, normalizeName} from "../../utils/string
 import {getUserId} from "../../types/cookie";
 import {
     CardEffects,
-    CostType,
+    CostType, DEFAULT_EFFECTS_COST,
     EffectsTarget,
     getAmountProps,
     getCostSelectionType,
@@ -59,7 +59,7 @@ import {
     getDefaultCostSupertype,
     getDefaultCostType,
     isCostType, LEVEL_AMOUNT_PROPS,
-    MonsterSpecificStateCostTypes, NULLABLE_LEVEL_AMOUNT_PROPS,
+    MonsterSpecificStateCostTypes, NULLABLE_LEVEL_AMOUNT_PROPS, NULLABLE_STAT_AMOUNT_PROPS,
     SelectionType,
     SpellSpecificStateCostTypes,
     StateCostType,
@@ -388,6 +388,28 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         handle(target);
         return target;
     }
+    const handleTargetAtkChange = (atk: number, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const target = {...prevTarget,
+            atk: atk
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
+    const handleTargetDefChange = (def: number, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const target = {...prevTarget,
+            def: def
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
 
     const costSubtypeOptions = useMemo(() => {
         return getCostSubtypeOptions(cardData);
@@ -404,6 +426,17 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
 
     const costCardSelectionVisible = {
         display: costSelectionType === SelectionType.CARD ? 'flex' : 'none'
+    }
+
+    const resetCost = () => {
+        const cost = {...handleCostTypeChange(getDefaultCostType(cardData), cardData, true),
+            amount: DEFAULT_EFFECTS_COST.amount,
+            target: null,
+            payment: null,
+            postCount: null
+        };
+        console.log(222, cost);
+        onCardDataChange('cardEffects', {...cardData.cardEffects, cost: cost});
     }
 
     const getEffectsTab = () => {
@@ -520,6 +553,46 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         disabled={cannotEdit()}
                         sx={costCardSelectionVisible}
                     />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Atk"
+                        variant="outlined"
+                        value={getEffectsCostTarget(cardData).atk ?? NULLABLE_STAT_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetAtkChange(parseInt(event.target.value), getEffectsCostTarget(cardData), handleCostTargetChange)}
+                        inputProps={NULLABLE_STAT_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                        sx={costCardSelectionVisible}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Def"
+                        variant="outlined"
+                        value={getEffectsCostTarget(cardData).def ?? NULLABLE_STAT_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetDefChange(parseInt(event.target.value), getEffectsCostTarget(cardData), handleCostTargetChange)}
+                        inputProps={NULLABLE_STAT_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                        sx={costCardSelectionVisible}
+                    />
+                </Box>
+                <Box
+                    sx={rowContainerStyle}
+                >
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        color="error"
+                        onClick={resetCost}
+                        disabled={
+                            cannotEdit()
+                        }
+                        sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
+                    >
+                        Reset
+                    </Button>
                 </Box>
                 <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Effect:</Typography>
                 <Box

@@ -228,29 +228,33 @@ export type CardEffects = {
     effect: EffectsEffect;
 }
 
+export const DEFAULT_EFFECTS_COST: EffectsCost = {
+    preState: null,
+    costType: CostType.NONE,
+    subtype: null,
+    supertype: null,
+    amount: null,
+    target: null,
+    payment: null,
+    postCount: null
+}
+
+export const DEFAULT_EFFECTS_EFFECT: EffectsEffect = {
+    effectType: EffectType.NONE,
+    subtype: null,
+    supertype: null,
+    amount: null,
+    maxAmount: null,
+    target: null,
+    direction: null,
+    hindrance: null,
+    benefit: null,
+    chainEffect: null
+}
+
 export const DEFAULT_CARD_EFFECTS: CardEffects = {
-    cost: {
-        preState: null,
-        costType: CostType.NONE,
-        subtype: null,
-        supertype: null,
-        amount: null,
-        target: null,
-        payment: null,
-        postCount: null
-    },
-    effect: {
-        effectType: EffectType.NONE,
-        subtype: null,
-        supertype: null,
-        amount: null,
-        maxAmount: null,
-        target: null,
-        direction: null,
-        hindrance: null,
-        benefit: null,
-        chainEffect: null
-    }
+    cost: DEFAULT_EFFECTS_COST,
+    effect: DEFAULT_EFFECTS_EFFECT
 }
 
 export const getCostSubtypeOptions = (cardData: CardData): Array<string> => {
@@ -359,6 +363,15 @@ export const STAT_AMOUNT_PROPS = {
     max: 2600,
     step: 100,
     default: 100
+}
+
+
+export const NULLABLE_STAT_AMOUNT_PROPS = {
+    visible: true,
+    min: -100,
+    max: 2600,
+    step: 100,
+    default: -100
 }
 
 export enum SelectionType {
