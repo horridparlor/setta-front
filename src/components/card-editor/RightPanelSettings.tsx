@@ -294,7 +294,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         const card = {...prevCard};
         card.cardEffects.cost.subtype = subtype;
         const supertype = getDefaultCostSupertype(card);
-        const cost = {...handleCostSupertypeChange(supertype, true),
+        const cost = {...handleCostSupertypeChange(supertype, card, true),
             subtype: subtype
         };
         if (justReturn) {
@@ -305,8 +305,12 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return cost;
     }
 
-    const handleCostSupertypeChange = (supertype: string, justReturn: boolean = false) => {
+    const handleCostSupertypeChange = (supertype: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const card = {...prevCard};
+        card.cardEffects.cost.supertype = supertype;
         const cost = {...getEffectsCost(cardData),
+            target: handleTargetTypeChange(getEffectsCostTarget(card).targetType || getDefaultCostTargetType(card),
+                getEffectsCostTarget(card), handleCostTargetChange, card,true),
             supertype: supertype
         };
         if (justReturn) {
@@ -412,10 +416,13 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return target;
     }
     const handleTargetTypeChange = (value: string, prevTarget: EffectsTarget,
-                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+                                     handle: (target: EffectsTarget) => void, prevCard: CardData = cardData,
+                                    justReturn: boolean = false) => {
+        const options = getCostTargetTypeOptions(prevCard);
+        const defaultTo = getDefaultCostTargetType(prevCard);
         const targetType = isTargetType(value) ? value : TargetType.NONE;
         const target = {...prevTarget,
-            targetType: targetType
+            targetType: options.includes(targetType) ? targetType : defaultTo
         };
         if (justReturn) {
             return target;
@@ -475,7 +482,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         };
         onCardDataChange('cardEffects', {...cardData.cardEffects, cost: cost});
     }
-    console.log(111, costAmountProps);
 
     const getEffectsTab = () => {
         return (
