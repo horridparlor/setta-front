@@ -344,6 +344,15 @@ export const LEVEL_AMOUNT_PROPS = {
     default: 1
 }
 
+export const NULLABLE_LEVEL_AMOUNT_PROPS = {
+    visible: true,
+    min: 0,
+    max: 9,
+    step: 1,
+    default: 0
+}
+
+
 export const STAT_AMOUNT_PROPS = {
     visible: true,
     min: 0,

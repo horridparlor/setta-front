@@ -58,8 +58,8 @@ import {
     getDefaultCostSubtype,
     getDefaultCostSupertype,
     getDefaultCostType,
-    isCostType,
-    MonsterSpecificStateCostTypes,
+    isCostType, LEVEL_AMOUNT_PROPS,
+    MonsterSpecificStateCostTypes, NULLABLE_LEVEL_AMOUNT_PROPS,
     SelectionType,
     SpellSpecificStateCostTypes,
     StateCostType,
@@ -362,6 +362,33 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return target;
     }
 
+    const handleTargetMinLevelChange = (minLevel: number, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const maxLevel = minLevel && prevTarget.maxLevel ? Math.max(prevTarget.maxLevel, minLevel) : prevTarget.maxLevel;
+        const target = {...prevTarget,
+            minLevel: minLevel,
+            maxLevel: maxLevel
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
+    const handleTargetMaxLevelChange = (maxLevel: number, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const minLevel = maxLevel && prevTarget.minLevel ? Math.min(prevTarget.minLevel, maxLevel) : prevTarget.minLevel;
+        const target = {...prevTarget,
+            minLevel: minLevel,
+            maxLevel: maxLevel
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
+
     const costSubtypeOptions = useMemo(() => {
         return getCostSubtypeOptions(cardData);
     }, [cardData.cardEffects.cost.costType, cardData.cardType]);
@@ -465,6 +492,34 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             {getStringSelector(TARGETABLE_CARD_SUBTYPES)}
                         </Select>
                     </FormControl>
+                </Box>
+                <Box
+                    sx={rowContainerStyle}
+                >
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Min level"
+                        variant="outlined"
+                        value={getEffectsCostTarget(cardData).minLevel || NULLABLE_LEVEL_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetMinLevelChange(parseInt(event.target.value), getEffectsCostTarget(cardData), handleCostTargetChange)}
+                        inputProps={NULLABLE_LEVEL_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                        sx={costCardSelectionVisible}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Max level"
+                        variant="outlined"
+                        value={getEffectsCostTarget(cardData).maxLevel || NULLABLE_LEVEL_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetMaxLevelChange(parseInt(event.target.value), getEffectsCostTarget(cardData), handleCostTargetChange)}
+                        inputProps={NULLABLE_LEVEL_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                        sx={costCardSelectionVisible}
+                    />
                 </Box>
                 <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Effect:</Typography>
                 <Box
