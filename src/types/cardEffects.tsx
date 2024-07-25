@@ -78,7 +78,7 @@ export enum TargetOwner {
 }
 
 export type EffectsTarget = {
-    class: CardClass|null,
+    cardClass: CardClass|null,
     subtype: CardSubtype|null,
     minLevel: number|null,
     maxLevel: number|null,
@@ -87,6 +87,18 @@ export type EffectsTarget = {
     zone: Zone|null,
     targetType: TargetType|null,
     owner: TargetOwner|null
+}
+
+export const DEFAULT_EFFECTS_TARGET = {
+    cardClass: null,
+    subtype: null,
+    minLevel: null,
+    maxLevel: null,
+    atk: null,
+    def: null,
+    zone: null,
+    targetType: null,
+    owner: null
 }
 
 export enum PostCountType {
@@ -237,7 +249,7 @@ export const DEFAULT_CARD_EFFECTS: CardEffects = {
         direction: null,
         hindrance: null,
         benefit: null,
-        chainedEffect: null
+        chainEffect: null
     }
 }
 
@@ -340,31 +352,55 @@ export const STAT_AMOUNT_PROPS = {
     default: 100
 }
 
-export const getCostAmountProps = (cardData: CardData) => {
+export enum SelectionType {
+    NONE = 'None',
+    CARD = 'Card',
+    HIDDEN_CARD = 'Hidden card',
+    LEVEL = 'Level',
+    STAT = 'Stat'
+}
+
+
+export const getAmountProps = (selectionType: SelectionType) => {
+    switch (selectionType) {
+        case SelectionType.NONE:
+            return DEFAULT_AMOUNT_PROPS;
+        case SelectionType.CARD:
+            return CARD_AMOUNT_PROPS;
+        case SelectionType.HIDDEN_CARD:
+            return CARD_AMOUNT_PROPS;
+        case SelectionType.LEVEL:
+            return LEVEL_AMOUNT_PROPS;
+        case SelectionType.STAT:
+            return STAT_AMOUNT_PROPS;
+    }
+}
+
+export const getCostSelectionType = (cardData: CardData) => {
     const cost = getEffectsCost(cardData);
     switch (cost.costType) {
         case CostType.PAYMENT:
             switch (cost.subtype) {
                 case PaymentCostType.DISCARD:
-                    return CARD_AMOUNT_PROPS;
+                    return SelectionType.CARD;
                 case PaymentCostType.LIFE:
-                    return STAT_AMOUNT_PROPS;
+                    return SelectionType.STAT;
                 case PaymentCostType.MILL:
-                    return CARD_AMOUNT_PROPS;
+                    return SelectionType.HIDDEN_CARD;
                 case PaymentCostType.RESHUFFLE:
-                    return CARD_AMOUNT_PROPS;
+                    return SelectionType.CARD;
                 case PaymentCostType.SACRIFICE:
-                    return CARD_AMOUNT_PROPS;
+                    return SelectionType.CARD;
             }
             break;
         case CostType.STATE:
             switch (cost.subtype) {
                 case StateCostType.COUNT_CARDS:
-                    return CARD_AMOUNT_PROPS;
+                    return SelectionType.CARD;
             }
             break;
     }
-    return DEFAULT_AMOUNT_PROPS;
+    return SelectionType.NONE;
 }
 
 export const getCostTypeOptions = (cardData: CardData) => {

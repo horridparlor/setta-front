@@ -3,9 +3,19 @@ import React from "react";
 import Cookies from "js-cookie";
 import {AuthCookie, getUserId} from "./cookie";
 import {CardExpansion, EXPANSION_NO_OWNER} from "./expansion";
-import {CardEffects, CostType, DEFAULT_CARD_EFFECTS, EffectsCost, EffectsEffect} from "./cardEffects";
+import {
+    CardEffects,
+    CostType,
+    DEFAULT_CARD_EFFECTS,
+    DEFAULT_EFFECTS_TARGET,
+    EffectsCost,
+    EffectsEffect,
+    EffectsTarget
+} from "./cardEffects";
+import {NONE_STRING} from "../utils/string";
 
 export enum CardClass {
+    NONE = 'None',
     ABYSS = 'Abyss',
     DRAGON = 'Dragon',
     KAWAII = 'Kawaii',
@@ -14,7 +24,12 @@ export enum CardClass {
     ZOMBIE = 'Zombie'
 }
 
+export const isCardClass = (value: string): value is CardClass => {
+    return Object.values(CardClass).includes(value as CardClass);
+}
+
 export enum CardType {
+    NONE = 'None',
     MONSTER = 'Monster',
     SPELL = 'Spell',
     TRAP = 'Trap'
@@ -25,6 +40,7 @@ export const isCardType = (value: string): value is CardType => {
 }
 
 export enum CardSubtype {
+    NONE = 'None',
     NORMAL = 'Normal',
     EFFECT = 'Effect',
     FUSION = 'Fusion',
@@ -34,12 +50,21 @@ export enum CardSubtype {
     KILLER_MOVE = 'Killer Move',
 }
 
+export const isCardSubtype = (value: string): value is CardSubtype => {
+    return Object.values(CardSubtype).includes(value as CardSubtype);
+}
+
 export enum CardSupertype {
     NONE = 'None',
     HAND_TRAP = 'Hand Trap',
     MAXIMUM = 'Maximum',
     PENDULUM = 'Pendulum',
     DOMAIN = 'Domain'
+}
+
+
+export const isCardSupertype = (value: string): value is CardSupertype => {
+    return Object.values(CardSupertype).includes(value as CardSupertype);
 }
 
 export enum MaximumPiece {
@@ -203,6 +228,8 @@ const MONSTER_SUBTYPES = [CardSubtype.NORMAL, CardSubtype.EFFECT,
 
 const getActiveSubtypes = (cardType: CardType) => {
     switch (cardType) {
+        case CardType.NONE:
+            return [];
         case CardType.MONSTER:
             return MONSTER_SUBTYPES;
         case CardType.SPELL:
@@ -215,7 +242,7 @@ const getActiveSubtypes = (cardType: CardType) => {
 export const getSubtypeOptions = (cardType: CardType): React.ReactNode => {
     const activeSubtypes = getActiveSubtypes(cardType);
     return Object.values(CardSubtype)
-        .filter(subtype => activeSubtypes.includes(subtype))
+        .filter(subtype => subtype !== NONE_STRING && activeSubtypes.includes(subtype))
         .map(subtype => (
             <MenuItem key={subtype} value={subtype}>{subtype}</MenuItem>
         ));
@@ -363,3 +390,18 @@ export const getEffectsCost = (cardData: CardData): EffectsCost => {
 export const getEffectsEffect = (cardData: CardData): EffectsEffect => {
     return cardData.cardEffects.effect;
 }
+
+export const fixEffectsTarget = (target: EffectsTarget|null) => {
+    return target ? target : DEFAULT_EFFECTS_TARGET;
+}
+
+export const getEffectsCostTarget = (cardData: CardData) => {
+    return fixEffectsTarget(cardData.cardEffects.cost.target);
+}
+
+export const getEffectsEffectTarget = (cardData: CardData) => {
+    return fixEffectsTarget(cardData.cardEffects.effect.target);
+}
+
+export const TARGETABLE_CARD_SUBTYPES = Object.values(CardSubtype)
+    .filter(subtype => subtype !== CardSubtype.EFFECT);

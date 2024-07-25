@@ -25,30 +25,45 @@ import {
     CardType,
     combineEffectsTexts,
     DefaultTextSize,
-    EXTRA_DECK_SUBTYPES, getEffectsCost,
+    EXTRA_DECK_SUBTYPES,
+    getEffectsCost,
+    getEffectsCostTarget,
     getSubtypeOptions,
     getSupertypeOptions,
     hasCostText,
     hasEffectText,
     hasFlavourText,
-    hasTwoMaterials, isCardType,
+    hasTwoMaterials,
+    isCardClass, isCardSubtype,
+    isCardType,
     isExtraDeckCard,
     isKiller,
     MaximumPiece,
     MONSTER_CARD_TYPES,
     SpecialCountsAs,
-    SpecialCountsAsId
+    SpecialCountsAsId, TARGETABLE_CARD_SUBTYPES
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
-import {getStringSelector, normalizeName} from "../../utils/string";
+import {getStringSelector, isNoneString, normalizeName} from "../../utils/string";
 import {getUserId} from "../../types/cookie";
 import {
     CardEffects,
-    CostType, getCostAmountProps,
-    getCostSubtypeOptions, getCostSupertypeOptions, getCostTypeOptions,
-    getDefaultCostSubtype, getDefaultCostSupertype, getDefaultCostType,
-    isCostType, MonsterSpecificStateCostTypes,
-    PaymentCostType, SpellSpecificStateCostTypes, StateCostType, TriggerCostType
+    CostType,
+    EffectsTarget,
+    getAmountProps,
+    getCostSelectionType,
+    getCostSubtypeOptions,
+    getCostSupertypeOptions,
+    getCostTypeOptions,
+    getDefaultCostSubtype,
+    getDefaultCostSupertype,
+    getDefaultCostType,
+    isCostType,
+    MonsterSpecificStateCostTypes,
+    SelectionType,
+    SpellSpecificStateCostTypes,
+    StateCostType,
+    TriggerCostType
 } from "../../types/cardEffects";
 import {menuTitleStyle} from "../../utils/fonts";
 
@@ -309,6 +324,43 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return cost;
     }
 
+    const handleCostTargetChange = (updatedTarget: EffectsTarget, justReturn: boolean = false) => {
+        const cost = {...getEffectsCost(cardData),
+            target: updatedTarget
+        };
+        if (justReturn) {
+            return cost;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, cost: cost});
+        return cost;
+    }
+
+    const handleTargetClassChange = (value: string, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const cardClass: CardClass|null = isCardClass(value) ? value : null;
+        const target = {...prevTarget,
+            cardClass: cardClass
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
+
+    const handleTargetSubtypeChange = (value: string, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const subtype: CardSubtype|null = isCardSubtype(value) ? value : null;
+        const target = {...prevTarget,
+            subtype: subtype
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
 
     const costSubtypeOptions = useMemo(() => {
         return getCostSubtypeOptions(cardData);
@@ -316,9 +368,16 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const costSupertypeOptions = useMemo(() => {
         return getCostSupertypeOptions(cardData);
     }, [cardData.cardEffects.cost.subtype, cardData.cardType]);
-    const costAmountProps = useMemo(() => {
-        return getCostAmountProps(cardData);
+    const costSelectionType = useMemo(() => {
+        return getCostSelectionType(cardData);
     }, [cardData.cardEffects.cost]);
+    const costAmountProps = useMemo(() => {
+        return getAmountProps(costSelectionType);
+    }, [costSelectionType]);
+
+    const costCardSelectionVisible = {
+        display: costSelectionType === SelectionType.CARD ? 'flex' : 'none'
+    }
 
     const getEffectsTab = () => {
         return (
@@ -380,6 +439,32 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         disabled={cannotEdit()}
                         sx={{display: costAmountProps.visible ? 'flex' : 'none'}}
                     />
+                     <FormControl fullWidth sx={costCardSelectionVisible}>
+                        <InputLabel id="cost-target-class-selector-label">Class</InputLabel>
+                        <Select
+                            labelId="cost-target-class-selector-label"
+                            value={cardData.cardEffects.cost?.target?.cardClass || CardClass.NONE}
+                            label="Class"
+                            onChange={(event: SelectChangeEvent<CardClass>, child: ReactNode) =>
+                                handleTargetClassChange(event.target.value, getEffectsCostTarget(cardData), handleCostTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(Object.values(CardClass))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={costCardSelectionVisible}>
+                        <InputLabel id="cost-target-subtype-selector-label">Subtype</InputLabel>
+                        <Select
+                            labelId="cost-target-subtype-selector-label"
+                            value={cardData.cardEffects.cost?.target?.subtype || CardSubtype.NONE}
+                            label="Subtype"
+                            onChange={(event: SelectChangeEvent<CardSubtype>, child: ReactNode) =>
+                                handleTargetSubtypeChange(event.target.value, getEffectsCostTarget(cardData), handleCostTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(TARGETABLE_CARD_SUBTYPES)}
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Effect:</Typography>
                 <Box
@@ -496,7 +581,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                                 onChange={handleSelectChange('cardClass')}
                                 disabled={cannotEdit()}
                             >
-                                {Object.values(CardClass).map(c => (
+                                {Object.values(CardClass).filter(value => !isNoneString(value)).map(c => (
                                     <MenuItem key={c} value={c}>{c}</MenuItem>
                                 ))}
                             </Select>
@@ -511,7 +596,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             onChange={handleSelectChange('cardType')}
                             disabled={cannotEdit()}
                         >
-                            {Object.values(CardType).map(t => (
+                            {Object.values(CardType).filter(value => !isNoneString(value)).map(t => (
                                 <MenuItem key={t} value={t}>{t}</MenuItem>
                             ))}
                         </Select>

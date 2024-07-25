@@ -1,6 +1,8 @@
 import {CardData, getMaximumExtension} from "../types/card";
 import {MenuItem} from "@mui/material";
 
+export const NONE_STRING = 'None';
+
 export const normalizeName = (cardData: CardData|any): string => {
     if (typeof cardData === 'undefined') {
         return '';
@@ -61,9 +63,10 @@ export const endsSentence = (message: String) => {
     return ['.', '!', '?'].includes(lastChar);
 }
 
-export const getStringSelector = (values: Array<string>, defaultTo: string) => {
-    return [<MenuItem key='none' value={defaultTo}>–</MenuItem>,
-        values.sort().map(value => (
+export const getStringSelector = (values: Array<string>, defaultTo: string|undefined = undefined) => {
+    const sorted = defaultTo === undefined ? values : values.sort();
+    return [<MenuItem key='none' value={defaultTo ?? NONE_STRING}>{defaultTo === undefined ? NONE_STRING : '–'}</MenuItem>,
+        sorted.filter(value => value !== 'None').map(value => (
             <MenuItem key={value} value={value}>{value}</MenuItem>
         ))
     ];
@@ -71,4 +74,8 @@ export const getStringSelector = (values: Array<string>, defaultTo: string) => {
 
 export const isString = (value: any): value is string => {
     return typeof value === 'string';
+}
+
+export const isNoneString = (message: string) => {
+    return message === NONE_STRING;
 }
