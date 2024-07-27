@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { Box } from '@mui/material';
 import {CardData} from "../../types/card";
 import {CardOwner} from "../../types/user";
@@ -17,6 +17,10 @@ interface CardCataloguePageProps {
 }
 
 const CardCataloguePage = (props: CardCataloguePageProps) => {
+    const DEFAULT_CARDS_SHOWN = 24;
+    const initialCardsShown = parseInt(sessionStorage.getItem(PageCookie.CARD_CATALOGUE_CARDS_SHOWN) || (DEFAULT_CARDS_SHOWN).toString());
+    const [visibleCardCount, setVisibleCardCount] = useState(initialCardsShown);
+
     const { cards, cardOwners,
         expansions, refetch } = props;
     const catalogueRef = useRef<CardCatalogueRef>(null);
@@ -34,10 +38,14 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
        catalogueRef.current?.backdownFilters();
     }
     const handleCardClick = (card: CardData) => {
-        const params = new URLSearchParams(location.search);
-        sessionStorage.setItem(PageCookie.CARD_CATALOGUE_FILTERS, params.toString());
+        onLeavePage();
         const cardRoute = `${AppPage.CardEditor}/${card.cardId.toString()}`;
         navigate(cardRoute);
+    }
+    const onLeavePage = () => {
+        const params = new URLSearchParams(location.search);
+        sessionStorage.setItem(PageCookie.CARD_CATALOGUE_CARDS_SHOWN, visibleCardCount.toString());
+        sessionStorage.setItem(PageCookie.CARD_CATALOGUE_FILTERS, params.toString());
     }
 
     useEffect(() => {
@@ -72,7 +80,7 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#244775', overflowX: 'hidden' }}>
             <Box sx={{ width: '100%', p: 2 }}>
-                <HomeBar refetch={refetch} ref={homeBarRef} />
+                <HomeBar refetch={refetch} ref={homeBarRef} onLeavePage={onLeavePage} />
             </Box>
             <Box sx={{
                 flex: 1,
@@ -82,7 +90,10 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
                 overflow: 'auto',
             }}>
                 <CardCatalogue cards={cards} cardOwners={cardOwners} expansions={expansions}
-                               ref={catalogueRef} handleCardClick={handleCardClick}/>
+                               ref={catalogueRef} handleCardClick={handleCardClick}
+                               visibleCardCount={visibleCardCount} setVisibleCardCount={setVisibleCardCount}
+                               defaultCardsShown={DEFAULT_CARDS_SHOWN}
+                />
             </Box>
         </Box>
     );

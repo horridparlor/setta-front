@@ -31,6 +31,7 @@ export enum CardCatalogueCookie {
 }
 
 export enum PageCookie {
+    CARD_CATALOGUE_CARDS_SHOWN = 'cardsShown',
     CARD_CATALOGUE_FILTERS = 'cardCatalogueFilters'
 }
 

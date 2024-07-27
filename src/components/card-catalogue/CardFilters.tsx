@@ -30,6 +30,8 @@ interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     expansions: Array<CardExpansion>;
     cards: Array<CardData>;
     cardOwners: Array<CardOwner>;
+    isShowingMoreCards: boolean;
+    resetCardsShown: () => void;
 }
 
 export interface CardFiltersRef {
@@ -48,7 +50,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 }));
 
 const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardFiltersProps>(({onFilterChange, expansions,
-    cards, cardOwners}, ref) => {
+    cards, cardOwners, isShowingMoreCards, resetCardsShown}, ref) => {
     const navigate = useNavigate();
     const location = useLocation();
     const urlParams = new URLSearchParams(location.search);
@@ -318,6 +320,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
 
         onFilterChange(getEmptyFilters());
         resetFilterCookies();
+        resetCardsShown();
     };
 
     const resetFilterCookies = () => {
@@ -423,7 +426,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
                     onClick={resetFilters}
                     disabled={
                         !cardName && !cardEffects && !referenceId && !cardClass && !cardType && !cardSubtype && !cardSupertype && !expansionId
-                        && !sortOrder && !sortBy && !levelOperation && !atkOperation && !defOperation && !isAce && !ownerId
+                        && !sortOrder && !sortBy && !levelOperation && !atkOperation && !defOperation && !isAce && !ownerId && !isShowingMoreCards
                     }
                     sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
                 >

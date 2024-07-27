@@ -8,13 +8,14 @@ import {PageCookie} from "../../types/cookie";
 
 interface HomeBarProps {
     refetch: () => Promise<void>;
+    onLeavePage?: () => void;
 }
 
 export interface HomeBarRef {
     toggleLoginOpen: () => void;
 }
 
-const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({refetch}, ref) => {
+const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({refetch, onLeavePage}, ref) => {
     const [isLoginOpen, setLoginOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,18 +27,21 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({refetch}, ref) => {
         toggleLoginOpen
     }));
 
+    const navigateTo = (page: AppPage) => {
+        if (onLeavePage) {
+            onLeavePage();
+        }
+        navigate(page);
+    }
+
     return (
         <Box>
             <Button variant="contained" color="primary" onClick={() => {
-                if (location.pathname.startsWith(AppPage.CardCatalogue)) {
-                    const params = new URLSearchParams(location.search);
-                    sessionStorage.setItem(PageCookie.CARD_CATALOGUE_FILTERS, params.toString());
-                }
-                navigate(AppPage.CardEditor);
+                navigateTo(AppPage.CardEditor);
             }}>
                 Card Editor
             </Button>
-            <Button variant="contained" color="secondary" onClick={() => navigate(AppPage.CardCatalogue)} sx={{marginLeft: '0.4rem'}}>
+            <Button variant="contained" color="secondary" onClick={() => navigateTo(AppPage.CardCatalogue)} sx={{marginLeft: '0.4rem'}}>
                 Card Catalogue
             </Button>
             <Button variant="contained" color="info" onClick={() => setLoginOpen(true)} sx={{marginLeft: '0.4rem'}}>

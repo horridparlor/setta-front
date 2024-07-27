@@ -16,12 +16,16 @@ import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 import Button from "@mui/material/Button";
 import {toast} from "react-toastify";
+import {PageCookie} from "../../types/cookie";
 
 interface CardCatalogueProps {
     handleCardClick: (cardData: CardData) => void;
     cards: Array<CardData>;
     cardOwners: Array<CardOwner>;
     expansions: Array<CardExpansion>;
+    visibleCardCount: number;
+    setVisibleCardCount: (newCount: number) => void;
+    defaultCardsShown: number;
 }
 
 export interface CardCatalogueRef {
@@ -30,7 +34,9 @@ export interface CardCatalogueRef {
     toggleFilters: () => void;
 }
 
-const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handleCardClick, cards, cardOwners, expansions }, ref) => {
+const CardCatalogue = forwardRef<CardCatalogueRef,
+    CardCatalogueProps>(({ handleCardClick, cards, cardOwners,
+          expansions, visibleCardCount, setVisibleCardCount, defaultCardsShown }, ref) => {
     const [filters, setFilters] = useState({
         cardName: '',
         cardEffects: '',
@@ -54,15 +60,9 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
         isErrata: false,
     });
 
+    const SHOW_MORE_CARDS = 42;
     const cardScale = 0.55;
     const filtersRef = useRef<CardFiltersRef>(null);
-    const initialCardsShown = 24;
-    const showMoreCards = 42;
-    const [visibleCardCount, setVisibleCardCount] = useState(initialCardsShown);
-
-    useEffect(() => {
-        setVisibleCardCount(initialCardsShown);
-    }, [filters]);
 
     const onGetReferences = (cardData: CardData) => {
         filtersRef.current?.referenceCard(cardData);
@@ -183,8 +183,12 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
         }
     }
 
+    const resetCardsShown = () => {
+        setVisibleCardCount(defaultCardsShown);
+    }
     const resetFilters = () => {
         filtersRef.current?.resetFilters();
+        resetCardsShown();
     };
     const backdownFilters = () => {
         if (isInReferenceMode()) {
@@ -208,7 +212,9 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
             }}
         >
             <CardFilters
-                ref={filtersRef} cards={cards} cardOwners={cardOwners} expansions={expansions} onFilterChange={setFilters}
+                ref={filtersRef} cards={cards} cardOwners={cardOwners} expansions={expansions}
+                onFilterChange={setFilters} isShowingMoreCards={visibleCardCount > defaultCardsShown}
+                resetCardsShown={resetCardsShown}
             />
             <Box sx={{
                 display: 'flex',
@@ -245,8 +251,8 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(({ handle
                 {visibleCardCount < cards.length && (
                     <Button variant="contained"
                             onClick={() => {
-                                setVisibleCardCount(prevCount => prevCount + showMoreCards)
-                                toast.success('Great, scroll down for more cards')
+                                setVisibleCardCount(visibleCardCount + SHOW_MORE_CARDS);
+                                toast.success('Great, scroll down for more cards');
                             }
                             }>
                         Load More
