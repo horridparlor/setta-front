@@ -27,6 +27,7 @@ import {
     DefaultTextSize,
     EXTRA_DECK_SUBTYPES,
     getEffectsCost,
+    getEffectsCostPayment, getEffectsCostPostCount,
     getEffectsCostTarget,
     getSubtypeOptions,
     getSupertypeOptions,
@@ -34,39 +35,68 @@ import {
     hasEffectText,
     hasFlavourText,
     hasTwoMaterials,
-    isCardClass, isCardSubtype,
+    isCardClass,
+    isCardSubtype,
     isCardType,
     isExtraDeckCard,
     isKiller,
     MaximumPiece,
     MONSTER_CARD_TYPES,
     SpecialCountsAs,
-    SpecialCountsAsId, TARGETABLE_CARD_SUBTYPES
+    SpecialCountsAsId,
+    TARGETABLE_CARD_SUBTYPES
 } from "../../types/card";
 import {CardExpansion, EXPANSION_NO_OWNER} from "../../types/expansion";
 import {getStringSelector, isNoneString, normalizeName} from "../../utils/string";
 import {getUserId} from "../../types/cookie";
 import {
     CardEffects,
-    CostType, DEFAULT_EFFECTS_COST,
+    CostType,
+    DEFAULT_EFFECTS_COST,
+    EffectsPayment,
     EffectsTarget,
     getAmountProps,
+    getCostPaymentTypeOptions, getCostPostCountSubtypeOptions,
+    getCostPostCountTypeOptions,
+    getCostPrestateOptions,
     getCostSelectionType,
     getCostSubtypeOptions,
-    getCostSupertypeOptions, getCostTargetOwnerOptions, getCostTargetTypeOptions, getCostTargetZoneOptions,
+    getCostSupertypeOptions,
+    getCostTargetOwnerOptions,
+    getCostTargetTypeOptions,
+    getCostTargetZoneOptions,
     getCostTypeOptions,
+    getDefaultCostPaymentType, getDefaultCostPostCountSubtype, getDefaultCostPostCountType,
+    getDefaultCostPrestate,
     getDefaultCostSubtype,
-    getDefaultCostSupertype, getDefaultCostTargetOwner, getDefaultCostTargetType, getDefaultCostTargetZone,
+    getDefaultCostSupertype,
+    getDefaultCostTargetOwner,
+    getDefaultCostTargetType,
+    getDefaultCostTargetZone,
     getDefaultCostType,
-    isCostType, isTargetOwner, isTargetType, isZone,
-    MonsterSpecificStateCostTypes, NULLABLE_LEVEL_AMOUNT_PROPS, NULLABLE_STAT_AMOUNT_PROPS,
+    isCardPropertySelection,
+    isCostType,
+    isPaymentCostType, isPostCountType,
+    isStateCostType,
+    isTargetOwner,
+    isTargetType,
+    isZone,
+    MonsterSpecificStateCostTypes,
+    NULLABLE_LEVEL_AMOUNT_PROPS,
+    NULLABLE_STAT_AMOUNT_PROPS,
+    PaymentCostType, PostCount,
+    PostCountType,
+    routePaymentCostTypeSelectionType,
     SelectionType,
     SpellSpecificStateCostTypes,
-    StateCostType, TargetOwner, TargetType,
-    TriggerCostType, Zone
+    StateCostType,
+    TargetOwner,
+    TargetType,
+    TriggerCostType,
+    Zone
 } from "../../types/cardEffects";
 import {menuTitleStyle} from "../../utils/fonts";
-import { isEqual } from 'lodash';
+import {isEqual} from 'lodash';
 
 interface RightPanelSettingsProps {
     cardData: CardData;
@@ -294,8 +324,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         const card = {...prevCard};
         card.cardEffects.cost.subtype = subtype;
         const supertype = getDefaultCostSupertype(card);
-        const cost = {...handleCostSupertypeChange(supertype, card, true),
-            subtype: subtype
+        let cost = getEffectsCost(cardData);
+        const prestate = cost.costType === CostType.STATE && cost.prestate === subtype ? StateCostType.NONE : cost.prestate;
+        cost = {...handleCostSupertypeChange(supertype, card, true),
+            subtype: subtype,
+            prestate: prestate
         };
         if (justReturn) {
             return cost;
@@ -312,6 +345,21 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             target: handleTargetTypeChange(getEffectsCostTarget(card).targetType || getDefaultCostTargetType(card),
                 getEffectsCostTarget(card), handleCostTargetChange, card,true),
             supertype: supertype
+        };
+        if (justReturn) {
+            return cost;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, cost: cost});
+        return cost;
+    }
+
+    const handleCostPrestateChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const prestate : StateCostType|null = isStateCostType(value) ? value : null;
+        let cost = getEffectsCost(cardData);
+        const subtype = cost.costType === CostType.STATE && cost.subtype === prestate ? StateCostType.COUNT_CARDS : cost.subtype || getDefaultCostSubtype(cardData);
+        cost = {...handleCostSubtypeChange(subtype, cardData, true),
+            prestate: prestate
         };
         if (justReturn) {
             return cost;
@@ -455,6 +503,93 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return target;
     }
 
+    const handleCostPaymentChange = (updatedPayment: EffectsPayment, justReturn: boolean = false) => {
+        const cost = {...getEffectsCost(cardData),
+            payment: updatedPayment
+        };
+        if (justReturn) {
+            return cost;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, cost: cost});
+        return cost;
+    }
+
+    const handlePaymentTypeChange = (value: string, prevPayment: EffectsPayment,
+                                     handle: (payment: EffectsPayment) => void, justReturn: boolean = false) => {
+        const paymentType = isPaymentCostType(value) ? value : PaymentCostType.NONE;
+        const payment = {...prevPayment,
+            paymentType: paymentType
+        };
+        if (justReturn) {
+            return payment;
+        }
+        handle(payment);
+        return payment;
+    }
+
+    const handlePaymentAmountChange = (amount: number, prevPayment: EffectsPayment,
+                                     handle: (payment: EffectsPayment) => void, justReturn: boolean = false) => {
+        const payment = {...prevPayment,
+            amount: amount
+        };
+        if (justReturn) {
+            return payment;
+        }
+        handle(payment);
+        return payment;
+    }
+
+    const handlePaymentCardTypeChange = (value: string, prevPayment: EffectsPayment,
+                                     handle: (payment: EffectsPayment) => void, justReturn: boolean = false) => {
+        const cardType = isCardType(value) ? value : CardType.NONE;
+        const payment = {...prevPayment,
+            cardType: cardType
+        };
+        if (justReturn) {
+            return payment;
+        }
+        handle(payment);
+        return payment;
+    }
+
+    const handleCostPostCountChange = (updatedPostCount: PostCount, justReturn: boolean = false) => {
+        const cost = {...getEffectsCost(cardData),
+            postCount: updatedPostCount
+        };
+        if (justReturn) {
+            return cost;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, cost: cost});
+        return cost;
+    }
+
+    const handlePostCountTypeChange = (value: string, prevPostCount: PostCount,
+                                     handle: (postCount: PostCount) => void, justReturn: boolean = false) => {
+        const countType = isPostCountType(value) ? value : PostCountType.NONE;
+        const postCount = {...handlePostCountSubtypeChange(getDefaultCostPostCountSubtype(countType), prevPostCount, handle, true),
+            countType: countType
+        };
+        if (justReturn) {
+            return postCount;
+        }
+        handle(postCount);
+        return postCount;
+    }
+
+    const handlePostCountSubtypeChange = (subtype: string|null, prevPostCount: PostCount,
+                                     handle: (postCount: PostCount) => void, justReturn: boolean = false) => {
+        const postCount = {...prevPostCount,
+            subtype: subtype
+        };
+        if (justReturn) {
+            return postCount;
+        }
+        handle(postCount);
+        return postCount;
+    }
+
     const costSubtypeOptions = useMemo(() => {
         return getCostSubtypeOptions(cardData);
     }, [cardData.cardEffects.cost.costType, cardData.cardType]);
@@ -468,11 +603,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return getAmountProps(costSelectionType);
     }, [costSelectionType]);
 
-    const isCostCardSelectable = [SelectionType.CARD, SelectionType.ALL_CARDS, SelectionType.PRIVATE_CARD]
-        .includes(costSelectionType);
-
     const costCardSelectionVisible = {
-        display: isCostCardSelectable ? 'flex' : 'none'
+        display: isCardPropertySelection(costSelectionType) ? 'flex' : 'none'
     }
 
     const isCostAmountSelectable = costAmountProps.min !== costAmountProps.max
@@ -488,10 +620,31 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         onCardDataChange('cardEffects', {...cardData.cardEffects, cost: cost});
     }
 
+    const isCostPaymentConfable = getCostPaymentTypeOptions(cardData).length && getEffectsCostPayment(cardData).paymentType !== PaymentCostType.NONE;
+
+    const costPaymentSelectionType = routePaymentCostTypeSelectionType(getEffectsCostPayment(cardData).paymentType || PaymentCostType.NONE);
+    const costPaymentProps = getAmountProps(costPaymentSelectionType);
+
     const getEffectsTab = () => {
         return (
             <>
                 <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Cost:</Typography>
+                <Box
+                    sx={{...rowContainerStyle, display: getCostPrestateOptions(cardData).length ? 'flex' : 'none'}}
+                >
+                    <FormControl fullWidth>
+                        <InputLabel id="cost-prestate-label">Prestate</InputLabel>
+                        <Select
+                            labelId="cost-prestate-label"
+                            value={cardData.cardEffects.cost?.prestate || StateCostType.NONE}
+                            label="Prestate"
+                            onChange={(event: SelectChangeEvent<StateCostType>, child: ReactNode) => handleCostPrestateChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getCostPrestateOptions(cardData), getDefaultCostPrestate(cardData))}
+                        </Select>
+                    </FormControl>
+                </Box>
                 <Box
                     sx={rowContainerStyle}
                 >
@@ -535,7 +688,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: costAmountProps.visible && isCostCardSelectable ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: costAmountProps.visible ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
@@ -671,6 +824,79 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
+                    sx={{...rowContainerStyle, display: getCostPaymentTypeOptions(cardData).length ? 'flex' : 'none'}}
+                >
+                    <FormControl fullWidth>
+                        <InputLabel id="cost-payment-type-label">Payment</InputLabel>
+                        <Select
+                            labelId="cost-payment-type-label"
+                            value={cardData.cardEffects.cost?.payment?.paymentType || PaymentCostType.NONE}
+                            label="Payment"
+                            onChange={(event: SelectChangeEvent<PaymentCostType>, child: ReactNode) =>
+                                handlePaymentTypeChange(event.target.value, getEffectsCostPayment(cardData), handleCostPaymentChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getCostPaymentTypeOptions(cardData), getDefaultCostPaymentType(cardData))}
+                        </Select>
+                    </FormControl>
+                    <TextField sx={{display: isCostPaymentConfable ? 'flex' : 'none'}}
+                        fullWidth
+                        type="number"
+                        label="Amount"
+                        variant="outlined"
+                        value={getEffectsCostPayment(cardData).amount ?? costPaymentProps.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handlePaymentAmountChange(parseInt(event.target.value), getEffectsCostPayment(cardData), handleCostPaymentChange)}
+                        inputProps={costPaymentProps}
+                        disabled={cannotEdit()}
+                    />
+                    <FormControl fullWidth sx={{display: isCostPaymentConfable && isCardPropertySelection(costPaymentSelectionType) ? 'flex' : 'none'}}>
+                        <InputLabel id="cost-payment-card-type-label">Card Type</InputLabel>
+                        <Select
+                            labelId="cost-payment-card-type-label"
+                            value={cardData.cardEffects.cost?.payment?.cardType || CardType.NONE}
+                            label="Card Type"
+                            onChange={(event: SelectChangeEvent<CardType>, child: ReactNode) =>
+                                handlePaymentCardTypeChange(event.target.value, getEffectsCostPayment(cardData), handleCostPaymentChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(Object.values(CardType))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: getCostPostCountTypeOptions(cardData).length ? 'flex' : 'none'}}
+                >
+                   <FormControl fullWidth>
+                        <InputLabel id="cost-post-count-type-label">Post Count</InputLabel>
+                        <Select
+                            labelId="cost-post-count-type-label"
+                            value={cardData.cardEffects.cost?.postCount?.countType || PostCountType.NONE}
+                            label="Post Count"
+                            onChange={(event: SelectChangeEvent<PostCountType>, child: ReactNode) =>
+                                handlePostCountTypeChange(event.target.value, getEffectsCostPostCount(cardData), handleCostPostCountChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getCostPostCountTypeOptions(cardData), getDefaultCostPostCountType(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getCostPostCountSubtypeOptions(getEffectsCostPostCount(cardData).countType).length ? 'flex' : 'none'}}>
+                        <InputLabel id="cost-post-count-subtype-label">Subtype</InputLabel>
+                        <Select
+                            labelId="cost-post-count-subtype-label"
+                            value={cardData.cardEffects.cost?.postCount?.subtype || getDefaultCostPostCountSubtype(getEffectsCostPostCount(cardData).countType)}
+                            label="Subtype"
+                            onChange={(event: SelectChangeEvent<string|null>, child: ReactNode) =>
+                                handlePostCountSubtypeChange(event.target.value, getEffectsCostPostCount(cardData), handleCostPostCountChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getCostPostCountSubtypeOptions(getEffectsCostPostCount(cardData).countType),
+                                getDefaultCostPostCountSubtype(getEffectsCostPostCount(cardData).countType)
+                            )}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box
                     sx={rowContainerStyle}
                 >
                     <Button
@@ -687,6 +913,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         Reset
                     </Button>
                 </Box>
+
                 <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Effect:</Typography>
                 <Box
                     sx={rowContainerStyle}

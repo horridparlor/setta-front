@@ -6,11 +6,11 @@ import {CardExpansion, EXPANSION_NO_OWNER} from "./expansion";
 import {
     CardEffects,
     CostType,
-    DEFAULT_CARD_EFFECTS,
+    DEFAULT_CARD_EFFECTS, DEFAULT_EFFECTS_PAYMENT, DEFAULT_EFFECTS_POST_COUNT,
     DEFAULT_EFFECTS_TARGET,
     EffectsCost,
-    EffectsEffect,
-    EffectsTarget
+    EffectsEffect, EffectsPayment,
+    EffectsTarget, PostCount
 } from "./cardEffects";
 import {NONE_STRING} from "../utils/string";
 
@@ -397,6 +397,22 @@ export const fixEffectsTarget = (target: EffectsTarget|null) => {
 
 export const getEffectsCostTarget = (cardData: CardData) => {
     return fixEffectsTarget(cardData.cardEffects.cost.target);
+}
+
+export const fixEffectsPayment = (payment: EffectsPayment|null) => {
+    return payment ? payment : DEFAULT_EFFECTS_PAYMENT;
+}
+
+export const getEffectsCostPayment = (cardData: CardData) => {
+    return fixEffectsPayment(cardData.cardEffects.cost.payment);
+}
+
+export const fixEffectsPostCount = (postCount: PostCount|null) => {
+    return postCount ? postCount : DEFAULT_EFFECTS_POST_COUNT;
+}
+
+export const getEffectsCostPostCount = (cardData: CardData) => {
+    return fixEffectsPostCount(cardData.cardEffects.cost.postCount);
 }
 
 export const getEffectsEffectTarget = (cardData: CardData) => {

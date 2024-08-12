@@ -1,5 +1,13 @@
-import {CardClass, CardData, CardSubtype, CardType, getEffectsCost, isMonster, isSpell, isTrap} from "./card";
-import {Payment} from "@mui/icons-material";
+import {
+    CardClass,
+    CardData,
+    CardSubtype,
+    CardType,
+    getEffectsCost,
+    getEffectsCostPostCount,
+    isMonster,
+    isTrap
+} from "./card";
 
 export enum CostType {
     NONE = 'None',
@@ -14,6 +22,7 @@ export const isCostType = (value: string): value is CostType => {
 }
 
 export enum PaymentCostType {
+    NONE = 'None',
     DISCARD = 'Discard',
     LIFE = 'Life',
     MILL = 'Mill',
@@ -21,11 +30,20 @@ export enum PaymentCostType {
     SACRIFICE = 'Sacrifice',
 }
 
+export const isPaymentCostType = (value: string): value is PaymentCostType => {
+    return Object.values(PaymentCostType).includes(value as PaymentCostType);
+}
+
 export enum StateCostType {
+    NONE = 'None',
     COUNT_CARDS = 'Count cards',
     NO_MONSTERS = 'No monsters',
     SUMMONED_THIS_TURN = 'Summoned this turn',
     YOU_CONTROL_ONLY_THIS = 'You control only this'
+}
+
+export const isStateCostType = (value: string): value is StateCostType => {
+    return Object.values(StateCostType).includes(value as StateCostType);
 }
 
 export const MonsterSpecificStateCostTypes: Array<string> = [
@@ -55,6 +73,12 @@ export type EffectsPayment = {
     paymentType: PaymentCostType|null;
     amount: number|null;
     cardType: CardType|null;
+}
+
+export const DEFAULT_EFFECTS_PAYMENT : EffectsPayment = {
+    paymentType: PaymentCostType.NONE,
+    amount: null,
+    cardType: null
 }
 
 export enum Zone {
@@ -119,7 +143,12 @@ export const DEFAULT_EFFECTS_TARGET = {
 }
 
 export enum PostCountType {
+    NONE = 'None',
     LEVEL = 'Level'
+}
+
+export const isPostCountType = (value: string): value is PostCountType => {
+    return Object.values(PostCountType).includes(value as PostCountType);
 }
 
 export enum LevelPostCountType {
@@ -129,6 +158,11 @@ export enum LevelPostCountType {
 export type PostCount = {
     countType: PostCountType,
     subtype: string|null;
+}
+
+export const DEFAULT_EFFECTS_POST_COUNT : PostCount = {
+    countType: PostCountType.NONE,
+    subtype: null
 }
 
 export enum EffectType {
@@ -201,7 +235,7 @@ export enum EffectsBenefit {
 }
 
 export type EffectsCost = {
-    preState: StateCostType|null;
+    prestate: StateCostType|null;
     costType: CostType;
     subtype: string|null;
     supertype: string|null;
@@ -246,7 +280,7 @@ export type CardEffects = {
 }
 
 export const DEFAULT_EFFECTS_COST: EffectsCost = {
-    preState: null,
+    prestate: null,
     costType: CostType.NONE,
     subtype: null,
     supertype: null,
@@ -278,10 +312,10 @@ export const getCostSubtypeOptions = (cardData: CardData): Array<string> => {
     let costTypes;
     switch (cardData.cardEffects.cost.costType) {
         case CostType.PAYMENT:
-            return Object.values(PaymentCostType);
+            return Object.values(PaymentCostType).filter(type => type !== PaymentCostType.NONE);
         case CostType.STATE:
             costTypes = Object.values(StateCostType);
-            const notAvailable = isMonster(cardData) ? SpellSpecificStateCostTypes : MonsterSpecificStateCostTypes;
+            const notAvailable = (isMonster(cardData) ? SpellSpecificStateCostTypes : MonsterSpecificStateCostTypes).concat([StateCostType.NONE]);
             return costTypes.filter(costType => !notAvailable.includes(costType));
         case CostType.TRIGGER:
             costTypes = Object.values(TriggerCostType);
@@ -410,6 +444,13 @@ export enum SelectionType {
     STAT = 'Stat'
 }
 
+export const isCardPropertySelection = (selectionType: SelectionType) => {
+    return [
+        SelectionType.ALL_CARDS,
+        SelectionType.CARD,
+        SelectionType.PRIVATE_CARD
+    ].includes(selectionType);
+}
 
 export const getAmountProps = (selectionType: SelectionType) => {
     switch (selectionType) {
@@ -448,21 +489,14 @@ export const getCostSelectionType = (cardData: CardData) => {
 }
 
 const routeCostSelectionType = (cost: EffectsCost) => {
+    let selectionType;
     switch (cost.costType) {
         case CostType.PAYMENT:
-            switch (cost.subtype) {
-                case PaymentCostType.DISCARD:
-                    return SelectionType.PRIVATE_CARD;
-                case PaymentCostType.LIFE:
-                    return SelectionType.STAT;
-                case PaymentCostType.MILL:
-                    return SelectionType.HIDDEN_CARD;
-                case PaymentCostType.RESHUFFLE:
-                    return SelectionType.CARD;
-                case PaymentCostType.SACRIFICE:
-                    return SelectionType.CARD;
+            selectionType = routePaymentCostTypeSelectionType(cost.subtype || PaymentCostType.NONE);
+            if (selectionType === SelectionType.NONE) {
+                break;
             }
-            break;
+            return selectionType;
         case CostType.STATE:
             switch (cost.subtype) {
                 case StateCostType.COUNT_CARDS:
@@ -480,6 +514,22 @@ const routeCostSelectionType = (cost: EffectsCost) => {
                     break;
             }
             break;
+    }
+    return SelectionType.NONE;
+}
+
+export const routePaymentCostTypeSelectionType = (paymentType : string) => {
+    switch (paymentType) {
+        case PaymentCostType.DISCARD:
+            return SelectionType.PRIVATE_CARD;
+        case PaymentCostType.LIFE:
+            return SelectionType.STAT;
+        case PaymentCostType.MILL:
+            return SelectionType.HIDDEN_CARD;
+        case PaymentCostType.RESHUFFLE:
+            return SelectionType.CARD;
+        case PaymentCostType.SACRIFICE:
+            return SelectionType.CARD;
     }
     return SelectionType.NONE;
 }
@@ -534,9 +584,98 @@ export const getDefaultCostTargetOwner = (cardData: CardData) => {
 }
 
 export const getCostTargetZoneOptions = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.STATE:
+            switch (cost.subtype) {
+                case StateCostType.COUNT_CARDS:
+                    return [Zone.GRAVE];
+            }
+    }
     return [];
 }
 
 export const getDefaultCostTargetZone = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.STATE:
+            switch (cost.subtype) {
+                case StateCostType.COUNT_CARDS:
+                    return Zone.GRAVE;
+            }
+    }
     return Zone.NONE;
+}
+
+export const getCostPrestateOptions = (cardData: CardData) => {
+    const options = Object.values(StateCostType).filter(type => ![
+        StateCostType.COUNT_CARDS
+    ].includes(type));
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.PAYMENT:
+            return options;
+        case CostType.STATE:
+            return options;
+    }
+    return [];
+}
+
+export const getDefaultCostPrestate = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+    }
+    return StateCostType.NONE;
+}
+
+export const getCostPaymentTypeOptions = (cardData: CardData) => {
+    const options = Object.values(PaymentCostType);
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+        case CostType.PAYMENT:
+            return options;
+        case CostType.STATE:
+            return options;
+        case CostType.TRIGGER:
+            return options;
+    }
+    return [];
+}
+
+export const getDefaultCostPaymentType = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+    }
+    return PaymentCostType.NONE;
+}
+
+export const getCostPostCountTypeOptions = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    if (cost.costType === CostType.PAYMENT && cost.subtype !== PaymentCostType.RESHUFFLE) {
+        return Object.values(PostCountType);
+    }
+    return [];
+}
+
+export const getDefaultCostPostCountType = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    switch (cost.costType) {
+    }
+    return PaymentCostType.NONE;
+}
+
+export const getCostPostCountSubtypeOptions = (countType: PostCountType) => {
+    switch (countType) {
+        case PostCountType.LEVEL:
+            return Object.values(LevelPostCountType);
+    }
+    return [];
+}
+
+export const getDefaultCostPostCountSubtype = (countType: PostCountType) => {
+    switch (countType) {
+        case PostCountType.LEVEL:
+            return LevelPostCountType.COMBINED;
+    }
+    return '';
 }
