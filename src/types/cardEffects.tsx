@@ -651,7 +651,7 @@ export const getDefaultCostPaymentType = (cardData: CardData) => {
 
 export const getCostPostCountTypeOptions = (cardData: CardData) => {
     const cost = getEffectsCost(cardData);
-    if (cost.costType === CostType.PAYMENT && cost.subtype !== PaymentCostType.RESHUFFLE) {
+    if (cost.costType === CostType.PAYMENT) {
         return Object.values(PostCountType);
     }
     return [];
