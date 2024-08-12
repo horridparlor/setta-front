@@ -138,7 +138,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
         && (isInReferenceMode() || filters.defOperation === '' || checkDef(card))
         && (isInReferenceMode() || !filters.isAce || card.isAce)
         && (isInReferenceMode() || filters.ownerId === '' || card.ownerId === parseInt(filters.ownerId))
-        && (isInReferenceMode() || !filters.isReleased || (getCardsExpansion(card, expansions)?.isReleased && isNewestReleased(card)))
+        && (isInReferenceMode() || !filters.isReleased || ((getCardsExpansion(card, expansions)?.id === parseInt(filters.expansionId) || getCardsExpansion(card, expansions)?.isReleased) && isNewestReleased(card)))
         && (isInReferenceMode() || !filters.isErrata || (card.errataOfId && card.errataOfId !== card.cardId))
     );
     const doSortAscending = () => {
