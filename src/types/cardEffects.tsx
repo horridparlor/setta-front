@@ -3,7 +3,7 @@ import {
     CardData,
     CardSubtype,
     CardType,
-    getEffectsCost,
+    getEffectsCost, getEffectsEffect, getEffectsEffectTarget,
     isMonster,
     isTrap
 } from "./card";
@@ -185,9 +185,13 @@ export enum StatEffectType {
 }
 
 export enum KeywordEffectType {
-    DOUBLE_TRIBUTE = 'Counts as 2 tributes',
     CHAIN_ATTACK = 'Chain-attack',
-    PIERCING = 'Piercing'
+    PIERCING = 'Piercing',
+    TRIBUTES_ALTERATION = 'Tributes alteration'
+}
+
+export enum TributesAlterationEffectType {
+    DOUBLE_TRIBUTE = 'Double tribute'
 }
 
 export enum MoveCardEffectType {
@@ -694,10 +698,82 @@ export const getDefaultEffectType = (cardData: CardData) => {
     return EffectType.NONE;
 }
 
+export const getEffectSubtypeOptions = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            return Object.values(EvilEffectType);
+        case EffectType.KEYWORD:
+            return Object.values(KeywordEffectType);
+        case EffectType.MOVE_CARD:
+            return Object.values(MoveCardEffectType);
+        case EffectType.STAT:
+            return Object.values(StatEffectType);
+    }
+    return [];
+}
+
 export const getDefaultEffectSubtype = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            return EvilEffectType.DESTROY;
+        case EffectType.KEYWORD:
+            return KeywordEffectType.PIERCING;
+        case EffectType.MOVE_CARD:
+            return MoveCardEffectType.DRAW;
+        case EffectType.STAT:
+            return StatEffectType.ATK;
+    }
     return '';
 }
 
+export const getEffectSupertypeOptions = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.STEAL:
+                    return Object.values(StealEffectType);
+            }
+            break;
+        case EffectType.KEYWORD:
+            switch (effect.subtype) {
+                case KeywordEffectType.TRIBUTES_ALTERATION:
+                    return Object.values(TributesAlterationEffectType);
+            }
+            break;
+        case EffectType.MOVE_CARD:
+            switch (effect.subtype) {
+                case MoveCardEffectType.SUMMON:
+                    return Object.values(SummonEffectType);
+            }
+            break;
+    }
+    return [];
+}
+
 export const getDefaultEffectSupertype = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.STEAL:
+                    return StealEffectType.GAIN_CONTROL;
+            }
+            break;
+        case EffectType.KEYWORD:
+            switch (effect.subtype) {
+                case KeywordEffectType.TRIBUTES_ALTERATION:
+                    return TributesAlterationEffectType.DOUBLE_TRIBUTE;
+            }
+            break;
+        case EffectType.MOVE_CARD:
+            switch (effect.subtype) {
+                case MoveCardEffectType.SUMMON:
+                    return SummonEffectType.REBORN;
+            }
+            break;
+    }
     return '';
 }

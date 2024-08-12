@@ -52,11 +52,14 @@ import {getUserId} from "../../types/cookie";
 import {
     CardEffects,
     CostType,
-    DEFAULT_EFFECTS_COST, DEFAULT_EFFECTS_EFFECT,
+    DEFAULT_EFFECTS_COST,
+    DEFAULT_EFFECTS_EFFECT,
     EffectsPayment,
-    EffectsTarget, EffectType,
+    EffectsTarget,
+    EffectType,
     getAmountProps,
-    getCostPaymentTypeOptions, getCostPostCountSubtypeOptions,
+    getCostPaymentTypeOptions,
+    getCostPostCountSubtypeOptions,
     getCostPostCountTypeOptions,
     getCostPrestateOptions,
     getCostSelectionType,
@@ -66,17 +69,26 @@ import {
     getCostTargetTypeOptions,
     getCostTargetZoneOptions,
     getCostTypeOptions,
-    getDefaultCostPaymentType, getDefaultCostPostCountSubtype, getDefaultCostPostCountType,
+    getDefaultCostPaymentType,
+    getDefaultCostPostCountSubtype,
+    getDefaultCostPostCountType,
     getDefaultCostPrestate,
     getDefaultCostSubtype,
     getDefaultCostSupertype,
     getDefaultCostTargetOwner,
     getDefaultCostTargetType,
     getDefaultCostTargetZone,
-    getDefaultCostType, getDefaultEffectSubtype, getDefaultEffectSupertype, getDefaultEffectType, getEffectTypeOptions,
+    getDefaultCostType,
+    getDefaultEffectSubtype,
+    getDefaultEffectSupertype,
+    getDefaultEffectType,
+    getEffectSubtypeOptions, getEffectSupertypeOptions,
+    getEffectTypeOptions,
     isCardPropertySelection,
-    isCostType, isEffectType,
-    isPaymentCostType, isPostCountType,
+    isCostType,
+    isEffectType,
+    isPaymentCostType,
+    isPostCountType,
     isStateCostType,
     isTargetOwner,
     isTargetType,
@@ -84,7 +96,8 @@ import {
     MonsterSpecificStateCostTypes,
     NULLABLE_LEVEL_AMOUNT_PROPS,
     NULLABLE_STAT_AMOUNT_PROPS,
-    PaymentCostType, PostCount,
+    PaymentCostType,
+    PostCount,
     PostCountType,
     routePaymentCostTypeSelectionType,
     SelectionType,
@@ -646,8 +659,33 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return effect;
     }
 
-    const handleEffectSubtypeChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
-        return getEffectsEffect(cardData);
+    const handleEffectSubtypeChange = (subtype: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const card = {...prevCard};
+        card.cardEffects.effect.subtype = subtype;
+        const supertype = getDefaultEffectSupertype(card);
+        const effect = {...handleEffectSupertypeChange(supertype, card, true),
+            subtype: subtype
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleEffectSupertypeChange = (supertype: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const card = {...prevCard};
+        card.cardEffects.effect.supertype = supertype;
+        const effect = {...getEffectsEffect(cardData),
+            supertype: supertype
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
     }
 
     const resetEffect = () => {
@@ -928,7 +966,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             labelId="cost-post-count-subtype-label"
                             value={cardData.cardEffects.cost?.postCount?.subtype || getDefaultCostPostCountSubtype(getEffectsCostPostCount(cardData).countType)}
                             label="Subtype"
-                            onChange={(event: SelectChangeEvent<string|null>, child: ReactNode) =>
+                            onChange={(event: SelectChangeEvent<string>, child: ReactNode) =>
                                 handlePostCountSubtypeChange(event.target.value, getEffectsCostPostCount(cardData), handleCostPostCountChange)}
                             disabled={cannotEdit()}
                         >
@@ -970,6 +1008,30 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             disabled={cannotEdit()}
                         >
                             {getStringSelector(getEffectTypeOptions(cardData), getDefaultEffectType(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getEffectSubtypeOptions(cardData).length ? 'flex' : 'none' }}>
+                        <InputLabel id="effect-subtype-selector-label">Subtype</InputLabel>
+                        <Select
+                            labelId="effect-subtype-selector-label"
+                            value={cardData.cardEffects.effect?.subtype || getDefaultEffectSubtype(cardData)}
+                            label="Subtype"
+                            onChange={(event: SelectChangeEvent<string>, child: ReactNode) => handleEffectSubtypeChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getEffectSubtypeOptions(cardData), getDefaultEffectSubtype(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getEffectSupertypeOptions(cardData).length ? 'flex' : 'none' }}>
+                        <InputLabel id="effect-supertype-selector-label">Supertype</InputLabel>
+                        <Select
+                            labelId="effect-supertype-selector-label"
+                            value={cardData.cardEffects.effect?.supertype || getDefaultEffectSupertype(cardData)}
+                            label="Supertype"
+                            onChange={(event: SelectChangeEvent<string>, child: ReactNode) => handleEffectSupertypeChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getEffectSupertypeOptions(cardData), getDefaultEffectSupertype(cardData))}
                         </Select>
                     </FormControl>
                 </Box>
