@@ -589,7 +589,7 @@ export const getCostTargetZoneOptions = (cardData: CardData) => {
         case CostType.STATE:
             switch (cost.subtype) {
                 case StateCostType.COUNT_CARDS:
-                    return [Zone.GRAVE];
+                    return [Zone.FIELD, Zone.GRAVE];
             }
     }
     return [];
