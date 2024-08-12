@@ -924,11 +924,17 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         );
     }
 
+    const fixEffects = () => {
+        if (!getCostTypeOptions(cardData).includes(getEffectsCost(cardData).costType)) {
+            handleCostTypeChange(getDefaultCostType(cardData));
+        }
+    }
+
     return (
         <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
             <Tabs value={tabId} onChange={onTabClicked} aria-label="form tabs" sx={{marginBottom: '2rem', marginTop: '2rem'}}>
                 <Tab label="Stats" />
-                <Tab label="Effects" onClick={() => handleSelectChange('cardType')({ target: { value: cardData.cardType } } as SelectChangeEvent<string>)} />
+                <Tab label="Effects" onClick={() => fixEffects()} />
             </Tabs>
             <Box sx={{display: tabId === STATS_TAB ? 'block' : 'none'}}>
                 <Box
