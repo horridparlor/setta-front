@@ -73,7 +73,7 @@ import {
     getDefaultCostTargetOwner,
     getDefaultCostTargetType,
     getDefaultCostTargetZone,
-    getDefaultCostType, getDefaultEffectSubtype, getDefaultEffectSupertype, getDefaultEffectType,
+    getDefaultCostType, getDefaultEffectSubtype, getDefaultEffectSupertype, getDefaultEffectType, getEffectTypeOptions,
     isCardPropertySelection,
     isCostType, isEffectType,
     isPaymentCostType, isPostCountType,
@@ -960,7 +960,18 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 <Box
                     sx={rowContainerStyle}
                 >
-
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-type-selector-label">Type</InputLabel>
+                        <Select
+                            labelId="effect-type-selector-label"
+                            value={cardData.cardEffects.effect?.effectType}
+                            label="Type"
+                            onChange={(event: SelectChangeEvent<EffectType>, child: ReactNode) => handleEffectTypeChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getEffectTypeOptions(cardData), getDefaultEffectType(cardData))}
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Box
                     sx={{...rowContainerStyle, display: cannotEdit() ? 'none' : 'flex'}}
