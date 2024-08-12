@@ -4,7 +4,6 @@ import {
     CardSubtype,
     CardType,
     getEffectsCost,
-    getEffectsCostPostCount,
     isMonster,
     isTrap
 } from "./card";
@@ -171,6 +170,10 @@ export enum EffectType {
     MOVE_CARD = 'Move card',
     NONE = 'None',
     STAT = 'Stat'
+}
+
+export const isEffectType = (value: string): value is EffectType => {
+    return Object.values(EffectType).includes(value as EffectType);
 }
 
 export enum StatEffectType {
@@ -677,5 +680,24 @@ export const getDefaultCostPostCountSubtype = (countType: PostCountType) => {
         case PostCountType.LEVEL:
             return LevelPostCountType.COMBINED;
     }
+    return '';
+}
+
+export const getEffectTypeOptions = (cardData: CardData) => {
+    const options = Object.values(EffectType);
+    switch (cardData.cardType) {
+    }
+    return options;
+}
+
+export const getDefaultEffectType = (cardData: CardData) => {
+    return EffectType.NONE;
+}
+
+export const getDefaultEffectSubtype = (cardData: CardData) => {
+    return '';
+}
+
+export const getDefaultEffectSupertype = (cardData: CardData) => {
     return '';
 }

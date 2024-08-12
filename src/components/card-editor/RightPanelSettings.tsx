@@ -28,7 +28,7 @@ import {
     EXTRA_DECK_SUBTYPES,
     getEffectsCost,
     getEffectsCostPayment, getEffectsCostPostCount,
-    getEffectsCostTarget,
+    getEffectsCostTarget, getEffectsEffect,
     getSubtypeOptions,
     getSupertypeOptions,
     hasCostText,
@@ -52,9 +52,9 @@ import {getUserId} from "../../types/cookie";
 import {
     CardEffects,
     CostType,
-    DEFAULT_EFFECTS_COST,
+    DEFAULT_EFFECTS_COST, DEFAULT_EFFECTS_EFFECT,
     EffectsPayment,
-    EffectsTarget,
+    EffectsTarget, EffectType,
     getAmountProps,
     getCostPaymentTypeOptions, getCostPostCountSubtypeOptions,
     getCostPostCountTypeOptions,
@@ -73,9 +73,9 @@ import {
     getDefaultCostTargetOwner,
     getDefaultCostTargetType,
     getDefaultCostTargetZone,
-    getDefaultCostType,
+    getDefaultCostType, getDefaultEffectSubtype, getDefaultEffectSupertype, getDefaultEffectType,
     isCardPropertySelection,
-    isCostType,
+    isCostType, isEffectType,
     isPaymentCostType, isPostCountType,
     isStateCostType,
     isTargetOwner,
@@ -356,9 +356,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
 
     const handleCostPrestateChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
         const prestate : StateCostType|null = isStateCostType(value) ? value : null;
-        let cost = getEffectsCost(cardData);
-        const subtype = cost.costType === CostType.STATE && cost.subtype === prestate ? StateCostType.COUNT_CARDS : cost.subtype || getDefaultCostSubtype(cardData);
-        cost = {...handleCostSubtypeChange(subtype, cardData, true),
+        let cost = getEffectsCost(prevCard);
+        const subtype = cost.costType === CostType.STATE && cost.subtype === prestate ? StateCostType.COUNT_CARDS : cost.subtype || getDefaultCostSubtype(prevCard);
+        cost = {...handleCostSubtypeChange(subtype, prevCard, true),
             prestate: prestate
         };
         if (justReturn) {
@@ -611,7 +611,12 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         && getEffectsCost(cardData).costType !== CostType.TRIGGER;
 
     const resetCost = () => {
-        const cost = {...handleCostTypeChange(getDefaultCostType(cardData), cardData, true),
+        const prevCost = handleCostTypeChange(getDefaultCostType(cardData), cardData, true);
+        const cost = {
+            prestate: null,
+            costType: prevCost.costType,
+            subtype: prevCost.subtype,
+            supertype: prevCost.supertype,
             amount: DEFAULT_EFFECTS_COST.amount,
             target: null,
             payment: null,
@@ -624,6 +629,43 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
 
     const costPaymentSelectionType = routePaymentCostTypeSelectionType(getEffectsCostPayment(cardData).paymentType || PaymentCostType.NONE);
     const costPaymentProps = getAmountProps(costPaymentSelectionType);
+
+    const handleEffectTypeChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const effectType: EffectType = isEffectType(value) ? value : EffectType.NONE;
+        const card = {...prevCard};
+        card.cardEffects.effect.effectType = effectType;
+        const subtype = getDefaultEffectSubtype(card);
+        const effect = {...handleEffectSubtypeChange(subtype, card, true),
+            effectType: effectType
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleEffectSubtypeChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        return getEffectsEffect(cardData);
+    }
+
+    const resetEffect = () => {
+        const preEffect = handleEffectTypeChange(getDefaultEffectType(cardData), cardData, true);
+        const effect = {
+            effectType: preEffect.effectType,
+            subtype: preEffect.subtype ?? '',
+            supertype: preEffect.supertype ?? '',
+            amount: DEFAULT_EFFECTS_EFFECT.amount,
+            maxAmount: null,
+            target: null,
+            direction: null,
+            hindrance: null,
+            benefit: null,
+            chainEffect: null
+        };
+        onCardDataChange('cardEffects', {...cardData.cardEffects, effect: effect});
+    }
 
     const getEffectsTab = () => {
         return (
@@ -897,7 +939,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={rowContainerStyle}
+                    sx={{...rowContainerStyle, display: cannotEdit() ? 'none' : 'flex'}}
                 >
                     <Button
                         fullWidth
@@ -905,7 +947,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         color="error"
                         onClick={resetCost}
                         disabled={
-                            cannotEdit() || isEqual(getEffectsCost(cardData), {...DEFAULT_EFFECTS_COST, costType: getDefaultCostType(cardData),
+                            isEqual(getEffectsCost(cardData), {...DEFAULT_EFFECTS_COST, costType: getDefaultCostType(cardData),
                                 subtype: getDefaultCostSubtype(cardData), supertype: getDefaultCostSupertype(cardData)})
                         }
                         sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
@@ -919,6 +961,23 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     sx={rowContainerStyle}
                 >
 
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: cannotEdit() ? 'none' : 'flex'}}
+                >
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        color="error"
+                        onClick={resetEffect}
+                        disabled={
+                            isEqual(getEffectsEffect(cardData), {...DEFAULT_EFFECTS_EFFECT, effectType: getDefaultEffectType(cardData),
+                                subtype: getDefaultEffectSubtype(cardData), supertype: getDefaultEffectSupertype(cardData)})
+                        }
+                        sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
+                    >
+                        Reset
+                    </Button>
                 </Box>
             </>
         );
