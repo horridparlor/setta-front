@@ -106,6 +106,12 @@ const TARGET_OR_ALL_TARGET_TYPE_OPTIONS = [
     TargetType.TARGET
 ];
 
+const THIS_TARGET_OR_ALL_TARGET_TYPE_OPTIONS = [
+    TargetType.ALL,
+    TargetType.TARGET,
+    TargetType.THIS
+]
+
 export const isTargetType = (value: string): value is TargetType => {
     return Object.values(TargetType).includes(value as TargetType);
 }
@@ -989,7 +995,7 @@ export const getEffectTargetTypeOptions = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
-            return TARGET_OR_ALL_TARGET_TYPE_OPTIONS;
+            return isMonster(cardData) ? THIS_TARGET_OR_ALL_TARGET_TYPE_OPTIONS : TARGET_OR_ALL_TARGET_TYPE_OPTIONS;
     }
     return [];
 }
