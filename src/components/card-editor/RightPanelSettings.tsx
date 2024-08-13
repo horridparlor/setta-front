@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ReactNode, useEffect, useMemo, useState} from 'react';
+import React, {ChangeEvent, ReactNode, useMemo, useState} from 'react';
 import {
     Box,
     Button,
@@ -27,8 +27,11 @@ import {
     DefaultTextSize,
     EXTRA_DECK_SUBTYPES,
     getEffectsCost,
-    getEffectsCostPayment, getEffectsCostPostCount,
-    getEffectsCostTarget, getEffectsEffect,
+    getEffectsCostPayment,
+    getEffectsCostPostCount,
+    getEffectsCostTarget,
+    getEffectsEffect,
+    getEffectsEffectAmountTarget, getEffectsEffectTarget,
     getSubtypeOptions,
     getSupertypeOptions,
     hasCostText,
@@ -53,7 +56,9 @@ import {
     CardEffects,
     CostType,
     DEFAULT_EFFECTS_COST,
+    DEFAULT_EFFECTS_COUNT,
     DEFAULT_EFFECTS_EFFECT,
+    EffectsCount,
     EffectsPayment,
     EffectsTarget,
     EffectType,
@@ -80,12 +85,15 @@ import {
     getDefaultCostTargetZone,
     getDefaultCostType,
     getDefaultEffectSubtype,
-    getDefaultEffectSupertype,
-    getDefaultEffectType,
-    getEffectSubtypeOptions, getEffectSupertypeOptions,
-    getEffectTypeOptions,
+    getDefaultEffectSupertype, getDefaultEffectTargetOwner, getDefaultEffectTargetType, getDefaultEffectTargetZone,
+    getDefaultEffectType, getDefaultTargetOwner, getDefaultTargetType, getDefaultTargetZone,
+    getEffectSelectionType,
+    getEffectSubtypeOptions,
+    getEffectSupertypeOptions, getEffectTargetOwnerOptions, getEffectTargetTypeOptions, getEffectTargetZoneOptions,
+    getEffectTypeOptions, getTargetOwnerOptions, getTargetTypeOptions, getTargetZoneOptions,
     isCardPropertySelection,
     isCostType,
+    isCountedAmount,
     isEffectType,
     isPaymentCostType,
     isPostCountType,
@@ -356,7 +364,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         card.cardEffects.cost.supertype = supertype;
         const cost = {...getEffectsCost(cardData),
             target: handleTargetTypeChange(getEffectsCostTarget(card).targetType || getDefaultCostTargetType(card),
-                getEffectsCostTarget(card), handleCostTargetChange, card,true),
+                getEffectsCostTarget(card), handleCostTargetChange, card, getCostTargetTypeOptions(card), true),
             supertype: supertype
         };
         if (justReturn) {
@@ -478,8 +486,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     }
     const handleTargetTypeChange = (value: string, prevTarget: EffectsTarget,
                                      handle: (target: EffectsTarget) => void, prevCard: CardData = cardData,
-                                    justReturn: boolean = false) => {
-        const options = getCostTargetTypeOptions(prevCard);
+                                     options: Array<TargetType> = getCostTargetTypeOptions(prevCard), justReturn: boolean = false) => {
         const defaultTo = getDefaultCostTargetType(prevCard);
         const targetType = isTargetType(value) ? value : TargetType.NONE;
         const target = {...prevTarget,
@@ -678,8 +685,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         const card = {...prevCard};
         card.cardEffects.effect.supertype = supertype;
         const effect = {...getEffectsEffect(cardData),
+            target: handleTargetTypeChange(getEffectsEffectTarget(card).targetType || getDefaultEffectTargetType(card),
+                getEffectsEffectTarget(card), handleEffectTargetChange, card, getEffectTargetTypeOptions(card), true),
             supertype: supertype
         };
+        console.log(555, effect, getEffectsEffectTarget(card).targetType);
         if (justReturn) {
             return effect;
         }
@@ -687,6 +697,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             {...cardData.cardEffects, effect: effect});
         return effect;
     }
+
+    const effectSelectionType = getEffectSelectionType(cardData);
+    const effectAmountProps = getAmountProps(effectSelectionType);
+    const effectAmount = getEffectsEffect(cardData).amount;
+    const effectAmountSelectionType = isCountedAmount(effectAmount) ? SelectionType.CARD : SelectionType.NONE;
 
     const resetEffect = () => {
         const preEffect = handleEffectTypeChange(getDefaultEffectType(cardData), cardData, true);
@@ -703,6 +718,68 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             chainEffect: null
         };
         onCardDataChange('cardEffects', {...cardData.cardEffects, effect: effect});
+    }
+
+    const handleEffectAmountChange = (amount: number|EffectsCount, doReset = false, justReturn: boolean = false) => {
+        if (!doReset && typeof amount === 'number' && isCountedAmount(effectAmount)) {
+            amount = {...effectAmount, multiplier: amount};
+        }
+        const effect = {...getEffectsEffect(cardData), amount: amount};
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleIsEffectAmountCountedChange = (value: boolean) => {
+        let amount: number|EffectsCount = effectAmountProps.default;
+        let doReset = true;
+        if (value) {
+            amount = {...DEFAULT_EFFECTS_COUNT, multiplier: amount};
+            doReset = false;
+        }
+        handleEffectAmountChange(amount, doReset);
+    }
+
+    const handleEffectAmountTargetChange = (updatedTarget: EffectsTarget, justReturn: boolean = false) => {
+        const amount = {
+            multiplier: isCountedAmount(effectAmount) ? effectAmount.multiplier : effectAmountProps.default,
+            target: updatedTarget
+        };
+        const effect = {
+            ...getEffectsEffect(cardData),
+            amount: amount
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleEffectMaxAmountChange = (maxAmount: number, justReturn: boolean = false) => {
+        const effect = {...getEffectsEffect(cardData), maxAmount: maxAmount};
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleEffectTargetChange = (updatedTarget: EffectsTarget, justReturn: boolean = false) => {
+        const effect = {...getEffectsEffect(cardData),
+            target: updatedTarget
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
     }
 
     const getEffectsTab = () => {
@@ -809,7 +886,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: [SelectionType.CARD, SelectionType.ALL_CARDS, SelectionType.PRIVATE_CARD].includes(costSelectionType) ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: isCardPropertySelection(costSelectionType) ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
@@ -1034,6 +1111,300 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             {getStringSelector(getEffectSupertypeOptions(cardData), getDefaultEffectSupertype(cardData))}
                         </Select>
                     </FormControl>
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: isCardPropertySelection(effectSelectionType) ? 'flex' : 'none'}}
+                >
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-target-subtype-selector-label">Subtype</InputLabel>
+                        <Select
+                            labelId="effect-target-subtype-selector-label"
+                            value={getEffectsEffectTarget(cardData).subtype || CardSubtype.NONE}
+                            label="Subtype"
+                            onChange={(event: SelectChangeEvent<CardSubtype>, child: ReactNode) =>
+                                handleTargetSubtypeChange(event.target.value, getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(TARGETABLE_CARD_SUBTYPES)}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-target-class-selector-label">Class</InputLabel>
+                        <Select
+                            labelId="effect-target-class-selector-label"
+                            value={getEffectsEffectTarget(cardData).cardClass || CardClass.NONE}
+                            label="Class"
+                            onChange={(event: SelectChangeEvent<CardClass>, child: ReactNode) =>
+                                handleTargetClassChange(event.target.value, getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(Object.values(CardClass))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: isCardPropertySelection(effectSelectionType) ? 'flex' : 'none'}}
+                >
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Min level"
+                        variant="outlined"
+                        value={getEffectsEffectTarget(cardData)?.minLevel || NULLABLE_LEVEL_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetMinLevelChange(parseInt(event.target.value), getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                        inputProps={NULLABLE_LEVEL_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Max level"
+                        variant="outlined"
+                        value={getEffectsEffectTarget(cardData)?.maxLevel || NULLABLE_LEVEL_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetMaxLevelChange(parseInt(event.target.value), getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                        inputProps={NULLABLE_LEVEL_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Atk"
+                        variant="outlined"
+                        value={getEffectsEffectTarget(cardData)?.atk ?? NULLABLE_STAT_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetAtkChange(parseInt(event.target.value), getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                        inputProps={NULLABLE_STAT_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Def"
+                        variant="outlined"
+                        value={getEffectsEffectTarget(cardData)?.def ?? NULLABLE_STAT_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetDefChange(parseInt(event.target.value), getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                        inputProps={NULLABLE_STAT_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                    />
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display:
+                            getEffectTargetTypeOptions(cardData).length
+                            || getEffectTargetOwnerOptions(cardData).length
+                            || getEffectTargetZoneOptions(cardData).length
+                                ? 'flex' : 'none'}}
+                >
+                    <FormControl fullWidth sx={{display: getEffectTargetTypeOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="effect-target-type-selector-label">Target</InputLabel>
+                        <Select
+                            labelId="effect-target-type-selector-label"
+                            value={getEffectsEffectTarget(cardData).targetType || getDefaultEffectTargetType(cardData)}
+                            label="Target"
+                            onChange={(event: SelectChangeEvent<TargetType>, child: ReactNode) =>
+                                handleTargetTypeChange(event.target.value, getEffectsEffectTarget(cardData),
+                                    handleEffectTargetChange, cardData, getEffectTargetTypeOptions(cardData))}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getTargetTypeOptions(effectAmountSelectionType), getDefaultTargetType(effectAmountSelectionType))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getEffectTargetOwnerOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="effect-target-owner-selector-label">Owner</InputLabel>
+                        <Select
+                            labelId="effect-target-owner-selector-label"
+                            value={getEffectsEffectTarget(cardData)?.owner || getDefaultEffectTargetOwner(cardData)}
+                            label="Owner"
+                            onChange={(event: SelectChangeEvent<TargetOwner>, child: ReactNode) =>
+                                handleTargetOwnerChange(event.target.value, getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getEffectTargetOwnerOptions(cardData), getDefaultEffectTargetOwner(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getEffectTargetZoneOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="effect-target-zone-selector-label">Zone</InputLabel>
+                        <Select
+                            labelId="effec-target-zone-selector-label"
+                            value={getEffectsEffectTarget(cardData)?.zone || getDefaultEffectTargetZone(cardData)}
+                            label="Zone"
+                            onChange={(event: SelectChangeEvent<Zone>, child: ReactNode) =>
+                                handleTargetZoneChange(event.target.value, getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getEffectTargetZoneOptions(cardData), getDefaultEffectTargetZone(cardData))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: effectAmountProps.default ? 'flex' : 'none'}}
+                >
+                    <TextField
+                               fullWidth
+                               type="number"
+                               label={isCountedAmount(effectAmount) ? 'Multiplier' : 'Amount'}
+                               variant="outlined"
+                               value={isCountedAmount(effectAmount) ? effectAmount?.multiplier : effectAmount ?? effectAmountProps.default}
+                               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                   handleEffectAmountChange(parseInt(event.target.value))}
+                               inputProps={effectAmountProps}
+                               disabled={cannotEdit()}
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={isCountedAmount(getEffectsEffect(cardData).amount)}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => handleIsEffectAmountCountedChange(checked)}
+                                name="Counted"
+                                disabled={cannotEdit()}
+                            />
+                        }
+                        label="Counted"
+                        sx={{ minWidth: 'fit-content' }}
+                    />
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: isCountedAmount(effectAmount) ? 'flex' : 'none'}}
+                >
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-amount-target-subtype-selector-label">Subtype</InputLabel>
+                        <Select
+                            labelId="effect-amount-target-subtype-selector-label"
+                            value={getEffectsEffectAmountTarget(cardData)?.subtype || CardSubtype.NONE}
+                            label="Subtype"
+                            onChange={(event: SelectChangeEvent<CardSubtype>, child: ReactNode) =>
+                                handleTargetSubtypeChange(event.target.value, getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(TARGETABLE_CARD_SUBTYPES)}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-amount-target-class-selector-label">Class</InputLabel>
+                        <Select
+                            labelId="effect-amount-target-class-selector-label"
+                            value={getEffectsEffectAmountTarget(cardData)?.cardClass || CardClass.NONE}
+                            label="Class"
+                            onChange={(event: SelectChangeEvent<CardClass>, child: ReactNode) =>
+                                handleTargetClassChange(event.target.value, getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(Object.values(CardClass))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: isCountedAmount(effectAmount) && isCardPropertySelection(effectAmountSelectionType) ? 'flex' : 'none'}}
+                >
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Min level"
+                        variant="outlined"
+                        value={getEffectsEffectAmountTarget(cardData)?.minLevel || NULLABLE_LEVEL_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetMinLevelChange(parseInt(event.target.value), getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                        inputProps={NULLABLE_LEVEL_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Max level"
+                        variant="outlined"
+                        value={getEffectsEffectAmountTarget(cardData)?.maxLevel || NULLABLE_LEVEL_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetMaxLevelChange(parseInt(event.target.value), getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                        inputProps={NULLABLE_LEVEL_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Atk"
+                        variant="outlined"
+                        value={getEffectsEffectAmountTarget(cardData)?.atk ?? NULLABLE_STAT_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetAtkChange(parseInt(event.target.value), getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                        inputProps={NULLABLE_STAT_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                    />
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Def"
+                        variant="outlined"
+                        value={getEffectsEffectAmountTarget(cardData)?.def ?? NULLABLE_STAT_AMOUNT_PROPS.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            handleTargetDefChange(parseInt(event.target.value), getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                        inputProps={NULLABLE_STAT_AMOUNT_PROPS}
+                        disabled={cannotEdit()}
+                    />
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display:
+                            getTargetTypeOptions(effectAmountSelectionType).length
+                            || getTargetOwnerOptions(effectAmountSelectionType).length
+                            || getTargetZoneOptions(effectAmountSelectionType).length
+                                ? 'flex' : 'none'}}
+                >
+                    <FormControl fullWidth sx={{display: getTargetTypeOptions(effectAmountSelectionType).length ? 'flex' : 'none'}}>
+                        <InputLabel id="effect-amount-target-type-selector-label">Target</InputLabel>
+                        <Select
+                            labelId="effect-amount-target-type-selector-label"
+                            value={getEffectsEffectAmountTarget(cardData)?.targetType || getDefaultTargetType(effectAmountSelectionType)}
+                            label="Target"
+                            onChange={(event: SelectChangeEvent<TargetType>, child: ReactNode) =>
+                                handleTargetTypeChange(event.target.value, getEffectsEffectAmountTarget(cardData),
+                                    handleEffectAmountTargetChange, cardData, getTargetTypeOptions(effectAmountSelectionType))}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getTargetTypeOptions(effectAmountSelectionType), getDefaultTargetType(effectAmountSelectionType))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getTargetOwnerOptions(effectAmountSelectionType).length ? 'flex' : 'none'}}>
+                        <InputLabel id="effect-amount-target-owner-selector-label">Owner</InputLabel>
+                        <Select
+                            labelId="effect-amount-target-owner-selector-label"
+                            value={getEffectsEffectAmountTarget(cardData)?.owner || getDefaultTargetOwner(effectAmountSelectionType)}
+                            label="Owner"
+                            onChange={(event: SelectChangeEvent<TargetOwner>, child: ReactNode) =>
+                                handleTargetOwnerChange(event.target.value, getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getTargetOwnerOptions(effectAmountSelectionType), getDefaultTargetOwner(effectAmountSelectionType))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getTargetZoneOptions(effectAmountSelectionType).length ? 'flex' : 'none'}}>
+                        <InputLabel id="effect-amount-target-zone-selector-label">Zone</InputLabel>
+                        <Select
+                            labelId="effec-amount-target-zone-selector-label"
+                            value={getEffectsEffectAmountTarget(cardData)?.zone || getDefaultTargetZone(effectAmountSelectionType)}
+                            label="Zone"
+                            onChange={(event: SelectChangeEvent<Zone>, child: ReactNode) =>
+                                handleTargetZoneChange(event.target.value, getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getTargetZoneOptions(effectAmountSelectionType), getDefaultTargetZone(effectAmountSelectionType))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: isCountedAmount(effectAmount) && effectAmount.multiplier ? 'flex' : 'none'}}
+                >
+                    <TextField
+                        fullWidth
+                        type="number"
+                        label="Max Amount"
+                        variant="outlined"
+                        value={getEffectsEffect(cardData).maxAmount || 0}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                   handleEffectMaxAmountChange(parseInt(event.target.value))}
+                        inputProps={effectAmountProps}
+                        disabled={cannotEdit()}
+                    />
                 </Box>
                 <Box
                     sx={{...rowContainerStyle, display: cannotEdit() ? 'none' : 'flex'}}

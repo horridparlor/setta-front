@@ -10,7 +10,7 @@ import {
     DEFAULT_EFFECTS_TARGET,
     EffectsCost,
     EffectsEffect, EffectsPayment,
-    EffectsTarget, PostCount
+    EffectsTarget, isCountedAmount, PostCount
 } from "./cardEffects";
 import {NONE_STRING} from "../utils/string";
 
@@ -417,6 +417,11 @@ export const getEffectsCostPostCount = (cardData: CardData) => {
 
 export const getEffectsEffectTarget = (cardData: CardData) => {
     return fixEffectsTarget(cardData.cardEffects.effect.target);
+}
+
+export const getEffectsEffectAmountTarget = (cardData: CardData) => {
+    const amount = cardData.cardEffects.effect.amount;
+    return fixEffectsTarget(isCountedAmount(amount) ? amount.target : null);
 }
 
 export const TARGETABLE_CARD_SUBTYPES = Object.values(CardSubtype)

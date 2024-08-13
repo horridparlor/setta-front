@@ -108,9 +108,24 @@ export const isTargetType = (value: string): value is TargetType => {
 export enum TargetOwner {
     NONE = 'None',
     ANY = 'Any',
+    BOTH = 'Both',
     OPPONENT = 'Opponent',
     YOU = 'You'
 }
+
+const ONE_TARGET_OWNER_OPTIONS = [
+    TargetOwner.NONE,
+    TargetOwner.BOTH,
+    TargetOwner.OPPONENT,
+    TargetOwner.YOU
+];
+
+const TARGET_OWNER_FILTER_OPTIONS = [
+    TargetOwner.NONE,
+    TargetOwner.ANY,
+    TargetOwner.OPPONENT,
+    TargetOwner.YOU
+];
 
 export const isTargetOwner = (value: string): value is TargetOwner => {
     return Object.values(TargetOwner).includes(value as TargetOwner);
@@ -222,6 +237,11 @@ export enum StealEffectType {
 export type EffectsCount = {
     multiplier: number;
     target: EffectsTarget|null;
+}
+
+export const DEFAULT_EFFECTS_COUNT : EffectsCount = {
+    multiplier: 1,
+    target: DEFAULT_EFFECTS_TARGET
 }
 
 export enum EffectsDirection {
@@ -480,11 +500,8 @@ export const getAmountProps = (selectionType: SelectionType) => {
     }
 }
 
-
-export const getCostSelectionType = (cardData: CardData) => {
-    const cost = getEffectsCost(cardData);
-    const selectionType = routeCostSelectionType(cost);
-    if (cost?.target?.targetType === TargetType.ALL) {
+export const fixSelectionTypeByTarget = (selectionType: SelectionType, target: EffectsTarget|null) => {
+    if (target?.targetType === TargetType.ALL) {
         switch (selectionType) {
             case SelectionType.CARD:
                 return SelectionType.ALL_CARDS;
@@ -493,6 +510,12 @@ export const getCostSelectionType = (cardData: CardData) => {
         }
     }
     return selectionType;
+}
+
+export const getCostSelectionType = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    const selectionType = routeCostSelectionType(cost);
+    return fixSelectionTypeByTarget(selectionType, cost?.target);
 }
 
 const routeCostSelectionType = (cost: EffectsCost) => {
@@ -776,4 +799,180 @@ export const getDefaultEffectSupertype = (cardData: CardData) => {
             break;
     }
     return '';
+}
+
+export const getEffectSelectionType = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    const selectionType = routeEffectSelectionType(effect);
+    return fixSelectionTypeByTarget(selectionType, effect?.target);
+}
+
+const routeEffectSelectionType = (effect: EffectsEffect) => {
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.DESTROY:
+                    return SelectionType.CARD;
+                case EvilEffectType.DISCARD:
+                    return SelectionType.PRIVATE_CARD;
+                case EvilEffectType.FLIP:
+                    return SelectionType.CARD;
+                case EvilEffectType.MILL:
+                    return SelectionType.HIDDEN_CARD;
+                case EvilEffectType.STEAL:
+                    switch (effect.supertype) {
+                        case StealEffectType.GAIN_CONTROL:
+                            return SelectionType.CARD;
+                        case StealEffectType.SWITCH_WITH:
+                            return SelectionType.CARD;
+                    }
+                    break;
+            }
+            break;
+        case EffectType.KEYWORD:
+            return SelectionType.ALL_CARDS;
+        case EffectType.MOVE_CARD:
+            switch (effect.subtype) {
+                case MoveCardEffectType.DRAW:
+                    return SelectionType.HIDDEN_CARD;
+                case MoveCardEffectType.RESTACK:
+                    return SelectionType.CARD;
+                case MoveCardEffectType.RETRIEVE:
+                    return SelectionType.CARD;
+                case MoveCardEffectType.SUMMON:
+                    switch (effect.supertype) {
+                        case SummonEffectType.TOP_SUMMON:
+                            return SelectionType.HIDDEN_CARD;
+                        case SummonEffectType.REBORN:
+                            return SelectionType.CARD;
+                    }
+                    break;
+            }
+            break;
+        case EffectType.STAT:
+            switch (effect.subtype) {
+                case StatEffectType.ATK:
+                    return SelectionType.STAT;
+                case StatEffectType.DEF:
+                    return SelectionType.STAT;
+                case StatEffectType.LIFE:
+                    return SelectionType.STAT;
+                case StatEffectType.POSITION:
+                    return SelectionType.ALL_CARDS;
+                case StatEffectType.SWITCH:
+                    return SelectionType.ALL_CARDS;
+            }
+            break;
+    }
+    return SelectionType.NONE;
+}
+
+export function isCountedAmount(amount: number|EffectsCount|null): amount is EffectsCount {
+    return typeof amount === 'object' && amount !== null;
+}
+
+export const getTargetTypeOptions = (selectionType: SelectionType) => {
+    switch (selectionType) {
+        case SelectionType.CARD:
+            return [TargetType.ALL];
+    }
+    return [];
+}
+
+export const getDefaultTargetType = (selectionType: SelectionType) => {
+   switch (selectionType) {
+        case SelectionType.CARD:
+            return TargetType.ALL;
+    }
+    return '';
+}
+
+export const getTargetOwnerOptions = (selectionType: SelectionType) => {
+    switch (selectionType) {
+        case SelectionType.CARD:
+            return [TargetOwner.ANY, TargetOwner.OPPONENT, TargetOwner.YOU];
+    }
+    return [];
+}
+
+export const getDefaultTargetOwner = (selectionType: SelectionType) => {
+    switch (selectionType) {
+        case SelectionType.CARD:
+            return TargetOwner.YOU;
+    }
+    return '';
+}
+
+export const getTargetZoneOptions = (selectionType: SelectionType) => {
+    switch (selectionType) {
+        case SelectionType.CARD:
+            return [Zone.FIELD, Zone.GRAVE];
+    }
+    return [];
+}
+
+export const getDefaultTargetZone = (selectionType: SelectionType) => {
+    switch (selectionType) {
+        case SelectionType.CARD:
+            return Zone.GRAVE;
+    }
+    return '';
+}
+
+export const getEffectTargetTypeOptions = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+    }
+    return [];
+}
+
+export const getDefaultEffectTargetType = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+    }
+    return TargetType.NONE;
+}
+
+export const getEffectTargetOwnerOptions = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.DESTROY:
+                    return TARGET_OWNER_FILTER_OPTIONS;
+                case EvilEffectType.MILL:
+                    return ONE_TARGET_OWNER_OPTIONS;
+            }
+            break;
+    }
+    return [];
+}
+
+export const getDefaultEffectTargetOwner = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.DESTROY:
+                    return TargetOwner.ANY;
+                case EvilEffectType.MILL:
+                    return TargetOwner.OPPONENT;
+            }
+            break;
+    }
+    return TargetOwner.NONE;
+}
+
+export const getEffectTargetZoneOptions = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+    }
+    return [];
+}
+
+export const getDefaultEffectTargetZone = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+    }
+    return Zone.NONE;
 }
