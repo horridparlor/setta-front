@@ -285,6 +285,12 @@ const KEYWORD_DIRECTION_CHOICES = [
     EffectsDirection.LOSE
 ]
 
+const SUMMON_DIRECTION_CHOICES = [
+    EffectsDirection.ATTACK,
+    EffectsDirection.DEFENSE,
+    EffectsDirection.FACE_UP
+]
+
 export const isEffectsDirection = (value: string): value is EffectsDirection => {
     return Object.values(EffectsDirection).includes(value as EffectsDirection);
 }
@@ -1093,6 +1099,12 @@ export const getEffectDirectionOptions = (cardData: CardData) => {
                     return KEYWORD_DIRECTION_CHOICES;
             }
             break;
+        case EffectType.MOVE_CARD:
+            switch (effect.subtype) {
+                case MoveCardEffectType.SUMMON:
+                    return SUMMON_DIRECTION_CHOICES;
+            }
+            break;
         case EffectType.STAT:
             switch (effect.subtype) {
                 case StatEffectType.ATK:
@@ -1121,6 +1133,12 @@ export const getDefaultEffectDirection = (cardData: CardData) => {
                 case KeywordEffectType.CHAIN_ATTACK:
                 case KeywordEffectType.PIERCING:
                     return EffectsDirection.GAIN;
+            }
+            break;
+        case EffectType.MOVE_CARD:
+            switch (effect.subtype) {
+                case MoveCardEffectType.SUMMON:
+                    return EffectsDirection.FACE_UP;
             }
             break;
         case EffectType.STAT:
