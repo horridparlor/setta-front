@@ -916,7 +916,7 @@ const routeEffectSelectionType = (effect: EffectsEffect) => {
                 case MoveCardEffectType.SUMMON:
                     switch (effect.supertype) {
                         case SummonEffectType.TOP_SUMMON:
-                            return SelectionType.HIDDEN_CARD;
+                            return SelectionType.CARD;
                         case SummonEffectType.REBORN:
                             return SelectionType.CARD;
                     }
