@@ -3,7 +3,7 @@ import {
     CardData,
     CardSubtype,
     CardType,
-    getEffectsCost, getEffectsEffect, getEffectsEffectTarget,
+    getEffectsCost, getEffectsEffect,
     isMonster,
     isTrap
 } from "./card";
@@ -101,6 +101,11 @@ export enum TargetType {
     THIS = 'This'
 }
 
+const TARGET_OR_ALL_TARGET_TYPE_OPTIONS = [
+    TargetType.ALL,
+    TargetType.TARGET
+];
+
 export const isTargetType = (value: string): value is TargetType => {
     return Object.values(TargetType).includes(value as TargetType);
 }
@@ -114,14 +119,12 @@ export enum TargetOwner {
 }
 
 const ONE_TARGET_OWNER_OPTIONS = [
-    TargetOwner.NONE,
     TargetOwner.BOTH,
     TargetOwner.OPPONENT,
     TargetOwner.YOU
 ];
 
 const TARGET_OWNER_FILTER_OPTIONS = [
-    TargetOwner.NONE,
     TargetOwner.ANY,
     TargetOwner.OPPONENT,
     TargetOwner.YOU
@@ -868,7 +871,7 @@ const routeEffectSelectionType = (effect: EffectsEffect) => {
 }
 
 export function isCountedAmount(amount: number|EffectsCount|null): amount is EffectsCount {
-    return typeof amount === 'object' && amount !== null;
+    return  typeof amount === 'object' && amount !== null;
 }
 
 export const getTargetTypeOptions = (selectionType: SelectionType) => {
@@ -922,6 +925,18 @@ export const getDefaultTargetZone = (selectionType: SelectionType) => {
 export const getEffectTargetTypeOptions = (cardData: CardData) => {
     const effect = getEffectsEffect(cardData);
     switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.DESTROY:
+                case EvilEffectType.DISCARD:
+                case EvilEffectType.FLIP:
+                case EvilEffectType.STEAL:
+                    return TARGET_OR_ALL_TARGET_TYPE_OPTIONS;
+            }
+            break;
+        case EffectType.KEYWORD:
+        case EffectType.STAT:
+            return TARGET_OR_ALL_TARGET_TYPE_OPTIONS;
     }
     return [];
 }
@@ -929,6 +944,18 @@ export const getEffectTargetTypeOptions = (cardData: CardData) => {
 export const getDefaultEffectTargetType = (cardData: CardData) => {
     const effect = getEffectsEffect(cardData);
     switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.DESTROY:
+                case EvilEffectType.DISCARD:
+                case EvilEffectType.FLIP:
+                case EvilEffectType.STEAL:
+                    return TargetType.TARGET;
+            }
+            break;
+        case EffectType.KEYWORD:
+        case EffectType.STAT:
+            return TargetType.TARGET;
     }
     return TargetType.NONE;
 }
@@ -940,10 +967,17 @@ export const getEffectTargetOwnerOptions = (cardData: CardData) => {
             switch (effect.subtype) {
                 case EvilEffectType.DESTROY:
                     return TARGET_OWNER_FILTER_OPTIONS;
+                case EvilEffectType.DISCARD:
+                    return ONE_TARGET_OWNER_OPTIONS;
+                case EvilEffectType.FLIP:
+                    return TARGET_OWNER_FILTER_OPTIONS;
                 case EvilEffectType.MILL:
                     return ONE_TARGET_OWNER_OPTIONS;
             }
             break;
+        case EffectType.KEYWORD:
+        case EffectType.STAT:
+            return TARGET_OWNER_FILTER_OPTIONS;
     }
     return [];
 }
@@ -955,10 +989,17 @@ export const getDefaultEffectTargetOwner = (cardData: CardData) => {
             switch (effect.subtype) {
                 case EvilEffectType.DESTROY:
                     return TargetOwner.ANY;
+                case EvilEffectType.DISCARD:
+                    return TargetOwner.OPPONENT;
+                case EvilEffectType.FLIP:
+                    return TargetOwner.ANY;
                 case EvilEffectType.MILL:
                     return TargetOwner.OPPONENT;
             }
             break;
+        case EffectType.KEYWORD:
+        case EffectType.STAT:
+            return TargetOwner.ANY;
     }
     return TargetOwner.NONE;
 }

@@ -31,7 +31,8 @@ import {
     getEffectsCostPostCount,
     getEffectsCostTarget,
     getEffectsEffect,
-    getEffectsEffectAmountTarget, getEffectsEffectTarget,
+    getEffectsEffectAmountTarget,
+    getEffectsEffectTarget,
     getSubtypeOptions,
     getSupertypeOptions,
     hasCostText,
@@ -85,12 +86,24 @@ import {
     getDefaultCostTargetZone,
     getDefaultCostType,
     getDefaultEffectSubtype,
-    getDefaultEffectSupertype, getDefaultEffectTargetOwner, getDefaultEffectTargetType, getDefaultEffectTargetZone,
-    getDefaultEffectType, getDefaultTargetOwner, getDefaultTargetType, getDefaultTargetZone,
+    getDefaultEffectSupertype,
+    getDefaultEffectTargetOwner,
+    getDefaultEffectTargetType,
+    getDefaultEffectTargetZone,
+    getDefaultEffectType,
+    getDefaultTargetOwner,
+    getDefaultTargetType,
+    getDefaultTargetZone,
     getEffectSelectionType,
     getEffectSubtypeOptions,
-    getEffectSupertypeOptions, getEffectTargetOwnerOptions, getEffectTargetTypeOptions, getEffectTargetZoneOptions,
-    getEffectTypeOptions, getTargetOwnerOptions, getTargetTypeOptions, getTargetZoneOptions,
+    getEffectSupertypeOptions,
+    getEffectTargetOwnerOptions,
+    getEffectTargetTypeOptions,
+    getEffectTargetZoneOptions,
+    getEffectTypeOptions,
+    getTargetOwnerOptions,
+    getTargetTypeOptions,
+    getTargetZoneOptions,
     isCardPropertySelection,
     isCostType,
     isCountedAmount,
@@ -689,7 +702,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 getEffectsEffectTarget(card), handleEffectTargetChange, card, getEffectTargetTypeOptions(card), true),
             supertype: supertype
         };
-        console.log(555, effect, getEffectsEffectTarget(card).targetType);
         if (justReturn) {
             return effect;
         }
@@ -702,6 +714,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const effectAmountProps = getAmountProps(effectSelectionType);
     const effectAmount = getEffectsEffect(cardData).amount;
     const effectAmountSelectionType = isCountedAmount(effectAmount) ? SelectionType.CARD : SelectionType.NONE;
+    const isEffectCardPropertySelection = isCardPropertySelection(effectSelectionType) || effectSelectionType === SelectionType.STAT;
 
     const resetEffect = () => {
         const preEffect = handleEffectTypeChange(getDefaultEffectType(cardData), cardData, true);
@@ -1113,7 +1126,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: isCardPropertySelection(effectSelectionType) ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: isEffectCardPropertySelection ? 'flex' : 'none'}}
                 >
                     <FormControl fullWidth>
                         <InputLabel id="effect-target-subtype-selector-label">Subtype</InputLabel>
@@ -1143,7 +1156,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: isCardPropertySelection(effectSelectionType) ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: isEffectCardPropertySelection ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
@@ -1208,14 +1221,14 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                                     handleEffectTargetChange, cardData, getEffectTargetTypeOptions(cardData))}
                             disabled={cannotEdit()}
                         >
-                            {getStringSelector(getTargetTypeOptions(effectAmountSelectionType), getDefaultTargetType(effectAmountSelectionType))}
+                            {getStringSelector(getEffectTargetTypeOptions(cardData), getDefaultEffectTargetType(cardData))}
                         </Select>
                     </FormControl>
                     <FormControl fullWidth sx={{display: getEffectTargetOwnerOptions(cardData).length ? 'flex' : 'none'}}>
                         <InputLabel id="effect-target-owner-selector-label">Owner</InputLabel>
                         <Select
                             labelId="effect-target-owner-selector-label"
-                            value={getEffectsEffectTarget(cardData)?.owner || getDefaultEffectTargetOwner(cardData)}
+                            value={getEffectsEffectTarget(cardData).owner || getDefaultEffectTargetOwner(cardData)}
                             label="Owner"
                             onChange={(event: SelectChangeEvent<TargetOwner>, child: ReactNode) =>
                                 handleTargetOwnerChange(event.target.value, getEffectsEffectTarget(cardData), handleEffectTargetChange)}
@@ -1228,7 +1241,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         <InputLabel id="effect-target-zone-selector-label">Zone</InputLabel>
                         <Select
                             labelId="effec-target-zone-selector-label"
-                            value={getEffectsEffectTarget(cardData)?.zone || getDefaultEffectTargetZone(cardData)}
+                            value={getEffectsEffectTarget(cardData).zone || getDefaultEffectTargetZone(cardData)}
                             label="Zone"
                             onChange={(event: SelectChangeEvent<Zone>, child: ReactNode) =>
                                 handleTargetZoneChange(event.target.value, getEffectsEffectTarget(cardData), handleEffectTargetChange)}
@@ -1238,6 +1251,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         </Select>
                     </FormControl>
                 </Box>
+                <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem', display: effectAmountProps.default ? 'flex' : 'none'}}>Amount:</Typography>
                 <Box
                     sx={{...rowContainerStyle, display: effectAmountProps.default ? 'flex' : 'none'}}
                 >
@@ -1266,7 +1280,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     />
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: isCountedAmount(effectAmount) ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount)  ? 'flex' : 'none'}}
                 >
                     <FormControl fullWidth>
                         <InputLabel id="effect-amount-target-subtype-selector-label">Subtype</InputLabel>
@@ -1296,7 +1310,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: isCountedAmount(effectAmount) && isCardPropertySelection(effectAmountSelectionType) ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount) && isCardPropertySelection(effectAmountSelectionType) ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
@@ -1344,10 +1358,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     />
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display:
+                    sx={{...rowContainerStyle, display: effectAmountProps.default && (
                             getTargetTypeOptions(effectAmountSelectionType).length
                             || getTargetOwnerOptions(effectAmountSelectionType).length
-                            || getTargetZoneOptions(effectAmountSelectionType).length
+                            || getTargetZoneOptions(effectAmountSelectionType).length)
                                 ? 'flex' : 'none'}}
                 >
                     <FormControl fullWidth sx={{display: getTargetTypeOptions(effectAmountSelectionType).length ? 'flex' : 'none'}}>
@@ -1392,7 +1406,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: isCountedAmount(effectAmount) && effectAmount.multiplier ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount) && effectAmount.multiplier ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
