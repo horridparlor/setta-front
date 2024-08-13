@@ -59,7 +59,10 @@ import {
     DEFAULT_EFFECTS_COST,
     DEFAULT_EFFECTS_COUNT,
     DEFAULT_EFFECTS_EFFECT,
+    EffectsBenefit,
     EffectsCount,
+    EffectsDirection,
+    EffectsHindrance,
     EffectsPayment,
     EffectsTarget,
     EffectType,
@@ -85,6 +88,7 @@ import {
     getDefaultCostTargetType,
     getDefaultCostTargetZone,
     getDefaultCostType,
+    getDefaultEffectDirection,
     getDefaultEffectSubtype,
     getDefaultEffectSupertype,
     getDefaultEffectTargetOwner,
@@ -94,6 +98,9 @@ import {
     getDefaultTargetOwner,
     getDefaultTargetType,
     getDefaultTargetZone,
+    getEffectBenefitOptions,
+    getEffectDirectionOptions,
+    getEffectHindranceOptions,
     getEffectSelectionType,
     getEffectSubtypeOptions,
     getEffectSupertypeOptions,
@@ -106,7 +113,9 @@ import {
     getTargetZoneOptions,
     isCardPropertySelection,
     isCostType,
-    isCountedAmount,
+    isCountedAmount, isEffectsBenefit,
+    isEffectsDirection,
+    isEffectsHindrance,
     isEffectType,
     isPaymentCostType,
     isPostCountType,
@@ -124,6 +133,7 @@ import {
     SelectionType,
     SpellSpecificStateCostTypes,
     StateCostType,
+    StatEffectType,
     TargetOwner,
     TargetType,
     TriggerCostType,
@@ -697,10 +707,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const handleEffectSupertypeChange = (supertype: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
         const card = {...prevCard};
         card.cardEffects.effect.supertype = supertype;
-        const effect = {...getEffectsEffect(cardData),
+        const effect = {...getEffectsEffect(prevCard),
+            supertype: supertype,
             target: handleTargetTypeChange(getEffectsEffectTarget(card).targetType || getDefaultEffectTargetType(card),
                 getEffectsEffectTarget(card), handleEffectTargetChange, card, getEffectTargetTypeOptions(card), true),
-            supertype: supertype
+            direction: handleEffectDirectionChange(getDefaultEffectDirection(card), card, true).direction
         };
         if (justReturn) {
             return effect;
@@ -714,7 +725,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const effectAmountProps = getAmountProps(effectSelectionType);
     const effectAmount = getEffectsEffect(cardData).amount;
     const effectAmountSelectionType = isCountedAmount(effectAmount) ? SelectionType.CARD : SelectionType.NONE;
-    const isEffectCardPropertySelection = isCardPropertySelection(effectSelectionType) || effectSelectionType === SelectionType.STAT;
+    const isEffectCardPropertySelection = isCardPropertySelection(effectSelectionType) || (effectSelectionType === SelectionType.STAT && getEffectsEffect(cardData).subtype !== StatEffectType.LIFE);
 
     const resetEffect = () => {
         const preEffect = handleEffectTypeChange(getDefaultEffectType(cardData), cardData, true);
@@ -786,6 +797,45 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const handleEffectTargetChange = (updatedTarget: EffectsTarget, justReturn: boolean = false) => {
         const effect = {...getEffectsEffect(cardData),
             target: updatedTarget
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleEffectDirectionChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const direction: EffectsDirection = isEffectsDirection(value) ? value : getDefaultEffectDirection(prevCard);
+        const effect = {...getEffectsEffect(prevCard),
+            direction: direction
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleEffectHindranceChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const hindrance: EffectsHindrance = isEffectsHindrance(value) ? value : EffectsHindrance.NONE;
+        const effect = {...getEffectsEffect(prevCard),
+            hindrance: hindrance
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleEffectBenefitChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const benefit: EffectsBenefit = isEffectsBenefit(value) ? value : EffectsBenefit.NONE;
+        const effect = {...getEffectsEffect(prevCard),
+            benefit: benefit
         };
         if (justReturn) {
             return effect;
@@ -1124,6 +1174,18 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             {getStringSelector(getEffectSupertypeOptions(cardData), getDefaultEffectSupertype(cardData))}
                         </Select>
                     </FormControl>
+                    <FormControl fullWidth sx={{display: getEffectDirectionOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="effect-direction-selector-label">Direction</InputLabel>
+                        <Select
+                            labelId="effect-direction-selector-label"
+                            value={cardData.cardEffects.effect?.direction || getDefaultEffectDirection(cardData)}
+                            label="Direction"
+                            onChange={(event: SelectChangeEvent<EffectsDirection>, child: ReactNode) => handleEffectDirectionChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getEffectDirectionOptions(cardData), getDefaultEffectDirection(cardData))}
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Box
                     sx={{...rowContainerStyle, display: isEffectCardPropertySelection ? 'flex' : 'none'}}
@@ -1419,6 +1481,35 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         inputProps={effectAmountProps}
                         disabled={cannotEdit()}
                     />
+                </Box>
+                <Typography sx={{...menuTitleStyle, marginBottom: '0.6rem'}}>Extra effects:</Typography>
+                <Box
+                    sx={rowContainerStyle}
+                >
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-hindrance-selector-label">Hindrance</InputLabel>
+                        <Select
+                            labelId="effect-hindrance-selector-label"
+                            value={cardData.cardEffects.effect.hindrance || EffectsHindrance.NONE}
+                            label="Hindrance"
+                            onChange={(event: SelectChangeEvent<EffectsHindrance>, child: ReactNode) => handleEffectHindranceChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getEffectHindranceOptions(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-benefit-selector-label">Benefit</InputLabel>
+                        <Select
+                            labelId="effect-benefit-selector-label"
+                            value={cardData.cardEffects.effect.benefit || EffectsBenefit.NONE}
+                            label="Benefit"
+                            onChange={(event: SelectChangeEvent<EffectsBenefit>, child: ReactNode) => handleEffectBenefitChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getEffectBenefitOptions(cardData))}
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Box
                     sx={{...rowContainerStyle, display: cannotEdit() ? 'none' : 'flex'}}

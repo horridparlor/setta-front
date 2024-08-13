@@ -248,20 +248,58 @@ export const DEFAULT_EFFECTS_COUNT : EffectsCount = {
 }
 
 export enum EffectsDirection {
+    NONE = 'None',
     ATTACK = 'Attack',
     DEFENSE = 'Defense',
     DOUBLE = 'Double',
+    FACE_DOWN = 'Face-down',
+    FACE_UP = 'Face-up',
     GAIN = 'Gain',
     LOSE = 'Lose'
 }
 
+const FLIP_DIRECTION_CHOICES = [
+    EffectsDirection.FACE_DOWN,
+    EffectsDirection.FACE_UP
+]
+
+const STAT_DIRECTION_CHOICES = [
+    EffectsDirection.DOUBLE,
+    EffectsDirection.GAIN,
+    EffectsDirection.LOSE
+]
+
+const POSITION_DIRECTION_CHOICES = [
+    EffectsDirection.ATTACK,
+    EffectsDirection.DEFENSE
+]
+
+const KEYWORD_DIRECTION_CHOICES = [
+    EffectsDirection.GAIN,
+    EffectsDirection.LOSE
+]
+
+export const isEffectsDirection = (value: string): value is EffectsDirection => {
+    return Object.values(EffectsDirection).includes(value as EffectsDirection);
+}
+
 export enum EffectsHindrance {
+    NONE = 'None',
     CANNOT_ATTACK_DIRECTLY = 'Cannot attack directly',
     OPPONENT_TOP_SUMMONS = 'Opponent top-summons'
 }
 
+export const isEffectsHindrance = (value: string): value is EffectsHindrance => {
+    return Object.values(EffectsHindrance).includes(value as EffectsHindrance);
+}
+
 export enum EffectsBenefit {
+    NONE = 'None',
     DRAW = 'Draw a card'
+}
+
+export const isEffectsBenefit = (value: string): value is EffectsBenefit => {
+    return Object.values(EffectsBenefit).includes(value as EffectsBenefit);
 }
 
 export type EffectsCost = {
@@ -807,6 +845,9 @@ export const getDefaultEffectSupertype = (cardData: CardData) => {
 export const getEffectSelectionType = (cardData: CardData) => {
     const effect = getEffectsEffect(cardData);
     const selectionType = routeEffectSelectionType(effect);
+    if (effect.direction === EffectsDirection.DOUBLE) {
+        return SelectionType.ALL_CARDS;
+    }
     return fixSelectionTypeByTarget(selectionType, effect?.target);
 }
 
@@ -1016,4 +1057,72 @@ export const getDefaultEffectTargetZone = (cardData: CardData) => {
     switch (effect.effectType) {
     }
     return Zone.NONE;
+}
+
+export const getEffectDirectionOptions = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.FLIP:
+                    return FLIP_DIRECTION_CHOICES;
+            }
+            break;
+        case EffectType.KEYWORD:
+            switch (effect.subtype) {
+                case KeywordEffectType.CHAIN_ATTACK:
+                case KeywordEffectType.PIERCING:
+                    return KEYWORD_DIRECTION_CHOICES;
+            }
+            break;
+        case EffectType.STAT:
+            switch (effect.subtype) {
+                case StatEffectType.ATK:
+                case StatEffectType.DEF:
+                case StatEffectType.LIFE:
+                    return STAT_DIRECTION_CHOICES;
+                case StatEffectType.POSITION:
+                    return POSITION_DIRECTION_CHOICES;
+            }
+            break;
+    }
+    return [];
+}
+
+export const getDefaultEffectDirection = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.EVIL:
+            switch (effect.subtype) {
+                case EvilEffectType.FLIP:
+                    return EffectsDirection.FACE_DOWN;
+            }
+            break;
+        case EffectType.KEYWORD:
+            switch (effect.subtype) {
+                case KeywordEffectType.CHAIN_ATTACK:
+                case KeywordEffectType.PIERCING:
+                    return EffectsDirection.GAIN;
+            }
+            break;
+        case EffectType.STAT:
+            switch (effect.subtype) {
+                case StatEffectType.ATK:
+                case StatEffectType.DEF:
+                case StatEffectType.LIFE:
+                    return EffectsDirection.GAIN;
+                case StatEffectType.POSITION:
+                    return EffectsDirection.DEFENSE;
+            }
+            break;
+    }
+    return EffectsDirection.NONE;
+}
+
+export const getEffectHindranceOptions = (cardData: CardData) => {
+    return Object.values(EffectsHindrance);
+}
+
+export const getEffectBenefitOptions = (cardData: CardData) => {
+    return Object.values(EffectsBenefit);
 }
