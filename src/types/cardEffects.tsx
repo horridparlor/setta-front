@@ -1014,7 +1014,7 @@ export const getDefaultEffectTargetType = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
-            return TargetType.TARGET;
+            return isMonster(cardData) ? TargetType.THIS : TargetType.TARGET;
     }
     return TargetType.NONE;
 }
