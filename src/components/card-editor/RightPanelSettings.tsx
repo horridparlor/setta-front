@@ -25,7 +25,8 @@ import {
     CardType,
     combineEffectsTexts,
     DefaultTextSize,
-    EXTRA_DECK_SUBTYPES, getEffectsChainEffect,
+    EXTRA_DECK_SUBTYPES,
+    getEffectsChainEffect,
     getEffectsCost,
     getEffectsCostPayment,
     getEffectsCostPostCount,
@@ -68,7 +69,10 @@ import {
     EffectsPayment,
     EffectsTarget,
     EffectType,
-    getAmountProps, getChainEffectDirectionOptions, getChainEffectSelectionType, getChainEffectSubtypeOptions,
+    getAmountProps,
+    getChainEffectDirectionOptions,
+    getChainEffectSelectionType,
+    getChainEffectSubtypeOptions,
     getChainEffectTypeOptions,
     getCostPaymentTypeOptions,
     getCostPostCountSubtypeOptions,
@@ -80,7 +84,9 @@ import {
     getCostTargetOwnerOptions,
     getCostTargetTypeOptions,
     getCostTargetZoneOptions,
-    getCostTypeOptions, getDefaultChainEffectDirection, getDefaultChainEffectSubtype,
+    getCostTypeOptions,
+    getDefaultChainEffectDirection,
+    getDefaultChainEffectSubtype,
     getDefaultCostPaymentType,
     getDefaultCostPostCountSubtype,
     getDefaultCostPostCountType,
@@ -731,7 +737,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const effectAmountProps = getAmountProps(effectSelectionType);
     const effectAmount = getEffectsEffect(cardData).amount;
     const effectAmountSelectionType = isCountedAmount(effectAmount) ? SelectionType.CARD : SelectionType.NONE;
-    const isEffectCardPropertySelection = isCardPropertySelection(effectSelectionType) || (effectSelectionType === SelectionType.STAT && getEffectsEffect(cardData).subtype !== StatEffectType.LIFE);
+    const doesEffectTargetCardItself = getEffectsEffectTarget(cardData).targetType === TargetType.THIS;
+    const isEffectCardPropertySelection = !doesEffectTargetCardItself &&
+        (isCardPropertySelection(effectSelectionType)
+            || (effectSelectionType === SelectionType.STAT && getEffectsEffect(cardData).subtype !== StatEffectType.LIFE));
     const chainEffectSelectionType = getChainEffectSelectionType(cardData);
     const chainEffectAmountProps = getAmountProps(chainEffectSelectionType);
 
@@ -1345,7 +1354,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             {getStringSelector(getEffectTargetTypeOptions(cardData), getDefaultEffectTargetType(cardData))}
                         </Select>
                     </FormControl>
-                    <FormControl fullWidth sx={{display: getEffectTargetOwnerOptions(cardData).length ? 'flex' : 'none'}}>
+                    <FormControl fullWidth sx={{display: getEffectTargetOwnerOptions(cardData).length && !doesEffectTargetCardItself ? 'flex' : 'none'}}>
                         <InputLabel id="effect-target-owner-selector-label">Owner</InputLabel>
                         <Select
                             labelId="effect-target-owner-selector-label"
