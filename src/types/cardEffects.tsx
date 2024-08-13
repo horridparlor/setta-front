@@ -148,6 +148,7 @@ export const isTargetOwner = (value: string): value is TargetOwner => {
 
 
 export type EffectsTarget = {
+    cardType: CardType|null,
     cardClass: CardClass|null,
     subtype: CardSubtype|null,
     minLevel: number|null,
@@ -159,7 +160,8 @@ export type EffectsTarget = {
     owner: TargetOwner|null
 }
 
-export const DEFAULT_EFFECTS_TARGET = {
+export const DEFAULT_EFFECTS_TARGET: EffectsTarget = {
+    cardType: null,
     cardClass: null,
     subtype: null,
     minLevel: null,

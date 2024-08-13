@@ -444,6 +444,19 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         return cost;
     }
 
+    const handleTargetCardTypeChange = (value: string, prevTarget: EffectsTarget,
+                                     handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
+        const cardType: CardType|null = isCardType(value) ? value : null;
+        const target = {...prevTarget,
+            cardType: cardType
+        };
+        if (justReturn) {
+            return target;
+        }
+        handle(target);
+        return target;
+    }
+
     const handleTargetClassChange = (value: string, prevTarget: EffectsTarget,
                                      handle: (target: EffectsTarget) => void, justReturn: boolean = false) => {
         const cardClass: CardClass|null = isCardClass(value) ? value : null;
@@ -983,7 +996,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         type="number"
                         label="Amount"
                         variant="outlined"
-                        value={cardData.cardEffects.cost.amount || costAmountProps.default}
+                        value={getEffectsCost(cardData).amount || costAmountProps.default}
                         onChange={handleCostAmountChange}
                         inputProps={costAmountProps}
                         disabled={cannotEdit()}
@@ -993,7 +1006,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         <InputLabel id="cost-target-subtype-selector-label">Subtype</InputLabel>
                         <Select
                             labelId="cost-target-subtype-selector-label"
-                            value={cardData.cardEffects.cost?.target?.subtype || CardSubtype.NONE}
+                            value={getEffectsCostTarget(cardData).subtype || CardSubtype.NONE}
                             label="Subtype"
                             onChange={(event: SelectChangeEvent<CardSubtype>, child: ReactNode) =>
                                 handleTargetSubtypeChange(event.target.value, getEffectsCostTarget(cardData), handleCostTargetChange)}
@@ -1006,13 +1019,26 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                         <InputLabel id="cost-target-class-selector-label">Class</InputLabel>
                         <Select
                             labelId="cost-target-class-selector-label"
-                            value={cardData.cardEffects.cost?.target?.cardClass || CardClass.NONE}
+                            value={getEffectsCostTarget(cardData).cardClass || CardClass.NONE}
                             label="Class"
                             onChange={(event: SelectChangeEvent<CardClass>, child: ReactNode) =>
                                 handleTargetClassChange(event.target.value, getEffectsCostTarget(cardData), handleCostTargetChange)}
                             disabled={cannotEdit()}
                         >
                             {getStringSelector(Object.values(CardClass))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={costCardSelectionVisible}>
+                        <InputLabel id="cost-target-card-type-selector-label">Card Type</InputLabel>
+                        <Select
+                            labelId="cost-target-card-type-selector-label"
+                            value={getEffectsCostTarget(cardData).cardType || CardType.NONE}
+                            label="Card Type"
+                            onChange={(event: SelectChangeEvent<CardType>, child: ReactNode) =>
+                                handleTargetCardTypeChange(event.target.value, getEffectsCostTarget(cardData), handleCostTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(Object.values(CardType))}
                         </Select>
                     </FormControl>
                 </Box>
@@ -1284,6 +1310,19 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             {getStringSelector(Object.values(CardClass))}
                         </Select>
                     </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-target-card-type-selector-label">Card Type</InputLabel>
+                        <Select
+                            labelId="effect-target-card-type-selector-label"
+                            value={getEffectsEffectTarget(cardData).cardType || CardType.NONE}
+                            label="Card Type"
+                            onChange={(event: SelectChangeEvent<CardType>, child: ReactNode) =>
+                                handleTargetCardTypeChange(event.target.value, getEffectsEffectTarget(cardData), handleEffectTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(Object.values(CardType))}
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Box
                     sx={{...rowContainerStyle, display: isEffectCardPropertySelection ? 'flex' : 'none'}}
@@ -1436,6 +1475,19 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             disabled={cannotEdit()}
                         >
                             {getStringSelector(Object.values(CardClass))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel id="effect-amount-target-card-type-selector-label">Card Type</InputLabel>
+                        <Select
+                            labelId="effect-amount-target-card-type-selector-label"
+                            value={getEffectsEffectAmountTarget(cardData).cardType || CardType.NONE}
+                            label="Card Type"
+                            onChange={(event: SelectChangeEvent<CardType>, child: ReactNode) =>
+                                handleTargetCardTypeChange(event.target.value, getEffectsEffectAmountTarget(cardData), handleEffectAmountTargetChange)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(Object.values(CardType))}
                         </Select>
                     </FormControl>
                 </Box>
