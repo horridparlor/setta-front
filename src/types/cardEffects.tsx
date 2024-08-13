@@ -2,7 +2,7 @@ import {
     CardClass,
     CardData,
     CardSubtype,
-    CardType,
+    CardType, getEffectsChainEffect,
     getEffectsCost, getEffectsEffect,
     isMonster,
     isTrap
@@ -314,7 +314,12 @@ export type EffectsCost = {
 }
 
 export enum ChainType {
+    NONE = 'None',
     ALTER_SUMMONED = 'Alter summoned'
+}
+
+export const isChainType = (value: string): value is ChainType => {
+    return Object.values(ChainType).includes(value as ChainType);
 }
 
 export enum AlterSummonedChainType {
@@ -327,6 +332,13 @@ export type ChainEffect = {
     subtype: string|null;
     direction: EffectsDirection|null;
     amount: number|null;
+}
+
+export const DEFAULT_CHAIN_EFFECT = {
+    chainType: ChainType.NONE,
+    subtype: null,
+    direction: null,
+    amount: null
 }
 
 export type EffectsEffect = {
@@ -1125,4 +1137,65 @@ export const getEffectHindranceOptions = (cardData: CardData) => {
 
 export const getEffectBenefitOptions = (cardData: CardData) => {
     return Object.values(EffectsBenefit);
+}
+
+export const getChainEffectTypeOptions = (cardData: CardData) => {
+    const effect = getEffectsEffect(cardData);
+    switch (effect.effectType) {
+        case EffectType.MOVE_CARD:
+            switch (effect.subtype) {
+                case MoveCardEffectType.SUMMON:
+                    return [ChainType.NONE, ChainType.ALTER_SUMMONED];
+            }
+            break;
+    }
+    return [];
+}
+
+export const getChainEffectSubtypeOptions = (cardData: CardData) => {
+    const chainEffect = getEffectsChainEffect(cardData);
+    switch (chainEffect.chainType) {
+        case ChainType.ALTER_SUMMONED:
+            return Object.values(AlterSummonedChainType);
+    }
+    return [];
+}
+
+export const getDefaultChainEffectSubtype = (cardData: CardData) => {
+    const chainEffect = getEffectsChainEffect(cardData);
+    switch (chainEffect.chainType) {
+        case ChainType.ALTER_SUMMONED:
+            return AlterSummonedChainType.ATK;
+    }
+    return '';
+}
+
+export const getChainEffectDirectionOptions = (cardData: CardData) => {
+    const chainEffect = getEffectsChainEffect(cardData);
+    switch (chainEffect.chainType) {
+        case ChainType.ALTER_SUMMONED:
+            return STAT_DIRECTION_CHOICES;
+    }
+    return [];
+}
+
+export const getDefaultChainEffectDirection = (cardData: CardData) => {
+    const chainEffect = getEffectsChainEffect(cardData);
+    switch (chainEffect.chainType) {
+        case ChainType.ALTER_SUMMONED:
+            return EffectsDirection.GAIN;
+    }
+    return '';
+}
+
+export const getChainEffectSelectionType = (cardData: CardData) => {
+    const chainEffect = getEffectsChainEffect(cardData);
+    switch (chainEffect.chainType) {
+        case ChainType.ALTER_SUMMONED:
+            if (chainEffect.direction === EffectsDirection.DOUBLE) {
+                return SelectionType.NONE;
+            }
+            return SelectionType.STAT;
+    }
+    return SelectionType.NONE;
 }

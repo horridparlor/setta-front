@@ -25,7 +25,7 @@ import {
     CardType,
     combineEffectsTexts,
     DefaultTextSize,
-    EXTRA_DECK_SUBTYPES,
+    EXTRA_DECK_SUBTYPES, getEffectsChainEffect,
     getEffectsCost,
     getEffectsCostPayment,
     getEffectsCostPostCount,
@@ -55,6 +55,8 @@ import {getStringSelector, isNoneString, normalizeName} from "../../utils/string
 import {getUserId} from "../../types/cookie";
 import {
     CardEffects,
+    ChainEffect,
+    ChainType,
     CostType,
     DEFAULT_EFFECTS_COST,
     DEFAULT_EFFECTS_COUNT,
@@ -66,7 +68,8 @@ import {
     EffectsPayment,
     EffectsTarget,
     EffectType,
-    getAmountProps,
+    getAmountProps, getChainEffectDirectionOptions, getChainEffectSelectionType, getChainEffectSubtypeOptions,
+    getChainEffectTypeOptions,
     getCostPaymentTypeOptions,
     getCostPostCountSubtypeOptions,
     getCostPostCountTypeOptions,
@@ -77,7 +80,7 @@ import {
     getCostTargetOwnerOptions,
     getCostTargetTypeOptions,
     getCostTargetZoneOptions,
-    getCostTypeOptions,
+    getCostTypeOptions, getDefaultChainEffectDirection, getDefaultChainEffectSubtype,
     getDefaultCostPaymentType,
     getDefaultCostPostCountSubtype,
     getDefaultCostPostCountType,
@@ -112,8 +115,10 @@ import {
     getTargetTypeOptions,
     getTargetZoneOptions,
     isCardPropertySelection,
+    isChainType,
     isCostType,
-    isCountedAmount, isEffectsBenefit,
+    isCountedAmount,
+    isEffectsBenefit,
     isEffectsDirection,
     isEffectsHindrance,
     isEffectType,
@@ -711,7 +716,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             supertype: supertype,
             target: handleTargetTypeChange(getEffectsEffectTarget(card).targetType || getDefaultEffectTargetType(card),
                 getEffectsEffectTarget(card), handleEffectTargetChange, card, getEffectTargetTypeOptions(card), true),
-            direction: handleEffectDirectionChange(getDefaultEffectDirection(card), card, true).direction
+            direction: handleEffectDirectionChange(getDefaultEffectDirection(card), card, true).direction,
+            chainEffect: handleChainEffectTypeChange(ChainType.NONE, card, true).chainEffect
         };
         if (justReturn) {
             return effect;
@@ -726,6 +732,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const effectAmount = getEffectsEffect(cardData).amount;
     const effectAmountSelectionType = isCountedAmount(effectAmount) ? SelectionType.CARD : SelectionType.NONE;
     const isEffectCardPropertySelection = isCardPropertySelection(effectSelectionType) || (effectSelectionType === SelectionType.STAT && getEffectsEffect(cardData).subtype !== StatEffectType.LIFE);
+    const chainEffectSelectionType = getChainEffectSelectionType(cardData);
+    const chainEffectAmountProps = getAmountProps(chainEffectSelectionType);
 
     const resetEffect = () => {
         const preEffect = handleEffectTypeChange(getDefaultEffectType(cardData), cardData, true);
@@ -843,6 +851,57 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         onCardDataChange('cardEffects',
             {...cardData.cardEffects, effect: effect});
         return effect;
+    }
+
+    const handleChainEffectChange = (chainEffect: ChainEffect, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const effect = {...getEffectsEffect(prevCard),
+            chainEffect: chainEffect
+        };
+        if (justReturn) {
+            return effect;
+        }
+        onCardDataChange('cardEffects',
+            {...cardData.cardEffects, effect: effect});
+        return effect;
+    }
+
+    const handleChainEffectTypeChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const chainType = isChainType(value) ? value : ChainType.NONE;
+        const card = {...prevCard};
+        card.cardEffects.effect.chainEffect = {
+            chainType: chainType,
+            subtype: null,
+            direction: null,
+            amount: null,
+        };
+        const subtype = getDefaultChainEffectSubtype(card);
+        const chainEffect = {...handleChainEffectSubtypeChange(subtype, card, justReturn).chainEffect,
+            chainType: chainType
+        };
+        return handleChainEffectChange(chainEffect, card, justReturn);
+    }
+
+    const handleChainEffectSubtypeChange = (subtype: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const chainEffect = {...getEffectsChainEffect(prevCard),
+            subtype: subtype
+        };
+        return handleChainEffectChange(chainEffect, prevCard, justReturn);
+    }
+
+    const handleChainEffectDirectionChange = (value: string, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const direction = isEffectsDirection(value) ? value : EffectsDirection.NONE;
+        const chainEffect = {...getEffectsChainEffect(prevCard),
+            direction: direction
+        };
+        return handleChainEffectChange(chainEffect, prevCard, justReturn);
+    }
+
+    const handleChainEffectAmountChange = (amount: number, prevCard: CardData = cardData, justReturn: boolean = false) => {
+        const chainEffect = {...getEffectsChainEffect(prevCard),
+            amount: amount
+        };
+        console.log(777, chainEffect);
+        return handleChainEffectChange(chainEffect, prevCard, justReturn);
     }
 
     const getEffectsTab = () => {
@@ -1510,6 +1569,57 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             {getStringSelector(getEffectBenefitOptions(cardData))}
                         </Select>
                     </FormControl>
+                </Box>
+                <Box
+                    sx={{...rowContainerStyle, display: getChainEffectTypeOptions(cardData).length ? 'flex' : 'none' }}
+                >
+                    <FormControl fullWidth>
+                        <InputLabel id="chain-effect-type-label">Chain effect</InputLabel>
+                        <Select
+                            labelId="chain-effect-type-label"
+                            value={getEffectsChainEffect(cardData).chainType || ChainType.NONE}
+                            label="Chain effect"
+                            onChange={(event: SelectChangeEvent<ChainType>, child: ReactNode) => handleChainEffectTypeChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getChainEffectTypeOptions(cardData), ChainType.NONE)}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getChainEffectSubtypeOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="chain-effect-subtype-label">Subtype</InputLabel>
+                        <Select
+                            labelId="chain-effect-subtype-label"
+                            value={getEffectsChainEffect(cardData).subtype || getDefaultChainEffectSubtype(cardData)}
+                            label="Subtype"
+                            onChange={(event: SelectChangeEvent<string>, child: ReactNode) => handleChainEffectSubtypeChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getChainEffectSubtypeOptions(cardData), getDefaultChainEffectSubtype(cardData))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{display: getChainEffectDirectionOptions(cardData).length ? 'flex' : 'none'}}>
+                        <InputLabel id="chain-effect-direction-label">Direction</InputLabel>
+                        <Select
+                            labelId="chain-effect-direction-label"
+                            value={getEffectsChainEffect(cardData).direction || getDefaultChainEffectDirection(cardData)}
+                            label="Direction"
+                            onChange={(event: SelectChangeEvent<string>, child: ReactNode) => handleChainEffectDirectionChange(event.target.value)}
+                            disabled={cannotEdit()}
+                        >
+                            {getStringSelector(getChainEffectDirectionOptions(cardData), getDefaultChainEffectDirection(cardData))}
+                        </Select>
+                    </FormControl>
+                    <TextField sx={{display: chainEffectAmountProps.visible ? 'flex' : 'none'}}
+                        fullWidth
+                        type="number"
+                        label="Amount"
+                        variant="outlined"
+                        value={getEffectsChainEffect(cardData).amount || chainEffectAmountProps.default}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                   handleChainEffectAmountChange(parseInt(event.target.value))}
+                        inputProps={chainEffectAmountProps}
+                        disabled={cannotEdit()}
+                    />
                 </Box>
                 <Box
                     sx={{...rowContainerStyle, display: cannotEdit() ? 'none' : 'flex'}}

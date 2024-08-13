@@ -4,9 +4,9 @@ import Cookies from "js-cookie";
 import {AuthCookie, getUserId} from "./cookie";
 import {CardExpansion, EXPANSION_NO_OWNER} from "./expansion";
 import {
-    CardEffects,
+    CardEffects, ChainEffect,
     CostType,
-    DEFAULT_CARD_EFFECTS, DEFAULT_EFFECTS_PAYMENT, DEFAULT_EFFECTS_POST_COUNT,
+    DEFAULT_CARD_EFFECTS, DEFAULT_CHAIN_EFFECT, DEFAULT_EFFECTS_PAYMENT, DEFAULT_EFFECTS_POST_COUNT,
     DEFAULT_EFFECTS_TARGET,
     EffectsCost,
     EffectsEffect, EffectsPayment,
@@ -391,7 +391,7 @@ export const getEffectsEffect = (cardData: CardData): EffectsEffect => {
     return cardData.cardEffects.effect;
 }
 
-export const fixEffectsTarget = (target: EffectsTarget|null) => {
+const fixEffectsTarget = (target: EffectsTarget|null) => {
     return target ? target : DEFAULT_EFFECTS_TARGET;
 }
 
@@ -399,7 +399,7 @@ export const getEffectsCostTarget = (cardData: CardData) => {
     return fixEffectsTarget(cardData.cardEffects.cost.target);
 }
 
-export const fixEffectsPayment = (payment: EffectsPayment|null) => {
+const fixEffectsPayment = (payment: EffectsPayment|null) => {
     return payment ? payment : DEFAULT_EFFECTS_PAYMENT;
 }
 
@@ -407,7 +407,7 @@ export const getEffectsCostPayment = (cardData: CardData) => {
     return fixEffectsPayment(cardData.cardEffects.cost.payment);
 }
 
-export const fixEffectsPostCount = (postCount: PostCount|null) => {
+const fixEffectsPostCount = (postCount: PostCount|null) => {
     return postCount ? postCount : DEFAULT_EFFECTS_POST_COUNT;
 }
 
@@ -422,6 +422,14 @@ export const getEffectsEffectTarget = (cardData: CardData) => {
 export const getEffectsEffectAmountTarget = (cardData: CardData) => {
     const amount = cardData.cardEffects.effect.amount;
     return fixEffectsTarget(isCountedAmount(amount) ? amount.target : null);
+}
+
+const fixChainEffect = (chainEffect: ChainEffect|null) => {
+    return chainEffect ? chainEffect : DEFAULT_CHAIN_EFFECT;
+}
+
+export const getEffectsChainEffect = (cardData: CardData) => {
+    return fixChainEffect(getEffectsEffect(cardData).chainEffect);
 }
 
 export const TARGETABLE_CARD_SUBTYPES = Object.values(CardSubtype)
