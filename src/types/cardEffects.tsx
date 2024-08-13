@@ -112,6 +112,12 @@ const THIS_TARGET_OR_ALL_TARGET_TYPE_OPTIONS = [
     TargetType.THIS
 ]
 
+const ATTACK_TRIGGER_TARGET_TYPE_OPTIONS = [
+    TargetType.ALL,
+    TargetType.ATTACKER,
+    TargetType.TARGET
+]
+
 export const isTargetType = (value: string): value is TargetType => {
     return Object.values(TargetType).includes(value as TargetType);
 }
@@ -942,7 +948,7 @@ export function isCountedAmount(amount: number|EffectsCount|null): amount is Eff
 export const getTargetTypeOptions = (selectionType: SelectionType) => {
     switch (selectionType) {
         case SelectionType.CARD:
-            return [TargetType.ALL];
+            return [TargetType.ALL, TargetType.OTHER];
     }
     return [];
 }
@@ -987,6 +993,13 @@ export const getDefaultTargetZone = (selectionType: SelectionType) => {
     return '';
 }
 
+const isAttackTrigger = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    return cost.costType === CostType.TRIGGER
+        && cost.subtype === TriggerCostType.OPPONENT
+        && cost.supertype === OpponentTriggerCostType.ATTACKS;
+}
+
 export const getEffectTargetTypeOptions = (cardData: CardData) => {
     const effect = getEffectsEffect(cardData);
     switch (effect.effectType) {
@@ -1001,7 +1014,9 @@ export const getEffectTargetTypeOptions = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
-            return isMonster(cardData) ? THIS_TARGET_OR_ALL_TARGET_TYPE_OPTIONS : TARGET_OR_ALL_TARGET_TYPE_OPTIONS;
+            return isMonster(cardData) ? THIS_TARGET_OR_ALL_TARGET_TYPE_OPTIONS
+                : isAttackTrigger(cardData) ? ATTACK_TRIGGER_TARGET_TYPE_OPTIONS
+                    : TARGET_OR_ALL_TARGET_TYPE_OPTIONS;
     }
     return [];
 }
@@ -1020,7 +1035,7 @@ export const getDefaultEffectTargetType = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
-            return isMonster(cardData) ? TargetType.THIS : TargetType.TARGET;
+            return isMonster(cardData) ? TargetType.THIS : isAttackTrigger(cardData) ? TargetType.ATTACKER : TargetType.TARGET;
     }
     return TargetType.NONE;
 }
