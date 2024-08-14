@@ -210,7 +210,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
     const countOfFilteredTripleCopyCards = filteredCards.filter(card => !isExtraDeckCard(card) && !card.isAce).length;
     const countOfFilteredSingleCopyCards = filteredCards.filter(card => isExtraDeckCard(card) || card.isAce).length;
     const cardsNeededToPrintForTwoPlayers = 2 * countOfFilteredSingleCopyCards + 6 * countOfFilteredTripleCopyCards;
-    const resultCountString = `${countOfFilteredSingleCopyCards} + ${countOfFilteredTripleCopyCards} = ${ cardsNeededToPrintForTwoPlayers }${
+    const resultCountString = `${countOfFilteredTripleCopyCards} + ${countOfFilteredSingleCopyCards} = ${ cardsNeededToPrintForTwoPlayers }${
         cardsNeededToPrintForTwoPlayers <= 234 && cardsNeededToPrintForTwoPlayers % 18 === 0 ? ' ✔️' : ''}`;
 
     return (
