@@ -54,3 +54,23 @@ export const getHeaders = () => {
         'Content-Type': 'application/json'
     };
 }
+
+export interface SystemUser {
+    firstName: string;
+    lastName: string;
+    isAdmin: boolean;
+}
+
+const DEFAULT_SYSTEM_USER = {
+    firstName: 'Nota',
+    lastName: 'Uthenticated',
+    isAdmin: false,
+}
+
+export const getUser = (): SystemUser => {
+    const systemUserString : string|undefined = Cookies.get(AuthCookie.SYSTEM_USER);
+    if (systemUserString === undefined) {
+        return DEFAULT_SYSTEM_USER;
+    }
+    return JSON.parse(systemUserString);
+}

@@ -35,6 +35,8 @@ interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     isShowingMoreCards: boolean;
     resetCardsShown: () => void;
     resultCountString: string;
+    resultsCount: number;
+    handleExportAll: () => void;
 }
 
 export interface CardFiltersRef {
@@ -53,7 +55,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 }));
 
 const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardFiltersProps>(({onFilterChange, expansions,
-    cards, cardOwners, isShowingMoreCards, resetCardsShown, resultCountString}, ref) => {
+    cards, cardOwners, isShowingMoreCards, resetCardsShown, resultCountString, resultsCount,
+    handleExportAll}, ref) => {
     const navigate = useNavigate();
     const location = useLocation();
     const urlParams = new URLSearchParams(location.search);
@@ -481,7 +484,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
                               isAce={isAce === true || isAce === 'true'} handleIsAceChange={handleIsAceChange}
                               ownerId={ownerId} handleOwnerIdChange={handleOwnerIdChange}
                               isReleased={isReleased === true || isReleased === 'true'} handleIsReleasedChange={handleIsReleasedChange}
-                              isErrata={isErrata === true || isErrata === 'true'} handleIsErrataChange={handleIsErrataChange}
+                              isErrata={isErrata === true || isErrata === 'true'} handleIsErrataChange={handleIsErrataChange} resultsCount={resultsCount}
+                              handleExportAll={handleExportAll}
                 />
             </Toolbar>
         </StyledAppBar>

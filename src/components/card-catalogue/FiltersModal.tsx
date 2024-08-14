@@ -15,6 +15,9 @@ import {
 import {CardClass, CardDeck, CardSubtype, CardSupertype, CardType} from "../../types/card";
 import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
+import {getUser} from "../../types/api";
+import Cookies from "js-cookie";
+import {AuthCookie} from "../../types/cookie";
 
 interface FiltersModalProps {
     isOpen: boolean;
@@ -54,6 +57,8 @@ interface FiltersModalProps {
     handleIsReleasedChange: (value: boolean) => void;
     isErrata: boolean;
     handleIsErrataChange: (value: boolean) => void;
+    resultsCount: number;
+    handleExportAll: () => void;
 }
 
 const getComparisonTypeToggleOptions = (): React.ReactElement => {
@@ -79,7 +84,7 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
     handleSortOrderChange, handleSortByChange, level, handleLevelChange, levelOperation, handleLevelOperationChange,
     atk, handleAtkChange, atkOperation, handleAtkOperationChange, def, handleDefChange, defOperation, handleDefOperationChange,
     isAce, handleIsAceChange, ownerId, handleOwnerIdChange,
-    isReleased, handleIsReleasedChange, isErrata, handleIsErrataChange
+    isReleased, handleIsReleasedChange, isErrata, handleIsErrataChange, resultsCount, handleExportAll
                                                    }) => {
     return (
         <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="md">
@@ -224,6 +229,10 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                     <Grid item xs={12} sm={6} md={3}>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
+                        <Button sx={{display: getUser().isAdmin ? 'flex' : 'none'}}
+                            onClick={handleExportAll} variant="contained" color="secondary" disabled={!resultsCount}>
+                            Export ALL
+                        </Button>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <TextField

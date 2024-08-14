@@ -1,10 +1,12 @@
-import {useEffect, useRef} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import { Box } from '@mui/material';
 import {CardData} from "../../types/card";
 import HomeBar, {HomeBarRef} from "../../components/common/HomeBar";
 import CardEditor, {CardEditorRef} from "../../components/card-editor/CardEditor";
 import {useNavigate} from "react-router-dom";
 import {AppPage} from "../../types/navigation";
+import {MultitaskCookie} from "../../types/cookie";
+import Cookies from "js-cookie";
 
 interface CardEditorPageProps {
     cards: Array<CardData>;
@@ -16,8 +18,13 @@ const CardEditorPage = (props: CardEditorPageProps) => {
     const editorRef = useRef<CardEditorRef>(null);
     const homeBarRef = useRef<HomeBarRef>(null);
     const navigate = useNavigate();
+    const [ multiTaskNextCard, setMultiTaskNextCard ] = useState<number>(0);
 
     const onCardSaved = async() => {
+        if (multiTaskNextCard) {
+            goToCard(multiTaskNextCard);
+            return;
+        }
         await refetch();
         onClose();
     }
@@ -73,6 +80,23 @@ const CardEditorPage = (props: CardEditorPageProps) => {
         };
     } );
 
+    const onCardSet = (card: CardData) => {
+        const exportingAllCards: string|undefined = Cookies.get(MultitaskCookie.EXPORTING_ALL_CARDS);
+        const exportingAllIndex: string|undefined = Cookies.get(MultitaskCookie.EXPORTING_ALL_INDEX);
+        if (!exportingAllCards || !card.cardId) {
+            return;
+        }
+        const cardIds: Array<number> = JSON.parse(exportingAllCards);
+        const currentIndex: number = JSON.parse(exportingAllIndex ?? '0');
+        Cookies.set(MultitaskCookie.EXPORTING_ALL_INDEX, JSON.stringify(currentIndex + 1));
+        if (currentIndex + 1 >= cardIds.length) {
+            Cookies.remove(MultitaskCookie.EXPORTING_ALL_CARDS);
+            Cookies.remove(MultitaskCookie.EXPORTING_ALL_INDEX);
+        }
+        setMultiTaskNextCard(cardIds[currentIndex + 1]);
+        commitExport();
+    };
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#244775', overflowX: 'hidden' }}>
             <Box sx={{ width: '100%', p: 2 }}>
@@ -86,7 +110,7 @@ const CardEditorPage = (props: CardEditorPageProps) => {
                 overflow: 'auto',
             }}>
                 <CardEditor cards={cards} closeUpdate={onCardSaved} ref={editorRef} refetch={refetch}
-                    goToCard={goToCard}
+                    goToCard={goToCard} onCardSet={onCardSet}
                 />
             </Box>
         </Box>

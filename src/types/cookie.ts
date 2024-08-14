@@ -2,9 +2,8 @@ import Cookies from "js-cookie";
 
 export enum AuthCookie {
     AUTH_TOKEN = 'authToken',
-    FIRSTNAME = 'firstname',
-    LASTNAME = 'lastname',
     USER_ID = 'userId',
+    SYSTEM_USER = 'systemUser'
 }
 
 export enum CardCatalogueCookie {
@@ -34,6 +33,11 @@ export enum CardCatalogueCookie {
 export enum PageCookie {
     CARD_CATALOGUE_CARDS_SHOWN = 'cardsShown',
     CARD_CATALOGUE_FILTERS = 'cardCatalogueFilters'
+}
+
+export enum MultitaskCookie {
+    EXPORTING_ALL_CARDS = 'exportingAllCards',
+    EXPORTING_ALL_INDEX = 'exportingAllIndex'
 }
 
 export const getUserId = () => {

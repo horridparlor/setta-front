@@ -13,6 +13,7 @@ import {
     EffectsTarget, isCountedAmount, PostCount
 } from "./cardEffects";
 import {NONE_STRING} from "../utils/string";
+import {getUser} from "./api";
 
 export enum CardClass {
     NONE = 'None',
@@ -307,8 +308,9 @@ export const getOwnerId = (cardData: CardData) => {
 }
 
 export const getOwnerName = (cardData: CardData) => {
-    const firstname = cardData.ownerFirstname.length ? cardData.ownerFirstname : Cookies.get(AuthCookie.FIRSTNAME);
-    const lastname = cardData.ownerLastname.length ? cardData.ownerLastname : Cookies.get(AuthCookie.LASTNAME);
+    const systemUser = getUser();
+    const firstname = cardData.ownerFirstname.length ? cardData.ownerFirstname : Cookies.get(systemUser.firstName);
+    const lastname = cardData.ownerLastname.length ? cardData.ownerLastname : Cookies.get(systemUser.lastName);
     return [firstname, lastname].join(' ');
 }
 

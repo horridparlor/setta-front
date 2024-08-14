@@ -18,6 +18,7 @@ interface CardEditorProps {
     cards: Array<CardData>;
     refetch: () => Promise<void>;
     goToCard: (cardId: number) => void;
+    onCardSet: (card: CardData) => void;
 }
 
 export interface CardEditorRef {
@@ -27,7 +28,7 @@ export interface CardEditorRef {
 }
 
 const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({
-                                                                   closeUpdate, cards, refetch, goToCard
+                                                                   closeUpdate, cards, refetch, goToCard, onCardSet
                                                                }, ref) => {
     const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
@@ -239,6 +240,12 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({
         setOldName(serializeName(card));
         setCardData(card);
     }
+
+    useEffect(() => {
+        if (cardData.cardId) {
+            onCardSet(cardData);
+        }
+    }, [cardData]);
 
     useEffect(() => {
         const card = cardId === undefined ? undefined : cards.find(card => card.cardId === parseInt(cardId));

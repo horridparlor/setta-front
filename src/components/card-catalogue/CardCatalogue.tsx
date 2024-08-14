@@ -16,7 +16,8 @@ import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 import Button from "@mui/material/Button";
 import {toast} from "react-toastify";
-import {PageCookie} from "../../types/cookie";
+import {MultitaskCookie, PageCookie} from "../../types/cookie";
+import Cookies from "js-cookie";
 
 interface CardCatalogueProps {
     handleCardClick: (cardData: CardData) => void;
@@ -207,6 +208,17 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
         toggleFilters,
     }));
 
+    const onExportAll = () => {
+        const cardIds = filteredCards.map(card => card.cardId);
+        if (!cardIds.length) {
+            return;
+        }
+        Cookies.set(MultitaskCookie.EXPORTING_ALL_INDEX, JSON.stringify(0));
+        Cookies.set(MultitaskCookie.EXPORTING_ALL_CARDS, JSON.stringify(cardIds));
+        console.log(5555);
+        handleCardClick(filteredCards[0]);
+    }
+
     const countOfFilteredMain = filteredCards.filter(card => !isExtraDeckCard(card) && !card.isAce).length;
     const countOfFilteredMainAce = filteredCards.filter(card => !isExtraDeckCard(card) && card.isAce).length;
     const countOfFilteredExtra = filteredCards.filter(card => isExtraDeckCard(card)).length;
@@ -223,7 +235,8 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
             <CardFilters
                 ref={filtersRef} cards={cards} cardOwners={cardOwners} expansions={expansions}
                 onFilterChange={setFilters} isShowingMoreCards={visibleCardCount > defaultCardsShown}
-                resetCardsShown={resetCardsShown} resultCountString={resultCountString}
+                resetCardsShown={resetCardsShown} resultCountString={resultCountString} resultsCount={filteredCards.length}
+                handleExportAll={onExportAll}
             />
             <Box sx={{
                 display: 'flex',

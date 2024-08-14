@@ -38,9 +38,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
             return;
         }
         Cookies.set(AuthCookie.AUTH_TOKEN, responseData.authToken, { expires: 1 });
-        Cookies.set(AuthCookie.FIRSTNAME, responseData.firstname, { expires: 7 });
-        Cookies.set(AuthCookie.LASTNAME, responseData.lastname, { expires: 7 });
         Cookies.set(AuthCookie.USER_ID, responseData.userId, { expires: 7 });
+        Cookies.set(AuthCookie.SYSTEM_USER, JSON.stringify({
+            firstName: responseData.firstName,
+            lastName: responseData.lastName,
+            isAdmin: responseData.isAdmin
+        }), { expires: 7 });
         toast.success(`Authenticated: ${responseData.firstname} ${responseData.lastname}`);
         await refetch();
         onClose();
