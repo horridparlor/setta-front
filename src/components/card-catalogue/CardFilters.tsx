@@ -453,8 +453,9 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
                             color="error"
                             onClick={resetFilters}
                             disabled={
-                                !cardName && !cardEffects && !referenceId && !cardClass && !cardType && !cardSubtype && !cardSupertype && !expansionId
-                                && !sortOrder && !sortBy && !levelOperation && !atkOperation && !defOperation && !isAce && !ownerId && !isShowingMoreCards
+                                !cardName && !cardEffects && !referenceId && !cardClass && !cardType && !cardSubtype && !cardSupertype && !cardDeck && !expansionId
+                                && !sortOrder && !sortBy && !levelOperation && !atkOperation && !defOperation && !isAce && !isReleased && !isErrata
+                                && !ownerId && !isShowingMoreCards
                             }
                             sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
                         >
