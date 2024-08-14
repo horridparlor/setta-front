@@ -129,7 +129,7 @@ import {
     isEffectsHindrance,
     isEffectType,
     isPaymentCostType,
-    isPostCountType,
+    isPostCountType, isSingularTargetType,
     isStateCostType,
     isTargetOwner,
     isTargetType,
@@ -178,7 +178,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     onDelete,
     onEncode,
     cards,
-    canUpload,
     onErrata,
     onCopy,
 }) => {
@@ -750,8 +749,8 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     const effectAmountProps = getAmountProps(effectSelectionType);
     const effectAmount = getEffectsEffect(cardData).amount;
     const effectAmountSelectionType = isCountedAmount(effectAmount) ? SelectionType.CARD : SelectionType.NONE;
-    const doesEffectTargetCardItself = getEffectsEffectTarget(cardData).targetType === TargetType.THIS;
-    const isEffectCardPropertySelection = !doesEffectTargetCardItself &&
+    const isEffectTargetSingular = isSingularTargetType(getEffectsEffectTarget(cardData).targetType);
+    const isEffectCardPropertySelection = !isEffectTargetSingular &&
         (isCardPropertySelection(effectSelectionType)
             || (effectSelectionType === SelectionType.STAT && getEffectsEffect(cardData).subtype !== StatEffectType.LIFE));
     const chainEffectSelectionType = getChainEffectSelectionType(cardData);
@@ -1393,7 +1392,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             {getStringSelector(getEffectTargetTypeOptions(cardData), getDefaultEffectTargetType(cardData))}
                         </Select>
                     </FormControl>
-                    <FormControl fullWidth sx={{display: getEffectTargetOwnerOptions(cardData).length && !doesEffectTargetCardItself ? 'flex' : 'none'}}>
+                    <FormControl fullWidth sx={{display: getEffectTargetOwnerOptions(cardData).length && !isEffectTargetSingular ? 'flex' : 'none'}}>
                         <InputLabel id="effect-target-owner-selector-label">Owner</InputLabel>
                         <Select
                             labelId="effect-target-owner-selector-label"

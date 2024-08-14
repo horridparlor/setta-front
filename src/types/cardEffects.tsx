@@ -106,7 +106,7 @@ export enum TargetType {
 const TARGET_OR_ALL_TARGET_TYPE_OPTIONS = [
     TargetType.ALL,
     TargetType.TARGET
-];
+]
 
 const THIS_TARGET_OR_ALL_TARGET_TYPE_OPTIONS = [
     TargetType.ALL,
@@ -130,6 +130,17 @@ const TRIGGERED_TARGETING_TARGET_TYPES = [
     TargetType.ATTACKER,
     TargetType.SUMMONED
 ]
+
+const SINGULAR_TARGET_TYPES = [
+    TargetType.ALL,
+    TargetType.ATTACKER,
+    TargetType.SUMMONED,
+    TargetType.THIS
+]
+
+export const isSingularTargetType = (targetType : TargetType|null) => {
+    return targetType && SINGULAR_TARGET_TYPES.includes(targetType);
+}
 
 export const isTargetType = (value: string): value is TargetType => {
     return Object.values(TargetType).includes(value as TargetType);
@@ -587,13 +598,22 @@ export const getAmountProps = (selectionType: SelectionType) => {
 }
 
 export const fixSelectionTypeByTarget = (selectionType: SelectionType, target: EffectsTarget|null) => {
-    if (target?.targetType === TargetType.ALL) {
-        switch (selectionType) {
-            case SelectionType.CARD:
-                return SelectionType.ALL_CARDS;
-            case SelectionType.PRIVATE_CARD:
-                return SelectionType.ALL_PRIVATE_CARDS;
-        }
+    switch (target?.targetType) {
+        case TargetType.ALL:
+            switch (selectionType) {
+                case SelectionType.CARD:
+                    return SelectionType.ALL_CARDS;
+                case SelectionType.PRIVATE_CARD:
+                    return SelectionType.ALL_PRIVATE_CARDS;
+            }
+            break;
+        case TargetType.THIS:
+        case TargetType.ATTACKER:
+        case TargetType.SUMMONED:
+            switch (selectionType) {
+                case SelectionType.CARD:
+                    return SelectionType.NONE;
+            }
     }
     return selectionType;
 }
