@@ -93,7 +93,7 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                                 label="Card Type"
                                 onChange={handleCardTypeChange}
                             >
-                                <MenuItem value="">–</MenuItem>
+                                <MenuItem value="None">–</MenuItem>
                                 {Object.values(CardType).map(c => (
                                     <MenuItem key={c} value={c}>{c}</MenuItem>
                                 ))}

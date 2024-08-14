@@ -31,6 +31,7 @@ export const isCardClass = (value: string): value is CardClass => {
 export enum CardType {
     NONE = 'None',
     MONSTER = 'Monster',
+    BACKROW = 'Backrow',
     SPELL = 'Spell',
     TRAP = 'Trap'
 }
@@ -236,6 +237,8 @@ const getActiveSubtypes = (cardType: CardType) => {
             return [CardSubtype.NORMAL];
         case CardType.TRAP:
             return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
+        case CardType.BACKROW:
+            return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
     }
 }
 
@@ -263,6 +266,20 @@ const getActiveSupertypes = (cardType: CardType, subtype: CardSubtype) => {
         default:
             return [CardSupertype.NONE];
     }
+}
+
+export const isGroupCardType = (cardType: CardType|string) => {
+    return isCardType(cardType) && [
+        CardType.BACKROW
+    ].includes(cardType);
+}
+
+export const isIncludedInGroupCardType = (cardType: CardType, groupCardType: CardType|string) => {
+    switch (groupCardType) {
+        case CardType.BACKROW:
+            return BACKROW_CARD_TYPES.includes(cardType);
+    }
+    return false;
 }
 
 export const getSupertypeOptions = (cardType: CardType, subtype: CardSubtype): React.ReactNode => {

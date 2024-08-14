@@ -43,7 +43,7 @@ import {
     isCardClass,
     isCardSubtype,
     isCardType,
-    isExtraDeckCard,
+    isExtraDeckCard, isGroupCardType,
     isKiller,
     MaximumPiece,
     MONSTER_CARD_TYPES,
@@ -1829,7 +1829,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             onChange={handleSelectChange('cardType')}
                             disabled={cannotEdit()}
                         >
-                            {Object.values(CardType).filter(value => !isNoneString(value)).map(t => (
+                            {Object.values(CardType).filter(value => !isNoneString(value) && !isGroupCardType(value)).map(t => (
                                 <MenuItem key={t} value={t}>{t}</MenuItem>
                             ))}
                         </Select>

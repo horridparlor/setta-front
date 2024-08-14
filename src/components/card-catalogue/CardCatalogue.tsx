@@ -5,13 +5,13 @@ import {
     CardType,
     combineEffectsTexts, getCardsExpansion, getCardsExpansionIds,
     getCombinedStats,
-    getFullTypeString, getPointerId,
+    getFullTypeString, getPointerId, isGroupCardType, isIncludedInGroupCardType,
     isMonster
 } from "../../types/card";
 import CardFilters, {CardFiltersRef} from "./CardFilters";
 import CardPreviewer from "../card-editor/card-previewer/CardPreviewer";
 import {CardExpansion} from "../../types/expansion";
-import {normalizeName} from "../../utils/string";
+import {NONE_STRING, normalizeName} from "../../utils/string";
 import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 import Button from "@mui/material/Button";
@@ -108,6 +108,8 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
             .map(card => card.cardId));
     }
 
+    console.log(666, filters.cardType);
+
     const filteredCards = cards.filter(card =>
         (isInReferenceMode() || normalizeName(card).toLowerCase().includes(normalizeName(filters.cardName).toLowerCase()))
         && filters.cardEffects.toLowerCase().split(' ').every(word => isInReferenceMode() || (card.costText + card.effectText).toLowerCase().includes(word))
@@ -126,7 +128,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
             )
             || cards.find(c => getPointerId(c).toString() === filters.referenceId) && combineEffectsTexts(card).includes(cards.find(c => getPointerId(c).toString() === filters.referenceId)!.cardName)
             || cards.find(c => getPointerId(c).toString() === getReferencesCountsAs()?.toString()) && combineEffectsTexts(card).includes(cards.find(c => getPointerId(c).toString() === getReferencesCountsAs()?.toString())!.cardName))
-        && (isInReferenceMode() || filters.cardType === '' || card.cardType === filters.cardType)
+        && (isInReferenceMode() || filters.cardType === NONE_STRING || (isGroupCardType(filters.cardType) ? isIncludedInGroupCardType(card.cardType, filters.cardType) : card.cardType === filters.cardType))
         && (isInReferenceMode() || filters.cardSubtype === '' || card.subtype === filters.cardSubtype)
         && (isInReferenceMode() || filters.cardSupertype === '' || card.supertype === filters.cardSupertype)
         && (isInReferenceMode() || filters.cardClass === '' || (card.cardType === CardType.MONSTER && card.cardClass === filters.cardClass))

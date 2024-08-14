@@ -97,8 +97,10 @@ export enum TargetType {
     ALL = 'All',
     ATTACKER = 'Attacker',
     OTHER = 'Other',
+    SUMMONED = 'Summoned',
     TARGET = 'Target',
-    THIS = 'This'
+    THIS = 'This',
+    WITH_SAME_CLASS = 'With same class'
 }
 
 const TARGET_OR_ALL_TARGET_TYPE_OPTIONS = [
@@ -116,6 +118,17 @@ const ATTACK_TRIGGER_TARGET_TYPE_OPTIONS = [
     TargetType.ALL,
     TargetType.ATTACKER,
     TargetType.TARGET
+]
+
+const SUMMON_TRIGGER_TARGET_TYPE_OPTIONS = [
+    TargetType.ALL,
+    TargetType.SUMMONED,
+    TargetType.TARGET
+]
+
+const TRIGGERED_TARGETING_TARGET_TYPES = [
+    TargetType.ATTACKER,
+    TargetType.SUMMONED
 ]
 
 export const isTargetType = (value: string): value is TargetType => {
@@ -950,7 +963,7 @@ export function isCountedAmount(amount: number|EffectsCount|null): amount is Eff
 export const getTargetTypeOptions = (selectionType: SelectionType) => {
     switch (selectionType) {
         case SelectionType.CARD:
-            return [TargetType.ALL, TargetType.OTHER];
+            return [TargetType.ALL, TargetType.OTHER, TargetType.WITH_SAME_CLASS];
     }
     return [];
 }
@@ -995,19 +1008,13 @@ export const getDefaultTargetZone = (selectionType: SelectionType) => {
     return '';
 }
 
-const isAttackTrigger = (cardData: CardData) => {
-    const cost = getEffectsCost(cardData);
-    return cost.costType === CostType.TRIGGER
-        && cost.subtype === TriggerCostType.OPPONENT
-        && cost.supertype === OpponentTriggerCostType.ATTACKS;
-}
-
 export const getEffectTargetTypeOptions = (cardData: CardData) => {
     const effect = getEffectsEffect(cardData);
     switch (effect.effectType) {
         case EffectType.EVIL:
             switch (effect.subtype) {
                 case EvilEffectType.DESTROY:
+                    return routeTriggerTargetOptions(cardData);
                 case EvilEffectType.DISCARD:
                 case EvilEffectType.FLIP:
                 case EvilEffectType.STEAL:
@@ -1017,10 +1024,36 @@ export const getEffectTargetTypeOptions = (cardData: CardData) => {
         case EffectType.KEYWORD:
         case EffectType.STAT:
             return isMonster(cardData) ? THIS_TARGET_OR_ALL_TARGET_TYPE_OPTIONS
-                : isAttackTrigger(cardData) ? ATTACK_TRIGGER_TARGET_TYPE_OPTIONS
-                    : TARGET_OR_ALL_TARGET_TYPE_OPTIONS;
+                : routeTriggerTargetOptions(cardData);
     }
     return [];
+}
+
+const routeTriggerTargetOptions = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    if (cost.costType === CostType.TRIGGER && cost.subtype === TriggerCostType.OPPONENT) {
+        switch (cost.supertype) {
+            case OpponentTriggerCostType.ATTACKS:
+                return ATTACK_TRIGGER_TARGET_TYPE_OPTIONS;
+            case OpponentTriggerCostType.SUMMONS:
+                return SUMMON_TRIGGER_TARGET_TYPE_OPTIONS;
+        }
+    }
+    return TARGET_OR_ALL_TARGET_TYPE_OPTIONS;
+}
+
+const routeDefaultTriggerTarget = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    const options = getEffectTargetTypeOptions(cardData);
+    if (cost.costType === CostType.TRIGGER && cost.subtype === TriggerCostType.OPPONENT) {
+        switch (cost.supertype) {
+            case OpponentTriggerCostType.ATTACKS:
+                return options.includes(TargetType.ATTACKER) ? TargetType.ATTACKER : TargetType.TARGET;
+            case OpponentTriggerCostType.SUMMONS:
+                return options.includes(TargetType.ATTACKER) ? TargetType.SUMMONED : TargetType.SUMMONED;
+        }
+    }
+    return TargetType.TARGET;
 }
 
 export const getDefaultEffectTargetType = (cardData: CardData) => {
@@ -1029,6 +1062,7 @@ export const getDefaultEffectTargetType = (cardData: CardData) => {
         case EffectType.EVIL:
             switch (effect.subtype) {
                 case EvilEffectType.DESTROY:
+                    return routeDefaultTriggerTarget(cardData)
                 case EvilEffectType.DISCARD:
                 case EvilEffectType.FLIP:
                 case EvilEffectType.STEAL:
@@ -1037,7 +1071,7 @@ export const getDefaultEffectTargetType = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
-            return isMonster(cardData) ? TargetType.THIS : isAttackTrigger(cardData) ? TargetType.ATTACKER : TargetType.TARGET;
+            return isMonster(cardData) ? TargetType.THIS : routeDefaultTriggerTarget(cardData);
     }
     return TargetType.NONE;
 }
@@ -1163,6 +1197,9 @@ export const getDefaultEffectDirection = (cardData: CardData) => {
                 case StatEffectType.ATK:
                 case StatEffectType.DEF:
                 case StatEffectType.LIFE:
+                    if (TRIGGERED_TARGETING_TARGET_TYPES.includes(effect.target?.targetType || TargetType.NONE)) {
+                        return EffectsDirection.LOSE;
+                    }
                     return EffectsDirection.GAIN;
                 case StatEffectType.POSITION:
                     return EffectsDirection.DEFENSE;
