@@ -215,7 +215,6 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
         }
         Cookies.set(MultitaskCookie.EXPORTING_ALL_INDEX, JSON.stringify(0));
         Cookies.set(MultitaskCookie.EXPORTING_ALL_CARDS, JSON.stringify(cardIds));
-        console.log(5555);
         handleCardClick(filteredCards[0]);
     }
 

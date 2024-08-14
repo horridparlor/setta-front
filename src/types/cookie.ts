@@ -37,7 +37,8 @@ export enum PageCookie {
 
 export enum MultitaskCookie {
     EXPORTING_ALL_CARDS = 'exportingAllCards',
-    EXPORTING_ALL_INDEX = 'exportingAllIndex'
+    EXPORTING_ALL_INDEX = 'exportingAllIndex',
+    EXPORTING_ALL_NEXT_CARD = 'exportingAllNextCard',
 }
 
 export const getUserId = () => {

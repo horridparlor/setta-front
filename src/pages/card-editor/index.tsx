@@ -21,7 +21,9 @@ const CardEditorPage = (props: CardEditorPageProps) => {
     const [ multiTaskNextCard, setMultiTaskNextCard ] = useState<number>(0);
 
     const onCardSaved = async() => {
+        console.log(555, multiTaskNextCard);
         if (multiTaskNextCard) {
+            setMultiTaskNextCard(0);
             goToCard(multiTaskNextCard);
             return;
         }
@@ -88,14 +90,23 @@ const CardEditorPage = (props: CardEditorPageProps) => {
         }
         const cardIds: Array<number> = JSON.parse(exportingAllCards);
         const currentIndex: number = JSON.parse(exportingAllIndex ?? '0');
-        Cookies.set(MultitaskCookie.EXPORTING_ALL_INDEX, JSON.stringify(currentIndex + 1));
-        if (currentIndex + 1 >= cardIds.length) {
+        const nextIndex: number = currentIndex + 1;
+        Cookies.set(MultitaskCookie.EXPORTING_ALL_INDEX, JSON.stringify(nextIndex));
+        if (nextIndex >= cardIds.length) {
+            console.log(999);
             Cookies.remove(MultitaskCookie.EXPORTING_ALL_CARDS);
             Cookies.remove(MultitaskCookie.EXPORTING_ALL_INDEX);
+            commitExport();
+        } else {
+            setMultiTaskNextCard(cardIds[nextIndex]);
         }
-        setMultiTaskNextCard(cardIds[currentIndex + 1]);
-        commitExport();
     };
+
+    useEffect(() => {
+        if (multiTaskNextCard) {
+            commitExport();
+        }
+    }, [multiTaskNextCard]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#244775', overflowX: 'hidden' }}>
