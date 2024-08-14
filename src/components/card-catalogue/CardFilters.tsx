@@ -23,8 +23,9 @@ import {useLocation, useNavigate} from "react-router-dom";
 
 interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
-        cardType: string, cardSubtype: string, cardSupertype: string, expansionId: string, sortOrder: string,
-        sortBy: string, level: number, levelOperation: string, atk: number, atkOperation: string, def: number,
+        cardType: string, cardSubtype: string, cardSupertype: string, cardDeck: string,
+        expansionId: string, sortOrder: string, sortBy: string,
+        level: number, levelOperation: string, atk: number, atkOperation: string, def: number,
         defOperation: string, isAce: boolean, ownerId: string, isReleased: boolean, isErrata: boolean
     }) => void;
     expansions: Array<CardExpansion>;
@@ -65,6 +66,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
             cardType: params.get(CardCatalogueCookie.CARD_TYPE) || '',
             cardSubtype: params.get(CardCatalogueCookie.CARD_SUBTYPE) || '',
             cardSupertype: params.get(CardCatalogueCookie.CARD_SUPERTYPE) || '',
+            cardDeck: params.get(CardCatalogueCookie.CARD_DECK) || '',
             expansionId: params.get(CardCatalogueCookie.EXPANSION_ID) || '',
             sortOrder: params.get(CardCatalogueCookie.SORT_ORDER) || '',
             sortBy: params.get(CardCatalogueCookie.SORT_BY) || '',
@@ -89,6 +91,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     const [cardType, setCardType] = useState(initialState.cardType);
     const [cardSubtype, setCardSubtype] = useState(initialState.cardSubtype);
     const [cardSupertype, setCardSupertype] = useState(initialState.cardSupertype);
+    const [cardDeck, setCardDeck] = useState(initialState.cardDeck);
     const [expansionId, setExpansionId] = useState(initialState.expansionId);
     const [sortOrder, setSortOrder] = useState(initialState.sortOrder);
     const [sortBy, setSortBy] = useState(initialState.sortBy);
@@ -107,7 +110,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
 
     const getFilters = () => {
         return {
-            cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, expansionId, sortOrder, sortBy,
+            cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, cardDeck,
+            expansionId, sortOrder, sortBy,
             level, levelOperation, atk, atkOperation, def, defOperation, isAce, ownerId, isReleased, isErrata
         }
     }
@@ -115,8 +119,9 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     const getEmptyFilters = () => {
         return {
             cardName: '', cardEffects: '', referenceId: '', cardClass: '',
-            cardType: '', cardSubtype: '', cardSupertype: '', expansionId: '',
-            sortOrder: '', sortBy: '', level: 1, levelOperation: '',
+            cardType: '', cardSubtype: '', cardSupertype: '', cardDeck: '',
+            expansionId: '', sortOrder: '', sortBy: '',
+            level: 1, levelOperation: '',
             atk: 0, atkOperation: '', def: 0, defOperation: '', isAce: false, ownerId: '',
             isReleased: false, isErrata: false
         };
@@ -131,15 +136,16 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
 
     useEffect(() => {
         onFilterChange({
-            cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype,
+            cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, cardDeck,
             expansionId, sortOrder, sortBy, level: makeInt(level), levelOperation, atk: makeInt(atk),
             atkOperation, def: makeInt(def), defOperation, isAce: (typeof isAce === 'boolean' ? isAce : isAce.toLowerCase() === "true"), ownerId,
             isReleased: (typeof isReleased === 'boolean' ? isReleased : isReleased.toLowerCase() === "true"),
             isErrata: (typeof isErrata === 'boolean' ? isErrata : isErrata.toLowerCase() === "true")
         });
     }, [cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype,
-        cardSupertype, expansionId, sortOrder, sortBy, level, levelOperation, atk,
-        atkOperation, def, defOperation, isAce, ownerId, isReleased, isErrata]);
+        cardSupertype, cardDeck, expansionId, sortOrder, sortBy,
+        level, levelOperation, atk, atkOperation, def, defOperation,
+        isAce, ownerId, isReleased, isErrata]);
 
     const referenceCard = (cardData: CardData) => {
         const cardId = getPointerId(cardData).toString();
@@ -194,6 +200,12 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         setCardSupertype(value);
         handleCookieChange(CardCatalogueCookie.CARD_SUPERTYPE, value);
     };
+
+    const handleCardDeckChange = (event: SelectChangeEvent<string>) => {
+        const value: string = event.target.value;
+        setCardDeck(value);
+        handleCookieChange(CardCatalogueCookie.CARD_DECK, value);
+    }
 
     const handleExpansionChange = (event: SelectChangeEvent<string>) => {
         const value: string = event.target.value;
@@ -304,6 +316,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         setCardType('');
         setCardSubtype('');
         setCardSupertype('');
+        setCardDeck('');
         setExpansionId('');
         setSortOrder('');
         setSortBy('');
@@ -331,6 +344,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         removeCookie(CardCatalogueCookie.CARD_TYPE);
         removeCookie(CardCatalogueCookie.CARD_SUBTYPE);
         removeCookie(CardCatalogueCookie.CARD_SUPERTYPE);
+        removeCookie(CardCatalogueCookie.CARD_DECK);
         removeCookie(CardCatalogueCookie.EXPANSION_ID);
         removeCookie(CardCatalogueCookie.SORT_ORDER);
         removeCookie(CardCatalogueCookie.SORT_BY);
@@ -438,6 +452,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
                               cardType={cardType} handleCardTypeChange={handleCardTypeChange}
                               cardSubtype={cardSubtype} handleCardSubtypeChange={handleCardSubtypeChange}
                               cardSupertype={cardSupertype} handleCardSupertypeChange={handleCardSupertypeChange}
+                              cardDeck={cardDeck} handleCardDeckChange={handleCardDeckChange}
                               sortOrder={sortOrder} handleSortOrderChange={handleSortOrderChange}
                               sortBy={sortBy} handleSortByChange={handleSortByChange}
                               level={level as number} handleLevelChange={handleLevelChange}

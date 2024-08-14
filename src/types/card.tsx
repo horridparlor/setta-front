@@ -40,6 +40,16 @@ export const isCardType = (value: string): value is CardType => {
     return Object.values(CardType).includes(value as CardType);
 }
 
+export enum CardDeck {
+    NONE = 'None',
+    MAIN = 'Main',
+    EXTRA = 'Extra'
+}
+
+export const isCardDeck = (value: string): value is CardDeck => {
+    return Object.values(CardDeck).includes(value as CardDeck);
+}
+
 export enum CardSubtype {
     NONE = 'None',
     NORMAL = 'Normal',
@@ -451,3 +461,16 @@ export const getEffectsChainEffect = (cardData: CardData) => {
 
 export const TARGETABLE_CARD_SUBTYPES = Object.values(CardSubtype)
     .filter(subtype => subtype !== CardSubtype.EFFECT);
+
+export const isOfCardDeck = (card: CardData, deck: CardDeck|string) => {
+    if (!isCardDeck(deck)) {
+        return false;
+    }
+    switch (deck) {
+        case CardDeck.MAIN:
+            return !isExtraDeckCard(card);
+        case CardDeck.EXTRA:
+            return isExtraDeckCard(card);
+    }
+    return false;
+}

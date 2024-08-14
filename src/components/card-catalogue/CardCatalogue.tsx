@@ -6,7 +6,7 @@ import {
     combineEffectsTexts, getCardsExpansion, getCardsExpansionIds,
     getCombinedStats,
     getFullTypeString, getPointerId, isGroupCardType, isIncludedInGroupCardType,
-    isMonster
+    isMonster, isOfCardDeck
 } from "../../types/card";
 import CardFilters, {CardFiltersRef} from "./CardFilters";
 import CardPreviewer from "../card-editor/card-previewer/CardPreviewer";
@@ -45,6 +45,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
         cardSubtype: '',
         cardSupertype: '',
         cardClass: '',
+        cardDeck: '',
         expansionId: '',
         sortOrder: '',
         sortBy: '',
@@ -108,8 +109,6 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
             .map(card => card.cardId));
     }
 
-    console.log(666, filters.cardType);
-
     const filteredCards = cards.filter(card =>
         (isInReferenceMode() || normalizeName(card).toLowerCase().includes(normalizeName(filters.cardName).toLowerCase()))
         && filters.cardEffects.toLowerCase().split(' ').every(word => isInReferenceMode() || (card.costText + card.effectText).toLowerCase().includes(word))
@@ -132,6 +131,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
         && (isInReferenceMode() || filters.cardSubtype === '' || card.subtype === filters.cardSubtype)
         && (isInReferenceMode() || filters.cardSupertype === '' || card.supertype === filters.cardSupertype)
         && (isInReferenceMode() || filters.cardClass === '' || (card.cardType === CardType.MONSTER && card.cardClass === filters.cardClass))
+        && (isInReferenceMode() || isNoneString(filters.cardDeck) || isOfCardDeck(card, filters.cardDeck))
         && (isInReferenceMode() || filters.expansionId === '' || getCardsExpansionIds(card).has(parseInt(filters.expansionId)))
         && ((![SortOption.CARD_CLASS, SortOption.LEVEL, SortOption.ATK, SortOption.DEF, SortOption.COMBINED].includes(filters.sortBy as SortOption)
             && (filters.levelOperation === '' && filters.atkOperation === '' && filters.defOperation === '')) || isMonster(card))

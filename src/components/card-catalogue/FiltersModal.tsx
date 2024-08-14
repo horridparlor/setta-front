@@ -12,7 +12,7 @@ import {
     Button,
     Grid, ToggleButtonGroup, ToggleButton, Typography, TextField, Checkbox, FormControlLabel
 } from '@mui/material';
-import {CardClass, CardSubtype, CardSupertype, CardType} from "../../types/card";
+import {CardClass, CardDeck, CardSubtype, CardSupertype, CardType} from "../../types/card";
 import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 
@@ -28,6 +28,8 @@ interface FiltersModalProps {
     handleCardSubtypeChange: (event: SelectChangeEvent<string>) => void;
     cardSupertype: string;
     handleCardSupertypeChange: (event: SelectChangeEvent<string>) => void;
+    cardDeck: string;
+    handleCardDeckChange: (event: SelectChangeEvent<string>) => void;
     sortOrder: string;
     handleSortOrderChange: (event: React.MouseEvent<HTMLElement>, newSortOrder: SortOrder | null ) => void;
     sortBy: string;
@@ -72,8 +74,8 @@ const getComparisonTypeToggleOptions = (): React.ReactElement => {
 
 const FiltersModal: React.FC<FiltersModalProps> = ({
     isOpen, onClose, cardOwners,
-    cardClass, cardType, cardSubtype, cardSupertype, sortOrder, sortBy,
-    handleCardClassChange, handleCardTypeChange, handleCardSubtypeChange, handleCardSupertypeChange,
+    cardClass, cardType, cardSubtype, cardSupertype, cardDeck, sortOrder, sortBy,
+    handleCardClassChange, handleCardTypeChange, handleCardSubtypeChange, handleCardSupertypeChange, handleCardDeckChange,
     handleSortOrderChange, handleSortByChange, level, handleLevelChange, levelOperation, handleLevelOperationChange,
     atk, handleAtkChange, atkOperation, handleAtkOperationChange, def, handleDefChange, defOperation, handleDefOperationChange,
     isAce, handleIsAceChange, ownerId, handleOwnerIdChange,
@@ -93,7 +95,7 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                                 label="Card Type"
                                 onChange={handleCardTypeChange}
                             >
-                                <MenuItem value="None">–</MenuItem>
+                                <MenuItem value="">–</MenuItem>
                                 {Object.values(CardType).map(c => (
                                     <MenuItem key={c} value={c}>{c}</MenuItem>
                                 ))}
@@ -143,6 +145,22 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                             >
                                 <MenuItem value="">–</MenuItem>
                                 {Object.values(CardClass).map(c => (
+                                    <MenuItem key={c} value={c}>{c}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth sx={{ m: 1 }}>
+                            <InputLabel id="deck-selector-label">Deck</InputLabel>
+                            <Select
+                                labelId="deck-selector-label"
+                                value={cardDeck}
+                                label="Deck"
+                                onChange={handleCardDeckChange}
+                            >
+                                <MenuItem value="">–</MenuItem>
+                                {Object.values(CardDeck).map(c => (
                                     <MenuItem key={c} value={c}>{c}</MenuItem>
                                 ))}
                             </Select>

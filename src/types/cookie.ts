@@ -15,6 +15,7 @@ export enum CardCatalogueCookie {
     CARD_TYPE = 'cardType',
     CARD_SUBTYPE = 'cardSubtype',
     CARD_SUPERTYPE = 'cardSupertype',
+    CARD_DECK = 'cardDeck',
     EXPANSION_ID = 'expansionId',
     SORT_ORDER = 'sortOrder',
     SORT_BY = 'sortBy',
