@@ -1043,6 +1043,10 @@ export const getEffectTargetTypeOptions = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
+            switch (effect.subtype) {
+                case StatEffectType.LIFE:
+                    return [];
+            }
             return isMonster(cardData) ? THIS_TARGET_OR_ALL_TARGET_TYPE_OPTIONS
                 : routeTriggerTargetOptions(cardData);
     }
@@ -1091,6 +1095,10 @@ export const getDefaultEffectTargetType = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
+            switch (effect.subtype) {
+                case StatEffectType.LIFE:
+                    return TargetType.NONE;
+            }
             return isMonster(cardData) ? TargetType.THIS : routeDefaultTriggerTarget(cardData);
     }
     return TargetType.NONE;
@@ -1113,6 +1121,10 @@ export const getEffectTargetOwnerOptions = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
+            switch (effect.subtype) {
+                case StatEffectType.LIFE:
+                    return ONE_TARGET_OWNER_OPTIONS;
+            }
             return TARGET_OWNER_FILTER_OPTIONS;
     }
     return [];
@@ -1135,6 +1147,10 @@ export const getDefaultEffectTargetOwner = (cardData: CardData) => {
             break;
         case EffectType.KEYWORD:
         case EffectType.STAT:
+            switch (effect.subtype) {
+                case StatEffectType.LIFE:
+                    return TargetOwner.YOU;
+            }
             return TargetOwner.ANY;
     }
     return TargetOwner.NONE;
