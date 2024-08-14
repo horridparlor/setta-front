@@ -207,10 +207,11 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
         toggleFilters,
     }));
 
-    const countOfFilteredTripleCopyCards = filteredCards.filter(card => !isExtraDeckCard(card) && !card.isAce).length;
-    const countOfFilteredSingleCopyCards = filteredCards.filter(card => isExtraDeckCard(card) || card.isAce).length;
-    const cardsNeededToPrintForTwoPlayers = 2 * countOfFilteredSingleCopyCards + 6 * countOfFilteredTripleCopyCards;
-    const resultCountString = `${countOfFilteredTripleCopyCards} + ${countOfFilteredSingleCopyCards} = ${ cardsNeededToPrintForTwoPlayers }${
+    const countOfFilteredMain = filteredCards.filter(card => !isExtraDeckCard(card) && !card.isAce).length;
+    const countOfFilteredMainAce = filteredCards.filter(card => !isExtraDeckCard(card) && card.isAce).length;
+    const countOfFilteredExtra = filteredCards.filter(card => isExtraDeckCard(card)).length;
+    const cardsNeededToPrintForTwoPlayers = 6 * countOfFilteredMain + 2 * (countOfFilteredMainAce + countOfFilteredExtra);
+    const resultCountString = `${countOfFilteredMain}${countOfFilteredMainAce ? ` + ${countOfFilteredMainAce}` : ''} + ${countOfFilteredExtra} = ${ cardsNeededToPrintForTwoPlayers }${
         cardsNeededToPrintForTwoPlayers <= 234 && cardsNeededToPrintForTwoPlayers % 18 === 0 ? ' ✔️' : ''}`;
 
     return (
