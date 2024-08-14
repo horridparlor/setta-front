@@ -183,6 +183,8 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
                         <FormControl fullWidth sx={{ m: 1 }}>
                             <FormControlLabel
                                 control={
@@ -218,6 +220,10 @@ const FiltersModal: React.FC<FiltersModalProps> = ({
                         >
                             {getComparisonTypeToggleOptions()}
                         </ToggleButtonGroup>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <TextField
