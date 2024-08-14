@@ -77,5 +77,5 @@ export const isString = (value: any): value is string => {
 }
 
 export const isNoneString = (message: string) => {
-    return message === NONE_STRING;
+    return message === '' || message === NONE_STRING;
 }

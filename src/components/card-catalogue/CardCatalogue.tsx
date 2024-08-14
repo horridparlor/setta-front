@@ -11,7 +11,7 @@ import {
 import CardFilters, {CardFiltersRef} from "./CardFilters";
 import CardPreviewer from "../card-editor/card-previewer/CardPreviewer";
 import {CardExpansion} from "../../types/expansion";
-import {NONE_STRING, normalizeName} from "../../utils/string";
+import {isNoneString, NONE_STRING, normalizeName} from "../../utils/string";
 import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 import Button from "@mui/material/Button";
@@ -128,7 +128,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
             )
             || cards.find(c => getPointerId(c).toString() === filters.referenceId) && combineEffectsTexts(card).includes(cards.find(c => getPointerId(c).toString() === filters.referenceId)!.cardName)
             || cards.find(c => getPointerId(c).toString() === getReferencesCountsAs()?.toString()) && combineEffectsTexts(card).includes(cards.find(c => getPointerId(c).toString() === getReferencesCountsAs()?.toString())!.cardName))
-        && (isInReferenceMode() || filters.cardType === NONE_STRING || (isGroupCardType(filters.cardType) ? isIncludedInGroupCardType(card.cardType, filters.cardType) : card.cardType === filters.cardType))
+        && (isInReferenceMode() || isNoneString(filters.cardType) || (isGroupCardType(filters.cardType) ? isIncludedInGroupCardType(card.cardType, filters.cardType) : card.cardType === filters.cardType))
         && (isInReferenceMode() || filters.cardSubtype === '' || card.subtype === filters.cardSubtype)
         && (isInReferenceMode() || filters.cardSupertype === '' || card.supertype === filters.cardSupertype)
         && (isInReferenceMode() || filters.cardClass === '' || (card.cardType === CardType.MONSTER && card.cardClass === filters.cardClass))
