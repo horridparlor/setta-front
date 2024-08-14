@@ -128,7 +128,7 @@ import {
     isEffectsDirection,
     isEffectsHindrance,
     isEffectType,
-    isPaymentCostType,
+    isPaymentCostType, isPostCounted,
     isPostCountType, isSingularTargetType,
     isStateCostType,
     isTargetOwner,
@@ -1426,7 +1426,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     <TextField
                                fullWidth
                                type="number"
-                               label={isCountedAmount(effectAmount) ? 'Multiplier' : 'Amount'}
+                               label={isCountedAmount(effectAmount) || isPostCounted(cardData) ? 'Multiplier' : 'Amount'}
                                variant="outlined"
                                value={isCountedAmount(effectAmount) ? effectAmount?.multiplier : effectAmount ?? effectAmountProps.default}
                                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -1444,11 +1444,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                             />
                         }
                         label="Counted"
-                        sx={{ minWidth: 'fit-content' }}
+                        sx={{ minWidth: 'fit-content', display: isPostCounted(cardData) ? 'none' : 'flex' }}
                     />
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount)  ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount) && !isPostCounted(cardData)  ? 'flex' : 'none'}}
                 >
                     <FormControl fullWidth>
                         <InputLabel id="effect-amount-target-subtype-selector-label">Subtype</InputLabel>
@@ -1491,7 +1491,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount) && isCardPropertySelection(effectAmountSelectionType) ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount) && !isPostCounted(cardData) && isCardPropertySelection(effectAmountSelectionType) ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth
@@ -1539,7 +1539,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     />
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: effectAmountProps.default && (
+                    sx={{...rowContainerStyle, display: effectAmountProps.default && !isPostCounted(cardData) && (
                             getTargetTypeOptions(effectAmountSelectionType).length
                             || getTargetOwnerOptions(effectAmountSelectionType).length
                             || getTargetZoneOptions(effectAmountSelectionType).length)
@@ -1587,7 +1587,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     </FormControl>
                 </Box>
                 <Box
-                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount) && effectAmount.multiplier ? 'flex' : 'none'}}
+                    sx={{...rowContainerStyle, display: effectAmountProps.default && isCountedAmount(effectAmount) && !isPostCounted(cardData) && effectAmount.multiplier ? 'flex' : 'none'}}
                 >
                     <TextField
                         fullWidth

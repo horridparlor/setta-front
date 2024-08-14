@@ -908,6 +908,7 @@ export const getDefaultEffectSupertype = (cardData: CardData) => {
 }
 
 export const getEffectSelectionType = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
     const effect = getEffectsEffect(cardData);
     const selectionType = routeEffectSelectionType(effect);
     if (effect.direction === EffectsDirection.DOUBLE) {
@@ -1312,4 +1313,9 @@ export const getChainEffectSelectionType = (cardData: CardData) => {
             return SelectionType.STAT;
     }
     return SelectionType.NONE;
+}
+
+export const isPostCounted = (cardData: CardData) => {
+    const cost = getEffectsCost(cardData);
+    return cost.postCount && cost.postCount.countType !== PostCountType.NONE;
 }
