@@ -7,7 +7,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    SelectChangeEvent,
+    SelectChangeEvent, Typography, Box,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {CardData, getPointerId} from "../../types/card";
@@ -20,6 +20,7 @@ import {CardCatalogueCookie, PageCookie} from "../../types/cookie";
 import {ComparisonType} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 import {useLocation, useNavigate} from "react-router-dom";
+import {TextColor} from "../../types/color";
 
 interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     onFilterChange: (filters: { cardName: string, cardEffects: string, referenceId: string, cardClass: string,
@@ -33,6 +34,7 @@ interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
     cardOwners: Array<CardOwner>;
     isShowingMoreCards: boolean;
     resetCardsShown: () => void;
+    resultCountString: string;
 }
 
 export interface CardFiltersRef {
@@ -51,7 +53,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 }));
 
 const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardFiltersProps>(({onFilterChange, expansions,
-    cards, cardOwners, isShowingMoreCards, resetCardsShown}, ref) => {
+    cards, cardOwners, isShowingMoreCards, resetCardsShown, resultCountString}, ref) => {
     const navigate = useNavigate();
     const location = useLocation();
     const urlParams = new URLSearchParams(location.search);
@@ -426,26 +428,40 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
                         ))}
                     </Select>
                 </FormControl>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => setModalOpen(true)}
-                    sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
-                >
-                    Filters
-                </Button>
-                <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={resetFilters}
-                    disabled={
-                        !cardName && !cardEffects && !referenceId && !cardClass && !cardType && !cardSubtype && !cardSupertype && !expansionId
-                        && !sortOrder && !sortBy && !levelOperation && !atkOperation && !defOperation && !isAce && !ownerId && !isShowingMoreCards
-                    }
-                    sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
-                >
-                    Reset
-                </Button>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Typography sx={{
+                        color: TextColor.FADED,
+                        marginBottom: '0.2rem',
+                        textAlign: 'center',
+                        fontFamily: 'Montserrat, sans-serif',
+                        fontWeight: '300',
+                        fontStyle: 'italic'
+                    }}>
+                        {resultCountString}
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => setModalOpen(true)}
+                            sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
+                        >
+                            Filters
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={resetFilters}
+                            disabled={
+                                !cardName && !cardEffects && !referenceId && !cardClass && !cardType && !cardSubtype && !cardSupertype && !expansionId
+                                && !sortOrder && !sortBy && !levelOperation && !atkOperation && !defOperation && !isAce && !ownerId && !isShowingMoreCards
+                            }
+                            sx={{ marginLeft: '0.6rem', borderRadius: '1rem', padding: '0.2rem' }}
+                        >
+                            Reset
+                        </Button>
+                    </Box>
+                </Box>
                 <FiltersModal isOpen={isModalOpen} onClose={() => setModalOpen(false)}
                               cardOwners={cardOwners}
                               cardClass={cardClass} handleCardClassChange={handleCardClassChange}

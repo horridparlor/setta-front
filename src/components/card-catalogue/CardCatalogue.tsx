@@ -5,7 +5,7 @@ import {
     CardType,
     combineEffectsTexts, getCardsExpansion, getCardsExpansionIds,
     getCombinedStats,
-    getFullTypeString, getPointerId, isGroupCardType, isIncludedInGroupCardType,
+    getFullTypeString, getPointerId, isExtraDeckCard, isGroupCardType, isIncludedInGroupCardType,
     isMonster, isOfCardDeck
 } from "../../types/card";
 import CardFilters, {CardFiltersRef} from "./CardFilters";
@@ -105,7 +105,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
             return true;
         }
         return cardData.cardId === Math.max(...cards
-            .filter(card => card.errataOfId === cardData.errataOfId)
+            .filter(card => card.errataOfId === cardData.errataOfId && getCardsExpansion(card, expansions)?.isReleased)
             .map(card => card.cardId));
     }
 
@@ -207,6 +207,12 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
         toggleFilters,
     }));
 
+    const countOfFilteredTripleCopyCards = filteredCards.filter(card => !isExtraDeckCard(card) && !card.isAce).length;
+    const countOfFilteredSingleCopyCards = filteredCards.filter(card => isExtraDeckCard(card) || card.isAce).length;
+    const cardsNeededToPrintForTwoPlayers = 2 * countOfFilteredSingleCopyCards + 6 * countOfFilteredTripleCopyCards;
+    const resultCountString = `${countOfFilteredSingleCopyCards} + ${countOfFilteredTripleCopyCards} = ${ cardsNeededToPrintForTwoPlayers }${
+        cardsNeededToPrintForTwoPlayers <= 234 && cardsNeededToPrintForTwoPlayers % 18 === 0 ? ' ✔️' : ''}`;
+
     return (
         <Box
             sx={{
@@ -216,7 +222,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef,
             <CardFilters
                 ref={filtersRef} cards={cards} cardOwners={cardOwners} expansions={expansions}
                 onFilterChange={setFilters} isShowingMoreCards={visibleCardCount > defaultCardsShown}
-                resetCardsShown={resetCardsShown}
+                resetCardsShown={resetCardsShown} resultCountString={resultCountString}
             />
             <Box sx={{
                 display: 'flex',
