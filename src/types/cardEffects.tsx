@@ -132,7 +132,6 @@ const TRIGGERED_TARGETING_TARGET_TYPES = [
 ]
 
 const SINGULAR_TARGET_TYPES = [
-    TargetType.ALL,
     TargetType.ATTACKER,
     TargetType.SUMMONED,
     TargetType.THIS
