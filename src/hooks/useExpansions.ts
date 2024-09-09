@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import {CardExpansion} from "../types/expansion";
 import {UpdateFrequencies} from "../types/time";
 import {getHeaders, getUserEndpoint, RequestMethod, UserEndpoint} from "../types/api";
