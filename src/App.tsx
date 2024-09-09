@@ -1,21 +1,15 @@
-import React, {useRef, useState} from 'react';
 import {ThemeProvider} from '@mui/material';
 import {theme} from './styles/Theme';
-import CardEditor, {CardEditorRef} from './components/card-editor/CardEditor';
 import './styles/montserrat.css';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import {AppPage} from "./types/navigation";
-import {CardData} from "./types/card";
 import useCards from "./hooks/useCards";
 import useExpansions from "./hooks/useExpansions";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import CardCataloguePage from "./pages/card-catalogue";
 import CardEditorPage from "./pages/card-editor";
 
-interface AppProps {}
-
-const App: React.FC<AppProps> = () => {
+export default function App() {
     const { expansions, fetchExpansions } = useExpansions();
     const { cards, cardOwners, fetchCards } = useCards();
     const refetch = async() => {
@@ -40,5 +34,3 @@ const App: React.FC<AppProps> = () => {
         </ThemeProvider>
     );
 };
-
-export default App;

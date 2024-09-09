@@ -1,7 +1,6 @@
 import React from 'react';
 import {Box, Typography} from '@mui/material';
-import {CardData, CardSubtype, CardType} from "../../../types/card";
-import {getArtworkBorder, getCardBackgroundColor, getFrameTextColor} from "../../../types/color";
+import {CardData} from "../../../types/card";
 import {getFontSize} from "../../../utils/fonts";
 
 interface AceFrameProps {

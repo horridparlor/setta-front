@@ -1,6 +1,3 @@
-import {ToggleButton} from "@mui/material";
-import React from "react";
-
 export enum ComparisonType {
     MORE = '>',
     LESS = '<',

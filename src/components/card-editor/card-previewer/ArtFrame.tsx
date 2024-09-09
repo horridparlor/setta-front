@@ -2,10 +2,8 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import {getArtworkBorder} from "../../../types/color";
 import {CardData, getOwnerId} from "../../../types/card";
-import {normalizeName, serializeName} from "../../../utils/string";
+import {serializeName} from "../../../utils/string";
 import {AssetEndpoint, getAsset} from "../../../types/api";
-import Cookies from "js-cookie";
-import {AuthCookie} from "../../../types/cookie";
 
 interface ArtFrameProps {
     cardData: CardData;

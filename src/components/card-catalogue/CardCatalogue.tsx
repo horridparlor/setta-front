@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {forwardRef,  useImperativeHandle, useRef, useState} from 'react';
 import {Box, Card} from '@mui/material';
 import {
     CardData,
@@ -11,12 +11,12 @@ import {
 import CardFilters, {CardFiltersRef} from "./CardFilters";
 import CardPreviewer from "../card-editor/card-previewer/CardPreviewer";
 import {CardExpansion} from "../../types/expansion";
-import {isNoneString, NONE_STRING, normalizeName} from "../../utils/string";
+import {isNoneString,  normalizeName} from "../../utils/string";
 import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 import Button from "@mui/material/Button";
 import {toast} from "react-toastify";
-import {MultitaskCookie, PageCookie} from "../../types/cookie";
+import {MultitaskCookie} from "../../types/cookie";
 import Cookies from "js-cookie";
 
 interface CardCatalogueProps {

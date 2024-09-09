@@ -24,7 +24,7 @@ interface CardPreviewerProps {
 
 const CardPreviewer: React.FC<CardPreviewerProps> = ({ cardData, cardRef, scale,
                                                          cards, overwriteArt, oldName }) => {
-    const { cardName, level, atk, def, effectText } = cardData;
+    const { level, atk, def } = cardData;
     return (
         <Card ref={cardRef} sx={{
             position: 'relative',

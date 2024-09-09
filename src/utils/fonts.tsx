@@ -1,5 +1,4 @@
 import { styled } from "@mui/material/styles";
-import React from "react";
 import {TextColor} from "../types/color";
 
 export enum FontSize {
@@ -61,7 +60,7 @@ const LightItalic = createStyledSpan({ fontWeight: '300', fontStyle: 'italic' })
 
 export const formatText = (text: string, scale: number): JSX.Element[] => {
     const regex = /\{(h|b|bi|sb|r|i|bs)=?(\d+)?\}(.*?)\{\/(h|b|bi|sb|r|i|bs)\}/g;
-    let result: JSX.Element[] = [];
+    const result: JSX.Element[] = [];
     let lastEnd = 0;
 
     text.replace(regex, (match, tag, fontSize, content, _, offset) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import {CardType, StatType} from "../../../types/card";
-import {CardEffectFrameColor, getArtworkBorder, getStatBoxBackgroundColor, TextColor} from "../../../types/color";
+import {StatType} from "../../../types/card";
+import {getStatBoxBackgroundColor, TextColor} from "../../../types/color";
 import {getFontSize} from "../../../utils/fonts";
 
 interface StatFrameProps {

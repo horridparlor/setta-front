@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { formatText, getFontSize } from "../../../utils/fonts";
-import {CardData, getMaximumExtension, MaximumPiece} from "../../../types/card";
+import {CardData, getMaximumExtension} from "../../../types/card";
 import { getFrameTextColor } from "../../../types/color";
 
 interface TopFrameProps {

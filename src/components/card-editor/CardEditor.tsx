@@ -1,4 +1,4 @@
-import React, {ChangeEvent, forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {ChangeEvent, forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
 import domtoimage from 'dom-to-image';
@@ -245,7 +245,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({
         if (cardData.cardId) {
             onCardSet(cardData);
         }
-    }, [cardData]);
+    }, [cardData, onCardSet]);
 
     useEffect(() => {
         const card = cardId === undefined ? undefined : cards.find(card => card.cardId === parseInt(cardId));

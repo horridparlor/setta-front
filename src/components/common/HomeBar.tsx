@@ -1,10 +1,9 @@
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import {forwardRef, useImperativeHandle, useState} from 'react';
 import Button from '@mui/material/Button';
 import {Box} from "@mui/material";
 import {AppPage} from "../../types/navigation";
 import LoginModal from "./LoginModal";
-import {useLocation, useNavigate} from "react-router-dom";
-import {PageCookie} from "../../types/cookie";
+import {useNavigate} from "react-router-dom";
 
 interface HomeBarProps {
     refetch: () => Promise<void>;
@@ -18,7 +17,6 @@ export interface HomeBarRef {
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(({refetch, onLeavePage}, ref) => {
     const [isLoginOpen, setLoginOpen] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
 
     const toggleLoginOpen = () => {
         setLoginOpen(!isLoginOpen);
