@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react';
+import React from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -16,8 +16,6 @@ import {CardClass, CardDeck, CardSubtype, CardSupertype, CardType} from "../../t
 import {ComparisonType, SortOption, SortOrder} from "../../types/filter";
 import {CardOwner} from "../../types/user";
 import {getUser} from "../../types/api";
-import Cookies from "js-cookie";
-import {AuthCookie} from "../../types/cookie";
 
 interface FiltersModalProps {
     isOpen: boolean;

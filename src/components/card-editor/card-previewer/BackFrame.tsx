@@ -1,6 +1,6 @@
 import React from 'react';
 import {Box} from '@mui/material';
-import {CardData, CardSubtype, CardType} from "../../../types/card";
+import {CardData} from "../../../types/card";
 import {CardMainFrameColor, getCardBackground, getCardBackgroundColor} from "../../../types/color";
 
 interface BackFrameProps {

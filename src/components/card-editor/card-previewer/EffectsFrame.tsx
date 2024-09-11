@@ -89,7 +89,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({ cardData, scale, cards }) =
         return Math.max(0, 0.25 + 0.06 * (firstLineSize + (isExtraDeckCard(cardData) ? 2 : 1)) - ((getEffectsSize() + 1) * 0.045 * getLineHeight()));
     }
     const getSpecialCountsAsText = (id: number): string => {
-        const entry = Object.entries(SpecialCountsAsId).find(([key, value]) => value === id);
+        const entry = Object.entries(SpecialCountsAsId).find(([_, value]) => value === id);
         return (entry ? entry[0] : '')
             .replaceAll('$EFFECTS_SIZE', getEffectsSize().toString());
     }

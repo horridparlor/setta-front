@@ -43,7 +43,7 @@ export const encodeEffectsString = (message: string) => {
         .replace('(', '{i}')
         .replace('.)', ')')
         .replace(')', '{/i}')
-        .replace(tagPattern, (match, p1, p2, p3, p4) => {
+        .replace(tagPattern, (match, p1, _p2, p3, p4) => {
         if (p1) return p1;
         if (p3) return `{sb}${match}{/sb}`;
         if (p4) return `{b}${match}{/b}`;
@@ -55,7 +55,7 @@ export const encodeEffectsString = (message: string) => {
         ;
 }
 
-export const endsSentence = (message: String) => {
+export const endsSentence = (message: string) => {
     if (!message.length) {
         return false;
     }

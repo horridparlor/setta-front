@@ -710,11 +710,11 @@ export const getDefaultCostTargetType = (cardData: CardData) => {
     return TargetType.NONE;
 }
 
-export const getCostTargetOwnerOptions = (cardData: CardData) => {
+export const getCostTargetOwnerOptions = (_cardData: CardData) => {
     return [];
 }
 
-export const getDefaultCostTargetOwner = (cardData: CardData) => {
+export const getDefaultCostTargetOwner = (_cardData: CardData) => {
     return TargetOwner.NONE;
 }
 
@@ -822,7 +822,7 @@ export const getEffectTypeOptions = (cardData: CardData) => {
     return options;
 }
 
-export const getDefaultEffectType = (cardData: CardData) => {
+export const getDefaultEffectType = (_cardData: CardData) => {
     return EffectType.NONE;
 }
 
@@ -907,7 +907,7 @@ export const getDefaultEffectSupertype = (cardData: CardData) => {
 }
 
 export const getEffectSelectionType = (cardData: CardData) => {
-    const cost = getEffectsCost(cardData);
+    // const cost = getEffectsCost(cardData);
     const effect = getEffectsEffect(cardData);
     const selectionType = routeEffectSelectionType(effect);
     if (effect.direction === EffectsDirection.DOUBLE) {
@@ -1245,11 +1245,11 @@ export const getDefaultEffectDirection = (cardData: CardData) => {
     return EffectsDirection.NONE;
 }
 
-export const getEffectHindranceOptions = (cardData: CardData) => {
+export const getEffectHindranceOptions = (_cardData: CardData) => {
     return Object.values(EffectsHindrance);
 }
 
-export const getEffectBenefitOptions = (cardData: CardData) => {
+export const getEffectBenefitOptions = (_cardData: CardData) => {
     return Object.values(EffectsBenefit);
 }
 

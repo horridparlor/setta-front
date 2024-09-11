@@ -1,14 +1,14 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import {CardData, CardSubtype, CardType} from "../../../types/card";
-import { getArtworkBorder, getCardBackgroundColor } from "../../../types/color";
+import {CardData} from "../../../types/card";
+import { getArtworkBorder} from "../../../types/color";
 
 interface AttributeCutProps {
     scale: number;
     cardData: CardData;
 }
 
-const AttributeCut: React.FC<AttributeCutProps> = ({ scale, cardData }) => {
+const AttributeCut: React.FC<AttributeCutProps> = ({ scale }) => {
     const PANEL_SIZE = 4.8;
     const cutPanelStyle = {
         position: 'absolute',

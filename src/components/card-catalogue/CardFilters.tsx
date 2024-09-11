@@ -113,13 +113,13 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
 
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const getFilters = () => {
-        return {
-            cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, cardDeck,
-            expansionId, sortOrder, sortBy,
-            level, levelOperation, atk, atkOperation, def, defOperation, isAce, ownerId, isReleased, isErrata
-        }
-    }
+    // const getFilters = () => {
+    //     return {
+    //         cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype, cardSupertype, cardDeck,
+    //         expansionId, sortOrder, sortBy,
+    //         level, levelOperation, atk, atkOperation, def, defOperation, isAce, ownerId, isReleased, isErrata
+    //     }
+    // }
 
     const getEmptyFilters = () => {
         return {
@@ -150,7 +150,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
     }, [cardName, cardEffects, referenceId, cardClass, cardType, cardSubtype,
         cardSupertype, cardDeck, expansionId, sortOrder, sortBy,
         level, levelOperation, atk, atkOperation, def, defOperation,
-        isAce, ownerId, isReleased, isErrata]);
+        isAce, ownerId, isReleased, isErrata, onFilterChange]);
 
     const referenceCard = (cardData: CardData) => {
         const cardId = getPointerId(cardData).toString();
@@ -230,7 +230,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         handleCookieChange(CardCatalogueCookie.REFERENCE_ID, value);
     };
 
-    const handleSortOrderChange = (event: React.MouseEvent<HTMLElement>, value: string | null ) => {
+    const handleSortOrderChange = (_event: React.MouseEvent<HTMLElement>, value: string | null ) => {
         if (value === null) {
             value = sortOrder;
         }
@@ -252,7 +252,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         }
         handleCookieChange(CardCatalogueCookie.LEVEL, value.toString());
     };
-    const handleLevelOperationChange = (event: React.MouseEvent<HTMLElement>, value: string | null ) => {
+    const handleLevelOperationChange = (_event: React.MouseEvent<HTMLElement>, value: string | null ) => {
         if (value === null) {
             value = '';
         }
@@ -268,7 +268,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         }
         handleCookieChange(CardCatalogueCookie.ATK, value.toString());
     };
-    const handleAtkOperationChange = (event: React.MouseEvent<HTMLElement>, value: string | null ) => {
+    const handleAtkOperationChange = (_event: React.MouseEvent<HTMLElement>, value: string | null ) => {
         if (value === null) {
             value = '';
         }
@@ -284,7 +284,7 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<CardFiltersRef, CardF
         }
         handleCookieChange(CardCatalogueCookie.DEF, value.toString());
     };
-    const handleDefOperationChange = (event: React.MouseEvent<HTMLElement>, value: string | null ) => {
+    const handleDefOperationChange = (_event: React.MouseEvent<HTMLElement>, value: string | null ) => {
         if (value === null) {
             value = '';
         }
