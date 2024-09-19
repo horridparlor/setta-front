@@ -27,6 +27,20 @@ npm run format:check
 npm run format:write (autofix)
 ```
 
+## Translations
+
+We use [i80next](https://www.i18next.com/overview/getting-started) hooks for translations.
+
+```tsx
+function TranslatedComponent() {
+  const { t } = useTranslation();
+
+  return <div>{t('EXAMPLE')}</div>;
+}
+```
+
+Translations need to be manually added/updated inside the `src/locales/<lang>.json` files. New languages need to be registered in `src/i18n.ts`.
+
 ## Production build
 
 ```
