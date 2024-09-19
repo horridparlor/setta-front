@@ -1,16 +1,16 @@
-# Setta Front
+# Setta frontend
 
 ## Getting started
+
+### Environment variables
+
+Copy the contents of `.env.example` to `.env` and fill in missing environment variables.
+
+### Develop
 
 ```
 npm install
 npm run dev
-```
-
-### Production build
-
-```
-npm run build
 ```
 
 ### Linting
@@ -27,4 +27,8 @@ npm run format:check
 npm run format:write (autofix)
 ```
 
-## Translations
+## Production build
+
+```
+npm run build
+```
