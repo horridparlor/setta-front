@@ -12,7 +12,7 @@ export default function LanguageSelect() {
     <Select
       value={i18n.language}
       onChange={handleChange}
-      sx={{ backgroundColor: 'white', marginLeft: '0.4rem' }}
+      sx={{ backgroundColor: 'white' }}
     >
       <MenuItem value="fi">Finnish</MenuItem>
       <MenuItem value="en">English</MenuItem>
