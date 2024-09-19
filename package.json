@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:check": "eslint .",
+    "lint:write": "eslint --fix .",
+    "format:check": "prettier --check './src/**/*.{ts,tsx}'",
+    "format:write": "prettier --write './src/**/*.{ts,tsx}'"
   },
   "dependencies": {
     "@emotion/react": "11.13.3",
@@ -32,9 +35,12 @@
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react-swc": "3.5.0",
     "eslint": "9.9.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react-hooks": "5.1.0-rc.0",
     "eslint-plugin-react-refresh": "0.4.9",
     "globals": "15.9.0",
+    "prettier": "3.3.3",
     "typescript": "5.5.3",
     "typescript-eslint": "8.0.1",
     "vite": "5.4.1"

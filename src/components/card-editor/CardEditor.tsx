@@ -1,35 +1,51 @@
-import {ChangeEvent, forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {
+  ChangeEvent,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
 import domtoimage from 'dom-to-image';
-import {Box} from "@mui/material";
-import {CardData, DEFAULT_CARD_DATA, getOwnerId} from "../../types/card";
-import {CardMainFrameColor} from "../../types/color";
-import {toast} from "react-toastify";
-import {AdminEndpoint, getAdminEndpoint, getHeaders, RequestMethod, showError} from "../../types/api";
-import useExpansions from "../../hooks/useExpansions";
-import {encodeEffectsString, normalizeName, serializeName} from "../../utils/string";
-import {convertToBase64} from "../../types/files";
-import {useParams} from "react-router-dom";
-import {CardEffects} from "../../types/cardEffects";
+import { Box } from '@mui/material';
+import { CardData, DEFAULT_CARD_DATA, getOwnerId } from '../../types/card';
+import { CardMainFrameColor } from '../../types/color';
+import { toast } from 'react-toastify';
+import {
+  AdminEndpoint,
+  getAdminEndpoint,
+  getHeaders,
+  RequestMethod,
+  showError,
+} from '../../types/api';
+import useExpansions from '../../hooks/useExpansions';
+import {
+  encodeEffectsString,
+  normalizeName,
+  serializeName,
+} from '../../utils/string';
+import { convertToBase64 } from '../../types/files';
+import { useParams } from 'react-router-dom';
+import { CardEffects } from '../../types/cardEffects';
 
 interface CardEditorProps {
-    closeUpdate: () => void;
-    cards: Array<CardData>;
-    refetch: () => Promise<void>;
-    goToCard: (cardId: number) => void;
-    onCardSet: (card: CardData) => void;
+  closeUpdate: () => void;
+  cards: Array<CardData>;
+  refetch: () => Promise<void>;
+  goToCard: (cardId: number) => void;
+  onCardSet: (card: CardData) => void;
 }
 
 export interface CardEditorRef {
-    handleSave: () => void;
-    handleExport: () => void;
-    handleDelete: () => void;
+  handleSave: () => void;
+  handleExport: () => void;
+  handleDelete: () => void;
 }
 
-const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({
-                                                                   closeUpdate, cards, refetch, goToCard, onCardSet
-                                                               }, ref) => {
+const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
+  ({ closeUpdate, cards, refetch, goToCard, onCardSet }, ref) => {
     const { expansions } = useExpansions();
     const [cardData, setCardData] = useState<CardData>(DEFAULT_CARD_DATA);
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
@@ -39,245 +55,283 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(({
 
     const cardRef = useRef<HTMLDivElement>(null);
 
-    const handleCardDataChange = (field: keyof CardData, value: string | number | CardEffects) => {
-        setCardData(prev => ({
-            ...prev,
-            [field]: value
-        }));
+    const handleCardDataChange = (
+      field: keyof CardData,
+      value: string | number | CardEffects
+    ) => {
+      setCardData(prev => ({
+        ...prev,
+        [field]: value,
+      }));
     };
 
     const handleSave = async () => {
-        if (isSaving) {
-            toast.info('Saving card... Please wait');
-            return;
-        }
-        setIsSaving(true);
-        const url = getAdminEndpoint(AdminEndpoint.CARD);
-        const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
-        const body = JSON.stringify({
-            ...cardData, serializedName: serializeName(cardData), oldSerializedName: serializeName(oldName)
-        });
+      if (isSaving) {
+        toast.info('Saving card... Please wait');
+        return;
+      }
+      setIsSaving(true);
+      const url = getAdminEndpoint(AdminEndpoint.CARD);
+      const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
+      const body = JSON.stringify({
+        ...cardData,
+        serializedName: serializeName(cardData),
+        oldSerializedName: serializeName(oldName),
+      });
 
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: getHeaders(),
-                body: body
-            });
-            const responseData = await response.json();
-            if (!response.ok) {
-                showError(responseData);
-                setIsSaving(false);
-                return;
-            }
-            const cardId = responseData.cardId;
-            setCardData(cardData => ({
-                ...cardData,
-                cardId: cardId,
-                serializedName: serializeName(cardData)
-            }));
-            toast.success(`Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`);
-            await handleUploadImage(cardId);
-            setIsSaving(false);
-            closeUpdate();
-        } catch (error) {
-            toast.error('Failed to save card: ' + error);
-            setIsSaving(false);
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: getHeaders(),
+          body: body,
+        });
+        const responseData = await response.json();
+        if (!response.ok) {
+          showError(responseData);
+          setIsSaving(false);
+          return;
         }
-    }
+        const cardId = responseData.cardId;
+        setCardData(cardData => ({
+          ...cardData,
+          cardId: cardId,
+          serializedName: serializeName(cardData),
+        }));
+        toast.success(
+          `Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`
+        );
+        await handleUploadImage(cardId);
+        setIsSaving(false);
+        closeUpdate();
+      } catch (error) {
+        toast.error('Failed to save card: ' + error);
+        setIsSaving(false);
+      }
+    };
 
     const handleDelete = async () => {
-        const url = getAdminEndpoint(AdminEndpoint.CARD);
-        const method = RequestMethod.DELETE;
-        const body = JSON.stringify({
-            'cardId': cardData.cardId
-        });
+      const url = getAdminEndpoint(AdminEndpoint.CARD);
+      const method = RequestMethod.DELETE;
+      const body = JSON.stringify({
+        cardId: cardData.cardId,
+      });
 
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: getHeaders(),
-                body: body
-            });
-            const responseData = await response.json();
-            if (!response.ok) {
-                showError(responseData);
-                return;
-            }
-            toast.success(`Card deleted: ${normalizeName(cardData)}`);
-            closeUpdate();
-        } catch (error) {
-            toast.error('Failed to delete card: ' + error);
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: getHeaders(),
+          body: body,
+        });
+        const responseData = await response.json();
+        if (!response.ok) {
+          showError(responseData);
+          return;
         }
-    }
+        toast.success(`Card deleted: ${normalizeName(cardData)}`);
+        closeUpdate();
+      } catch (error) {
+        toast.error('Failed to delete card: ' + error);
+      }
+    };
 
     const handleErrata = async () => {
-        await copyCard(true);
-    }
+      await copyCard(true);
+    };
 
     const handleCopy = async () => {
-        await copyCard();
-    }
+      await copyCard();
+    };
 
     const copyCard = async (doErrata = false) => {
-        const url = getAdminEndpoint(AdminEndpoint.COPY_CARD);
-        const method = RequestMethod.POST;
-        const body = JSON.stringify({
-            'cardId': cardData.cardId,
-            'serializedName': serializeName(cardData),
-            'doErrata': doErrata
-        });
-        const actionWord = doErrata ? 'errata' : 'copy';
+      const url = getAdminEndpoint(AdminEndpoint.COPY_CARD);
+      const method = RequestMethod.POST;
+      const body = JSON.stringify({
+        cardId: cardData.cardId,
+        serializedName: serializeName(cardData),
+        doErrata: doErrata,
+      });
+      const actionWord = doErrata ? 'errata' : 'copy';
 
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: getHeaders(),
-                body: body
-            });
-            const responseData = await response.json();
-            if (!response.ok) {
-                showError(responseData);
-                return;
-            }
-            toast.success(`New ${actionWord} of card: ${normalizeName(cardData)}`);
-            goToCard(responseData.cardId);
-            await refetch();
-        } catch (error) {
-            toast.error(`Failed to ${actionWord} card: ` + error);
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: getHeaders(),
+          body: body,
+        });
+        const responseData = await response.json();
+        if (!response.ok) {
+          showError(responseData);
+          return;
         }
-    }
+        toast.success(`New ${actionWord} of card: ${normalizeName(cardData)}`);
+        goToCard(responseData.cardId);
+        await refetch();
+      } catch (error) {
+        toast.error(`Failed to ${actionWord} card: ` + error);
+      }
+    };
 
     const handleExport = async () => {
-        if (!cardData.cardName) {
-            toast.warning('Name the card before exporting');
-            return;
+      if (!cardData.cardName) {
+        toast.warning('Name the card before exporting');
+        return;
+      }
+      if (cardRef.current && cardRef.current.parentNode) {
+        const wrapper = document.createElement('div');
+        wrapper.style.backgroundColor = CardMainFrameColor.FRAME;
+        wrapper.style.padding = '2rem';
+
+        const parent = cardRef.current.parentNode;
+        parent.insertBefore(wrapper, cardRef.current);
+        wrapper.appendChild(cardRef.current);
+
+        try {
+          const dataUrl = await domtoimage.toPng(wrapper, {
+            height: wrapper.offsetHeight * 2,
+            width: wrapper.offsetWidth * 2,
+            style: {
+              transform: 'scale(2)',
+              transformOrigin: 'top left',
+              width: `${wrapper.offsetWidth}px`,
+              height: `${wrapper.offsetHeight}px`,
+            },
+          });
+
+          if (parent) {
+            parent.insertBefore(cardRef.current, wrapper);
+          }
+          wrapper.remove();
+
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = normalizeName(cardData) + '.png';
+          link.click();
+          closeUpdate();
+        } catch (err) {
+          console.error('oops, something went wrong!', err);
         }
-        if (cardRef.current && cardRef.current.parentNode) {
-            const wrapper = document.createElement('div');
-            wrapper.style.backgroundColor = CardMainFrameColor.FRAME;
-            wrapper.style.padding = '2rem';
-
-            const parent = cardRef.current.parentNode;
-            parent.insertBefore(wrapper, cardRef.current);
-            wrapper.appendChild(cardRef.current);
-
-            try {
-                const dataUrl = await domtoimage.toPng(wrapper, {
-                    height: wrapper.offsetHeight * 2,
-                    width: wrapper.offsetWidth * 2,
-                    style: {
-                        transform: 'scale(2)',
-                        transformOrigin: 'top left',
-                        width: `${wrapper.offsetWidth}px`,
-                        height: `${wrapper.offsetHeight}px`
-                    }
-                });
-
-                if (parent) {
-                    parent.insertBefore(cardRef.current, wrapper);
-                }
-                wrapper.remove();
-
-                const link = document.createElement('a');
-                link.href = dataUrl;
-                link.download = normalizeName(cardData) + '.png';
-                link.click();
-                closeUpdate();
-            } catch (err) {
-                console.error('oops, something went wrong!', err);
-            }
-        }
+      }
     };
 
     const handleImageFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
-        if (files && files.length > 0) {
-            setImageFile(files[0]);
-        }
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        setImageFile(files[0]);
+      }
     };
 
     const handleUploadImage = async (cardId: number) => {
-        if (!imageFile) {
-            if (!cardData.cardId) {
-                toast.warning("No image selected!");
-            }
-            return;
+      if (!imageFile) {
+        if (!cardData.cardId) {
+          toast.warning('No image selected!');
         }
-        toast.info('Saving image...');
-        try {
-            const base64String = await convertToBase64(imageFile);
-            const data = {
-                cardId: cardId,
-                ownerId: getOwnerId(cardData),
-                imageName: serializeName(cardData),
-                imageMime: imageFile.type,
-                artScale: cardData.artScale,
-                artXOffset: cardData.artXOffset,
-                artYOffset: cardData.artYOffset,
-                base64String: base64String
-            };
-            const body = JSON.stringify(data);
-            const response = await fetch(getAdminEndpoint(AdminEndpoint.IMAGE), {
-                method: RequestMethod.POST,
-                headers: getHeaders(),
-                body: body
-            });
-            const responseData = await response.json();
-            if (!response.ok) {
-                showError(responseData);
-                return;
-            }
-            setImageFile(undefined);
-            toast.success('Saved image: ' + serializeName(cardData) + '.png');
-        } catch (error) {
-            toast.error('Error storing image: ' + error);
+        return;
+      }
+      toast.info('Saving image...');
+      try {
+        const base64String = await convertToBase64(imageFile);
+        const data = {
+          cardId: cardId,
+          ownerId: getOwnerId(cardData),
+          imageName: serializeName(cardData),
+          imageMime: imageFile.type,
+          artScale: cardData.artScale,
+          artXOffset: cardData.artXOffset,
+          artYOffset: cardData.artYOffset,
+          base64String: base64String,
+        };
+        const body = JSON.stringify(data);
+        const response = await fetch(getAdminEndpoint(AdminEndpoint.IMAGE), {
+          method: RequestMethod.POST,
+          headers: getHeaders(),
+          body: body,
+        });
+        const responseData = await response.json();
+        if (!response.ok) {
+          showError(responseData);
+          return;
         }
+        setImageFile(undefined);
+        toast.success('Saved image: ' + serializeName(cardData) + '.png');
+      } catch (error) {
+        toast.error('Error storing image: ' + error);
+      }
     };
 
     const setCard = (card: CardData) => {
-        setImageFile(undefined);
-        setOldName(serializeName(card));
-        setCardData(card);
-    }
+      setImageFile(undefined);
+      setOldName(serializeName(card));
+      setCardData(card);
+    };
 
     useEffect(() => {
-        if (cardData.cardId) {
-            onCardSet(cardData);
-        }
+      if (cardData.cardId) {
+        onCardSet(cardData);
+      }
     }, [cardData, onCardSet]);
 
     useEffect(() => {
-        const card = cardId === undefined ? undefined : cards.find(card => card.cardId === parseInt(cardId));
-        setCard(card || DEFAULT_CARD_DATA);
+      const card =
+        cardId === undefined
+          ? undefined
+          : cards.find(card => card.cardId === parseInt(cardId));
+      setCard(card || DEFAULT_CARD_DATA);
     }, [cardId, cards]);
 
     const encodeEffects = () => {
-        setCardData({
-            ...cardData,
-            cardName: encodeEffectsString(cardData.cardName),
-            costText: encodeEffectsString(cardData.costText),
-            effectText: encodeEffectsString(cardData.effectText)
-        });
-    }
+      setCardData({
+        ...cardData,
+        cardName: encodeEffectsString(cardData.cardName),
+        costText: encodeEffectsString(cardData.costText),
+        effectText: encodeEffectsString(cardData.effectText),
+      });
+    };
 
     useImperativeHandle(ref, () => ({
-        handleSave,
-        handleExport,
-        handleDelete,
+      handleSave,
+      handleExport,
+      handleDelete,
     }));
 
     return (
-        <Box ref={ref} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', margin: '20px' }}>
-            <Box sx={{ marginRight: '2rem' }}>
-                <CardPreviewer cards={cards} cardData={cardData} cardRef={cardRef} scale={1} overwriteArt={imageFile} oldName={oldName}/>
-            </Box>
-            <RightPanelSettings cards={cards} cardData={cardData}
-                                expansions={expansions} canUpload={!!imageFile} onEncode={encodeEffects}
-                                onCardDataChange={handleCardDataChange} onExport={handleExport} onImageFileChange={handleImageFileChange}
-                                onSave={handleSave} onDelete={handleDelete} onErrata={handleErrata} onCopy={handleCopy} />
+      <Box
+        ref={ref}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          width: '100%',
+          margin: '20px',
+        }}
+      >
+        <Box sx={{ marginRight: '2rem' }}>
+          <CardPreviewer
+            cards={cards}
+            cardData={cardData}
+            cardRef={cardRef}
+            scale={1}
+            overwriteArt={imageFile}
+            oldName={oldName}
+          />
         </Box>
+        <RightPanelSettings
+          cards={cards}
+          cardData={cardData}
+          expansions={expansions}
+          canUpload={!!imageFile}
+          onEncode={encodeEffects}
+          onCardDataChange={handleCardDataChange}
+          onExport={handleExport}
+          onImageFileChange={handleImageFileChange}
+          onSave={handleSave}
+          onDelete={handleDelete}
+          onErrata={handleErrata}
+          onCopy={handleCopy}
+        />
+      </Box>
     );
-});
+  }
+);
 
 export default CardEditor;

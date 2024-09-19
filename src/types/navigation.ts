@@ -1,4 +1,4 @@
 export enum AppPage {
-    CardCatalogue = '/card-catalogue',
-    CardEditor = '/card-editor'
+  CardCatalogue = '/card-catalogue',
+  CardEditor = '/card-editor',
 }

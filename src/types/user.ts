@@ -1,4 +1,4 @@
 export type CardOwner = {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 };
