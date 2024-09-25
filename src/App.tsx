@@ -9,6 +9,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CardCataloguePage from './pages/card-catalogue';
 import CardEditorPage from './pages/card-editor';
 
+
 export default function App() {
   const { expansions, fetchExpansions } = useExpansions();
   const { cards, cardOwners, fetchCards } = useCards();
@@ -20,6 +21,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
+      
         <Routes>
           <Route path="/" element={<Navigate to="/card-catalogue" />} />
           <Route

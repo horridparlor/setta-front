@@ -1,4 +1,8 @@
 {
   "EXAMPLE": "example",
-  "OTHER": "other"
+  "OTHER": "other",
+  "HOME": "Home",
+  "LOGIN": "Login",
+  "CARD_EDITOR": "Card Editor",
+  "CARD_CATALOGUE": "Card Catalogue"
 }

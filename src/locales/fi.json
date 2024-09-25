@@ -1,4 +1,8 @@
 {
   "EXAMPLE": "esimerkki",
-  "OTHER": "toinen"
+  "OTHER": "muu",
+  "HOME": "Koti",
+  "LOGIN": "Kirjaudu sisään",
+  "CARD_EDITOR": "Korttieditori",
+  "CARD_CATALOGUE": "Korttikatalogi"
 }
