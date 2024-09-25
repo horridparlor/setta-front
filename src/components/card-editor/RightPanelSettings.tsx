@@ -160,6 +160,7 @@ import {
 import { menuTitleStyle } from '../../utils/fonts';
 import { isEqual } from 'lodash';
 
+
 interface RightPanelSettingsProps {
   cardData: CardData;
   expansions: Array<CardExpansion>;
@@ -177,8 +178,11 @@ interface RightPanelSettingsProps {
   onErrata: () => void;
   onCopy: () => void;
 }
+import { useTranslation } from 'react-i18next';
+
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
+  
   cardData,
   expansions,
   onCardDataChange,
@@ -192,6 +196,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   onCopy,
 }) => {
   const STATS_TAB = 0;
+  const { t } = useTranslation(); 
   const EFFECTS_TAB = 1;
   const [tabId, setTabId] = useState<number>(0);
   const countsAsSelector = () => {
@@ -1202,6 +1207,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   };
 
   const getEffectsTab = () => {
+    
     return (
       <>
         <Typography sx={{ ...menuTitleStyle, marginBottom: '0.6rem' }}>
@@ -1335,11 +1341,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             </Select>
           </FormControl>
           <FormControl fullWidth sx={costCardSelectionVisible}>
-            <InputLabel id="cost-target-class-selector-label">Class</InputLabel>
+            <InputLabel id="cost-target-class-selector-label">{t('CLASS')}</InputLabel>
             <Select
               labelId="cost-target-class-selector-label"
               value={getEffectsCostTarget(cardData).cardClass || CardClass.NONE}
-              label="Class"
+              label={t('CLASS')}
               onChange={(
                 event: SelectChangeEvent<CardClass>,
                 _child: ReactNode
@@ -1357,12 +1363,12 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth sx={costCardSelectionVisible}>
             <InputLabel id="cost-target-card-type-selector-label">
-              Card Type
+            {t('CARD_TYPE')}
             </InputLabel>
             <Select
               labelId="cost-target-card-type-selector-label"
               value={getEffectsCostTarget(cardData).cardType || CardType.NONE}
-              label="Card Type"
+              label={t('CARD_TYPE')}
               onChange={(
                 event: SelectChangeEvent<CardType>,
                 _child: ReactNode
@@ -1903,14 +1909,14 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="effect-target-class-selector-label">
-              Class
+            {t('CLASS')}
             </InputLabel>
             <Select
               labelId="effect-target-class-selector-label"
               value={
                 getEffectsEffectTarget(cardData).cardClass || CardClass.NONE
               }
-              label="Class"
+              label={t('CLASS')}
               onChange={(
                 event: SelectChangeEvent<CardClass>,
                 _child: ReactNode
@@ -1928,12 +1934,12 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="effect-target-card-type-selector-label">
-              Card Type
+            {t('CARD_TYPE')}
             </InputLabel>
             <Select
               labelId="effect-target-card-type-selector-label"
               value={getEffectsEffectTarget(cardData).cardType || CardType.NONE}
-              label="Card Type"
+              label={t('CARD_TYPE')}
               onChange={(
                 event: SelectChangeEvent<CardType>,
                 _child: ReactNode
@@ -2245,7 +2251,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="effect-amount-target-class-selector-label">
-              Class
+            {t('CLASS')}
             </InputLabel>
             <Select
               labelId="effect-amount-target-class-selector-label"
@@ -2253,7 +2259,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 getEffectsEffectAmountTarget(cardData)?.cardClass ||
                 CardClass.NONE
               }
-              label="Class"
+              label={t('CLASS')}
               onChange={(
                 event: SelectChangeEvent<CardClass>,
                 _child: ReactNode
@@ -2271,14 +2277,14 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="effect-amount-target-card-type-selector-label">
-              Card Type
+            {t('CARD_TYPE')}
             </InputLabel>
             <Select
               labelId="effect-amount-target-card-type-selector-label"
               value={
                 getEffectsEffectAmountTarget(cardData).cardType || CardType.NONE
               }
-              label="Card Type"
+              label={t('CARD_TYPE')}
               onChange={(
                 event: SelectChangeEvent<CardType>,
                 _child: ReactNode
@@ -2711,14 +2717,14 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         aria-label="form tabs"
         sx={{ marginBottom: '2rem', marginTop: '2rem' }}
       >
-        <Tab label="Stats" />
-        <Tab label="Effects" onClick={() => fixEffects()} />
+        <Tab label={t('TAB_STATS')} />
+        <Tab label={t('TAB_EFFECTS')} onClick={() => fixEffects()} />
       </Tabs>
       <Box sx={{ display: tabId === STATS_TAB ? 'block' : 'none' }}>
         <Box sx={rowContainerStyle}>
           <TextField
             fullWidth
-            label="Card Name"
+            label={t('CARD_NAME')}
             variant="outlined"
             value={cardData.cardName}
             onChange={handleInputChange('cardName')}
@@ -2734,11 +2740,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 cardData.supertype === CardSupertype.MAXIMUM ? 'flex' : 'none',
             }}
           >
-            <InputLabel id="maximum-selector-label">Maximum Piece</InputLabel>
+            <InputLabel id="maximum-selector-label">{t('MAXIMUM_PIECE')}</InputLabel>
             <Select
               labelId="maximum-selector-label"
               value={cardData.maximumPiece}
-              label="Maximum Piece"
+              label={t('MAXIMUM_PIECE')}
               onChange={handleSelectChange('maximumPiece')}
               disabled={cannotEdit()}
             >
@@ -2757,7 +2763,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <TextField
             type="number"
-            label="Name Size"
+            label={t('NAME_SIZE')}
             variant="outlined"
             value={cardData.nameSize}
             onChange={handleInputChange('nameSize')}
@@ -2774,7 +2780,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 disabled={cannotEdit()}
               />
             }
-            label="Is Ace"
+            label={t('IS_ACE')}
             sx={{ minWidth: 'fit-content' }}
           />
         </Box>
@@ -2782,7 +2788,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           <TextField
             fullWidth
             type="number"
-            label="Art Scale"
+            label={t('ART_SCALE')}
             variant="outlined"
             value={cardData.artScale}
             onChange={handleInputChange('artScale')}
@@ -2792,7 +2798,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           <TextField
             fullWidth
             type="number"
-            label="X Offset"
+            label={t('X_OFFSET')}
             variant="outlined"
             value={cardData.artXOffset}
             onChange={handleInputChange('artXOffset')}
@@ -2802,7 +2808,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           <TextField
             fullWidth
             type="number"
-            label="Y Offset"
+            label={t('Y_OFFSET')}
             variant="outlined"
             value={cardData.artYOffset}
             onChange={handleInputChange('artYOffset')}
@@ -2818,11 +2824,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             }}
           >
             <FormControl fullWidth>
-              <InputLabel id="class-selector-label">Class</InputLabel>
+              <InputLabel id="class-selector-label">{t('CLASS')}</InputLabel>
               <Select
                 labelId="class-selector-label"
                 value={cardData.cardClass}
-                label="Class"
+                label={t('CLASS')}
                 onChange={handleSelectChange('cardClass')}
                 disabled={cannotEdit()}
               >
@@ -2837,11 +2843,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             </FormControl>
           </Box>
           <FormControl fullWidth>
-            <InputLabel id="type-selector-label">Card Type</InputLabel>
+            <InputLabel id="type-selector-label">{t('CARD_TYPE')}</InputLabel>
             <Select
               labelId="type-selector-label"
               value={cardData.cardType}
-              label="Card Type"
+              label={t('CARD_TYPE')}
               onChange={handleSelectChange('cardType')}
               disabled={cannotEdit()}
             >
@@ -2857,11 +2863,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             </Select>
           </FormControl>
           <FormControl fullWidth>
-            <InputLabel id="subtype-selector-label">Subtype</InputLabel>
+            <InputLabel id="subtype-selector-label">{t('SUBTYPE')}</InputLabel>
             <Select
               labelId="subtype-selector-label"
               value={cardData.subtype}
-              label="Subtype"
+              label={t('SUBTYPE')}
               onChange={handleSelectChange('subtype')}
               disabled={cannotEdit()}
             >
@@ -2884,7 +2890,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
               <Select
                 labelId="supertype-selector-label"
                 value={cardData.supertype}
-                label="Supertype"
+                label={t('SUPERTYPE')}
                 onChange={handleSelectChange('supertype')}
                 disabled={cannotEdit()}
               >
@@ -2902,7 +2908,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           <TextField
             fullWidth
             type="number"
-            label="Level"
+            label={t('LEVEL')}
             variant="outlined"
             value={cardData.level}
             onChange={handleInputChange('level')}
@@ -2912,7 +2918,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           <TextField
             fullWidth
             type="number"
-            label="Attack"
+            label={t('ATTACK')}
             variant="outlined"
             value={cardData.atk}
             onChange={handleInputChange('atk')}
@@ -2922,7 +2928,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           <TextField
             fullWidth
             type="number"
-            label="Defense"
+            label={t('DEFENSE')}
             variant="outlined"
             value={cardData.def}
             onChange={handleInputChange('def')}
@@ -2939,7 +2945,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         >
           <FormControl fullWidth sx={{ marginBottom: 2 }}>
             <InputLabel id="primary-material-selector-label">
-              Primary material
+            {t('PRIMARY_MATERIAL')}
             </InputLabel>
             <Select
               labelId="primary-material-selector-label"
@@ -2948,7 +2954,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                   ? cardData.primaryMaterialId.toString()
                   : ''
               }
-              label="Primary material"
+              label={t('PRIMARY_MATERIAL')}
               onChange={handleSelectChange('primaryMaterialId')}
               disabled={cannotEdit()}
             >
@@ -2957,7 +2963,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ marginBottom: 2 }}>
             <InputLabel id="secondary-material-selector-label">
-              Secondary material
+            {t('SECONDARY_MATERIAL')}
             </InputLabel>
             <Select
               labelId="secondary-material-selector-label"
@@ -2966,7 +2972,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                   ? cardData.secondaryMaterialId.toString()
                   : ''
               }
-              label="Secondary material"
+              label={t('SECONDARY_MATERIAL')}
               onChange={handleSelectChange('secondaryMaterialId')}
               disabled={cannotEdit()}
             >
@@ -2981,7 +2987,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             }}
           >
             <InputLabel id="tertiary-material-selector-label">
-              Tertiary material
+            {t('TERTIARY_MATERIAL')}
             </InputLabel>
             <Select
               labelId="tertiary-material-selector-label"
@@ -2990,7 +2996,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                   ? cardData.tertiaryMaterialId.toString()
                   : ''
               }
-              label="Tertiary material"
+              label={t('TERTIARY_MATERIAL')}
               onChange={handleSelectChange('tertiaryMaterialId')}
               disabled={cannotEdit()}
             >
@@ -3001,7 +3007,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         <Box sx={rowContainerStyle}>
           <TextField
             fullWidth
-            label="Cost Text"
+            label={t('COST_TEXT')}
             variant="outlined"
             multiline
             rows={2}
@@ -3015,7 +3021,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           />
           <TextField
             fullWidth
-            label="Materials Reminder"
+            label={t('MATERIALS_REMINDER')}
             variant="outlined"
             multiline
             rows={2}
@@ -3030,7 +3036,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         </Box>
         <TextField
           fullWidth
-          label="Effect Text"
+          label={t('EFFECT_TEXT')}
           variant="outlined"
           multiline
           rows={2}
@@ -3044,7 +3050,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         />
         <TextField
           fullWidth
-          label="Flavour Text"
+          label={t('FLAVOUR_TEXT')}
           variant="outlined"
           multiline
           rows={2}
@@ -3058,11 +3064,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         />
         <Box sx={rowContainerStyle}>
           <FormControl fullWidth>
-            <InputLabel id="counts-as-selector-label">Counts as</InputLabel>
+            <InputLabel id="counts-as-selector-label">{t('COUNTS_AS')}</InputLabel>
             <Select
               labelId="counts-as-selector-label"
               value={cardData.countsAsId ? cardData.countsAsId.toString() : ''}
-              label="Counts as"
+              label={t('COUNTS_AS')}
               onChange={handleSelectChange('countsAsId')}
               disabled={cannotEdit()}
             >
@@ -3071,7 +3077,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <TextField
             type="number"
-            label="Materials Size"
+            label={t('MATERIALS_SIZE')}
             variant="outlined"
             value={cardData.materialsSize}
             onChange={handleInputChange('materialsSize')}
@@ -3084,7 +3090,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           />
           <TextField
             type="number"
-            label="Effects Size"
+            label={t('EFFECTS_SIZE')}
             variant="outlined"
             value={cardData.effectsSize}
             onChange={handleInputChange('effectsSize')}
@@ -3093,11 +3099,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             sx={{ minWidth: '8rem' }}
           />
           <FormControl fullWidth>
-            <InputLabel id="expansion-selector-label">Expansion</InputLabel>
+            <InputLabel id="expansion-selector-label">{t('EXPANSION')}</InputLabel>
             <Select
               labelId="expansion-selector-label"
               value={cardData.expansionId.toString()}
-              label="Expansion"
+              label={t('EXPANSION')}
               disabled={cannotEdit()}
               onChange={handleSelectChange('expansionId')}
             >
@@ -3131,7 +3137,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           disabled={cardData.cardName.length === 0}
           sx={hideHiddenButton()}
         >
-          Save
+          {t('SAVE')}
         </Button>
         <Button
           onClick={onExport}
@@ -3139,7 +3145,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           color="secondary"
           disabled={cardData.cardName.length === 0}
         >
-          Export as PNG
+          {t('EXPORT_PNG')}
         </Button>
         <Button
           variant="contained"
@@ -3147,7 +3153,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           component="label"
           sx={hideHiddenButton()}
         >
-          Upload Image
+          {t('UPLOAD_IMAGE')}
           <input
             type="file"
             hidden
@@ -3164,7 +3170,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           }
           sx={hideHiddenButton()}
         >
-          ENCODE
+          {t('ENCODE')}
         </Button>
         <Button
           onClick={onDelete}
@@ -3173,7 +3179,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           disabled={cardData.cardId === 0}
           sx={hideHiddenButton()}
         >
-          Delete
+          {t('DELETE')}
         </Button>
         <Button
           onClick={onErrata}
@@ -3183,10 +3189,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             display: canErrataCard(cardData, expansions) ? 'flex' : 'none',
           }}
         >
-          Errata
+          {t('ERRATA')}
         </Button>
         <Button onClick={onCopy} variant="contained" color="secondary">
-          Copy
+        {t('COPY')}
         </Button>
       </Box>
     </Box>
