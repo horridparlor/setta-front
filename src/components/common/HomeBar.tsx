@@ -18,7 +18,7 @@ export interface HomeBarRef {
 
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
   ({ refetch, onLeavePage }, ref) => {
-    const { t } = useTranslation(); // Initialize translation hook
+    const { t } = useTranslation(); 
     const [isLoginOpen, setLoginOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -46,7 +46,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             navigateTo(AppPage.CardEditor);
           }}
         >
-          {t('CARD_EDITOR')} {/* Use translation here */}
+          {t('CARD_EDITOR')} 
         </Button>
         <Button
           variant="contained"
@@ -54,7 +54,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           onClick={() => navigateTo(AppPage.CardCatalogue)}
           sx={{ marginLeft: '0.4rem' }}
         >
-          {t('CARD_CATALOGUE')} {/* Use translation here */}
+          {t('CARD_CATALOGUE')} 
         </Button>
         <Button
           variant="contained"
@@ -62,7 +62,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           onClick={() => setLoginOpen(true)}
           sx={{ marginLeft: '0.4rem' }}
         >
-          {t('LOGIN')} {/* Use translation here */}
+          {t('LOGIN')} 
         </Button>
         <LoginModal
           open={isLoginOpen}

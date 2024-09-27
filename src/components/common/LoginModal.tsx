@@ -18,7 +18,7 @@ import {
   UserEndpoint,
 } from '../../types/api';
 import { AuthCookie } from '../../types/cookie';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from 'react-i18next'; 
 
 interface LoginModalProps {
   open: boolean;
@@ -27,7 +27,7 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
-  const { t } = useTranslation(); // Initialize useTranslation
+  const { t } = useTranslation(); 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
@@ -58,14 +58,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
       }),
       { expires: 7 }
     );
-    toast.success(t('AUTHENTICATED', { firstName: responseData.firstName, lastName: responseData.lastName })); // Use translation here
+    toast.success(t('AUTHENTICATED', { firstName: responseData.firstName, lastName: responseData.lastName })); 
     await refetch();
     onClose();
   };
 
   const handleChangePassword = async () => {
     if (newPassword !== retypeNewPassword) {
-      toast.error(t('PASSWORDS_DO_NOT_MATCH')); // Use translation here
+      toast.error(t('PASSWORDS_DO_NOT_MATCH')); 
       return;
     }
     const data = {
@@ -85,7 +85,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
       showError(responseData);
       return;
     }
-    toast.success(t('PASSWORD_CHANGED_SUCCESS')); // Use translation here
+    toast.success(t('PASSWORD_CHANGED_SUCCESS')); 
     setChangePasswordOpen(false);
   };
 
@@ -160,8 +160,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setChangePasswordOpen(false)}>{t('CANCEL')}</Button> {/* Use translation here */}
-          <Button onClick={handleChangePassword}>{t('UPDATE_PASSWORD')}</Button> {/* Use translation here */}
+          <Button onClick={() => setChangePasswordOpen(false)}>{t('CANCEL')}</Button> 
+          <Button onClick={handleChangePassword}>{t('UPDATE_PASSWORD')}</Button> 
         </DialogActions>
       </Dialog>
     </>
