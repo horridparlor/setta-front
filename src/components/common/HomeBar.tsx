@@ -4,6 +4,8 @@ import { Box } from '@mui/material';
 import { AppPage } from '../../types/navigation';
 import LoginModal from './LoginModal';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSelect from './LanguageSelect';
 
 interface HomeBarProps {
   refetch: () => Promise<void>;
@@ -16,6 +18,7 @@ export interface HomeBarRef {
 
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
   ({ refetch, onLeavePage }, ref) => {
+    const { t } = useTranslation(); 
     const [isLoginOpen, setLoginOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -35,6 +38,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
     return (
       <Box>
+        <LanguageSelect />
         <Button
           variant="contained"
           color="primary"
@@ -42,7 +46,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             navigateTo(AppPage.CardEditor);
           }}
         >
-          Card Editor
+          {t('CARD_EDITOR')} 
         </Button>
         <Button
           variant="contained"
@@ -50,7 +54,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           onClick={() => navigateTo(AppPage.CardCatalogue)}
           sx={{ marginLeft: '0.4rem' }}
         >
-          Card Catalogue
+          {t('CARD_CATALOGUE')} 
         </Button>
         <Button
           variant="contained"
@@ -58,7 +62,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           onClick={() => setLoginOpen(true)}
           sx={{ marginLeft: '0.4rem' }}
         >
-          Login
+          {t('LOGIN')} 
         </Button>
         <LoginModal
           open={isLoginOpen}
