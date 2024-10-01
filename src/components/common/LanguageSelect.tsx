@@ -16,6 +16,8 @@ export default function LanguageSelect() {
     >
       <MenuItem value="fi">Finnish</MenuItem>
       <MenuItem value="en">English</MenuItem>
+      <MenuItem value="ru">Russian</MenuItem>
+      <MenuItem value="jp">Japanese</MenuItem>
     </Select>
   );
 }
