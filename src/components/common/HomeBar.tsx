@@ -61,20 +61,16 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
     const [open, setOpen] = useState(false);
 
-    const toggleDrawer = (newOpen: boolean) => () => {
-      setOpen(newOpen);
-    };
-
     return (
       <Box>
         <AppBar position="static">
           <Toolbar>
-            <IconButton color="inherit" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
+            <IconButton color="inherit" sx={{ mr: 2 }} onClick={() => setOpen(true)}>
               <MenuIcon/>
             </IconButton>
             <Drawer open={open}>
               <Box sx={{ p: 2 }}>
-                <IconButton onClick={toggleDrawer(false)}>
+                <IconButton onClick={() => setOpen(false)}>
                   <CloseIcon/>
                 </IconButton>
                 <Divider />
@@ -86,7 +82,15 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('CARD_CATALOGUE')} />
                 </ListItemButton>
-                <Accordion>
+                <Accordion
+                  disableGutters
+                  elevation={0}
+                  sx={{
+                    '&:before': {
+                      display: 'none'
+                    },
+                  }}
+                >
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <AddToPhotosIcon sx={{ mr: 2 }} /> {t('CARD_CREATION')}
                   </AccordionSummary>
