@@ -3132,6 +3132,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
       <Box sx={{ display: tabId === EFFECTS_TAB ? 'block' : 'none' }}>
         {getEffectsTab()}
       </Box>
+      <Box sx={{ display: tabId === GENERATE_TAB ? 'block' : 'none' }}>
+        <GenerateTab />
+      </Box>
       <Box sx={{ ...rowContainerStyle, marginBottom: 0 }}>
         <Button
           onClick={onSave}
@@ -3198,9 +3201,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         {t('COPY')}
         </Button>
       </Box>
-      <Box sx={{ display: tabId === GENERATE_TAB ? 'block' : 'none' }}>
-        <GenerateTab />
-      </Box>
+
     </Box>
   );
 };
