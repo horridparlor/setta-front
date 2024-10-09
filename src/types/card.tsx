@@ -156,7 +156,7 @@ export enum StatType {
 
 export const isExtraDeckCard = (cardData: CardData) => {
   return EXTRA_DECK_SUBTYPES.includes(cardData.subtype);
-  return EXTRA_DECK_SUBTYPES.includes(cardData.subtype);
+
 };
 
 export const hasCostText = (cardData: CardData) => {
