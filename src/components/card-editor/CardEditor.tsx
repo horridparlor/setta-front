@@ -265,10 +265,10 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
     };
 
     useEffect(() => {
-      if (cardData.cardId) {
+      if (cardData.cardId && expansions.find(expansion => expansion.id = cardData.expansionId)) {
         onCardSet(cardData);
       }
-    }, [cardData, onCardSet]);
+    }, [cardData, onCardSet, expansions]);
 
     useEffect(() => {
       const card =
@@ -308,6 +308,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
         <Box sx={{ marginRight: '2rem' }}>
           <CardPreviewer
             cards={cards}
+            expansions={expansions}
             cardData={cardData}
             cardRef={cardRef}
             scale={1}

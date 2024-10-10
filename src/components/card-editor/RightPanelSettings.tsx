@@ -1202,7 +1202,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     justReturn: boolean = false
   ) => {
     const chainEffect = { ...getEffectsChainEffect(prevCard), amount: amount };
-    console.log(777, chainEffect);
     return handleChainEffectChange(chainEffect, prevCard, justReturn);
   };
 
