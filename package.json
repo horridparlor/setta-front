@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test:playwright": "npx playwright test",
     "test:playwright:report": "npx playwright show-report",
+    "type:check": "tsc --noEmit",
     "lint:check": "eslint .",
     "lint:write": "eslint --fix .",
     "format:check": "prettier --check './src/**/*.{ts,tsx}'",
