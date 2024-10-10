@@ -34,6 +34,21 @@ npm run test:playwright
 npm run test:playwright:report (view test result report)
 ```
 
+## API CLIENT
+
+We use [TypeSpec](https://typespec.io/docs) as a tool to generate openapi docs. We also generate a typesafe api client from the openapi docs using [openapi-typescript](https://openapi-ts.dev/introduction) and [openapi-fetch](https://openapi-ts.dev/openapi-fetch/).
+
+### Updates
+
+1. Update api definitions inside `./api/main.tsp`.
+2. Run `npm run generate:api` to generate the openapi schema and api client.
+
+### Files
+
+Generated openapi schema is found at `./api/tsp-output/@typespec/openapi3/openapi.yaml`.
+
+Generated typesafe api client is found at `./src/api/client.ts`.
+
 ## Translations
 
 We use [i80next](https://www.i18next.com/overview/getting-started) hooks for translations.
