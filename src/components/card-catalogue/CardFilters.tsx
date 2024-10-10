@@ -556,9 +556,6 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<
                 –
               </MenuItem>
               {expansions
-                .sort((expansionA, expansionB) =>
-                  expansionA.name.localeCompare(expansionB.name)
-                )
                 .map(expansion => (
                   <MenuItem key={expansion.id} value={expansion.id}>
                     {expansion.name}

@@ -3113,9 +3113,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     expansion.ownerId === getUserId() ||
                     expansion.ownerId === EXPANSION_NO_OWNER
                 )
-                .sort((expansionA, expansionB) =>
-                  expansionA.name.localeCompare(expansionB.name)
-                )
                 .map(expansion => (
                   <MenuItem key={expansion.id} value={expansion.id}>
                     {expansion.name}
