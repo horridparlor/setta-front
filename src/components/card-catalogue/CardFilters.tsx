@@ -536,7 +536,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<
               <MenuItem key={'none'} value={''}>
                 –
               </MenuItem>
-              {cards.map(card => (
+              {cards.sort((cardA, cardB) => normalizeName(cardA).localeCompare(normalizeName(cardB))
+              ).map(card => (
                 <MenuItem key={card.cardId} value={card.cardId.toString()}>
                   {normalizeName(card.cardName)}
                 </MenuItem>
