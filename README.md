@@ -27,6 +27,13 @@ npm run format:check
 npm run format:write (autofix)
 ```
 
+### E2E Tests
+
+```
+npm run test:playwright
+npm run test:playwright:report (view test result report)
+```
+
 ## Translations
 
 We use [i80next](https://www.i18next.com/overview/getting-started) hooks for translations.
@@ -40,13 +47,6 @@ function TranslatedComponent() {
 ```
 
 Translations need to be manually added/updated inside the `src/locales/<lang>.json` files. New languages need to be registered in `src/i18n.ts`.
-
-### E2E Tests
-
-```
-npm run test:playwright
-npm run test:playwright:report (view test result report)
-```
 
 ## Production build
 
