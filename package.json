@@ -13,17 +13,17 @@
     "format:write": "prettier --write './src/**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "@emotion/react": "11.13.3",
-    "@emotion/styled": "11.13.0",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "6.0.2",
-    "@mui/material": "6.0.2",
+    "@mui/material": "^6.1.2",
     "dom-to-image": "2.6.0",
-    "i18next": "23.15.1",
+    "i18next": "^23.15.1",
     "js-cookie": "3.0.5",
     "lodash": "4.17.21",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-i18next": "15.0.2",
+    "react-i18next": "^15.0.2",
     "react-router": "6.26.1",
     "react-router-dom": "6.26.1",
     "react-toastify": "10.0.5"
