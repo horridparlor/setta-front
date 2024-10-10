@@ -82,26 +82,14 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('CARD_CATALOGUE')} />
                 </ListItemButton>
-                <Accordion
-                  disableGutters
-                  elevation={0}
-                  sx={{
-                    '&:before': {
-                      display: 'none'
-                    },
-                  }}
+                <ListItemButton
+                    onClick={() => navigateTo(AppPage.CardEditor)}
                 >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <AddToPhotosIcon sx={{ mr: 2 }} /> {t('CARD_CREATION')}
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <ListItemButton
-                      onClick={() => navigateTo(AppPage.CardEditor)}
-                    >
-                      <ListItemText primary={t('CARD_EDITOR')} />
-                    </ListItemButton>
-                  </AccordionDetails>
-                </Accordion>
+                  <ListItemIcon >
+                    <AddToPhotosIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t('CARD_EDITOR')} />
+                </ListItemButton>
                 <ListItemButton>
                   <ListItemIcon>
                     <PeopleIcon />
