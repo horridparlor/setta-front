@@ -1,19 +1,23 @@
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import {forwardRef, useImperativeHandle, useState} from 'react';
 import Button from '@mui/material/Button';
-import { 
-  Box, 
-  Divider, 
-  ListItemButton, 
-  AppBar, Toolbar, 
-  Typography, 
-  IconButton,
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  AppBar,
+  Box,
+  Divider,
   Drawer,
-  ListItemText,
+  IconButton,
+  ListItemButton,
   ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
 } from '@mui/material';
-import { AppPage } from '../../types/navigation';
+import {AppPage, isAppPage} from '../../types/navigation';
 import LoginModal from './LoginModal';
-import { useNavigate } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -21,9 +25,10 @@ import PeopleIcon from '@mui/icons-material/People';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import LoginIcon from '@mui/icons-material/Login';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import LanguageSelect from './LanguageSelect';
 import LanguageIcon from '@mui/icons-material/Language';
+import {ExpandMore, FormatPaint, Inventory} from "@mui/icons-material";
 
 
 interface HomeBarProps {
@@ -57,6 +62,22 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
     const [open, setOpen] = useState(false);
 
+    const getPageName = () => {
+      const location = useLocation();
+      const pageLocation = '/' + location.pathname.split('/').filter(Boolean)[0] ?? '';
+      const appPage = isAppPage(pageLocation) ? pageLocation : AppPage.Error;
+      switch (appPage) {
+        case AppPage.CardCatalogue:
+          return t('PAGE_NAME.CARD_CATALOGUE');
+        case AppPage.CardEditor:
+          return t('PAGE_NAME.CARD_EDITOR');
+        case AppPage.CardExpansions:
+          return t('PAGE_NAME.CARD_EXPANSIONS');
+        case AppPage.Error:
+          return t('ERROR') + ': ' + pageLocation;
+      }
+    }
+
     return (
       <Box>
         <AppBar position="static">
@@ -76,7 +97,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   <ListItemIcon>
                     <AutoStoriesIcon />
                   </ListItemIcon>
-                  <ListItemText primary={t('CARD_CATALOGUE')} />
+                  <ListItemText primary={t('PAGE_NAME.CARD_CATALOGUE')} />
                 </ListItemButton>
                 <ListItemButton
                     onClick={() => navigateTo(AppPage.CardEditor)}
@@ -84,8 +105,24 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   <ListItemIcon >
                     <AddToPhotosIcon />
                   </ListItemIcon>
-                  <ListItemText primary={t('CARD_EDITOR')} />
+                  <ListItemText primary={t('PAGE_NAME.CARD_EDITOR')} />
                 </ListItemButton>
+                <Accordion>
+                  <AccordionSummary expandIcon={<ExpandMore />}>
+                    <ListItemIcon>
+                      <FormatPaint />
+                    </ListItemIcon>
+                    <ListItemText primary={t('PAGE_NAME.RELEASING')} />
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <ListItemButton onClick={() => navigateTo(AppPage.CardExpansions)}>
+                      <ListItemIcon>
+                        <Inventory />
+                      </ListItemIcon>
+                      <ListItemText primary={t('PAGE_NAME.CARD_EXPANSIONS')} />
+                    </ListItemButton>
+                  </AccordionDetails>
+                </Accordion>
                 <ListItemButton>
                   <ListItemIcon>
                     <PeopleIcon />
@@ -106,8 +143,12 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
               Setta
             </Typography>
 
+            <Typography variant="h5" sx={{ flexGrow: 1, fontWeight: 600 }}>
+              {getPageName()}
+            </Typography>
+
             <Button
-              variant="contained"
+                variant="contained"
               color="info"
               startIcon={<LoginIcon />}
               onClick={() => setLoginOpen(true)}
