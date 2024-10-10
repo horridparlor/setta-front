@@ -13,7 +13,8 @@
     "lint:check": "eslint .",
     "lint:write": "eslint --fix .",
     "format:check": "prettier --check './src/**/*.{ts,tsx}'",
-    "format:write": "prettier --write './src/**/*.{ts,tsx}'"
+    "format:write": "prettier --write './src/**/*.{ts,tsx}'",
+    "generate:api": "cd ./.api && npm run compile && cd .. && npx openapi-typescript ./.api/tsp-output/@typespec/openapi3/openapi.yaml -o ./src/api/schema.d.ts"
   },
   "dependencies": {
     "@emotion/react": "11.13.3",
@@ -24,6 +25,7 @@
     "i18next": "23.15.1",
     "js-cookie": "3.0.5",
     "lodash": "4.17.21",
+    "openapi-fetch": "0.12.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-i18next": "15.0.2",
@@ -47,6 +49,7 @@
     "eslint-plugin-react-hooks": "5.1.0-rc.0",
     "eslint-plugin-react-refresh": "0.4.9",
     "globals": "15.9.0",
+    "openapi-typescript": "7.4.1",
     "prettier": "3.3.3",
     "typescript": "5.5.3",
     "typescript-eslint": "8.0.1",
