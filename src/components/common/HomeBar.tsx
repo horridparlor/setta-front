@@ -10,9 +10,6 @@ import {
   Drawer,
   ListItemText,
   ListItemIcon,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails
 } from '@mui/material';
 import { AppPage } from '../../types/navigation';
 import LoginModal from './LoginModal';
@@ -22,7 +19,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import PeopleIcon from '@mui/icons-material/People';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import LoginIcon from '@mui/icons-material/Login';
 import { useTranslation } from 'react-i18next';
