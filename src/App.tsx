@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './styles/Theme';
 import './styles/montserrat.css';
 import { ToastContainer } from 'react-toastify';
