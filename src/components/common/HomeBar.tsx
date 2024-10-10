@@ -29,6 +29,7 @@ import {useTranslation} from 'react-i18next';
 import LanguageSelect from './LanguageSelect';
 import LanguageIcon from '@mui/icons-material/Language';
 import {ExpandMore, FormatPaint, Inventory} from "@mui/icons-material";
+import {getUsername} from "../../types/cookie.ts";
 
 
 interface HomeBarProps {
@@ -145,6 +146,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
             <Typography variant="h5" sx={{ flexGrow: 1, fontWeight: 600 }}>
               {getPageName()}
+            </Typography>
+
+            <Typography variant="h6" sx={{ marginRight: 2 }}>
+              {getUsername(t)}
             </Typography>
 
             <Button
