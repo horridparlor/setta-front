@@ -8,7 +8,7 @@ interface BackgroundTabProps {
 
 const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => {
   const [backgroundDescription, setBackgroundDescription] = useState<string>('');
-  const [selectedType, setSelectedType] = useState<string | undefined>(CardType.NONE);
+  const [selectedType, setSelectedType] = useState<string | undefined>(CardType.MONSTER);
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDescription = event.target.value;
@@ -45,7 +45,7 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
             onChange={handleTypeChange}
           >
             {Object.values(CardType)
-              .filter(value => value !== CardType.NONE) // Filter out 'NONE' if needed
+              .filter(value => value !== CardType.NONE) 
               .map((cardType) => (
                 <MenuItem key={cardType} value={cardType}>
                   {cardType}

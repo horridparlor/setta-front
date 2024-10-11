@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+ import React, { useState } from 'react';
 import { Box, Tab, Tabs, TextField, Typography } from '@mui/material';
 import BackgroundTab from './BackgroundTab';
 import CharacterTab from './CharacterTab';
@@ -10,31 +10,31 @@ const ArtTab: React.FC = () => {
   const SPECIAL_EFFECTS_TAB = 2;
   const [subTabId, setSubTabId] = useState<number>(0);
 
-  // State to hold the values from different fields
+  //hold the values from different fields
   const [promptValues, setPromptValues] = useState<Record<string, string>>({});
 
   const handleSubTabChange = (_event: React.ChangeEvent<{}>, newId: number) => {
     setSubTabId(newId);
   };
 
-  // Function to update the prompt values from different tabs
+  // update the prompt values from different tabs
   const updatePromptValues = (newValues: Partial<any>) => {
     setPromptValues(prevValues => ({ ...prevValues, ...newValues }));
   };
   
   
-  // Construct the prompt text based on the collected values
-  const promptText = `Background: ${promptValues.backgroundDescription || 'N/A'}, 
-  Type: ${promptValues.backgroundType || 'N/A'},
-  Character: ${promptValues.characterName || 'N/A'},
-  Race: ${promptValues.race || 'N/A'},
-  Gender: ${promptValues.gender || 'N/A'},
-  Age: ${promptValues.age || 'N/A'},
-  Type: ${promptValues.characterType || 'N/A'},
-  Appearance: ${promptValues.appearance || 'N/A'},
-  Tool: ${promptValues.tool || 'N/A'},
-  Action: ${promptValues.action || 'N/A'}`;
-
+  // Construct the prompt
+  const promptText = `Background: ${promptValues.backgroundDescription || 'N/A'}
+  Type: ${promptValues.backgroundType || 'N/A'}
+  Character: ${promptValues.characterName || 'N/A'}
+  Race: ${promptValues.race || 'N/A'}
+  Gender: ${promptValues.gender || 'N/A'}
+  Age: ${promptValues.age || 'N/A'}
+  Character type: ${promptValues.Charactertype || 'N/A'}
+  Appearance: ${promptValues.appearance || 'N/A'}
+  Tool: ${promptValues.tool || 'N/A'}
+  Action: ${promptValues.action || 'N/A'}
+  Effect: ${promptValues.effect || 'N/A'}`;
   return (
     <Box>
       <Tabs
@@ -56,11 +56,11 @@ const ArtTab: React.FC = () => {
         <CharacterTab updatePromptValues={updatePromptValues} />
       </Box>
       <Box sx={{ display: subTabId === SPECIAL_EFFECTS_TAB ? 'block' : 'none' }}>
-      {/*  <SpecialEffectsTab updatePromptValues={updatePromptValues} /> */}
+      <SpecialEffectsTab updatePromptValues={updatePromptValues} />
       </Box>
 
       {/* Prompt Display Box */}
-      <Box sx={{ marginTop: '2rem' }}>
+      <Box sx={{ marginTop: '1.5rem', marginBottom: '1rem' }}>
         <Typography variant="h6">Current Prompt</Typography>
         <TextField
           fullWidth
