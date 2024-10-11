@@ -179,12 +179,14 @@ interface RightPanelSettingsProps {
   canUpload: boolean;
   onErrata: () => void;
   onCopy: () => void;
+  tabId: number;
+  onActiveTabChange: (activeTab: number) => void;
 }
 import { useTranslation } from 'react-i18next';
 
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
-  
+  onActiveTabChange,
   cardData,
   expansions,
   onCardDataChange,
@@ -203,6 +205,10 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   const Art_TAB = 2;
   const DECK_TAB = 3;
   const [tabId, setTabId] = useState<number>(0);
+  const handleTabChange = (_event: React.SyntheticEvent, newTabId: number) => {
+    setTabId(newTabId);
+    onActiveTabChange(newTabId);
+  };
   const countsAsSelector = () => {
     const countsAsOptions = Object.values(SpecialCountsAs).map(countsAs => {
       const id = SpecialCountsAsId[countsAs];
@@ -439,10 +445,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
 
   const hideHiddenButton = () => {
     return { display: cannotEdit() ? 'none' : 'flex' };
-  };
-
-  const onTabClicked = (_event: React.ChangeEvent<{}>, newId: number) => {
-    setTabId(newId);
   };
 
   const handleCostTypeChange = (
@@ -2717,7 +2719,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
       <Tabs
         value={tabId}
-        onChange={onTabClicked}
+        onChange={handleTabChange}
         aria-label="form tabs"
         sx={{ marginBottom: '2rem', marginTop: '2rem' }}
       >

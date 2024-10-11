@@ -8,6 +8,7 @@ import {
 } from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
+import GenerateBox from './GenerateBox';
 import domtoimage from 'dom-to-image';
 import { Box } from '@mui/material';
 import { CardData, DEFAULT_CARD_DATA, getOwnerId } from '../../types/card';
@@ -51,9 +52,17 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [oldName, setOldName] = useState<string>('');
+    const [activeTab, setActiveTab] = useState<number>(0);
     const { cardId } = useParams();
-
     const cardRef = useRef<HTMLDivElement>(null);
+    const handleActiveTabChange = (newTabId: number) => {
+      setActiveTab(newTabId); 
+    };
+    const handleResetFields = () => {
+      // Logic to reset all fields in BackgroundTab, CharacterTab, and SpecialEffectsTab
+      setCardData(DEFAULT_CARD_DATA);
+      // Assuming that each tab component has a reset method, call those here if needed.
+    };
 
     const handleCardDataChange = (
       field: keyof CardData,
@@ -314,6 +323,9 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
             overwriteArt={imageFile}
             oldName={oldName}
           />
+          {activeTab === 2 && (
+            <GenerateBox onReset={handleResetFields} />
+          )}
         </Box>
         <RightPanelSettings
           cards={cards}
@@ -328,6 +340,8 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
           onDelete={handleDelete}
           onErrata={handleErrata}
           onCopy={handleCopy}
+          tabId={activeTab}
+          onActiveTabChange={setActiveTab}
         />
       </Box>
     );
