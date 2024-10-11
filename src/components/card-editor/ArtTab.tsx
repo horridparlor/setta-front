@@ -23,7 +23,8 @@ const ArtTab: React.FC = () => {
   };
   
   
-  // Construct the prompt
+  // Constructs the prompt. Preset texts are for testing purposes adn will be removed once all is finished.
+  //this setup allows for consistent and structured prompt creation no matter which order the fields are filled in.
   const promptText = `Background: ${promptValues.backgroundDescription || 'N/A'}
   Type: ${promptValues.backgroundType || 'N/A'}
   Character: ${promptValues.characterName || 'N/A'}
