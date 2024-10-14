@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './styles/Theme';
 import './styles/montserrat.css';
 import { ToastContainer } from 'react-toastify';
@@ -8,6 +8,7 @@ import useExpansions from './hooks/useExpansions';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CardCataloguePage from './pages/card-catalogue';
 import CardEditorPage from './pages/card-editor';
+import UserManagamentPage from './pages/user-management';
 
 export default function App() {
   const { expansions, fetchExpansions } = useExpansions();
@@ -41,9 +42,13 @@ export default function App() {
             path="/card-editor/:cardId"
             element={<CardEditorPage cards={cards} refetch={refetch} />}
           />
+          <Route
+            path="/user-management"
+            element={<UserManagamentPage refetch={refetch}/>}
+          />
         </Routes>
       </BrowserRouter>
       <ToastContainer position="bottom-right" autoClose={2000} />
     </ThemeProvider>
   );
-}
+};

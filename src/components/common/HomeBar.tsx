@@ -93,7 +93,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                 >
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <AddToPhotosIcon sx={{ mr: 2 }} /> {t('CARD_CREATION')}
-                  </AccordionSummary>
+                  </AccordionSummary> 
                   <AccordionDetails>
                     <ListItemButton
                       onClick={() => navigateTo(AppPage.CardEditor)}
@@ -102,7 +102,9 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     </ListItemButton>
                   </AccordionDetails>
                 </Accordion>
-                <ListItemButton>
+                <ListItemButton
+                  onClick={() => navigateTo(AppPage.UserManagement)}
+                >
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
