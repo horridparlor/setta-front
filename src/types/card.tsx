@@ -160,15 +160,21 @@ export const isExtraDeckCard = (cardData: CardData) => {
 };
 
 export const hasCostText = (cardData: CardData) => {
-  return (
-    cardData.cardType !== CardType.MONSTER ||
-    isPendulumCard(cardData) ||
-    !(
-      (cardData.subtype !== CardSubtype.NORMAL &&
-        cardData.flavourText.length > 0) ||
-      cardData.subtype === CardSubtype.NORMAL
-    )
-  );
+  switch (cardData.cardType) {
+    case CardType.MONSTER:
+      return (
+          isPendulumCard(cardData) ||
+          !(
+              (cardData.subtype !== CardSubtype.NORMAL &&
+                  cardData.flavourText.length > 0) ||
+              cardData.subtype === CardSubtype.NORMAL
+          )
+      );
+    case CardType.SPELL:
+      return cardData.subtype !== CardSubtype.FUSION;
+    case CardType.TRAP:
+      return true;
+  }
 };
 
 export const hasEffectText = (cardData: CardData) => {
@@ -270,7 +276,7 @@ const getActiveSubtypes = (cardType: CardType) => {
     case CardType.MONSTER:
       return MONSTER_SUBTYPES;
     case CardType.SPELL:
-      return [CardSubtype.NORMAL];
+      return [CardSubtype.NORMAL, CardSubtype.FUSION];
     case CardType.TRAP:
       return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
     case CardType.BACKROW:

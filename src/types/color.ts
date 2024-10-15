@@ -1,10 +1,4 @@
-import {
-  CardData,
-  CardSubtype,
-  CardSupertype,
-  CardType,
-  StatType,
-} from './card';
+import {CardData, CardSubtype, CardSupertype, CardType, StatType,} from './card';
 
 const ARTWORK_BORDER_THICKNESS = 0.225;
 const EFFECTS_BORDER_THICKNESS = 0.2;
@@ -62,7 +56,7 @@ export const getCardBackgroundColor = (cardData: CardData) => {
     case CardType.MONSTER:
       return getMonsterBackgroundColor(cardData.subtype);
     case CardType.SPELL:
-      return CardMainFrameColor.SPELL;
+      return getSpellBackgroundColor(cardData.subtype);
     case CardType.TRAP:
       return getTrapBackgroundColor(cardData.subtype);
   }
@@ -101,7 +95,7 @@ export const getCardBackground = (cardData: CardData) => {
   return '';
 };
 
-export const getMonsterBackgroundColor = (subtype: CardSubtype) => {
+const getMonsterBackgroundColor = (subtype: CardSubtype) => {
   switch (subtype) {
     case CardSubtype.EFFECT:
       return CardMainFrameColor.EFFECT;
@@ -114,7 +108,16 @@ export const getMonsterBackgroundColor = (subtype: CardSubtype) => {
   }
 };
 
-export const getTrapBackgroundColor = (subtype: CardSubtype) => {
+const getSpellBackgroundColor = (subtype: CardSubtype) => {
+  switch (subtype) {
+    case CardSubtype.NORMAL:
+      return CardMainFrameColor.SPELL;
+    case CardSubtype.FUSION:
+      return CardMainFrameColor.FUSION;
+  }
+}
+
+const getTrapBackgroundColor = (subtype: CardSubtype) => {
   switch (subtype) {
     case CardSubtype.KILLER_MOVE:
       return CardMainFrameColor.KILLER_MOVE;
@@ -128,13 +131,13 @@ export const getCardEffectFrameColor = (cardData: CardData) => {
     case CardType.MONSTER:
       return getMonsterEffectFrameColor(cardData);
     case CardType.SPELL:
-      return CardEffectFrameColor.SPELL;
+      return getSpellEffectFrameColor(cardData);
     case CardType.TRAP:
       return getTrapEffectFrameColor(cardData);
   }
 };
 
-export const getMonsterEffectFrameColor = (cardData: CardData) => {
+const getMonsterEffectFrameColor = (cardData: CardData) => {
   switch (cardData.subtype) {
     case CardSubtype.EFFECT:
       return CardEffectFrameColor.EFFECT;
@@ -151,7 +154,16 @@ export const getMonsterEffectFrameColor = (cardData: CardData) => {
   }
 };
 
-export const getNormalMonsterEffectFrameColor = (supertype: CardSupertype) => {
+const getSpellEffectFrameColor = (cardData: CardData) => {
+  switch (cardData.subtype) {
+    case CardSubtype.NORMAL:
+      return CardEffectFrameColor.SPELL;
+    case CardSubtype.FUSION:
+      return CardEffectFrameColor.FUSION;
+  }
+}
+
+const getNormalMonsterEffectFrameColor = (supertype: CardSupertype) => {
   switch (supertype) {
     case CardSupertype.HAND_TRAP:
       return CardEffectFrameColor.TRAP;
