@@ -110,11 +110,12 @@ const getMonsterBackgroundColor = (subtype: CardSubtype) => {
 
 const getSpellBackgroundColor = (subtype: CardSubtype) => {
   switch (subtype) {
-    case CardSubtype.NORMAL:
-      return CardMainFrameColor.SPELL;
     case CardSubtype.FUSION:
       return CardMainFrameColor.FUSION;
+    case CardSubtype.REVENGE:
+      return CardMainFrameColor.REVENGE;
   }
+  return CardMainFrameColor.SPELL;
 }
 
 const getTrapBackgroundColor = (subtype: CardSubtype) => {
@@ -156,11 +157,12 @@ const getMonsterEffectFrameColor = (cardData: CardData) => {
 
 const getSpellEffectFrameColor = (cardData: CardData) => {
   switch (cardData.subtype) {
-    case CardSubtype.NORMAL:
-      return CardEffectFrameColor.SPELL;
     case CardSubtype.FUSION:
       return CardEffectFrameColor.FUSION;
+    case CardSubtype.REVENGE:
+      return CardEffectFrameColor.REVENGE;
   }
+  return CardEffectFrameColor.SPELL;
 }
 
 const getNormalMonsterEffectFrameColor = (supertype: CardSupertype) => {

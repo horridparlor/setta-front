@@ -171,7 +171,7 @@ export const hasCostText = (cardData: CardData) => {
           )
       );
     case CardType.SPELL:
-      return cardData.subtype !== CardSubtype.FUSION;
+      return !isExtraDeckCard(cardData);
     case CardType.TRAP:
       return true;
   }
@@ -276,7 +276,7 @@ const getActiveSubtypes = (cardType: CardType) => {
     case CardType.MONSTER:
       return MONSTER_SUBTYPES;
     case CardType.SPELL:
-      return [CardSubtype.NORMAL, CardSubtype.FUSION];
+      return [CardSubtype.NORMAL, CardSubtype.FUSION, CardSubtype.REVENGE];
     case CardType.TRAP:
       return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
     case CardType.BACKROW:
