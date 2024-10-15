@@ -276,7 +276,7 @@ const getActiveSubtypes = (cardType: CardType) => {
     case CardType.MONSTER:
       return MONSTER_SUBTYPES;
     case CardType.SPELL:
-      return [CardSubtype.NORMAL, CardSubtype.FUSION, CardSubtype.REVENGE];
+      return [CardSubtype.NORMAL, CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL];
     case CardType.TRAP:
       return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
     case CardType.BACKROW:

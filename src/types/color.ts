@@ -114,6 +114,8 @@ const getSpellBackgroundColor = (subtype: CardSubtype) => {
       return CardMainFrameColor.FUSION;
     case CardSubtype.REVENGE:
       return CardMainFrameColor.REVENGE;
+    case CardSubtype.ROYAL:
+      return CardEffectFrameColor.ROYAL;
   }
   return CardMainFrameColor.SPELL;
 }
@@ -161,6 +163,8 @@ const getSpellEffectFrameColor = (cardData: CardData) => {
       return CardEffectFrameColor.FUSION;
     case CardSubtype.REVENGE:
       return CardEffectFrameColor.REVENGE;
+    case CardSubtype.ROYAL:
+      return CardEffectFrameColor.ROYAL;
   }
   return CardEffectFrameColor.SPELL;
 }
