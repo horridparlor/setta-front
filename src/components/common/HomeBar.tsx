@@ -132,6 +132,11 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText onClick={() => navigateTo(AppPage.UserManagement)} primary={t('USER_MANAGEMENT')} />
                 </ListItemButton>
+                <ListItemButton
+                  onClick={() => navigateTo(AppPage.UserRoles)}
+                >
+                  <ListItemText primary={t('USER_ROLES')} />
+                </ListItemButton>
                 <ListItemButton>
                   <ListItemIcon>
                     <ManageAccountsIcon />
