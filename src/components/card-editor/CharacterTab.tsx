@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Box, Tab, Tabs, TextField, Typography, FormControl, InputLabel, Select, MenuItem, Button, SelectChangeEvent } from '@mui/material';
+import React, { useState, ChangeEvent, useEffect } from 'react';
+import { Box, Tab, Tabs, TextField, Typography, FormControl, InputLabel, Select, MenuItem, Button, IconButton, InputAdornment } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 interface CharacterTabProps {
   updatePromptValues: (values: Partial<any>) => void;
@@ -8,10 +10,10 @@ interface CharacterTabProps {
 const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   const [characterFields, setCharacterFields] = useState({
     characterName: '',
-    race: 'Human', 
-    gender: 'Male', 
-    age: 'Young', 
-    Charactertype: 'Main', 
+    race: 'Human',
+    gender: 'Male',
+    age: 'Young',
+    Charactertype: 'Main',
     appearance: '',
     tool: '',
     action: '',
@@ -19,12 +21,22 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     who: '',
   });
 
+  // Use useEffect to transmit the default values to the promptbox
+  useEffect(() => {
+    updatePromptValues(characterFields);
+  }, []);
+
   const handleInputChange = (field: string) => (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
-    const newValue = event.target.value;
+    const newValue = event.target.value as string;
     setCharacterFields(prevFields => ({ ...prevFields, [field]: newValue }));
     updatePromptValues({ [field]: newValue });
+  };
+
+  const clearField = (field: string) => () => {
+    setCharacterFields(prevFields => ({ ...prevFields, [field]: '' }));
+    updatePromptValues({ [field]: '' });
   };
 
   const [characterSubTabId, setCharacterSubTabId] = useState(0);
@@ -69,6 +81,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             placeholder="Search..."
             value={characterFields.search}
             onChange={handleInputChange('search')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={clearField('search')}>
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
 
@@ -80,6 +101,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             label="Who"
             value={characterFields.who}
             onChange={handleInputChange('who')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={clearField('who')}>
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             fullWidth
@@ -88,6 +118,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             label="Name"
             value={characterFields.characterName}
             onChange={handleInputChange('characterName')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={clearField('characterName')}>
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
 
@@ -99,6 +138,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             placeholder="What do you look like?"
             value={characterFields.appearance}
             onChange={handleInputChange('appearance')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={clearField('appearance')}>
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
 
@@ -166,6 +214,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             label="Tool"
             value={characterFields.tool}
             onChange={handleInputChange('tool')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={clearField('tool')}>
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             fullWidth
@@ -174,6 +231,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             label="Action"
             value={characterFields.action}
             onChange={handleInputChange('action')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={clearField('action')}>
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
       </Box>

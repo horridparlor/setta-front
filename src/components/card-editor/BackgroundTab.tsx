@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Box, TextField, Typography, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import { Box, TextField, Typography, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, IconButton, InputAdornment } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 import { CardType } from '../../types/card';
 
 interface BackgroundTabProps {
@@ -10,7 +11,12 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
   const [backgroundDescription, setBackgroundDescription] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string | undefined>(CardType.MONSTER);
 
-  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Transmit the default background type to the promptbox
+  useEffect(() => {
+    updatePromptValues({ backgroundType: selectedType });
+  }, [selectedType, updatePromptValues]);
+
+  const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newDescription = event.target.value;
     setBackgroundDescription(newDescription);
     updatePromptValues({ backgroundDescription: newDescription });
@@ -20,6 +26,11 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
     const newType = event.target.value as string;
     setSelectedType(newType);
     updatePromptValues({ backgroundType: newType });
+  };
+
+  const clearField = () => {
+    setBackgroundDescription('');
+    updatePromptValues({ backgroundDescription: '' });
   };
 
   return (
@@ -32,6 +43,15 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
           placeholder="What's on your background?"
           value={backgroundDescription}
           onChange={handleDescriptionChange}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={clearField}>
+                  <ClearIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
       </Box>
 
@@ -45,7 +65,7 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
             onChange={handleTypeChange}
           >
             {Object.values(CardType)
-              .filter(value => value !== CardType.NONE) 
+              .filter(value => value !== CardType.NONE)
               .map((cardType) => (
                 <MenuItem key={cardType} value={cardType}>
                   {cardType}

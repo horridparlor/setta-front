@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography, TextField } from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 
 interface SpecialEffectsTabProps {
   updatePromptValues: (values: Partial<{ effect: string }>) => void;
@@ -14,6 +15,11 @@ const SpecialEffectsTab: React.FC<SpecialEffectsTabProps> = ({ updatePromptValue
     updatePromptValues({ effect: newEffect });
   };
 
+  const handleClearEffect = () => {
+    setEffect('');
+    updatePromptValues({ effect: '' });
+  };
+
   return (
     <Box>
       <Typography variant="h6">Special Effects</Typography>
@@ -25,6 +31,15 @@ const SpecialEffectsTab: React.FC<SpecialEffectsTabProps> = ({ updatePromptValue
           placeholder="Describe the special effect you wish to add..."
           value={effect}
           onChange={handleEffectChange}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={handleClearEffect}>
+                  <ClearIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
       </Box>
     </Box>
