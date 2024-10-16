@@ -29,9 +29,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoleCreate'
+                $ref: '#/components/schemas/Role'
       tags:
         - planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleCreate'
   /roles/{roleId}:
     get:
       operationId: Roles_getRole
@@ -57,6 +63,30 @@ paths:
                 $ref: '#/components/schemas/NotFoundError'
       tags:
         - planned
+    post:
+      operationId: Roles_updateRole
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+      tags:
+        - planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleUpdate'
     delete:
       operationId: Roles_deleteRole
       parameters:
@@ -137,9 +167,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserCreate'
+                $ref: '#/components/schemas/User'
       tags:
         - planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
   /users/{userId}:
     get:
       operationId: Users_getUser
@@ -175,14 +211,20 @@ paths:
             type: integer
             format: int32
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '200':
+          description: The request has succeeded.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserUpdate'
+                $ref: '#/components/schemas/User'
       tags:
         - planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
     delete:
       operationId: Users_deleteUser
       parameters:
@@ -256,6 +298,15 @@ components:
       required:
         - name
         - rights
+      properties:
+        name:
+          type: string
+        rights:
+          type: array
+          items:
+            $ref: '#/components/schemas/right'
+    RoleUpdate:
+      type: object
       properties:
         name:
           type: string

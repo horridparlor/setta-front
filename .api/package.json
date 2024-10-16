@@ -2,6 +2,9 @@
   "name": "apispec",
   "version": "0.1.0",
   "type": "module",
+  "scripts": {
+    "compile": "npx tsp compile ."
+  },
   "peerDependencies": {
     "@typespec/compiler": "latest",
     "@typespec/http": "latest",

@@ -52,8 +52,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
     Cookies.set(
       AuthCookie.SYSTEM_USER,
       JSON.stringify({
-        firstName: responseData.firstName,
-        lastName: responseData.lastName,
+        firstName: responseData.firstname,
+        lastName: responseData.lastname,
         isAdmin: responseData.isAdmin,
       }),
       { expires: 7 }

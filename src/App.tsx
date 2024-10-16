@@ -8,7 +8,11 @@ import useExpansions from './hooks/useExpansions';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CardCataloguePage from './pages/card-catalogue';
 import CardEditorPage from './pages/card-editor';
+<<<<<<< HEAD
 import UserManagamentPage from './pages/user-management';
+=======
+import CardExpansionsPage from "./pages/card-expansions";
+>>>>>>> 8eeaa74adf4fc7105f01400254240eb259a79ca5
 
 export default function App() {
   const { expansions, fetchExpansions } = useExpansions();
@@ -42,10 +46,17 @@ export default function App() {
             path="/card-editor/:cardId"
             element={<CardEditorPage cards={cards} refetch={refetch} />}
           />
+<<<<<<< HEAD
           <Route
             path="/user-management"
             element={<UserManagamentPage refetch={refetch}/>}
           />
+=======
+            <Route
+                path="/card-expansions"
+                element={<CardExpansionsPage cards={cards} expansions={expansions} refetch={refetch} />}
+            />
+>>>>>>> 8eeaa74adf4fc7105f01400254240eb259a79ca5
         </Routes>
       </BrowserRouter>
       <ToastContainer position="bottom-right" autoClose={2000} />
