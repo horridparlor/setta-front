@@ -1,23 +1,25 @@
-import {forwardRef, useImperativeHandle, useState} from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  AppBar,
   Box,
   Divider,
-  Drawer,
+  ListItemButton,
+  AppBar, Toolbar,
+  Typography,
   IconButton,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   Toolbar,
   Typography,
+  Drawer,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
 } from '@mui/material';
-import {AppPage, isAppPage} from '../../types/navigation';
+import { AppPage, isAppPage } from '../../types/navigation';
 import LoginModal from './LoginModal';
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -25,11 +27,11 @@ import PeopleIcon from '@mui/icons-material/People';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import LoginIcon from '@mui/icons-material/Login';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import LanguageSelect from './LanguageSelect';
 import LanguageIcon from '@mui/icons-material/Language';
-import {ExpandMore, FormatPaint, Inventory} from "@mui/icons-material";
-import {getUsername} from "../../types/cookie.ts";
+import { ExpandMore, FormatPaint, Inventory } from "@mui/icons-material";
+import { getUsername } from "../../types/cookie.ts";
 
 
 interface HomeBarProps {
@@ -43,7 +45,7 @@ export interface HomeBarRef {
 
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
   ({ refetch, onLeavePage }, ref) => {
-    const { t } = useTranslation(); 
+    const { t } = useTranslation();
     const [isLoginOpen, setLoginOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -84,12 +86,12 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
         <AppBar position="static">
           <Toolbar>
             <IconButton color="inherit" sx={{ mr: 2 }} onClick={() => setOpen(true)}>
-              <MenuIcon/>
+              <MenuIcon />
             </IconButton>
             <Drawer open={open}>
               <Box sx={{ p: 2 }}>
                 <IconButton onClick={() => setOpen(false)}>
-                  <CloseIcon/>
+                  <CloseIcon />
                 </IconButton>
                 <Divider />
                 <ListItemButton
@@ -101,7 +103,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   <ListItemText primary={t('PAGE_NAME.CARD_CATALOGUE')} />
                 </ListItemButton>
                 <ListItemButton
-                    onClick={() => navigateTo(AppPage.CardEditor)}
+                  onClick={() => navigateTo(AppPage.CardEditor)}
                 >
                   <ListItemIcon >
                     <AddToPhotosIcon />
@@ -128,7 +130,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
-                  <ListItemText primary={t('USER_MANAGEMENT')} />
+                  <ListItemText onClick={() => navigateTo(AppPage.UserManagement)} primary={t('USER_MANAGEMENT')} />
                 </ListItemButton>
                 <ListItemButton>
                   <ListItemIcon>
@@ -136,7 +138,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PROFILE')} />
                 </ListItemButton>
-                <LanguageIcon sx={{ ml: 2, mr:3 }}/>
+                <LanguageIcon sx={{ ml: 2, mr: 3 }} />
                 <LanguageSelect />
               </Box>
             </Drawer>
@@ -153,13 +155,13 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             </Typography>
 
             <Button
-                variant="contained"
+              variant="contained"
               color="info"
               startIcon={<LoginIcon />}
               onClick={() => setLoginOpen(true)}
               sx={{ marginLeft: '0.4rem' }}
             >
-              {t('LOGIN')} 
+              {t('LOGIN')}
             </Button>
             <LoginModal
               open={isLoginOpen}
