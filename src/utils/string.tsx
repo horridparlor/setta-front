@@ -14,7 +14,7 @@ export const normalizeName = (cardData: CardData | any): string => {
   return name
     .replace(/^({i}The)/i, '{i}')
     .replace(/{[^}]*}/g, '')
-    .replace(/[^a-zA-Z0-9\s-'!?–,:áäéö$[\]]/g, '');
+    .replace(/[^a-zA-Z0-9\s-'!?–,.:áäéö$[\]]/g, '');
 };
 
 export const serializeName = (cardData: CardData | any): string => {
@@ -23,7 +23,7 @@ export const serializeName = (cardData: CardData | any): string => {
     .replace(/é|€/g, 'e')
     .replace(/ó|ö/g, 'ö')
     .replace(/ś|\$/g, 's')
-    .replace(/-|'|!|\?|–|,|:|\[|\]/g, '')
+    .replace(/-|'|!|\?|–|,|\.|:|\[|\]/g, '')
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
