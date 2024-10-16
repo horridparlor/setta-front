@@ -3,18 +3,19 @@ import { Typography } from '@mui/material';
 import { CardData, getOwnerName } from '../../../types/card';
 import { getFontSize } from '../../../utils/fonts';
 import { TextColor } from '../../../types/color';
-import useExpansions from '../../../hooks/useExpansions';
+import {CardExpansion} from "../../../types/expansion.ts";
 
 interface CopyrightIndicatorProps {
   scale: number;
   cardData: CardData;
+  expansions: Array<CardExpansion>
 }
 
 const CopyrightIndicator: React.FC<CopyrightIndicatorProps> = ({
   scale,
   cardData,
+  expansions
 }) => {
-  const { expansions } = useExpansions();
   return (
     <Typography
       variant="h6"

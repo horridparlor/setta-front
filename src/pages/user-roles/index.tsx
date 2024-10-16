@@ -16,7 +16,7 @@ import AccessRightsForm from '../../components/common/AccessRightsForm'
 import { useTranslation } from 'react-i18next'
 
 interface UserRolesPageProps {
-  refetch: () => Promise<void>
+  refetch: () => Promise<void>;
 }
 
 const UserRolesPage = (props: UserRolesPageProps) => {
@@ -45,16 +45,18 @@ const UserRolesPage = (props: UserRolesPageProps) => {
         <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
       <h1 style={{ marginLeft: 40 }}>
-        {isEditMode ? t('EDIT ROLE'): t('CREATE NEW ROLE')}
+        {isEditMode ? t('EDIT_ROLE'): t('CREATE_NEW_ROLE')}
       </h1>
       <AccessRightsForm/>
       {isEditMode && (
         <Box 
-          display={'flex'} 
-          flexDirection={'column'} 
-          justifyContent={'center'} 
-          alignItems="center" 
-          sx={{marginTop:10}}
+          sx={{
+            display:'flex',
+            flexDirection:'column',
+            justifyContent:'center',
+            alignItems:'center', 
+            marginTop:10
+          }}
         >
           <Button 
             variant='contained'
@@ -62,42 +64,44 @@ const UserRolesPage = (props: UserRolesPageProps) => {
             color="error" 
             endIcon={<DeleteIcon />}
           >
-            {t('DELETE USER ROLE')}
+            {t('DELETE_USER_ROLE')}
           </Button>
           <Dialog open={open} onClose={() => setOpen(false)}>
             <DialogTitle>
-              {t('ARE YOU SURE')}
+              {t('ARE_YOU_SURE')}
             </DialogTitle>
             <DialogContent>
               <Box 
-                display="flex" 
-                flexDirection="column" 
-                alignItems="center" 
-                justifyContent="center"
+                sx={{
+                  display:'flex',
+                  flexDirection:'column',
+                  justifyContent:'center',
+                  alignItems:'center'
+                }}
               >
                 <WarningIcon color="error" />
                 <DialogContentText sx={{ marginTop: 2 }}>
-                  {t('THIS USER ROLE WILL BE DELETED PERMANENTLY AND CANNOT BE RECOVERED')}
+                  {t('THIS_USER_ROLE_WILL_BE_DELETED_PERMANENTLY_AND_CANNOT_BE_RECOVERED')}
                 </DialogContentText>
               </Box>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpen(false)}>{t('CANCEL')}</Button>
-              <Button onClick={() => setOpen(false)} color="error">{t('DELETE ROLE')}</Button>
+              <Button onClick={() => setOpen(false)} color="error">{t('DELETE_ROLE')}</Button>
             </DialogActions>
           </Dialog>
           <Typography variant='body2' >
-            {t('DELETING A USER ROLE IS AN IRREVERSIBLE OPERATION')}
+            {t('DELETING_A_USER_ROLE_IS_AN_IRREVERSIBLE_OPERATION')}
           </Typography>
           <Typography variant='body2' >
-            {t('ONCE THE ROLE HAS BEEN DELETED, IT CANNOT BE RECOVERED')}
+            {t('ONCE_THE_ROLE_HAS_BEEN_DELETED_IT_CANNOT_BE_RECOVERED')}
           </Typography>
         </Box>
       )}
       <Button onClick={handleToggleMode}>
         {isEditMode ? 'Switch to create mode' : 'Switch to edit mode'}
       </Button>
-    </Box>   
+      </Box>  
   )  
 }
 

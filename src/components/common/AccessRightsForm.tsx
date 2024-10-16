@@ -17,11 +17,11 @@ import {
 import { useTranslation } from 'react-i18next';
 
 const checkboxLabels = [
-  'CREATE NEW USER ACCOUNTS', 'CREATE NEW CARDS', 'TRIAL IMAGE GENERATION',
-  'EDIT OTHER USER ACCOUNTS', 'EDIT CARDS NOT MADE BY YOU', 'MONTHLY TOKEN ACCESS',
-  'ACTIVATE/DEACTIVATE USERS', 'DELETE CARDS', 'UNLIMITED IMAGE GENERATION',
-  'ACCEPT TOKEN REQUESTS', 'CREATE EXPANSIONS', 'DELETE USER ACCOUNTS',
-  'CREATE TOKEN REQUESTS', 'DELETE EXPANSIONS', 'PUBLISH AND PUSH CONTENT'
+  'CREATE_NEW_USER_ACCOUNTS', 'CREATE_NEW_CARDS', 'TRIAL_IMAGE_GENERATION',
+  'EDIT_OTHER_USER_ACCOUNTS', 'EDIT_CARDS_NOT_MADE_BY_YOU', 'MONTHLY_TOKEN_ACCESS',
+  'ACTIVATE/DEACTIVATE_USERS', 'DELETE_CARDS', 'UNLIMITED_IMAGE_GENERATION',
+  'ACCEPT_TOKEN_REQUESTS', 'CREATE_EXPANSIONS', 'DELETE_USER_ACCOUNTS',
+  'CREATE_TOKEN_REQUESTS', 'DELETE_EXPANSIONS', 'PUBLISH_AND_PUSH_CONTENT'
 ]
 type CheckboxState = {
   [label: string]: boolean
@@ -63,22 +63,28 @@ const AccessRightsForm = () => {
     e.preventDefault()
   }
   return (
-      <Box display={'flex'} justifyContent={'center'} sx={{marginTop:10}}>
+      <Box 
+        sx={{
+        display:'flex',
+        justifyContent:'center',
+        marginTop:10
+        }}
+      >
         <form onSubmit={handleSubmit}>
-          <Box display='flex' gap={2}>
+          <Box sx={{display:'flex', gap:2}}>
             <TextField
               fullWidth
               required
-              label={t('NAME OF THE ROLE')}
+              label={t('NAME_OF_THE_ROLE')}
               value={roleName}
               onChange={handleRoleNameChange}
             />
             <FormControl fullWidth>
-              <InputLabel>{t('COPY ACCESS RIGHTS FROM AN EXISTING ROLE')}</InputLabel>
+              <InputLabel>{t('COPY_ACCESS_RIGHTS_FROM_AN_EXISTING_ROLE')}</InputLabel>
               <Select
                 value={role}
                 onChange={handleRoleChange}
-                label={t('COPY ACCESS RIGHTS FROM AN EXISTING ROLE')}
+                label={t('COPY_ACCESS_RIGHTS_FROM_AN_EXISTING_ROLE')}
               >
                 <MenuItem value='Superadmin'>
                   {t('SUPERADMIN')}
@@ -95,7 +101,7 @@ const AccessRightsForm = () => {
               </Select>
             </FormControl>
           </Box>
-          <h2>{t('SELECT ACCESS RIGHTS')}</h2>
+          <h2>{t('SELECT_ACCESS_RIGHTS')}</h2>
             <FormControl>
               <FormGroup>
                 <FormControlLabel
@@ -105,10 +111,16 @@ const AccessRightsForm = () => {
                       onChange={handleSelectAllChange}
                     />
                   }
-                  label={t('SELECT ALL')}
+                  label={t('SELECT_ALL')}
                 />
                 <Divider/>
-                <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={1}>                  
+                <Box 
+                  sx={{
+                  display:'grid' ,
+                  gridTemplateColumns:'repeat(3, 1fr)', 
+                  gap:1
+                  }}
+                >                  
                   {checkboxLabels.map((label) => (
                     <FormControlLabel
                       key={label}
@@ -124,7 +136,7 @@ const AccessRightsForm = () => {
                 </Box>
                 <Divider/>
               </FormGroup>
-                <Grid2 container justifyContent='flex-end' sx={{marginTop: 2}}>
+                <Grid2 container sx={{justifyContent:'flex-end', marginTop: 2}}>
                   <Button variant='outlined' sx={{marginRight: 2}}>{t('CANCEL')}</Button>
                   <Button type='submit' variant='contained'>{t('SAVE')}</Button>
                 </Grid2>
