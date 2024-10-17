@@ -1,14 +1,16 @@
 import {useRef} from 'react';
 import { Box } from '@mui/material';
 import {CardData} from "../../types/card.tsx";
+import {CardExpansion} from "../../types/expansion.ts";
 import HomeBar, {HomeBarRef} from "../../components/common/HomeBar.tsx";
 
-interface TemplatePageProps {
+interface CardExpansionsPageProps {
   cards: Array<CardData>;
+  expansions: Array<CardExpansion>;
   refetch: () => Promise<void>;
 }
 
-const TemplatePage = (props: TemplatePageProps) => {
+const CardExpansionsPage = (props: CardExpansionsPageProps) => {
   const {refetch} = props;
   const homeBarRef = useRef<HomeBarRef>(null);
 
@@ -39,4 +41,4 @@ const TemplatePage = (props: TemplatePageProps) => {
   );
 };
 
-export default TemplatePage;
+export default CardExpansionsPage;

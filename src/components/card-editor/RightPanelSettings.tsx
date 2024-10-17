@@ -14,6 +14,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import GenerateTab from './GenerateTab';
 import {
   BACKROW_CARD_TYPES,
   canEditCard,
@@ -198,6 +199,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   const STATS_TAB = 0;
   const { t } = useTranslation(); 
   const EFFECTS_TAB = 1;
+  const GENERATE_TAB = 2;
   const [tabId, setTabId] = useState<number>(0);
   const countsAsSelector = () => {
     const countsAsOptions = Object.values(SpecialCountsAs).map(countsAs => {
@@ -1202,7 +1204,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     justReturn: boolean = false
   ) => {
     const chainEffect = { ...getEffectsChainEffect(prevCard), amount: amount };
-    console.log(777, chainEffect);
     return handleChainEffectChange(chainEffect, prevCard, justReturn);
   };
 
@@ -2719,6 +2720,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
       >
         <Tab label={t('TAB_STATS')} />
         <Tab label={t('TAB_EFFECTS')} onClick={() => fixEffects()} />
+        <Tab label="Generate" /> 
       </Tabs>
       <Box sx={{ display: tabId === STATS_TAB ? 'block' : 'none' }}>
         <Box sx={rowContainerStyle}>
@@ -3108,15 +3110,15 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
               onChange={handleSelectChange('expansionId')}
             >
               {expansions
-                .filter(
-                  expansion =>
-                    expansion.id === cardData.expansionId ||
-                    expansion.ownerId === getUserId() ||
-                    expansion.ownerId === EXPANSION_NO_OWNER
-                )
-                .sort((expansionA, expansionB) =>
-                  expansionA.name.localeCompare(expansionB.name)
-                )
+                  .filter(
+                      expansion =>
+                          expansion.id === cardData.expansionId ||
+                          (!expansion.isReleased &&
+                          (
+                              expansion.ownerId === getUserId() ||
+                              expansion.ownerId === EXPANSION_NO_OWNER
+                          ))
+                  )
                 .map(expansion => (
                   <MenuItem key={expansion.id} value={expansion.id}>
                     {expansion.name}
@@ -3128,6 +3130,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
       </Box>
       <Box sx={{ display: tabId === EFFECTS_TAB ? 'block' : 'none' }}>
         {getEffectsTab()}
+      </Box>
+      <Box sx={{ display: tabId === GENERATE_TAB ? 'block' : 'none' }}>
+        <GenerateTab />
       </Box>
       <Box sx={{ ...rowContainerStyle, marginBottom: 0 }}>
         <Button
@@ -3195,6 +3200,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         {t('COPY')}
         </Button>
       </Box>
+
     </Box>
   );
 };
