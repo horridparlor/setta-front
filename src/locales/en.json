@@ -61,7 +61,8 @@
     "CARD_CATALOGUE": "Card Catalogue",
     "CARD_EDITOR": "Card Editor",
     "CARD_EXPANSIONS": "Card Expansions",
-    "RELEASING": "Releasing"
+    "RELEASING": "Releasing",
+    "CREATE_NEW_USER": "Create a new user"
   },
   "PASSWORD": "Password",
   "PASSWORDS_DO_NOT_MATCH": "Passwords do not match",

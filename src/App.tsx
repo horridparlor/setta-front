@@ -9,7 +9,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CardCataloguePage from './pages/card-catalogue';
 import CardEditorPage from './pages/card-editor';
 import CardExpansionsPage from "./pages/card-expansions";
-import UserCreation from './components/user-management/create-user';
 import UserManagementPage from './pages/user-management';
 import UserRolesPage from './pages/user-roles';
 
@@ -48,6 +47,14 @@ export default function App() {
           <Route
             path="/card-expansions"
             element={<CardExpansionsPage cards={cards} expansions={expansions} refetch={refetch} />}
+          />
+          <Route
+            path="/user-roles"
+            element={<UserRolesPage refetch={refetch} />}
+          />
+          <Route
+            path="/user-management"
+            element={<UserManagementPage refetch={refetch} />}
           />
         </Routes>
       </BrowserRouter>

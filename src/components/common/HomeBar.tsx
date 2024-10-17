@@ -5,12 +5,9 @@ import {
   Divider,
   ListItemButton,
   AppBar, Toolbar,
-  Typography,
   IconButton,
-  ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar,
   Typography,
   Drawer,
   Accordion,
@@ -76,6 +73,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           return t('PAGE_NAME.CARD_EDITOR');
         case AppPage.CardExpansions:
           return t('PAGE_NAME.CARD_EXPANSIONS');
+        case AppPage.UserManagement:
+          return t('PAGE_NAME.CREATE_NEW_USER')
         case AppPage.Error:
           return t('ERROR') + ': ' + pageLocation;
       }
