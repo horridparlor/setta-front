@@ -1,8 +1,8 @@
-import {useRef} from 'react';
+import { useRef } from 'react';
 import { Box } from '@mui/material';
-import {CardData} from "../../types/card.tsx";
-import {CardExpansion} from "../../types/expansion.ts";
-import HomeBar, {HomeBarRef} from "../../components/common/HomeBar.tsx";
+import { CardData } from '../../types/card.tsx';
+import { CardExpansion } from '../../types/expansion.ts';
+import HomeBar, { HomeBarRef } from '../../components/common/HomeBar.tsx';
 
 interface CardExpansionsPageProps {
   cards: Array<CardData>;
@@ -11,7 +11,7 @@ interface CardExpansionsPageProps {
 }
 
 const CardExpansionsPage = (props: CardExpansionsPageProps) => {
-  const {refetch} = props;
+  const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
 
   return (
@@ -35,8 +35,7 @@ const CardExpansionsPage = (props: CardExpansionsPageProps) => {
           alignItems: 'center',
           overflow: 'auto',
         }}
-      >
-      </Box>
+      ></Box>
     </Box>
   );
 };

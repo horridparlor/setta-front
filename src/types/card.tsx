@@ -156,19 +156,18 @@ export enum StatType {
 
 export const isExtraDeckCard = (cardData: CardData) => {
   return EXTRA_DECK_SUBTYPES.includes(cardData.subtype);
-
 };
 
 export const hasCostText = (cardData: CardData) => {
   switch (cardData.cardType) {
     case CardType.MONSTER:
       return (
-          isPendulumCard(cardData) ||
-          !(
-              (cardData.subtype !== CardSubtype.NORMAL &&
-                  cardData.flavourText.length > 0) ||
-              cardData.subtype === CardSubtype.NORMAL
-          )
+        isPendulumCard(cardData) ||
+        !(
+          (cardData.subtype !== CardSubtype.NORMAL &&
+            cardData.flavourText.length > 0) ||
+          cardData.subtype === CardSubtype.NORMAL
+        )
       );
     case CardType.SPELL:
       return !isExtraDeckCard(cardData);
@@ -276,7 +275,12 @@ const getActiveSubtypes = (cardType: CardType) => {
     case CardType.MONSTER:
       return MONSTER_SUBTYPES;
     case CardType.SPELL:
-      return [CardSubtype.NORMAL, CardSubtype.FUSION, CardSubtype.REVENGE, CardSubtype.ROYAL];
+      return [
+        CardSubtype.NORMAL,
+        CardSubtype.FUSION,
+        CardSubtype.REVENGE,
+        CardSubtype.ROYAL,
+      ];
     case CardType.TRAP:
       return [CardSubtype.NORMAL, CardSubtype.KILLER_MOVE];
     case CardType.BACKROW:

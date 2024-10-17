@@ -3,7 +3,7 @@ export enum AppPage {
   CardEditor = '/card-editor',
   CardExpansions = '/card-expansions',
   UserRoles = '/user-roles',
-  Error = '/error'
+  Error = '/error',
 }
 
 export const isAppPage = (value: string): value is AppPage => {

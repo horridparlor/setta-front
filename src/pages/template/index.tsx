@@ -1,7 +1,7 @@
-import {useRef} from 'react';
+import { useRef } from 'react';
 import { Box } from '@mui/material';
-import {CardData} from "../../types/card.tsx";
-import HomeBar, {HomeBarRef} from "../../components/common/HomeBar.tsx";
+import { CardData } from '../../types/card.tsx';
+import HomeBar, { HomeBarRef } from '../../components/common/HomeBar.tsx';
 
 interface TemplatePageProps {
   cards: Array<CardData>;
@@ -9,7 +9,7 @@ interface TemplatePageProps {
 }
 
 const TemplatePage = (props: TemplatePageProps) => {
-  const {refetch} = props;
+  const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
 
   return (
@@ -33,8 +33,7 @@ const TemplatePage = (props: TemplatePageProps) => {
           alignItems: 'center',
           overflow: 'auto',
         }}
-      >
-      </Box>
+      ></Box>
     </Box>
   );
 };

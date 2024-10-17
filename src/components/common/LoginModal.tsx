@@ -18,7 +18,7 @@ import {
   UserEndpoint,
 } from '../../types/api';
 import { AuthCookie } from '../../types/cookie';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
 
 interface LoginModalProps {
   open: boolean;
@@ -27,7 +27,7 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
@@ -58,14 +58,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
       }),
       { expires: 7 }
     );
-    toast.success(t('AUTHENTICATED', { firstName: responseData.firstName, lastName: responseData.lastName })); 
+    toast.success(
+      t('AUTHENTICATED', {
+        firstName: responseData.firstName,
+        lastName: responseData.lastName,
+      })
+    );
     await refetch();
     onClose();
   };
 
   const handleChangePassword = async () => {
     if (newPassword !== retypeNewPassword) {
-      toast.error(t('PASSWORDS_DO_NOT_MATCH')); 
+      toast.error(t('PASSWORDS_DO_NOT_MATCH'));
       return;
     }
     const data = {
@@ -85,20 +90,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
       showError(responseData);
       return;
     }
-    toast.success(t('PASSWORD_CHANGED_SUCCESS')); 
+    toast.success(t('PASSWORD_CHANGED_SUCCESS'));
     setChangePasswordOpen(false);
   };
 
   return (
     <>
       <Dialog open={open} onClose={onClose}>
-        <DialogTitle>{t('LOGIN_TITLE')}</DialogTitle> 
+        <DialogTitle>{t('LOGIN_TITLE')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="username"
-            label={t('USERNAME')} 
+            label={t('USERNAME')}
             type="text"
             fullWidth
             variant="outlined"
@@ -109,7 +114,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
           <TextField
             margin="dense"
             id="password"
-            label={t('PASSWORD')} 
+            label={t('PASSWORD')}
             type="password"
             fullWidth
             variant="outlined"
@@ -121,12 +126,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
             onClick={() => setChangePasswordOpen(true)}
             sx={{ cursor: 'pointer', marginTop: 2 }}
           >
-            {t('CHANGE_PASSWORD')} 
+            {t('CHANGE_PASSWORD')}
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>{t('CANCEL')}</Button> 
-          <Button onClick={handleLogin}>{t('LOGIN')}</Button> 
+          <Button onClick={onClose}>{t('CANCEL')}</Button>
+          <Button onClick={handleLogin}>{t('LOGIN')}</Button>
         </DialogActions>
       </Dialog>
 
@@ -134,13 +139,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
         open={changePasswordOpen}
         onClose={() => setChangePasswordOpen(false)}
       >
-        <DialogTitle>{t('CHANGE_PASSWORD')}</DialogTitle> 
+        <DialogTitle>{t('CHANGE_PASSWORD')}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="newPassword"
-            label={t('NEW_PASSWORD')} 
+            label={t('NEW_PASSWORD')}
             type="password"
             fullWidth
             variant="outlined"
@@ -151,7 +156,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
           <TextField
             margin="dense"
             id="retypeNewPassword"
-            label={t('RETYPE_NEW_PASSWORD')} 
+            label={t('RETYPE_NEW_PASSWORD')}
             type="password"
             fullWidth
             variant="outlined"
@@ -160,8 +165,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setChangePasswordOpen(false)}>{t('CANCEL')}</Button> 
-          <Button onClick={handleChangePassword}>{t('UPDATE_PASSWORD')}</Button> 
+          <Button onClick={() => setChangePasswordOpen(false)}>
+            {t('CANCEL')}
+          </Button>
+          <Button onClick={handleChangePassword}>{t('UPDATE_PASSWORD')}</Button>
         </DialogActions>
       </Dialog>
     </>
