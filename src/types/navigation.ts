@@ -2,6 +2,7 @@ export enum AppPage {
   CardCatalogue = '/card-catalogue',
   CardEditor = '/card-editor',
   CardExpansions = '/card-expansions',
+  UserRoles = '/user-roles',
   Error = '/error'
 }
 
