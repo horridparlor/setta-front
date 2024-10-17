@@ -111,6 +111,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_EDITOR')} />
                 </ListItemButton>
+
                 <Accordion>
                   <AccordionSummary expandIcon={<ExpandMore />}>
                     <ListItemIcon>
@@ -118,7 +119,6 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     </ListItemIcon>
                     <ListItemText primary={t('PAGE_NAME.RELEASING')} />
                   </AccordionSummary>
-
                   <AccordionDetails>
                     <ListItemButton onClick={() => navigateTo(AppPage.CardExpansions)}>
                       <ListItemIcon>
@@ -128,9 +128,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     </ListItemButton>
                   </AccordionDetails>
                 </Accordion>
-                <ListItemButton
-                  onClick={() => navigateTo(AppPage.UserManagement)}
-                >
+
+                <ListItemButton onClick={() => navigateTo(AppPage.UserManagement)}>
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>

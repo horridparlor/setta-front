@@ -9,7 +9,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CardCataloguePage from './pages/card-catalogue';
 import CardEditorPage from './pages/card-editor';
 import CardExpansionsPage from "./pages/card-expansions";
->>>>>>> 8eeaa74adf4fc7105f01400254240eb259a79ca5
+import UserManagementPage from './pages/user-management';
 
 export default function App() {
   const { expansions, fetchExpansions } = useExpansions();
