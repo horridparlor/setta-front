@@ -3110,12 +3110,15 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
               onChange={handleSelectChange('expansionId')}
             >
               {expansions
-                .filter(
-                  expansion =>
-                    expansion.id === cardData.expansionId ||
-                    expansion.ownerId === getUserId() ||
-                    expansion.ownerId === EXPANSION_NO_OWNER
-                )
+                  .filter(
+                      expansion =>
+                          expansion.id === cardData.expansionId ||
+                          (!expansion.isReleased &&
+                          (
+                              expansion.ownerId === getUserId() ||
+                              expansion.ownerId === EXPANSION_NO_OWNER
+                          ))
+                  )
                 .map(expansion => (
                   <MenuItem key={expansion.id} value={expansion.id}>
                     {expansion.name}
