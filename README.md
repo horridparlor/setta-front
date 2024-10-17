@@ -6,6 +6,14 @@
 
 Copy the contents of `.env.example` to `.env` and fill in missing environment variables.
 
+### VSCode extensions
+
+TSP for API docs
+https://marketplace.visualstudio.com/items?itemName=typespec.typespec-vscode
+
+Prettier for formatting
+https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+
 ### Develop
 
 ```
