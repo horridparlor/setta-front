@@ -22,7 +22,7 @@ import {
 } from '../../types/api';
 import useExpansions from '../../hooks/useExpansions';
 import {
-  encodeEffectsString,
+  encodeEffectsString, encodeNameString,
   normalizeName,
   serializeName,
 } from '../../utils/string';
@@ -281,7 +281,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
     const encodeEffects = () => {
       setCardData({
         ...cardData,
-        cardName: encodeEffectsString(cardData.cardName),
+        cardName: encodeNameString(cardData.cardName),
         costText: encodeEffectsString(cardData.costText),
         effectText: encodeEffectsString(cardData.effectText),
       });
