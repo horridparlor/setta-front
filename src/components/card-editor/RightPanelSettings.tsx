@@ -1208,7 +1208,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     justReturn: boolean = false
   ) => {
     const chainEffect = { ...getEffectsChainEffect(prevCard), amount: amount };
-    console.log(777, chainEffect);
     return handleChainEffectChange(chainEffect, prevCard, justReturn);
   };
 
@@ -3121,9 +3120,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                     expansion.id === cardData.expansionId ||
                     expansion.ownerId === getUserId() ||
                     expansion.ownerId === EXPANSION_NO_OWNER
-                )
-                .sort((expansionA, expansionB) =>
-                  expansionA.name.localeCompare(expansionB.name)
                 )
                 .map(expansion => (
                   <MenuItem key={expansion.id} value={expansion.id}>

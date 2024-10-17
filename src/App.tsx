@@ -8,6 +8,7 @@ import useExpansions from './hooks/useExpansions';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CardCataloguePage from './pages/card-catalogue';
 import CardEditorPage from './pages/card-editor';
+import CardExpansionsPage from "./pages/card-expansions";
 
 export default function App() {
   const { expansions, fetchExpansions } = useExpansions();
@@ -41,6 +42,10 @@ export default function App() {
             path="/card-editor/:cardId"
             element={<CardEditorPage cards={cards} refetch={refetch} />}
           />
+            <Route
+                path="/card-expansions"
+                element={<CardExpansionsPage cards={cards} expansions={expansions} refetch={refetch} />}
+            />
         </Routes>
       </BrowserRouter>
       <ToastContainer position="bottom-right" autoClose={2000} />

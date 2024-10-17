@@ -447,6 +447,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
               >
                 <CardPreviewer
                   cards={cards}
+                  expansions={expansions}
                   cardData={cardData}
                   scale={cardScale}
                 />
