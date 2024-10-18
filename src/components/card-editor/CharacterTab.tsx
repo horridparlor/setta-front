@@ -33,6 +33,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     Charactertype: 'Main', // Default value
     appearance: '',
     tool: '',
+    inherited_tool: false,
     action: '',
     search: '',
     who: '',
@@ -57,7 +58,11 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     setCharacterFields(prevFields => ({ ...prevFields, [field]: '' }));
     updatePromptValues({ [field]: '' });
   };
-
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.checked;
+    setCharacterFields(prevFields => ({ ...prevFields, inherited_tool: newValue }));
+    updatePromptValues({ inherited_tool: newValue });
+  };
   const [characterSubTabId, setCharacterSubTabId] = useState(0);
 
   const handleCharacterSubTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -252,7 +257,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="What kind of tool do you use?"
+            placeholder="What kind of tool do they use?"
             label="Tool"
             value={characterFields.tool}
             onChange={handleInputChange('tool')}
@@ -269,8 +274,8 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={characterFields.tool === ''}
-                onChange={handleInputChange('tool')}
+                checked={characterFields.inherited_tool}
+                onChange={handleCheckboxChange} // Toggle inherited_tool
                 name="situational"
                 color="primary"
               />
