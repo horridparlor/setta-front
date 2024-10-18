@@ -324,7 +324,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
             oldName={oldName}
           />
           {activeTab === 2 && (
-            <GenerateBox onReset={handleResetFields} />
+            <GenerateBox/>
           )}
         </Box>
         <RightPanelSettings

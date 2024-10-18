@@ -21,7 +21,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     who: '',
   });
 
-  // Use useEffect to transmit the default values to the promptbox
+  // Transmit the default values to the prompt box upon component load
   useEffect(() => {
     updatePromptValues(characterFields);
   }, []);
@@ -41,7 +41,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
 
   const [characterSubTabId, setCharacterSubTabId] = useState(0);
 
-  const handleCharacterSubTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleCharacterSubTabChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setCharacterSubTabId(newValue);
   };
 

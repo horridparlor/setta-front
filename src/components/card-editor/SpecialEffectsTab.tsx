@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 
@@ -8,6 +8,11 @@ interface SpecialEffectsTabProps {
 
 const SpecialEffectsTab: React.FC<SpecialEffectsTabProps> = ({ updatePromptValues }) => {
   const [effect, setEffect] = useState<string>('');
+
+  // Send the default effect value to the prompt box upon load
+  useEffect(() => {
+    updatePromptValues({ effect });
+  }, [effect, updatePromptValues]);
 
   const handleEffectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newEffect = event.target.value;

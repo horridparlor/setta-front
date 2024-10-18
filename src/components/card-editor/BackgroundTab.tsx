@@ -11,7 +11,7 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
   const [backgroundDescription, setBackgroundDescription] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string | undefined>(CardType.MONSTER);
 
-  // Transmit the default background type to the promptbox
+  // Update the default type to prompt when the component loads
   useEffect(() => {
     updatePromptValues({ backgroundType: selectedType });
   }, [selectedType, updatePromptValues]);
