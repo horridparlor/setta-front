@@ -5,6 +5,17 @@ info:
 tags:
   - name: planned
 paths:
+  /api/user/cards:
+    get:
+      operationId: Cards_listCards
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardsResponse'
   /roles:
     get:
       operationId: Roles_listRoles
@@ -143,7 +154,7 @@ paths:
                 $ref: '#/components/schemas/NotFoundError'
       tags:
         - planned
-  /users:
+  /user/users:
     get:
       operationId: Users_listUsers
       parameters: []
@@ -176,7 +187,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserCreate'
-  /users/{userId}:
+  /user/users/{userId}:
     get:
       operationId: Users_getUser
       parameters:
@@ -245,8 +256,263 @@ paths:
                 $ref: '#/components/schemas/NotFoundError'
       tags:
         - planned
+security:
+  - BearerAuth: []
 components:
   schemas:
+    Card:
+      type: object
+      required:
+        - cardId
+        - ownerId
+        - ownerFirstname
+        - ownerLastname
+        - cardName
+        - isAce
+        - cardClass
+        - cardType
+        - subtype
+        - supertype
+        - maximumPiece
+        - level
+        - atk
+        - def
+        - costText
+        - effectText
+        - flavourText
+        - artScale
+        - artXOffset
+        - artYOffset
+        - nameSize
+        - materialsSize
+        - effectsSize
+        - expansionId
+        - originalExpansionId
+        - createdAt
+        - updatedAt
+        - cardEffects
+      properties:
+        cardId:
+          type: integer
+          format: int32
+        ownerId:
+          type: integer
+          format: int32
+        errataOfId:
+          type: integer
+          format: int32
+        ownerFirstname:
+          type: string
+        ownerLastname:
+          type: string
+        cardName:
+          type: string
+        isAce:
+          type: boolean
+        cardClass:
+          type: string
+        cardType:
+          type: string
+        subtype:
+          type: string
+        supertype:
+          type: string
+        maximumPiece:
+          type: string
+        level:
+          type: integer
+          format: int32
+        atk:
+          type: integer
+          format: int32
+        def:
+          type: integer
+          format: int32
+        primaryMaterialId:
+          type: integer
+          format: int32
+        secondaryMaterialId:
+          type: integer
+          format: int32
+        tertiaryMaterialId:
+          type: integer
+          format: int32
+        materialsReminder:
+          type: string
+        costText:
+          type: string
+        effectText:
+          type: string
+        flavourText:
+          type: string
+        countsAsId:
+          type: integer
+          format: int32
+        artScale:
+          type: number
+          format: float
+        artXOffset:
+          type: number
+          format: float
+        artYOffset:
+          type: number
+          format: float
+        nameSize:
+          type: number
+          format: float
+        materialsSize:
+          type: number
+          format: float
+        effectsSize:
+          type: number
+          format: float
+        expansionId:
+          type: integer
+          format: int32
+        originalExpansionId:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        cardEffects:
+          $ref: '#/components/schemas/CardEffects'
+    CardEffects:
+      type: object
+      required:
+        - cost
+        - effect
+      properties:
+        cost:
+          $ref: '#/components/schemas/EffectsCost'
+        effect:
+          $ref: '#/components/schemas/EffectsEffect'
+    CardsResponse:
+      type: object
+      required:
+        - countOfCards
+        - cards
+      properties:
+        countOfCards:
+          type: integer
+          format: int32
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+    ChainEffect:
+      type: object
+      required:
+        - chainType
+      properties:
+        chainType:
+          type: string
+        subtype:
+          type: string
+        direction:
+          type: string
+        amount:
+          type: integer
+          format: int32
+    EffectsCost:
+      type: object
+      required:
+        - costType
+      properties:
+        prestate:
+          type: string
+        costType:
+          type: string
+        subtype:
+          type: string
+        supertype:
+          type: string
+        amount:
+          type: integer
+          format: int32
+        target:
+          $ref: '#/components/schemas/EffectsTarget'
+        payment:
+          $ref: '#/components/schemas/EffectsPayment'
+        postCount:
+          $ref: '#/components/schemas/PostCount'
+    EffectsCount:
+      type: object
+      required:
+        - multiplier
+      properties:
+        multiplier:
+          type: integer
+          format: int32
+        target:
+          $ref: '#/components/schemas/EffectsTarget'
+    EffectsEffect:
+      type: object
+      required:
+        - effectType
+      properties:
+        effectType:
+          type: string
+        subtype:
+          type: string
+        supertype:
+          type: string
+        amount:
+          anyOf:
+            - type: integer
+              format: int32
+            - $ref: '#/components/schemas/EffectsCount'
+        maxAmount:
+          type: integer
+          format: int32
+        target:
+          $ref: '#/components/schemas/EffectsTarget'
+        direction:
+          type: string
+        hindrance:
+          type: string
+        benefit:
+          type: string
+        chainEffect:
+          $ref: '#/components/schemas/ChainEffect'
+    EffectsPayment:
+      type: object
+      properties:
+        paymentType:
+          type: string
+        amount:
+          type: integer
+          format: int32
+        cardType:
+          type: string
+    EffectsTarget:
+      type: object
+      properties:
+        cardType:
+          type: string
+        cardClass:
+          type: string
+        subtype:
+          type: string
+        minLevel:
+          type: integer
+          format: int32
+        maxLevel:
+          type: integer
+          format: int32
+        atk:
+          type: integer
+          format: int32
+        def:
+          type: integer
+          format: int32
+        zone:
+          type: string
+        targetType:
+          type: string
+        owner:
+          type: string
     InternalServerError:
       type: object
       required:
@@ -270,6 +536,15 @@ components:
           enum:
             - NOT_FOUND
         message:
+          type: string
+    PostCount:
+      type: object
+      required:
+        - countType
+      properties:
+        countType:
+          type: string
+        subtype:
           type: string
     Role:
       type: object
@@ -440,7 +715,11 @@ components:
         - right1
         - right2
         - right3
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
 servers:
-  - url: https://example.com/api
+  - url: localhost:8000
     description: Server endpoint
     variables: {}

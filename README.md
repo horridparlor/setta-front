@@ -42,7 +42,7 @@ We use [TypeSpec](https://typespec.io/docs) as a tool to generate openapi docs. 
 
 1. Run `npm install` inside `./api`.
 2. Update api definitions inside `./api/main.tsp`.
-3. Run `npm run generate:api` to generate the openapi schema and api client.
+3. Run `npm run api:generate` to generate the openapi schema and api client.
 
 ### Files
 

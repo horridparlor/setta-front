@@ -14,7 +14,7 @@
     "lint:write": "eslint --fix .",
     "format:check": "prettier --check './src/**/*.{ts,tsx}'",
     "format:write": "prettier --write './src/**/*.{ts,tsx}'",
-    "generate:api": "cd ./.api && npm run compile && cd .. && npx openapi-typescript ./.api/tsp-output/@typespec/openapi3/openapi.yaml -o ./src/api/schema.d.ts"
+    "api:generate": "cd ./.api && npm run compile && cd .. && npx openapi-typescript ./.api/tsp-output/@typespec/openapi3/openapi.yaml -o ./src/api/schema.d.ts"
   },
   "dependencies": {
     "@emotion/react": "11.13.3",

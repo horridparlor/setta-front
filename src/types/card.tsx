@@ -144,9 +144,9 @@ export interface CardData {
   effectsSize: number;
   expansionId: number;
   originalExpansionId: number;
+  createdAt: string;
+  updatedAt: string;
   cardEffects: CardEffects;
-  created_at: string;
-  updated_at: string;
 }
 
 export enum StatType {
@@ -248,9 +248,9 @@ export const DEFAULT_CARD_DATA = {
   effectsSize: DefaultTextSize.EFFECTS_BOX,
   expansionId: 8,
   originalExpansionId: 8,
+  createdAt: '',
+  updatedAt: '',
   cardEffects: DEFAULT_CARD_EFFECTS,
-  created_at: '',
-  updated_at: '',
 };
 
 export const combineEffectsTexts = (cardData: CardData | undefined) => {

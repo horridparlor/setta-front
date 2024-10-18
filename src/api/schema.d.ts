@@ -4,6 +4,22 @@
  */
 
 export interface paths {
+    "/api/user/cards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Cards_listCards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/roles": {
         parameters: {
             query?: never;
@@ -68,7 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users": {
+    "/user/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -84,7 +100,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{userId}": {
+    "/user/users/{userId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -104,6 +120,127 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        Card: {
+            /** Format: int32 */
+            cardId: number;
+            /** Format: int32 */
+            ownerId: number;
+            /** Format: int32 */
+            errataOfId?: number;
+            ownerFirstname: string;
+            ownerLastname: string;
+            cardName: string;
+            isAce: boolean;
+            cardClass: string;
+            cardType: string;
+            subtype: string;
+            supertype: string;
+            maximumPiece: string;
+            /** Format: int32 */
+            level: number;
+            /** Format: int32 */
+            atk: number;
+            /** Format: int32 */
+            def: number;
+            /** Format: int32 */
+            primaryMaterialId?: number;
+            /** Format: int32 */
+            secondaryMaterialId?: number;
+            /** Format: int32 */
+            tertiaryMaterialId?: number;
+            materialsReminder?: string;
+            costText: string;
+            effectText: string;
+            flavourText: string;
+            /** Format: int32 */
+            countsAsId?: number;
+            /** Format: float */
+            artScale: number;
+            /** Format: float */
+            artXOffset: number;
+            /** Format: float */
+            artYOffset: number;
+            /** Format: float */
+            nameSize: number;
+            /** Format: float */
+            materialsSize: number;
+            /** Format: float */
+            effectsSize: number;
+            /** Format: int32 */
+            expansionId: number;
+            /** Format: int32 */
+            originalExpansionId: number;
+            createdAt: string;
+            updatedAt: string;
+            cardEffects: components["schemas"]["CardEffects"];
+        };
+        CardEffects: {
+            cost: components["schemas"]["EffectsCost"];
+            effect: components["schemas"]["EffectsEffect"];
+        };
+        CardsResponse: {
+            /** Format: int32 */
+            countOfCards: number;
+            cards: components["schemas"]["Card"][];
+        };
+        ChainEffect: {
+            chainType: string;
+            subtype?: string;
+            direction?: string;
+            /** Format: int32 */
+            amount?: number;
+        };
+        EffectsCost: {
+            prestate?: string;
+            costType: string;
+            subtype?: string;
+            supertype?: string;
+            /** Format: int32 */
+            amount?: number;
+            target?: components["schemas"]["EffectsTarget"];
+            payment?: components["schemas"]["EffectsPayment"];
+            postCount?: components["schemas"]["PostCount"];
+        };
+        EffectsCount: {
+            /** Format: int32 */
+            multiplier: number;
+            target?: components["schemas"]["EffectsTarget"];
+        };
+        EffectsEffect: {
+            effectType: string;
+            subtype?: string;
+            supertype?: string;
+            amount?: number | components["schemas"]["EffectsCount"];
+            /** Format: int32 */
+            maxAmount?: number;
+            target?: components["schemas"]["EffectsTarget"];
+            direction?: string;
+            hindrance?: string;
+            benefit?: string;
+            chainEffect?: components["schemas"]["ChainEffect"];
+        };
+        EffectsPayment: {
+            paymentType?: string;
+            /** Format: int32 */
+            amount?: number;
+            cardType?: string;
+        };
+        EffectsTarget: {
+            cardType?: string;
+            cardClass?: string;
+            subtype?: string;
+            /** Format: int32 */
+            minLevel?: number;
+            /** Format: int32 */
+            maxLevel?: number;
+            /** Format: int32 */
+            atk?: number;
+            /** Format: int32 */
+            def?: number;
+            zone?: string;
+            targetType?: string;
+            owner?: string;
+        };
         InternalServerError: {
             /** @enum {string} */
             code: "INTERNAL_SERVER_ERROR";
@@ -113,6 +250,10 @@ export interface components {
             /** @enum {string} */
             code: "NOT_FOUND";
             message: string;
+        };
+        PostCount: {
+            countType: string;
+            subtype?: string;
         };
         Role: {
             /** Format: int32 */
@@ -193,6 +334,26 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    Cards_listCards: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardsResponse"];
+                };
+            };
+        };
+    };
     Roles_listRoles: {
         parameters: {
             query?: never;
