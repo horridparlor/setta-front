@@ -18,7 +18,8 @@ import {
   UserEndpoint,
 } from '../../types/api';
 import { AuthCookie } from '../../types/cookie';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
+import {apiClient} from "../../api/client.ts";
 
 interface LoginModalProps {
   open: boolean;
@@ -35,20 +36,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
   const [retypeNewPassword, setRetypeNewPassword] = useState('');
 
   const handleLogin = async () => {
-    const data = { username, password };
-    const body = JSON.stringify(data);
-    const response = await fetch(getUserEndpoint(UserEndpoint.AUTHENTICATE), {
-      method: RequestMethod.POST,
+    const { data: responseData, error } = await apiClient.POST('/user/authenticate', {
       headers: getHeaders(),
-      body,
+      body: {
+        username: username,
+        password: password
+      }
     });
-    const responseData = await response.json();
-    if (!response.ok) {
-      showError(responseData);
+    if (error) {
+      showError(error);
       return;
     }
     Cookies.set(AuthCookie.AUTH_TOKEN, responseData.authToken, { expires: 1 });
-    Cookies.set(AuthCookie.USER_ID, responseData.userId, { expires: 7 });
+    Cookies.set(AuthCookie.USER_ID, responseData.userId.toString(), { expires: 7 });
     Cookies.set(
       AuthCookie.SYSTEM_USER,
       JSON.stringify({
@@ -58,7 +58,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
       }),
       { expires: 7 }
     );
-    toast.success(t('AUTHENTICATED', { firstName: responseData.firstName, lastName: responseData.lastName })); 
+    toast.success(t('AUTHENTICATED', { firstName: responseData.firstname, lastName: responseData.lastname }));
     await refetch();
     onClose();
   };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { UpdateFrequencies } from '../types/time';
 import {
+  getHeaders,
   getUserEndpoint,
   UserEndpoint,
 } from '../types/api';
@@ -17,12 +18,14 @@ const useCards = () => {
 
   const fetchCards = async () => {
     setIsLoading(true);
-    const { data, error } = await apiClient.GET('/user/cards', {});
+    const { data: responseData, error } = await apiClient.GET('/user/cards', {
+      headers: getHeaders()
+    });
     if (error) {
       setError(error);
       setIsLoading(false);
     }
-    const cards = data.cards as CardData[];
+    const cards = responseData.cards as CardData[];
     const owners = cards
         .reduce((acc: CardOwner[], card: CardData) => {
           if (!acc.some(owner => owner.id === card.ownerId)) {

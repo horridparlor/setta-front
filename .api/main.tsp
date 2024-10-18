@@ -12,17 +12,46 @@ using TypeSpec.Rest;
 @useAuth(Http.BearerAuth)
 namespace SettaBackend;
 
-// --- CARDS
+/// ––––– ADMIN –––––
+
+/// ––––– USER –––––
+
+// ––– Authenticate
+@route("/user/authenticate")
+namespace Authenticate {
+    @post
+    op authenticate(
+        @body request: AuthenticateRequest
+    ): {
+        @statusCode statusCode: 200;
+        @body response: AuthenticateResponse;
+    };
+}
+
+model AuthenticateRequest {
+    username: string;
+    password: string;
+}
+
+model AuthenticateResponse {
+    authToken: string;
+    userId: int32;
+    firstname: string;
+    lastname: string;
+    isAdmin: boolean;
+}
+
+// ––– Cards
 @route("/user/cards")
 namespace Cards {
     @get
     op listCards(): {
         @statusCode statusCode: 200;
-        @body response: CardsResponse;
+        @body response: ListCardsResponse;
     };
 }
 
-model CardsResponse {
+model ListCardsResponse {
     countOfCards: int32;
     cards: Card[];
 }
@@ -129,7 +158,7 @@ model ChainEffect {
     amount?: int32;
 }
 
-// --- USERS
+// ––– Users
 @route("/user/users")
 namespace Users {
   @tag("planned")
@@ -137,6 +166,9 @@ namespace Users {
   op listUsers(): {
     @statusCode statusCode: 200;
     @body users: User[];
+  } | {
+    @statusCode statusCode: 401;
+    @body error: Error;
   };
 
   @tag("planned")
@@ -146,7 +178,7 @@ namespace Users {
     @body role: User;
   } | {
     @statusCode statusCode: 404;
-    @body error: NotFoundError;
+    @body error: Error;
   };
 
   @tag("planned")
@@ -169,7 +201,7 @@ namespace Users {
     @statusCode statusCode: 204;
   } | {
     @statusCode statusCode: 404;
-    @body error: NotFoundError;
+    @body error: Error;
   };
 }
 
@@ -227,7 +259,7 @@ namespace Roles {
     @body role: Role;
   } | {
     @statusCode statusCode: 404;
-    @body error: NotFoundError;
+    @body error: Error;
   };
 
   @tag("planned")
@@ -250,7 +282,7 @@ namespace Roles {
     @statusCode statusCode: 204;
   } | {
     @statusCode statusCode: 404;
-    @body error: NotFoundError;
+    @body error: Error;
   };
 }
 
@@ -295,7 +327,7 @@ namespace TokenRequests {
     @statusCode statusCode: 204;
   } | {
     @statusCode statusCode: 404;
-    @body error: NotFoundError;
+    @body error: Error;
   };
 }
 
@@ -309,20 +341,6 @@ model TokenRequest {
 // --- ERRORS
 
 @error
-model NotFoundError {
-  code: "NOT_FOUND";
-  message: string;
-}
-
-@error
-model ValidationError {
-  code: "VALIDATION_ERROR";
-  message: string;
-  details: string[];
-}
-
-@error
-model InternalServerError {
-  code: "INTERNAL_SERVER_ERROR";
-  message: string;
+model Error {
+  error: string;
 }

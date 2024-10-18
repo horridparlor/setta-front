@@ -60,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
     post:
@@ -104,7 +104,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
   /token_requests:
@@ -140,9 +140,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
+  /user/authenticate:
+    post:
+      operationId: Authenticate_authenticate
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticateResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticateRequest'
   /user/cards:
     get:
       operationId: Cards_listCards
@@ -153,7 +170,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CardsResponse'
+                $ref: '#/components/schemas/ListCardsResponse'
   /user/users:
     get:
       operationId: Users_listUsers
@@ -167,6 +184,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
     post:
@@ -209,7 +232,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
     patch:
@@ -253,13 +276,43 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
 security:
   - BearerAuth: []
 components:
   schemas:
+    AuthenticateRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    AuthenticateResponse:
+      type: object
+      required:
+        - authToken
+        - userId
+        - firstname
+        - lastname
+        - isAdmin
+      properties:
+        authToken:
+          type: string
+        userId:
+          type: integer
+          format: int32
+        firstname:
+          type: string
+        lastname:
+          type: string
+        isAdmin:
+          type: boolean
     Card:
       type: object
       required:
@@ -388,19 +441,6 @@ components:
           $ref: '#/components/schemas/EffectsCost'
         effect:
           $ref: '#/components/schemas/EffectsEffect'
-    CardsResponse:
-      type: object
-      required:
-        - countOfCards
-        - cards
-      properties:
-        countOfCards:
-          type: integer
-          format: int32
-        cards:
-          type: array
-          items:
-            $ref: '#/components/schemas/Card'
     ChainEffect:
       type: object
       required:
@@ -513,30 +553,26 @@ components:
           type: string
         owner:
           type: string
-    InternalServerError:
+    Error:
       type: object
       required:
-        - code
-        - message
+        - error
       properties:
-        code:
+        error:
           type: string
-          enum:
-            - INTERNAL_SERVER_ERROR
-        message:
-          type: string
-    NotFoundError:
+    ListCardsResponse:
       type: object
       required:
-        - code
-        - message
+        - countOfCards
+        - cards
       properties:
-        code:
-          type: string
-          enum:
-            - NOT_FOUND
-        message:
-          type: string
+        countOfCards:
+          type: integer
+          format: int32
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
     PostCount:
       type: object
       required:
@@ -692,23 +728,6 @@ components:
           type: string
         active:
           type: boolean
-    ValidationError:
-      type: object
-      required:
-        - code
-        - message
-        - details
-      properties:
-        code:
-          type: string
-          enum:
-            - VALIDATION_ERROR
-        message:
-          type: string
-        details:
-          type: array
-          items:
-            type: string
     right:
       type: string
       enum:
