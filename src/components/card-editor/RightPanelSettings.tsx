@@ -161,7 +161,6 @@ import {
 import { menuTitleStyle } from '../../utils/fonts';
 import { isEqual } from 'lodash';
 
-
 interface RightPanelSettingsProps {
   cardData: CardData;
   expansions: Array<CardExpansion>;
@@ -181,9 +180,7 @@ interface RightPanelSettingsProps {
 }
 import { useTranslation } from 'react-i18next';
 
-
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
-  
   cardData,
   expansions,
   onCardDataChange,
@@ -197,7 +194,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   onCopy,
 }) => {
   const STATS_TAB = 0;
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
   const EFFECTS_TAB = 1;
   const GENERATE_TAB = 2;
   const [tabId, setTabId] = useState<number>(0);
@@ -1208,7 +1205,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   };
 
   const getEffectsTab = () => {
-    
     return (
       <>
         <Typography sx={{ ...menuTitleStyle, marginBottom: '0.6rem' }}>
@@ -1342,7 +1338,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             </Select>
           </FormControl>
           <FormControl fullWidth sx={costCardSelectionVisible}>
-            <InputLabel id="cost-target-class-selector-label">{t('CLASS')}</InputLabel>
+            <InputLabel id="cost-target-class-selector-label">
+              {t('CLASS')}
+            </InputLabel>
             <Select
               labelId="cost-target-class-selector-label"
               value={getEffectsCostTarget(cardData).cardClass || CardClass.NONE}
@@ -1364,7 +1362,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth sx={costCardSelectionVisible}>
             <InputLabel id="cost-target-card-type-selector-label">
-            {t('CARD_TYPE')}
+              {t('CARD_TYPE')}
             </InputLabel>
             <Select
               labelId="cost-target-card-type-selector-label"
@@ -1910,7 +1908,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="effect-target-class-selector-label">
-            {t('CLASS')}
+              {t('CLASS')}
             </InputLabel>
             <Select
               labelId="effect-target-class-selector-label"
@@ -1935,7 +1933,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="effect-target-card-type-selector-label">
-            {t('CARD_TYPE')}
+              {t('CARD_TYPE')}
             </InputLabel>
             <Select
               labelId="effect-target-card-type-selector-label"
@@ -2252,7 +2250,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="effect-amount-target-class-selector-label">
-            {t('CLASS')}
+              {t('CLASS')}
             </InputLabel>
             <Select
               labelId="effect-amount-target-class-selector-label"
@@ -2278,7 +2276,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth>
             <InputLabel id="effect-amount-target-card-type-selector-label">
-            {t('CARD_TYPE')}
+              {t('CARD_TYPE')}
             </InputLabel>
             <Select
               labelId="effect-amount-target-card-type-selector-label"
@@ -2720,7 +2718,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
       >
         <Tab label={t('TAB_STATS')} />
         <Tab label={t('TAB_EFFECTS')} onClick={() => fixEffects()} />
-        <Tab label="Generate" /> 
+        <Tab label="Generate" />
       </Tabs>
       <Box sx={{ display: tabId === STATS_TAB ? 'block' : 'none' }}>
         <Box sx={rowContainerStyle}>
@@ -2742,7 +2740,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 cardData.supertype === CardSupertype.MAXIMUM ? 'flex' : 'none',
             }}
           >
-            <InputLabel id="maximum-selector-label">{t('MAXIMUM_PIECE')}</InputLabel>
+            <InputLabel id="maximum-selector-label">
+              {t('MAXIMUM_PIECE')}
+            </InputLabel>
             <Select
               labelId="maximum-selector-label"
               value={cardData.maximumPiece}
@@ -2947,7 +2947,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         >
           <FormControl fullWidth sx={{ marginBottom: 2 }}>
             <InputLabel id="primary-material-selector-label">
-            {t('PRIMARY_MATERIAL')}
+              {t('PRIMARY_MATERIAL')}
             </InputLabel>
             <Select
               labelId="primary-material-selector-label"
@@ -2965,7 +2965,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           </FormControl>
           <FormControl fullWidth sx={{ marginBottom: 2 }}>
             <InputLabel id="secondary-material-selector-label">
-            {t('SECONDARY_MATERIAL')}
+              {t('SECONDARY_MATERIAL')}
             </InputLabel>
             <Select
               labelId="secondary-material-selector-label"
@@ -2989,7 +2989,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             }}
           >
             <InputLabel id="tertiary-material-selector-label">
-            {t('TERTIARY_MATERIAL')}
+              {t('TERTIARY_MATERIAL')}
             </InputLabel>
             <Select
               labelId="tertiary-material-selector-label"
@@ -3066,7 +3066,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         />
         <Box sx={rowContainerStyle}>
           <FormControl fullWidth>
-            <InputLabel id="counts-as-selector-label">{t('COUNTS_AS')}</InputLabel>
+            <InputLabel id="counts-as-selector-label">
+              {t('COUNTS_AS')}
+            </InputLabel>
             <Select
               labelId="counts-as-selector-label"
               value={cardData.countsAsId ? cardData.countsAsId.toString() : ''}
@@ -3101,7 +3103,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             sx={{ minWidth: '8rem' }}
           />
           <FormControl fullWidth>
-            <InputLabel id="expansion-selector-label">{t('EXPANSION')}</InputLabel>
+            <InputLabel id="expansion-selector-label">
+              {t('EXPANSION')}
+            </InputLabel>
             <Select
               labelId="expansion-selector-label"
               value={cardData.expansionId.toString()}
@@ -3110,15 +3114,13 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
               onChange={handleSelectChange('expansionId')}
             >
               {expansions
-                  .filter(
-                      expansion =>
-                          expansion.id === cardData.expansionId ||
-                          (!expansion.isReleased &&
-                          (
-                              expansion.ownerId === getUserId() ||
-                              expansion.ownerId === EXPANSION_NO_OWNER
-                          ))
-                  )
+                .filter(
+                  expansion =>
+                    expansion.id === cardData.expansionId ||
+                    (!expansion.isReleased &&
+                      (expansion.ownerId === getUserId() ||
+                        expansion.ownerId === EXPANSION_NO_OWNER))
+                )
                 .map(expansion => (
                   <MenuItem key={expansion.id} value={expansion.id}>
                     {expansion.name}
@@ -3197,10 +3199,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
           {t('ERRATA')}
         </Button>
         <Button onClick={onCopy} variant="contained" color="secondary">
-        {t('COPY')}
+          {t('COPY')}
         </Button>
       </Box>
-
     </Box>
   );
 };

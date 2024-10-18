@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "test": "vitest run",
     "preview": "vite preview",
     "test:playwright": "npx playwright test",
     "test:playwright:report": "npx playwright show-report",
@@ -14,7 +15,8 @@
     "lint:write": "eslint --fix .",
     "format:check": "prettier --check './src/**/*.{ts,tsx}'",
     "format:write": "prettier --write './src/**/*.{ts,tsx}'",
-    "api:generate": "cd ./.api && npm run compile && cd .. && npx openapi-typescript ./.api/tsp-output/@typespec/openapi3/openapi.yaml -o ./src/api/schema.d.ts"
+    "api:generate": "cd ./.api && npm run compile && cd .. && npx openapi-typescript ./.api/tsp-output/@typespec/openapi3/openapi.yaml -o ./src/api/schema.d.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/react": "11.13.3",
@@ -24,6 +26,7 @@
     "dom-to-image": "2.6.0",
     "i18next": "23.15.1",
     "js-cookie": "3.0.5",
+    "jsdom": "^25.0.1",
     "lodash": "4.17.21",
     "openapi-fetch": "0.12.2",
     "react": "18.3.1",
@@ -36,6 +39,8 @@
   "devDependencies": {
     "@eslint/js": "9.9.0",
     "@playwright/test": "^1.47.2",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
     "@types/dom-to-image": "2.6.7",
     "@types/js-cookie": "3.0.6",
     "@types/lodash": "4.17.7",
@@ -50,10 +55,12 @@
     "eslint-plugin-react-hooks": "5.1.0-rc.0",
     "eslint-plugin-react-refresh": "0.4.9",
     "globals": "15.9.0",
+    "husky": "^9.1.6",
     "openapi-typescript": "7.4.1",
     "prettier": "3.3.3",
     "typescript": "5.5.3",
     "typescript-eslint": "8.0.1",
-    "vite": "5.4.1"
+    "vite": "5.4.1",
+    "vitest": "^2.1.2"
   }
 }
