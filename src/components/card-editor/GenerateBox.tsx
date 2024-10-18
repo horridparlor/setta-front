@@ -45,7 +45,7 @@ const GenerateBox: React.FC<GenerateBoxProps> = () => {
         gap: 2,
         width: '100%',
         backgroundColor: 'white',
-        borderRadius:2,
+        borderRadius:1,
         paddingBottom: 2,
         paddingLeft: 0,
         paddingTop: 2,
