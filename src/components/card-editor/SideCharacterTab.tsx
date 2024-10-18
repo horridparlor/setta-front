@@ -15,11 +15,11 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface SideCharacterTabProps {
-  updateSideCharacterValues: (values: Partial<any>) => void; // This will transmit side character values to parent component
+  updateSideCharacterValues: (values: Partial<any>) => void; // Thistransmits side character values
 }
 
 const SideCharacterTab: React.FC<SideCharacterTabProps> = ({ updateSideCharacterValues }) => {
-  // Full side character object
+
   const [sideCharacterFields, setSideCharacterFields] = useState({
     sideCharacterName: '',
     sideCharacterRace: '',
@@ -31,7 +31,7 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({ updateSideCharacter
     sideCharacterAction: '',
   });
 
-  // On component mount, transmit the default values to the parent component
+  // On component mount, transmit the default values
   useEffect(() => {
     updateSideCharacterValues(sideCharacterFields);
   }, []);
@@ -149,7 +149,7 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({ updateSideCharacter
           }}
         />
       </Box>
-
+      {/* what side character it is*/}
       <FormControl fullWidth>
             <InputLabel id="type-selector-label">Type</InputLabel>
             <Select
@@ -158,7 +158,6 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({ updateSideCharacter
               label="Type"
               onChange={handleInputChange('Charactertype')}
             >
-              <MenuItem value="Main">Main</MenuItem>
               <MenuItem value="Supporting">Supporting</MenuItem>
               <MenuItem value="Antagonist">Antagonist</MenuItem>
               <MenuItem value="Background-actor">Background-actor</MenuItem>

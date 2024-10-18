@@ -27,10 +27,10 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   // Full character object, including fields not directly displayed in the prompt
   const [characterFields, setCharacterFields] = useState({
     characterName: '',
-    race: 'Human', // Default value
-    gender: 'Male', // Default value
-    age: 'Young', // Default value
-    Charactertype: 'Main', // Default value
+    race: 'Human', 
+    gender: 'Male', 
+    age: 'Young', 
+    Charactertype: 'Main', 
     appearance: '',
     tool: '',
     inherited_tool: false,
@@ -39,7 +39,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     who: '',
   });
 
-  // On component mount, we transmit the default values to the prompt object
+  // On component mount, this transmits the default values to the prompt object
   useEffect(() => {
     updatePromptValues(characterFields);
   }, []);
@@ -50,10 +50,10 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   ) => {
     const newValue = event.target.value as string;
     setCharacterFields(prevFields => ({ ...prevFields, [field]: newValue }));
-    updatePromptValues({ [field]: newValue }); // Transmit the value to the parent component
+    updatePromptValues({ [field]: newValue }); 
   };
 
-  // Clear the value of a specific field
+  
   const clearField = (field: string) => () => {
     setCharacterFields(prevFields => ({ ...prevFields, [field]: '' }));
     updatePromptValues({ [field]: '' });
@@ -69,11 +69,11 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     setCharacterSubTabId(newValue);
   };
 
-  // Sub-tab definitions
+  // Sub-tab 
   const NEW_CHARACTER_TAB = 0;
   const SIDE_CHARACTER_TAB = 1;
-  const CHARACTER2_TAB = 2;
-  const HIDDEN_TAB = 3;
+  const CHARACTER2_TAB = 2; //tb implemented  
+  const HIDDEN_TAB = 3; //tb implemented
 
   return (
     <Box>

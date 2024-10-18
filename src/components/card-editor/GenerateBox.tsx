@@ -6,12 +6,12 @@ import { toast } from 'react-toastify';
 interface GenerateBoxProps {}
 
 const GenerateBox: React.FC<GenerateBoxProps> = () => {
-  const [selectedDate, setSelectedDate] = useState<string>('2024-10-03'); // Default selection for the example
+  const [selectedDate, setSelectedDate] = useState<string>('2024-10-03'); // Default selection of mock data
   const [dropdownItems, setDropdownItems] = useState<string[]>([
     '2024-10-01', 
     '2024-10-02',
     '2024-10-03', 
-    // Mocked data; replace with actual generation dates from backend
+    // Mocked data;
   ]);
   
   const handleArrowLeftClick = () => {
