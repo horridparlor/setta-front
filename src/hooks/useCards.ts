@@ -17,7 +17,7 @@ const useCards = () => {
 
   const fetchCards = async () => {
     setIsLoading(true);
-    const { data, error } = await apiClient.GET('/api/user/cards', {});
+    const { data, error } = await apiClient.GET('/user/cards', {});
     if (error) {
       setError(error);
       setIsLoading(false);

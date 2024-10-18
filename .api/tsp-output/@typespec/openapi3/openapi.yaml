@@ -5,17 +5,6 @@ info:
 tags:
   - name: planned
 paths:
-  /api/user/cards:
-    get:
-      operationId: Cards_listCards
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CardsResponse'
   /roles:
     get:
       operationId: Roles_listRoles
@@ -154,6 +143,17 @@ paths:
                 $ref: '#/components/schemas/NotFoundError'
       tags:
         - planned
+  /user/cards:
+    get:
+      operationId: Cards_listCards
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardsResponse'
   /user/users:
     get:
       operationId: Users_listUsers
@@ -720,6 +720,6 @@ components:
       type: http
       scheme: bearer
 servers:
-  - url: localhost:8000
+  - url: https://example.com/api
     description: Server endpoint
     variables: {}

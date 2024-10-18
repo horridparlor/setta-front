@@ -8,12 +8,12 @@ using TypeSpec.Rest;
 @service({
   title: "Setta Backend",
 })
-@server("localhost:8000", "Server endpoint")
+@server("https://example.com/api", "Server endpoint")
 @useAuth(Http.BearerAuth)
 namespace SettaBackend;
 
 // --- CARDS
-@route("api/user/cards")
+@route("/user/cards")
 namespace Cards {
     @get
     op listCards(): {
