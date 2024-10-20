@@ -1,4 +1,4 @@
-import {forwardRef, useImperativeHandle, useState} from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
   Accordion,
@@ -15,9 +15,9 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import {AppPage, isAppPage} from '../../types/navigation';
+import { AppPage, isAppPage } from '../../types/navigation';
 import LoginModal from './LoginModal';
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -25,12 +25,11 @@ import PeopleIcon from '@mui/icons-material/People';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import LoginIcon from '@mui/icons-material/Login';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import LanguageSelect from './LanguageSelect';
 import LanguageIcon from '@mui/icons-material/Language';
-import {ExpandMore, FormatPaint, Inventory} from "@mui/icons-material";
-import {getUsername} from "../../types/cookie.ts";
-
+import { ExpandMore, FormatPaint, Inventory } from '@mui/icons-material';
+import { getUsername } from '../../types/cookie.ts';
 
 interface HomeBarProps {
   refetch: () => Promise<void>;
@@ -43,7 +42,7 @@ export interface HomeBarRef {
 
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
   ({ refetch, onLeavePage }, ref) => {
-    const { t } = useTranslation(); 
+    const { t } = useTranslation();
     const [isLoginOpen, setLoginOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -79,19 +78,23 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
         case AppPage.Error:
           return t('ERROR') + ': ' + pageLocation;
       }
-    }
+    };
 
     return (
       <Box>
         <AppBar position="static">
           <Toolbar>
-            <IconButton color="inherit" sx={{ mr: 2 }} onClick={() => setOpen(true)}>
-              <MenuIcon/>
+            <IconButton
+              color="inherit"
+              sx={{ mr: 2 }}
+              onClick={() => setOpen(true)}
+            >
+              <MenuIcon />
             </IconButton>
             <Drawer open={open}>
               <Box sx={{ p: 2 }}>
                 <IconButton onClick={() => setOpen(false)}>
-                  <CloseIcon/>
+                  <CloseIcon />
                 </IconButton>
                 <Divider />
                 <ListItemButton
@@ -102,11 +105,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_CATALOGUE')} />
                 </ListItemButton>
-                <ListItemButton
-                    onClick={() => navigateTo(AppPage.CardEditor)}
-                >
-
-                  <ListItemIcon >
+                <ListItemButton onClick={() => navigateTo(AppPage.CardEditor)}>
+                  <ListItemIcon>
                     <AddToPhotosIcon />
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_EDITOR')} />
@@ -120,7 +120,9 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     <ListItemText primary={t('PAGE_NAME.RELEASING')} />
                   </AccordionSummary>
                   <AccordionDetails>
-                    <ListItemButton onClick={() => navigateTo(AppPage.CardExpansions)}>
+                    <ListItemButton
+                      onClick={() => navigateTo(AppPage.CardExpansions)}
+                    >
                       <ListItemIcon>
                         <Inventory />
                       </ListItemIcon>
@@ -135,13 +137,16 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.USER_MANAGEMENT')} />
                 </ListItemButton>
+                <ListItemButton onClick={() => navigateTo(AppPage.UserRoles)}>
+                  <ListItemText primary={t('USER_ROLES')} />
+                </ListItemButton>
                 <ListItemButton>
                   <ListItemIcon>
                     <ManageAccountsIcon />
                   </ListItemIcon>
                   <ListItemText primary={t('PROFILE')} />
                 </ListItemButton>
-                <LanguageIcon sx={{ ml: 2, mr:3 }}/>
+                <LanguageIcon sx={{ ml: 2, mr: 3 }} />
                 <LanguageSelect />
               </Box>
             </Drawer>
@@ -158,13 +163,13 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             </Typography>
 
             <Button
-                variant="contained"
+              variant="contained"
               color="info"
               startIcon={<LoginIcon />}
               onClick={() => setLoginOpen(true)}
               sx={{ marginLeft: '0.4rem' }}
             >
-              {t('LOGIN')} 
+              {t('LOGIN')}
             </Button>
             <LoginModal
               open={isLoginOpen}

@@ -3,11 +3,11 @@ import { UpdateFrequencies } from '../types/time';
 import {
   getHeaders,
   getUserEndpoint,
-  RequestMethod,
   UserEndpoint,
 } from '../types/api';
 import { CardData } from '../types/card';
 import { CardOwner } from '../types/user';
+import {apiClient} from "../api/client.ts";
 
 const useCards = () => {
   const [cards, setCards] = useState<Array<CardData>>([]);
@@ -18,14 +18,15 @@ const useCards = () => {
 
   const fetchCards = async () => {
     setIsLoading(true);
-    try {
-      const response = await fetch(url, {
-        method: RequestMethod.GET,
-        headers: getHeaders(),
-      });
-      const responseData = await response.json();
-      const cards = responseData.cards;
-      const owners = cards
+    const { data: responseData, error } = await apiClient.GET('/user/cards', {
+      headers: getHeaders()
+    });
+    if (error) {
+      setError(error);
+      setIsLoading(false);
+    }
+    const cards = responseData.cards as CardData[];
+    const owners = cards
         .reduce((acc: CardOwner[], card: CardData) => {
           if (!acc.some(owner => owner.id === card.ownerId)) {
             const owner: CardOwner = {
@@ -37,15 +38,11 @@ const useCards = () => {
           return acc;
         }, [])
         .sort((ownerA: CardOwner, ownerB: CardOwner) =>
-          ownerA.name.localeCompare(ownerB.name)
+            ownerA.name.localeCompare(ownerB.name)
         );
-      setCards(cards);
-      setCardOwners(owners);
-      setIsLoading(false);
-    } catch (err: any) {
-      setError(err.message);
-      setIsLoading(false);
-    }
+    setCards(cards);
+    setCardOwners(owners);
+    setIsLoading(false);
   };
   useEffect(() => {
     fetchCards();

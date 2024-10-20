@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
-import {SystemUser} from "./api.ts";
-import {TFunction} from "i18next";
+import { SystemUser } from './api.ts';
+import { TFunction } from 'i18next';
 
 export enum AuthCookie {
   AUTH_TOKEN = 'authToken',
@@ -49,8 +49,10 @@ export const getUserId = () => {
 };
 
 export const getUsername = (t: TFunction) => {
-  const user: SystemUser = JSON.parse(Cookies.get(AuthCookie.SYSTEM_USER) ?? '{}');
+  const user: SystemUser = JSON.parse(
+    Cookies.get(AuthCookie.SYSTEM_USER) ?? '{}'
+  );
   return user.firstName && user.lastName
-      ? user.firstName + ' ' + user.lastName
-      : (user.firstName || user.lastName || t('GUEST'));
-}
+    ? user.firstName + ' ' + user.lastName
+    : user.firstName || user.lastName || t('GUEST');
+};
