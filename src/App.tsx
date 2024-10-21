@@ -8,7 +8,7 @@ import useExpansions from './hooks/useExpansions';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CardCataloguePage from './pages/card-catalogue';
 import CardEditorPage from './pages/card-editor';
-import CardExpansionsPage from "./pages/card-expansions";
+import CardExpansionsPage from './pages/card-expansions';
 import UserManagementPage from './pages/user-management';
 import UserRolesPage from './pages/user-roles';
 
@@ -67,4 +67,4 @@ export default function App() {
       <ToastContainer position="bottom-right" autoClose={2000} />
     </ThemeProvider>
   );
-};
+}

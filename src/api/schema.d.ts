@@ -4,711 +4,711 @@
  */
 
 export interface paths {
-    "/roles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Roles_listRoles"];
-        put?: never;
-        post: operations["Roles_createRole"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/roles/{roleId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Roles_getRole"];
-        put?: never;
-        post: operations["Roles_updateRole"];
-        delete: operations["Roles_deleteRole"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Roles_listRoles'];
+    put?: never;
+    post: operations['Roles_createRole'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/roles/{roleId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/token_requests": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["TokenRequests_listTokenRequests"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Roles_getRole'];
+    put?: never;
+    post: operations['Roles_updateRole'];
+    delete: operations['Roles_deleteRole'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/token_requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/token_requests/{tokenRequestId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["TokenRequests_deleteTokenRequest"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['TokenRequests_listTokenRequests'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/token_requests/{tokenRequestId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/user/authenticate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["Authenticate_authenticate"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['TokenRequests_deleteTokenRequest'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/user/authenticate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/user/cards": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Cards_listCards"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['Authenticate_authenticate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/user/cards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/user/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Users_listUsers"];
-        put?: never;
-        post: operations["Users_createUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Cards_listCards'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/user/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/user/users/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Users_getUser"];
-        put?: never;
-        post?: never;
-        delete: operations["Users_deleteUser"];
-        options?: never;
-        head?: never;
-        patch: operations["Users_updateUser"];
-        trace?: never;
+    get: operations['Users_listUsers'];
+    put?: never;
+    post: operations['Users_createUser'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/user/users/{userId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get: operations['Users_getUser'];
+    put?: never;
+    post?: never;
+    delete: operations['Users_deleteUser'];
+    options?: never;
+    head?: never;
+    patch: operations['Users_updateUser'];
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        AuthenticateRequest: {
-            username: string;
-            password: string;
-        };
-        AuthenticateResponse: {
-            authToken: string;
-            /** Format: int32 */
-            userId: number;
-            firstname: string;
-            lastname: string;
-            isAdmin: boolean;
-        };
-        Card: {
-            /** Format: int32 */
-            cardId: number;
-            /** Format: int32 */
-            ownerId: number;
-            /** Format: int32 */
-            errataOfId?: number;
-            ownerFirstname: string;
-            ownerLastname: string;
-            cardName: string;
-            isAce: boolean;
-            cardClass: string;
-            cardType: string;
-            subtype: string;
-            supertype: string;
-            maximumPiece: string;
-            /** Format: int32 */
-            level: number;
-            /** Format: int32 */
-            atk: number;
-            /** Format: int32 */
-            def: number;
-            /** Format: int32 */
-            primaryMaterialId?: number;
-            /** Format: int32 */
-            secondaryMaterialId?: number;
-            /** Format: int32 */
-            tertiaryMaterialId?: number;
-            materialsReminder?: string;
-            costText: string;
-            effectText: string;
-            flavourText: string;
-            /** Format: int32 */
-            countsAsId?: number;
-            /** Format: float */
-            artScale: number;
-            /** Format: float */
-            artXOffset: number;
-            /** Format: float */
-            artYOffset: number;
-            /** Format: float */
-            nameSize: number;
-            /** Format: float */
-            materialsSize: number;
-            /** Format: float */
-            effectsSize: number;
-            /** Format: int32 */
-            expansionId: number;
-            /** Format: int32 */
-            originalExpansionId: number;
-            createdAt: string;
-            updatedAt: string;
-            cardEffects: components["schemas"]["CardEffects"];
-        };
-        CardEffects: {
-            cost: components["schemas"]["EffectsCost"];
-            effect: components["schemas"]["EffectsEffect"];
-        };
-        ChainEffect: {
-            chainType: string;
-            subtype?: string;
-            direction?: string;
-            /** Format: int32 */
-            amount?: number;
-        };
-        EffectsCost: {
-            prestate?: string;
-            costType: string;
-            subtype?: string;
-            supertype?: string;
-            /** Format: int32 */
-            amount?: number;
-            target?: components["schemas"]["EffectsTarget"];
-            payment?: components["schemas"]["EffectsPayment"];
-            postCount?: components["schemas"]["PostCount"];
-        };
-        EffectsCount: {
-            /** Format: int32 */
-            multiplier: number;
-            target?: components["schemas"]["EffectsTarget"];
-        };
-        EffectsEffect: {
-            effectType: string;
-            subtype?: string;
-            supertype?: string;
-            amount?: number | components["schemas"]["EffectsCount"];
-            /** Format: int32 */
-            maxAmount?: number;
-            target?: components["schemas"]["EffectsTarget"];
-            direction?: string;
-            hindrance?: string;
-            benefit?: string;
-            chainEffect?: components["schemas"]["ChainEffect"];
-        };
-        EffectsPayment: {
-            paymentType?: string;
-            /** Format: int32 */
-            amount?: number;
-            cardType?: string;
-        };
-        EffectsTarget: {
-            cardType?: string;
-            cardClass?: string;
-            subtype?: string;
-            /** Format: int32 */
-            minLevel?: number;
-            /** Format: int32 */
-            maxLevel?: number;
-            /** Format: int32 */
-            atk?: number;
-            /** Format: int32 */
-            def?: number;
-            zone?: string;
-            targetType?: string;
-            owner?: string;
-        };
-        Error: {
-            error: string;
-        };
-        ListCardsResponse: {
-            /** Format: int32 */
-            countOfCards: number;
-            cards: components["schemas"]["Card"][];
-        };
-        PostCount: {
-            countType: string;
-            subtype?: string;
-        };
-        Role: {
-            /** Format: int32 */
-            id: number;
-            name: string;
-            rights: components["schemas"]["right"][];
-            createdAt: string;
-            updatedAt: string;
-        };
-        RoleCreate: {
-            name: string;
-            rights: components["schemas"]["right"][];
-        };
-        RoleUpdate: {
-            name?: string;
-            rights?: components["schemas"]["right"][];
-        };
-        TokenRequest: {
-            /** Format: int32 */
-            id: number;
-            /** Format: int32 */
-            userId: number;
-            createdAt: string;
-            /** Format: int32 */
-            cardsInQueue: number;
-        };
-        User: {
-            /** Format: int32 */
-            id: number;
-            /** Format: int32 */
-            roleId: number;
-            firstName: string;
-            lastName: string;
-            email: string;
-            phoneNumber: string;
-            username?: string;
-            penName?: string;
-            active: boolean;
-            tokenRequests: components["schemas"]["TokenRequest"][];
-        };
-        UserCreate: {
-            /** Format: int32 */
-            roleId: number;
-            firstName: string;
-            lastName: string;
-            email: string;
-            phoneNumber: string;
-            username?: string;
-            password?: string;
-            penName?: string;
-            sendPasswordEmail?: boolean;
-        };
-        UserUpdate: {
-            /** Format: int32 */
-            roleId?: number;
-            firstName?: string;
-            lastName?: string;
-            email?: string;
-            phoneNumber?: string;
-            username?: string;
-            penName?: string;
-            active?: boolean;
-        };
-        /** @enum {string} */
-        right: "right1" | "right2" | "right3";
+  schemas: {
+    AuthenticateRequest: {
+      username: string;
+      password: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    AuthenticateResponse: {
+      authToken: string;
+      /** Format: int32 */
+      userId: number;
+      firstname: string;
+      lastname: string;
+      isAdmin: boolean;
+    };
+    Card: {
+      /** Format: int32 */
+      cardId: number;
+      /** Format: int32 */
+      ownerId: number;
+      /** Format: int32 */
+      errataOfId?: number;
+      ownerFirstname: string;
+      ownerLastname: string;
+      cardName: string;
+      isAce: boolean;
+      cardClass: string;
+      cardType: string;
+      subtype: string;
+      supertype: string;
+      maximumPiece: string;
+      /** Format: int32 */
+      level: number;
+      /** Format: int32 */
+      atk: number;
+      /** Format: int32 */
+      def: number;
+      /** Format: int32 */
+      primaryMaterialId?: number;
+      /** Format: int32 */
+      secondaryMaterialId?: number;
+      /** Format: int32 */
+      tertiaryMaterialId?: number;
+      materialsReminder?: string;
+      costText: string;
+      effectText: string;
+      flavourText: string;
+      /** Format: int32 */
+      countsAsId?: number;
+      /** Format: float */
+      artScale: number;
+      /** Format: float */
+      artXOffset: number;
+      /** Format: float */
+      artYOffset: number;
+      /** Format: float */
+      nameSize: number;
+      /** Format: float */
+      materialsSize: number;
+      /** Format: float */
+      effectsSize: number;
+      /** Format: int32 */
+      expansionId: number;
+      /** Format: int32 */
+      originalExpansionId: number;
+      createdAt: string;
+      updatedAt: string;
+      cardEffects: components['schemas']['CardEffects'];
+    };
+    CardEffects: {
+      cost: components['schemas']['EffectsCost'];
+      effect: components['schemas']['EffectsEffect'];
+    };
+    ChainEffect: {
+      chainType: string;
+      subtype?: string;
+      direction?: string;
+      /** Format: int32 */
+      amount?: number;
+    };
+    EffectsCost: {
+      prestate?: string;
+      costType: string;
+      subtype?: string;
+      supertype?: string;
+      /** Format: int32 */
+      amount?: number;
+      target?: components['schemas']['EffectsTarget'];
+      payment?: components['schemas']['EffectsPayment'];
+      postCount?: components['schemas']['PostCount'];
+    };
+    EffectsCount: {
+      /** Format: int32 */
+      multiplier: number;
+      target?: components['schemas']['EffectsTarget'];
+    };
+    EffectsEffect: {
+      effectType: string;
+      subtype?: string;
+      supertype?: string;
+      amount?: number | components['schemas']['EffectsCount'];
+      /** Format: int32 */
+      maxAmount?: number;
+      target?: components['schemas']['EffectsTarget'];
+      direction?: string;
+      hindrance?: string;
+      benefit?: string;
+      chainEffect?: components['schemas']['ChainEffect'];
+    };
+    EffectsPayment: {
+      paymentType?: string;
+      /** Format: int32 */
+      amount?: number;
+      cardType?: string;
+    };
+    EffectsTarget: {
+      cardType?: string;
+      cardClass?: string;
+      subtype?: string;
+      /** Format: int32 */
+      minLevel?: number;
+      /** Format: int32 */
+      maxLevel?: number;
+      /** Format: int32 */
+      atk?: number;
+      /** Format: int32 */
+      def?: number;
+      zone?: string;
+      targetType?: string;
+      owner?: string;
+    };
+    Error: {
+      error: string;
+    };
+    ListCardsResponse: {
+      /** Format: int32 */
+      countOfCards: number;
+      cards: components['schemas']['Card'][];
+    };
+    PostCount: {
+      countType: string;
+      subtype?: string;
+    };
+    Role: {
+      /** Format: int32 */
+      id: number;
+      name: string;
+      rights: components['schemas']['right'][];
+      createdAt: string;
+      updatedAt: string;
+    };
+    RoleCreate: {
+      name: string;
+      rights: components['schemas']['right'][];
+    };
+    RoleUpdate: {
+      name?: string;
+      rights?: components['schemas']['right'][];
+    };
+    TokenRequest: {
+      /** Format: int32 */
+      id: number;
+      /** Format: int32 */
+      userId: number;
+      createdAt: string;
+      /** Format: int32 */
+      cardsInQueue: number;
+    };
+    User: {
+      /** Format: int32 */
+      id: number;
+      /** Format: int32 */
+      roleId: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+      username?: string;
+      penName?: string;
+      active: boolean;
+      tokenRequests: components['schemas']['TokenRequest'][];
+    };
+    UserCreate: {
+      /** Format: int32 */
+      roleId: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+      username?: string;
+      password?: string;
+      penName?: string;
+      sendPasswordEmail?: boolean;
+    };
+    UserUpdate: {
+      /** Format: int32 */
+      roleId?: number;
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      phoneNumber?: string;
+      username?: string;
+      penName?: string;
+      active?: boolean;
+    };
+    /** @enum {string} */
+    right: 'right1' | 'right2' | 'right3';
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    Roles_listRoles: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Role"][];
-                };
-            };
-        };
+  Roles_listRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    Roles_createRole: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RoleCreate"];
-            };
+        content: {
+          'application/json': components['schemas']['Role'][];
         };
-        responses: {
-            /** @description The request has succeeded and a new resource has been created as a result. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Role"];
-                };
-            };
-        };
+      };
     };
-    Roles_getRole: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roleId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Role"];
-                };
-            };
-            /** @description The server cannot find the requested resource. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
+  };
+  Roles_createRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    Roles_updateRole: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roleId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RoleUpdate"];
-            };
-        };
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Role"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RoleCreate'];
+      };
     };
-    Roles_deleteRole: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roleId: number;
-            };
-            cookie?: never;
+    responses: {
+      /** @description The request has succeeded and a new resource has been created as a result. */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description There is no content to send for this request, but the headers may be useful.  */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The server cannot find the requested resource. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['Role'];
         };
+      };
     };
-    TokenRequests_listTokenRequests: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenRequest"][];
-                };
-            };
-        };
+  };
+  Roles_getRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        roleId: number;
+      };
+      cookie?: never;
     };
-    TokenRequests_deleteTokenRequest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                tokenRequestId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description There is no content to send for this request, but the headers may be useful.  */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The server cannot find the requested resource. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['Role'];
         };
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
     };
-    Authenticate_authenticate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AuthenticateRequest"];
-            };
-        };
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthenticateResponse"];
-                };
-            };
-        };
+  };
+  Roles_updateRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        roleId: number;
+      };
+      cookie?: never;
     };
-    Cards_listCards: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ListCardsResponse"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RoleUpdate'];
+      };
     };
-    Users_listUsers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["User"][];
-                };
-            };
-            /** @description Access is unauthorized. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['Role'];
         };
+      };
     };
-    Users_createUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserCreate"];
-            };
-        };
-        responses: {
-            /** @description The request has succeeded and a new resource has been created as a result. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["User"];
-                };
-            };
-        };
+  };
+  Roles_deleteRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        roleId: number;
+      };
+      cookie?: never;
     };
-    Users_getUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description There is no content to send for this request, but the headers may be useful.  */
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["User"];
-                };
-            };
-            /** @description The server cannot find the requested resource. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
+        content?: never;
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
     };
-    Users_deleteUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description There is no content to send for this request, but the headers may be useful.  */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The server cannot find the requested resource. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
+  };
+  TokenRequests_listTokenRequests: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    Users_updateUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserUpdate"];
-            };
+        content: {
+          'application/json': components['schemas']['TokenRequest'][];
         };
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["User"];
-                };
-            };
-        };
+      };
     };
+  };
+  TokenRequests_deleteTokenRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        tokenRequestId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description There is no content to send for this request, but the headers may be useful.  */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  Authenticate_authenticate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuthenticateRequest'];
+      };
+    };
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthenticateResponse'];
+        };
+      };
+    };
+  };
+  Cards_listCards: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ListCardsResponse'];
+        };
+      };
+    };
+  };
+  Users_listUsers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['User'][];
+        };
+      };
+      /** @description Access is unauthorized. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  Users_createUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UserCreate'];
+      };
+    };
+    responses: {
+      /** @description The request has succeeded and a new resource has been created as a result. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['User'];
+        };
+      };
+    };
+  };
+  Users_getUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['User'];
+        };
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  Users_deleteUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description There is no content to send for this request, but the headers may be useful.  */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  Users_updateUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UserUpdate'];
+      };
+    };
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['User'];
+        };
+      };
+    };
+  };
 }

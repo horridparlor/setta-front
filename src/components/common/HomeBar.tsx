@@ -64,7 +64,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
     const getPageName = () => {
       const location = useLocation();
-      const pageLocation = '/' + location.pathname.split('/').filter(Boolean)[0] || '';
+      const pageLocation =
+        '/' + location.pathname.split('/').filter(Boolean)[0] || '';
       const appPage = isAppPage(pageLocation) ? pageLocation : AppPage.Error;
       switch (appPage) {
         case AppPage.CardCatalogue:
@@ -131,7 +132,9 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </AccordionDetails>
                 </Accordion>
 
-                <ListItemButton onClick={() => navigateTo(AppPage.UserManagement)}>
+                <ListItemButton
+                  onClick={() => navigateTo(AppPage.UserManagement)}
+                >
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>

@@ -19,7 +19,7 @@ import {
 } from '../../types/api';
 import { AuthCookie } from '../../types/cookie';
 import { useTranslation } from 'react-i18next';
-import {apiClient} from "../../api/client.ts";
+import { apiClient } from '../../api/client.ts';
 
 interface LoginModalProps {
   open: boolean;
@@ -36,19 +36,24 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
   const [retypeNewPassword, setRetypeNewPassword] = useState('');
 
   const handleLogin = async () => {
-    const { data: responseData, error } = await apiClient.POST('/user/authenticate', {
-      headers: getHeaders(),
-      body: {
-        username: username,
-        password: password
+    const { data: responseData, error } = await apiClient.POST(
+      '/user/authenticate',
+      {
+        headers: getHeaders(),
+        body: {
+          username: username,
+          password: password,
+        },
       }
-    });
+    );
     if (error) {
       showError(error);
       return;
     }
     Cookies.set(AuthCookie.AUTH_TOKEN, responseData.authToken, { expires: 1 });
-    Cookies.set(AuthCookie.USER_ID, responseData.userId.toString(), { expires: 7 });
+    Cookies.set(AuthCookie.USER_ID, responseData.userId.toString(), {
+      expires: 7,
+    });
     Cookies.set(
       AuthCookie.SYSTEM_USER,
       JSON.stringify({
@@ -64,7 +69,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
         lastName: responseData.lastname,
       })
     );
-    toast.success(t('AUTHENTICATED', { firstName: responseData.firstname, lastName: responseData.lastname }));
+    toast.success(
+      t('AUTHENTICATED', {
+        firstName: responseData.firstname,
+        lastName: responseData.lastname,
+      })
+    );
     await refetch();
     onClose();
   };

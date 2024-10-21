@@ -1,13 +1,9 @@
 import { useState, useEffect } from 'react';
 import { UpdateFrequencies } from '../types/time';
-import {
-  getHeaders,
-  getUserEndpoint,
-  UserEndpoint,
-} from '../types/api';
+import { getHeaders, getUserEndpoint, UserEndpoint } from '../types/api';
 import { CardData } from '../types/card';
 import { CardOwner } from '../types/user';
-import {apiClient} from "../api/client.ts";
+import { apiClient } from '../api/client.ts';
 
 const useCards = () => {
   const [cards, setCards] = useState<Array<CardData>>([]);
@@ -19,7 +15,7 @@ const useCards = () => {
   const fetchCards = async () => {
     setIsLoading(true);
     const { data: responseData, error } = await apiClient.GET('/user/cards', {
-      headers: getHeaders()
+      headers: getHeaders(),
     });
     if (error) {
       setError(error);
@@ -27,19 +23,19 @@ const useCards = () => {
     }
     const cards = responseData.cards as CardData[];
     const owners = cards
-        .reduce((acc: CardOwner[], card: CardData) => {
-          if (!acc.some(owner => owner.id === card.ownerId)) {
-            const owner: CardOwner = {
-              id: card.ownerId,
-              name: `${card.ownerFirstname} ${card.ownerLastname}`,
-            };
-            acc.push(owner);
-          }
-          return acc;
-        }, [])
-        .sort((ownerA: CardOwner, ownerB: CardOwner) =>
-            ownerA.name.localeCompare(ownerB.name)
-        );
+      .reduce((acc: CardOwner[], card: CardData) => {
+        if (!acc.some(owner => owner.id === card.ownerId)) {
+          const owner: CardOwner = {
+            id: card.ownerId,
+            name: `${card.ownerFirstname} ${card.ownerLastname}`,
+          };
+          acc.push(owner);
+        }
+        return acc;
+      }, [])
+      .sort((ownerA: CardOwner, ownerB: CardOwner) =>
+        ownerA.name.localeCompare(ownerB.name)
+      );
     setCards(cards);
     setCardOwners(owners);
     setIsLoading(false);
