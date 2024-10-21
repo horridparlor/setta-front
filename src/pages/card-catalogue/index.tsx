@@ -97,7 +97,7 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ width: '100%', p: 2 }}>
+      <Box sx={{ width: '100%' }}>
         <HomeBar refetch={refetch} ref={homeBarRef} onLeavePage={onLeavePage} />
       </Box>
       <Box
@@ -107,6 +107,7 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
           justifyContent: 'center',
           alignItems: 'center',
           overflow: 'auto',
+          p: 2,
         }}
       >
         <CardCatalogue

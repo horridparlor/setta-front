@@ -41,7 +41,7 @@ const UserRolesPage = (props: UserRolesPageProps) => {
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ width: '100%', p: 2 }}>
+      <Box sx={{ width: '100%' }}>
         <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
       <h1 style={{ marginLeft: 40 }}>
@@ -56,6 +56,7 @@ const UserRolesPage = (props: UserRolesPageProps) => {
             justifyContent: 'center',
             alignItems: 'center',
             marginTop: 10,
+            p: 2,
           }}
         >
           <Button

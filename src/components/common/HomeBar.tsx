@@ -94,7 +94,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             </IconButton>
             <Drawer open={open}>
               <Box sx={{ p: 2 }}>
-                <IconButton onClick={() => setOpen(false)}>
+                <IconButton
+                  onClick={() => setOpen(false)}
+                  sx={{ mb: '0.75rem' }}
+                >
                   <CloseIcon />
                 </IconButton>
                 <Divider />
@@ -113,7 +116,15 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   <ListItemText primary={t('PAGE_NAME.CARD_EDITOR')} />
                 </ListItemButton>
 
-                <Accordion>
+                <Accordion
+                  disableGutters
+                  elevation={0}
+                  sx={{
+                    '&:before': {
+                      display: 'none',
+                    },
+                  }}
+                >
                   <AccordionSummary expandIcon={<ExpandMore />}>
                     <ListItemIcon>
                       <FormatPaint />
@@ -149,8 +160,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PROFILE')} />
                 </ListItemButton>
-                <LanguageIcon sx={{ ml: 2, mr: 3 }} />
-                <LanguageSelect />
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <LanguageIcon sx={{ ml: 2, mr: 3 }} />
+                  <LanguageSelect />
+                </Box>
               </Box>
             </Drawer>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>

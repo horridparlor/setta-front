@@ -216,7 +216,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ width: '100%', p: 2 }}>
+      <Box sx={{ width: '100%' }}>
         <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
 
@@ -227,6 +227,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
           flexWrap: 'wrap',
           justifyContent: 'center',
           overflow: 'auto',
+          p: 2,
         }}
       >
         <Card sx={{ m: 1, p: 1, width: '90%' }}>
