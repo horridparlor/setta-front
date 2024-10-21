@@ -1,8 +1,11 @@
 import Cookies from 'js-cookie';
+import { SystemUser } from './api.ts';
+import { TFunction } from 'i18next';
 
 export enum AuthCookie {
   AUTH_TOKEN = 'authToken',
   USER_ID = 'userId',
+  USER_NAME = 'userName',
   SYSTEM_USER = 'systemUser',
 }
 
@@ -43,4 +46,13 @@ export enum MultitaskCookie {
 
 export const getUserId = () => {
   return parseInt(Cookies.get(AuthCookie.USER_ID) || '');
+};
+
+export const getUsername = (t: TFunction) => {
+  const user: SystemUser = JSON.parse(
+    Cookies.get(AuthCookie.SYSTEM_USER) ?? '{}'
+  );
+  return user.firstName && user.lastName
+    ? user.firstName + ' ' + user.lastName
+    : user.firstName || user.lastName || t('GUEST');
 };

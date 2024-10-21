@@ -326,8 +326,8 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
         case SortOption.CREATED_AT:
           return filteredCards.sort((cardA, cardB) =>
             !doSortAscending()
-              ? cardA.created_at.localeCompare(cardB.created_at)
-              : cardB.created_at.localeCompare(cardA.created_at)
+              ? cardA.createdAt.localeCompare(cardB.createdAt)
+              : cardB.createdAt.localeCompare(cardA.createdAt)
           );
         case SortOption.NAME:
           return filteredCards.sort((cardA, cardB) =>
@@ -339,8 +339,8 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
         default:
           return filteredCards.sort((cardA, cardB) =>
             !doSortAscending()
-              ? cardA.updated_at.localeCompare(cardB.updated_at)
-              : cardB.updated_at.localeCompare(cardA.updated_at)
+              ? cardA.updatedAt.localeCompare(cardB.updatedAt)
+              : cardB.updatedAt.localeCompare(cardA.updatedAt)
           );
       }
     };
@@ -447,6 +447,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
               >
                 <CardPreviewer
                   cards={cards}
+                  expansions={expansions}
                   cardData={cardData}
                   scale={cardScale}
                 />

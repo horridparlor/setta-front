@@ -17,6 +17,7 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+.env
 
 # Editor directories and files
 .vscode/*
@@ -29,7 +30,8 @@ dist-ssr
 *.sln
 *.sw?
 
-.env
+.env.development
+.env.production
 /test-results/
 /playwright-report/
 /blob-report/

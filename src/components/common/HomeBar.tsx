@@ -1,34 +1,35 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import Button from '@mui/material/Button';
-import { 
-  Box, 
-  Divider, 
-  ListItemButton, 
-  AppBar, Toolbar, 
-  Typography, 
-  IconButton,
-  Drawer,
-  ListItemText,
-  ListItemIcon,
+import {
   Accordion,
+  AccordionDetails,
   AccordionSummary,
-  AccordionDetails
+  AppBar,
+  Box,
+  Divider,
+  Drawer,
+  IconButton,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
 } from '@mui/material';
-import { AppPage } from '../../types/navigation';
+import { AppPage, isAppPage } from '../../types/navigation';
 import LoginModal from './LoginModal';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import PeopleIcon from '@mui/icons-material/People';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import LoginIcon from '@mui/icons-material/Login';
 import { useTranslation } from 'react-i18next';
 import LanguageSelect from './LanguageSelect';
 import LanguageIcon from '@mui/icons-material/Language';
-
+import { ExpandMore, FormatPaint, Inventory } from '@mui/icons-material';
+import { getUsername } from '../../types/cookie.ts';
 
 interface HomeBarProps {
   refetch: () => Promise<void>;
@@ -41,7 +42,7 @@ export interface HomeBarRef {
 
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
   ({ refetch, onLeavePage }, ref) => {
-    const { t } = useTranslation(); 
+    const { t } = useTranslation();
     const [isLoginOpen, setLoginOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -61,17 +62,40 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
     const [open, setOpen] = useState(false);
 
+    const getPageName = () => {
+      const location = useLocation();
+      const pageLocation =
+        '/' + location.pathname.split('/').filter(Boolean)[0] || '';
+      const appPage = isAppPage(pageLocation) ? pageLocation : AppPage.Error;
+      switch (appPage) {
+        case AppPage.CardCatalogue:
+          return t('PAGE_NAME.CARD_CATALOGUE');
+        case AppPage.CardEditor:
+          return t('PAGE_NAME.CARD_EDITOR');
+        case AppPage.CardExpansions:
+          return t('PAGE_NAME.CARD_EXPANSIONS');
+        case AppPage.UserManagement:
+          return t('PAGE_NAME.USER_MANAGEMENT');
+        case AppPage.Error:
+          return t('ERROR') + ': ' + pageLocation;
+      }
+    };
+
     return (
       <Box>
         <AppBar position="static">
           <Toolbar>
-            <IconButton color="inherit" sx={{ mr: 2 }} onClick={() => setOpen(true)}>
-              <MenuIcon/>
+            <IconButton
+              color="inherit"
+              sx={{ mr: 2 }}
+              onClick={() => setOpen(true)}
+            >
+              <MenuIcon />
             </IconButton>
             <Drawer open={open}>
               <Box sx={{ p: 2 }}>
                 <IconButton onClick={() => setOpen(false)}>
-                  <CloseIcon/>
+                  <CloseIcon />
                 </IconButton>
                 <Divider />
                 <ListItemButton
@@ -80,33 +104,44 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   <ListItemIcon>
                     <AutoStoriesIcon />
                   </ListItemIcon>
-                  <ListItemText primary={t('CARD_CATALOGUE')} />
+                  <ListItemText primary={t('PAGE_NAME.CARD_CATALOGUE')} />
                 </ListItemButton>
-                <Accordion
-                  disableGutters
-                  elevation={0}
-                  sx={{
-                    '&:before': {
-                      display: 'none'
-                    },
-                  }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <AddToPhotosIcon sx={{ mr: 2 }} /> {t('CARD_CREATION')}
+                <ListItemButton onClick={() => navigateTo(AppPage.CardEditor)}>
+                  <ListItemIcon>
+                    <AddToPhotosIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t('PAGE_NAME.CARD_EDITOR')} />
+                </ListItemButton>
+
+                <Accordion>
+                  <AccordionSummary expandIcon={<ExpandMore />}>
+                    <ListItemIcon>
+                      <FormatPaint />
+                    </ListItemIcon>
+                    <ListItemText primary={t('PAGE_NAME.RELEASING')} />
                   </AccordionSummary>
                   <AccordionDetails>
                     <ListItemButton
-                      onClick={() => navigateTo(AppPage.CardEditor)}
+                      onClick={() => navigateTo(AppPage.CardExpansions)}
                     >
-                      <ListItemText primary={t('CARD_EDITOR')} />
+                      <ListItemIcon>
+                        <Inventory />
+                      </ListItemIcon>
+                      <ListItemText primary={t('PAGE_NAME.CARD_EXPANSIONS')} />
                     </ListItemButton>
                   </AccordionDetails>
                 </Accordion>
-                <ListItemButton>
+
+                <ListItemButton
+                  onClick={() => navigateTo(AppPage.UserManagement)}
+                >
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
-                  <ListItemText primary={t('USER_MANAGEMENT')} />
+                  <ListItemText primary={t('PAGE_NAME.USER_MANAGEMENT')} />
+                </ListItemButton>
+                <ListItemButton onClick={() => navigateTo(AppPage.UserRoles)}>
+                  <ListItemText primary={t('USER_ROLES')} />
                 </ListItemButton>
                 <ListItemButton>
                   <ListItemIcon>
@@ -114,12 +149,20 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PROFILE')} />
                 </ListItemButton>
-                <LanguageIcon sx={{ ml: 2, mr:3 }}/>
+                <LanguageIcon sx={{ ml: 2, mr: 3 }} />
                 <LanguageSelect />
               </Box>
             </Drawer>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
               Setta
+            </Typography>
+
+            <Typography variant="h5" sx={{ flexGrow: 1, fontWeight: 600 }}>
+              {getPageName()}
+            </Typography>
+
+            <Typography variant="h6" sx={{ marginRight: 2 }}>
+              {getUsername(t)}
             </Typography>
 
             <Button
@@ -129,7 +172,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
               onClick={() => setLoginOpen(true)}
               sx={{ marginLeft: '0.4rem' }}
             >
-              {t('LOGIN')} 
+              {t('LOGIN')}
             </Button>
             <LoginModal
               open={isLoginOpen}

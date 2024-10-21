@@ -23,7 +23,6 @@ const CardEditorPage = (props: CardEditorPageProps) => {
   const [multiTaskNextCard, setMultiTaskNextCard] = useState<number>(0);
 
   const onCardSaved = async () => {
-    console.log(555, multiTaskNextCard);
     if (multiTaskNextCard) {
       setMultiTaskNextCard(0);
       goToCard(multiTaskNextCard);
@@ -96,10 +95,12 @@ const CardEditorPage = (props: CardEditorPageProps) => {
     }
     const cardIds: Array<number> = JSON.parse(exportingAllCards);
     const currentIndex: number = JSON.parse(exportingAllIndex ?? '0');
+    if (cardIds[currentIndex] !== card.cardId) {
+      return;
+    }
     const nextIndex: number = currentIndex + 1;
     Cookies.set(MultitaskCookie.EXPORTING_ALL_INDEX, JSON.stringify(nextIndex));
     if (nextIndex >= cardIds.length) {
-      console.log(999);
       Cookies.remove(MultitaskCookie.EXPORTING_ALL_CARDS);
       Cookies.remove(MultitaskCookie.EXPORTING_ALL_INDEX);
       commitExport();

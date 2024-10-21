@@ -536,11 +536,15 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<
               <MenuItem key={'none'} value={''}>
                 –
               </MenuItem>
-              {cards.map(card => (
-                <MenuItem key={card.cardId} value={card.cardId.toString()}>
-                  {normalizeName(card.cardName)}
-                </MenuItem>
-              ))}
+              {cards
+                .sort((cardA, cardB) =>
+                  normalizeName(cardA).localeCompare(normalizeName(cardB))
+                )
+                .map(card => (
+                  <MenuItem key={card.cardId} value={card.cardId.toString()}>
+                    {normalizeName(card.cardName)}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
           <FormControl fullWidth sx={{ marginLeft: '0.4rem' }}>
@@ -554,15 +558,11 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<
               <MenuItem key={'none'} value={''}>
                 –
               </MenuItem>
-              {expansions
-                .sort((expansionA, expansionB) =>
-                  expansionA.name.localeCompare(expansionB.name)
-                )
-                .map(expansion => (
-                  <MenuItem key={expansion.id} value={expansion.id}>
-                    {expansion.name}
-                  </MenuItem>
-                ))}
+              {expansions.map(expansion => (
+                <MenuItem key={expansion.id} value={expansion.id}>
+                  {expansion.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
