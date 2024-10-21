@@ -64,8 +64,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
     const getPageName = () => {
       const location = useLocation();
-      const pageLocation =
-        '/' + location.pathname.split('/').filter(Boolean)[0] ?? '';
+      const pageLocation = '/' + location.pathname.split('/').filter(Boolean)[0] || '';
       const appPage = isAppPage(pageLocation) ? pageLocation : AppPage.Error;
       switch (appPage) {
         case AppPage.CardCatalogue:
@@ -74,6 +73,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           return t('PAGE_NAME.CARD_EDITOR');
         case AppPage.CardExpansions:
           return t('PAGE_NAME.CARD_EXPANSIONS');
+        case AppPage.UserManagement:
+          return t('PAGE_NAME.USER_MANAGEMENT');
         case AppPage.Error:
           return t('ERROR') + ': ' + pageLocation;
       }
@@ -110,6 +111,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_EDITOR')} />
                 </ListItemButton>
+
                 <Accordion>
                   <AccordionSummary expandIcon={<ExpandMore />}>
                     <ListItemIcon>
@@ -128,11 +130,12 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     </ListItemButton>
                   </AccordionDetails>
                 </Accordion>
-                <ListItemButton>
+
+                <ListItemButton onClick={() => navigateTo(AppPage.UserManagement)}>
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
-                  <ListItemText primary={t('USER_MANAGEMENT')} />
+                  <ListItemText primary={t('PAGE_NAME.USER_MANAGEMENT')} />
                 </ListItemButton>
                 <ListItemButton onClick={() => navigateTo(AppPage.UserRoles)}>
                   <ListItemText primary={t('USER_ROLES')} />
