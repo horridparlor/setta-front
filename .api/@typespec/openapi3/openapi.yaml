@@ -3,6 +3,8 @@ info:
   title: Setta Backend
   version: 0.0.0
 tags:
+  - name: auth
+  - name: cards
   - name: planned
 paths:
   /roles:
@@ -154,6 +156,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticateResponse'
+      tags:
+        - auth
       requestBody:
         required: true
         content:
@@ -171,6 +175,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListCardsResponse'
+      tags:
+        - cards
   /user/users:
     get:
       operationId: Users_listUsers

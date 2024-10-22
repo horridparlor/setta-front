@@ -17,145 +17,145 @@ namespace SettaBackend;
 /// ––––– USER –––––
 
 // ––– Authenticate
+@tag("auth")
 @route("/user/authenticate")
 namespace Authenticate {
-    @post
-    op authenticate(
-        @body request: AuthenticateRequest
-    ): {
-        @statusCode statusCode: 200;
-        @body response: AuthenticateResponse;
-    };
+  @post
+  op authenticate(@body request: AuthenticateRequest): {
+    @statusCode statusCode: 200;
+    @body response: AuthenticateResponse;
+  };
 }
 
 model AuthenticateRequest {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 model AuthenticateResponse {
-    authToken: string;
-    userId: int32;
-    firstname: string;
-    lastname: string;
-    isAdmin: boolean;
+  authToken: string;
+  userId: int32;
+  firstname: string;
+  lastname: string;
+  isAdmin: boolean;
 }
 
 // ––– Cards
+@tag("cards")
 @route("/user/cards")
 namespace Cards {
-    @get
-    op listCards(): {
-        @statusCode statusCode: 200;
-        @body response: ListCardsResponse;
-    };
+  @get
+  op listCards(): {
+    @statusCode statusCode: 200;
+    @body response: ListCardsResponse;
+  };
 }
 
 model ListCardsResponse {
-    countOfCards: int32;
-    cards: Card[];
+  countOfCards: int32;
+  cards: Card[];
 }
 
 model Card {
-    cardId: int32;
-    ownerId: int32;
-    errataOfId?: int32;
-    ownerFirstname: string;
-    ownerLastname: string;
-    cardName: string;
-    isAce: boolean;
-    cardClass: string;
-    cardType: string;
-    subtype: string;
-    supertype: string;
-    maximumPiece: string;
-    level: int32;
-    atk: int32;
-    def: int32;
-    primaryMaterialId?: int32;
-    secondaryMaterialId?: int32;
-    tertiaryMaterialId?: int32;
-    materialsReminder?: string;
-    costText: string;
-    effectText: string;
-    flavourText: string;
-    countsAsId?: int32;
-    artScale: float32;
-    artXOffset: float32;
-    artYOffset: float32;
-    nameSize: float32;
-    materialsSize: float32;
-    effectsSize: float32;
-    expansionId: int32;
-    originalExpansionId: int32;
-    createdAt: string;
-    updatedAt: string;
-    cardEffects: CardEffects;
+  cardId: int32;
+  ownerId: int32;
+  errataOfId?: int32;
+  ownerFirstname: string;
+  ownerLastname: string;
+  cardName: string;
+  isAce: boolean;
+  cardClass: string;
+  cardType: string;
+  subtype: string;
+  supertype: string;
+  maximumPiece: string;
+  level: int32;
+  atk: int32;
+  def: int32;
+  primaryMaterialId?: int32;
+  secondaryMaterialId?: int32;
+  tertiaryMaterialId?: int32;
+  materialsReminder?: string;
+  costText: string;
+  effectText: string;
+  flavourText: string;
+  countsAsId?: int32;
+  artScale: float32;
+  artXOffset: float32;
+  artYOffset: float32;
+  nameSize: float32;
+  materialsSize: float32;
+  effectsSize: float32;
+  expansionId: int32;
+  originalExpansionId: int32;
+  createdAt: string;
+  updatedAt: string;
+  cardEffects: CardEffects;
 }
 
 model CardEffects {
-    cost: EffectsCost;
-    effect: EffectsEffect;
+  cost: EffectsCost;
+  effect: EffectsEffect;
 }
 
 model EffectsCost {
-    prestate?: string;
-    costType: string;
-    subtype?: string;
-    supertype?: string;
-    amount?: int32;
-    target?: EffectsTarget;
-    payment?: EffectsPayment;
-    postCount?: PostCount;
+  prestate?: string;
+  costType: string;
+  subtype?: string;
+  supertype?: string;
+  amount?: int32;
+  target?: EffectsTarget;
+  payment?: EffectsPayment;
+  postCount?: PostCount;
 }
 
 model EffectsTarget {
-    cardType?: string;
-    cardClass?: string;
-    subtype?: string;
-    minLevel?: int32;
-    maxLevel?: int32;
-    atk?: int32;
-    def?: int32;
-    zone?: string;
-    targetType?: string;
-    owner?: string;
+  cardType?: string;
+  cardClass?: string;
+  subtype?: string;
+  minLevel?: int32;
+  maxLevel?: int32;
+  atk?: int32;
+  def?: int32;
+  zone?: string;
+  targetType?: string;
+  owner?: string;
 }
 
 model EffectsPayment {
-    paymentType?: string;
-    amount?: int32;
-    cardType?: string;
+  paymentType?: string;
+  amount?: int32;
+  cardType?: string;
 }
 
 model PostCount {
-    countType: string;
-    subtype?: string;
+  countType: string;
+  subtype?: string;
 }
 
 model EffectsEffect {
-    effectType: string;
-    subtype?: string;
-    supertype?: string;
-    amount?: int32|EffectsCount;
-    maxAmount?: int32;
-    target?: EffectsTarget;
-    direction?: string;
-    hindrance?: string;
-    benefit?: string;
-    chainEffect?: ChainEffect;
+  effectType: string;
+  subtype?: string;
+  supertype?: string;
+  amount?: int32 | EffectsCount;
+  maxAmount?: int32;
+  target?: EffectsTarget;
+  direction?: string;
+  hindrance?: string;
+  benefit?: string;
+  chainEffect?: ChainEffect;
 }
 
 model EffectsCount {
-    multiplier: int32;
-    target?: EffectsTarget;
+  multiplier: int32;
+  target?: EffectsTarget;
 }
 
 model ChainEffect {
-    chainType: string;
-    subtype?: string;
-    direction?: string;
-    amount?: int32;
+  chainType: string;
+  subtype?: string;
+  direction?: string;
+  amount?: int32;
 }
 
 // ––– Users
