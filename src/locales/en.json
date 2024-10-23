@@ -61,6 +61,7 @@
     "CARD_CATALOGUE": "Card Catalogue",
     "CARD_EDITOR": "Card Editor",
     "CARD_EXPANSIONS": "Card Expansions",
+    "USER_MANAGEMENT": "User Management",
     "RELEASING": "Releasing",
     "CREATE_NEW_USER": "Create a new user"
   },

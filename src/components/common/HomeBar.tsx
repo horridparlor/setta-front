@@ -4,7 +4,8 @@ import {
   Box,
   Divider,
   ListItemButton,
-  AppBar, Toolbar,
+  AppBar,
+  Toolbar,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -27,9 +28,8 @@ import LoginIcon from '@mui/icons-material/Login';
 import { useTranslation } from 'react-i18next';
 import LanguageSelect from './LanguageSelect';
 import LanguageIcon from '@mui/icons-material/Language';
-import { ExpandMore, FormatPaint, Inventory } from "@mui/icons-material";
-import { getUsername } from "../../types/cookie.ts";
-
+import { ExpandMore, FormatPaint, Inventory } from '@mui/icons-material';
+import { getUsername } from '../../types/cookie.ts';
 
 interface HomeBarProps {
   refetch: () => Promise<void>;
@@ -64,7 +64,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
     const getPageName = () => {
       const location = useLocation();
-      const pageLocation = '/' + location.pathname.split('/').filter(Boolean)[0] ?? '';
+      const pageLocation =
+        '/' + location.pathname.split('/').filter(Boolean)[0] || '';
       const appPage = isAppPage(pageLocation) ? pageLocation : AppPage.Error;
       switch (appPage) {
         case AppPage.CardCatalogue:
@@ -74,22 +75,29 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
         case AppPage.CardExpansions:
           return t('PAGE_NAME.CARD_EXPANSIONS');
         case AppPage.UserManagement:
-          return t('PAGE_NAME.CREATE_NEW_USER')
+          return t('PAGE_NAME.USER_MANAGEMENT');
         case AppPage.Error:
           return t('ERROR') + ': ' + pageLocation;
       }
-    }
+    };
 
     return (
       <Box>
         <AppBar position="static">
           <Toolbar>
-            <IconButton color="inherit" sx={{ mr: 2 }} onClick={() => setOpen(true)}>
+            <IconButton
+              color="inherit"
+              sx={{ mr: 2 }}
+              onClick={() => setOpen(true)}
+            >
               <MenuIcon />
             </IconButton>
             <Drawer open={open}>
               <Box sx={{ p: 2 }}>
-                <IconButton onClick={() => setOpen(false)}>
+                <IconButton
+                  onClick={() => setOpen(false)}
+                  sx={{ mb: '0.75rem' }}
+                >
                   <CloseIcon />
                 </IconButton>
                 <Divider />
@@ -101,15 +109,22 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_CATALOGUE')} />
                 </ListItemButton>
-                <ListItemButton
-                  onClick={() => navigateTo(AppPage.CardEditor)}
-                >
-                  <ListItemIcon >
+                <ListItemButton onClick={() => navigateTo(AppPage.CardEditor)}>
+                  <ListItemIcon>
                     <AddToPhotosIcon />
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_EDITOR')} />
                 </ListItemButton>
-                <Accordion>
+
+                <Accordion
+                  disableGutters
+                  elevation={0}
+                  sx={{
+                    '&:before': {
+                      display: 'none',
+                    },
+                  }}
+                >
                   <AccordionSummary expandIcon={<ExpandMore />}>
                     <ListItemIcon>
                       <FormatPaint />
@@ -117,7 +132,9 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     <ListItemText primary={t('PAGE_NAME.RELEASING')} />
                   </AccordionSummary>
                   <AccordionDetails>
-                    <ListItemButton onClick={() => navigateTo(AppPage.CardExpansions)}>
+                    <ListItemButton
+                      onClick={() => navigateTo(AppPage.CardExpansions)}
+                    >
                       <ListItemIcon>
                         <Inventory />
                       </ListItemIcon>
@@ -125,15 +142,16 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     </ListItemButton>
                   </AccordionDetails>
                 </Accordion>
-                <ListItemButton>
+
+                <ListItemButton
+                  onClick={() => navigateTo(AppPage.UserManagement)}
+                >
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
-                  <ListItemText onClick={() => navigateTo(AppPage.UserManagement)} primary={t('USER_MANAGEMENT')} />
+                  <ListItemText primary={t('PAGE_NAME.USER_MANAGEMENT')} />
                 </ListItemButton>
-                <ListItemButton
-                  onClick={() => navigateTo(AppPage.UserRoles)}
-                >
+                <ListItemButton onClick={() => navigateTo(AppPage.UserRoles)}>
                   <ListItemText primary={t('USER_ROLES')} />
                 </ListItemButton>
                 <ListItemButton>
@@ -142,8 +160,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PROFILE')} />
                 </ListItemButton>
-                <LanguageIcon sx={{ ml: 2, mr: 3 }} />
-                <LanguageSelect />
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <LanguageIcon sx={{ ml: 2, mr: 3 }} />
+                  <LanguageSelect />
+                </Box>
               </Box>
             </Drawer>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>

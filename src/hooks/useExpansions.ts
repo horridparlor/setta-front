@@ -22,8 +22,11 @@ const useExpansions = () => {
         headers: getHeaders(),
       });
       const responseData = await response.json();
-      const expansions = responseData.expansions.sort((expansionA: CardExpansion, expansionB: CardExpansion) =>
-          expansionA.name.localeCompare(expansionB.name, undefined, {numeric: true})
+      const expansions = responseData.expansions.sort(
+        (expansionA: CardExpansion, expansionB: CardExpansion) =>
+          expansionA.name.localeCompare(expansionB.name, undefined, {
+            numeric: true,
+          })
       );
       setExpansions(expansions);
       setIsLoading(false);

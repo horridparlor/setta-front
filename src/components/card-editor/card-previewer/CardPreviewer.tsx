@@ -11,7 +11,7 @@ import AttributeCut from './AttributeCut';
 import AttributeFrame from './AttributeFrame';
 import CopyrightIndicator from './CopyrightIndicator';
 import AceFrame from './AceFrame';
-import {CardExpansion} from "../../../types/expansion.ts";
+import { CardExpansion } from '../../../types/expansion.ts';
 
 interface CardPreviewerProps {
   cardData: CardData;
@@ -76,7 +76,11 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({
         </Box>
         <EffectsFrame cards={cards} cardData={cardData} scale={scale} />
       </Box>
-      <CopyrightIndicator scale={scale} cardData={cardData} expansions={expansions} />
+      <CopyrightIndicator
+        scale={scale}
+        cardData={cardData}
+        expansions={expansions}
+      />
       <AceFrame scale={scale} cardData={cardData} />
     </Card>
   );
