@@ -234,7 +234,8 @@ export interface components {
       cardId: number;
       /** Format: int32 */
       ownerId: number;
-      image: components['schemas']['Image'];
+      /** @description generated images need to be stored as array to allow multiple generations for same card */
+      image: components['schemas']['Image'][];
       prompt: string;
       /** Format: int32 */
       errataOfId?: number;
@@ -418,6 +419,11 @@ export interface components {
       id: number;
     };
     Image: {
+      /**
+       * Format: int32
+       * @description use this id in backend to identify the generated assets
+       */
+      id: number;
       /** @enum {string} */
       status: 'accepted' | 'generated' | 'queued' | 'error';
       /** Format: int32 */

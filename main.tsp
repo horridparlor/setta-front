@@ -59,7 +59,10 @@ model CardList {
 model Card {
   cardId: int32;
   ownerId: int32;
-  image: Image;
+
+  @doc("generated images need to be stored as array to allow multiple generations for same card")
+  image: Image[];
+
   prompt: string;
   errataOfId?: int32;
   ownerFirstname: string;
@@ -96,6 +99,9 @@ model Card {
 }
 
 model Image {
+  @doc("use this id in backend to identify the generated assets")
+  id: int32;
+
   status: "accepted" | "generated" | "queued" | "error";
   generatedByUserId: int32;
   generatedAt: string;

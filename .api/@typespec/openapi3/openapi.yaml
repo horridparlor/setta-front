@@ -529,7 +529,10 @@ components:
           type: integer
           format: int32
         image:
-          $ref: '#/components/schemas/Image'
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+          description: generated images need to be stored as array to allow multiple generations for same card
         prompt:
           type: string
         errataOfId:
@@ -895,10 +898,15 @@ components:
     Image:
       type: object
       required:
+        - id
         - status
         - generatedByUserId
         - generatedAt
       properties:
+        id:
+          type: integer
+          format: int32
+          description: use this id in backend to identify the generated assets
         status:
           type: string
           enum:
