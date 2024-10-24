@@ -23,7 +23,8 @@ import {
 } from '../../types/api';
 import useExpansions from '../../hooks/useExpansions';
 import {
-  encodeEffectsString, encodeNameString,
+  encodeEffectsString,
+  encodeNameString,
   normalizeName,
   serializeName,
 } from '../../utils/string';
@@ -274,7 +275,10 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
     };
 
     useEffect(() => {
-      if (cardData.cardId && expansions.find(expansion => expansion.id === cardData.expansionId)) {
+      if (
+        cardData.cardId &&
+        expansions.find(expansion => expansion.id === cardData.expansionId)
+      ) {
         onCardSet(cardData);
       }
     }, [cardData, onCardSet, expansions]);
@@ -325,7 +329,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
             oldName={oldName}
           />
           {activeTab === 2 && (
-            <GenerateBox onReset={handleResetFields} />
+            <GenerateBox/>
           )}
         </Box>
         <RightPanelSettings

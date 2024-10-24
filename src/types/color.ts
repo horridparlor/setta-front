@@ -1,4 +1,10 @@
-import {CardData, CardSubtype, CardSupertype, CardType, StatType,} from './card';
+import {
+  CardData,
+  CardSubtype,
+  CardSupertype,
+  CardType,
+  StatType,
+} from './card';
 
 const ARTWORK_BORDER_THICKNESS = 0.225;
 const EFFECTS_BORDER_THICKNESS = 0.2;
@@ -118,7 +124,7 @@ const getSpellBackgroundColor = (subtype: CardSubtype) => {
       return CardEffectFrameColor.ROYAL;
   }
   return CardMainFrameColor.SPELL;
-}
+};
 
 const getTrapBackgroundColor = (subtype: CardSubtype) => {
   switch (subtype) {
@@ -167,7 +173,7 @@ const getSpellEffectFrameColor = (cardData: CardData) => {
       return CardEffectFrameColor.ROYAL;
   }
   return CardEffectFrameColor.SPELL;
-}
+};
 
 const getNormalMonsterEffectFrameColor = (supertype: CardSupertype) => {
   switch (supertype) {

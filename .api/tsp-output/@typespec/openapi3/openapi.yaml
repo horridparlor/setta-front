@@ -60,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
     post:
@@ -104,7 +104,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
   /token_requests:
@@ -140,10 +140,38 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
-  /users:
+  /user/authenticate:
+    post:
+      operationId: Authenticate_authenticate
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticateResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticateRequest'
+  /user/cards:
+    get:
+      operationId: Cards_listCards
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCardsResponse'
+  /user/users:
     get:
       operationId: Users_listUsers
       parameters: []
@@ -156,6 +184,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
     post:
@@ -176,7 +210,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserCreate'
-  /users/{userId}:
+  /user/users/{userId}:
     get:
       operationId: Users_getUser
       parameters:
@@ -198,7 +232,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
     patch:
@@ -242,34 +276,311 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotFoundError'
+                $ref: '#/components/schemas/Error'
       tags:
         - planned
+security:
+  - BearerAuth: []
 components:
   schemas:
-    InternalServerError:
+    AuthenticateRequest:
       type: object
       required:
-        - code
-        - message
+        - username
+        - password
       properties:
-        code:
+        username:
           type: string
-          enum:
-            - INTERNAL_SERVER_ERROR
-        message:
+        password:
           type: string
-    NotFoundError:
+    AuthenticateResponse:
       type: object
       required:
-        - code
-        - message
+        - authToken
+        - userId
+        - firstname
+        - lastname
+        - isAdmin
       properties:
-        code:
+        authToken:
           type: string
-          enum:
-            - NOT_FOUND
-        message:
+        userId:
+          type: integer
+          format: int32
+        firstname:
+          type: string
+        lastname:
+          type: string
+        isAdmin:
+          type: boolean
+    Card:
+      type: object
+      required:
+        - cardId
+        - ownerId
+        - ownerFirstname
+        - ownerLastname
+        - cardName
+        - isAce
+        - cardClass
+        - cardType
+        - subtype
+        - supertype
+        - maximumPiece
+        - level
+        - atk
+        - def
+        - costText
+        - effectText
+        - flavourText
+        - artScale
+        - artXOffset
+        - artYOffset
+        - nameSize
+        - materialsSize
+        - effectsSize
+        - expansionId
+        - originalExpansionId
+        - createdAt
+        - updatedAt
+        - cardEffects
+      properties:
+        cardId:
+          type: integer
+          format: int32
+        ownerId:
+          type: integer
+          format: int32
+        errataOfId:
+          type: integer
+          format: int32
+        ownerFirstname:
+          type: string
+        ownerLastname:
+          type: string
+        cardName:
+          type: string
+        isAce:
+          type: boolean
+        cardClass:
+          type: string
+        cardType:
+          type: string
+        subtype:
+          type: string
+        supertype:
+          type: string
+        maximumPiece:
+          type: string
+        level:
+          type: integer
+          format: int32
+        atk:
+          type: integer
+          format: int32
+        def:
+          type: integer
+          format: int32
+        primaryMaterialId:
+          type: integer
+          format: int32
+        secondaryMaterialId:
+          type: integer
+          format: int32
+        tertiaryMaterialId:
+          type: integer
+          format: int32
+        materialsReminder:
+          type: string
+        costText:
+          type: string
+        effectText:
+          type: string
+        flavourText:
+          type: string
+        countsAsId:
+          type: integer
+          format: int32
+        artScale:
+          type: number
+          format: float
+        artXOffset:
+          type: number
+          format: float
+        artYOffset:
+          type: number
+          format: float
+        nameSize:
+          type: number
+          format: float
+        materialsSize:
+          type: number
+          format: float
+        effectsSize:
+          type: number
+          format: float
+        expansionId:
+          type: integer
+          format: int32
+        originalExpansionId:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        cardEffects:
+          $ref: '#/components/schemas/CardEffects'
+    CardEffects:
+      type: object
+      required:
+        - cost
+        - effect
+      properties:
+        cost:
+          $ref: '#/components/schemas/EffectsCost'
+        effect:
+          $ref: '#/components/schemas/EffectsEffect'
+    ChainEffect:
+      type: object
+      required:
+        - chainType
+      properties:
+        chainType:
+          type: string
+        subtype:
+          type: string
+        direction:
+          type: string
+        amount:
+          type: integer
+          format: int32
+    EffectsCost:
+      type: object
+      required:
+        - costType
+      properties:
+        prestate:
+          type: string
+        costType:
+          type: string
+        subtype:
+          type: string
+        supertype:
+          type: string
+        amount:
+          type: integer
+          format: int32
+        target:
+          $ref: '#/components/schemas/EffectsTarget'
+        payment:
+          $ref: '#/components/schemas/EffectsPayment'
+        postCount:
+          $ref: '#/components/schemas/PostCount'
+    EffectsCount:
+      type: object
+      required:
+        - multiplier
+      properties:
+        multiplier:
+          type: integer
+          format: int32
+        target:
+          $ref: '#/components/schemas/EffectsTarget'
+    EffectsEffect:
+      type: object
+      required:
+        - effectType
+      properties:
+        effectType:
+          type: string
+        subtype:
+          type: string
+        supertype:
+          type: string
+        amount:
+          anyOf:
+            - type: integer
+              format: int32
+            - $ref: '#/components/schemas/EffectsCount'
+        maxAmount:
+          type: integer
+          format: int32
+        target:
+          $ref: '#/components/schemas/EffectsTarget'
+        direction:
+          type: string
+        hindrance:
+          type: string
+        benefit:
+          type: string
+        chainEffect:
+          $ref: '#/components/schemas/ChainEffect'
+    EffectsPayment:
+      type: object
+      properties:
+        paymentType:
+          type: string
+        amount:
+          type: integer
+          format: int32
+        cardType:
+          type: string
+    EffectsTarget:
+      type: object
+      properties:
+        cardType:
+          type: string
+        cardClass:
+          type: string
+        subtype:
+          type: string
+        minLevel:
+          type: integer
+          format: int32
+        maxLevel:
+          type: integer
+          format: int32
+        atk:
+          type: integer
+          format: int32
+        def:
+          type: integer
+          format: int32
+        zone:
+          type: string
+        targetType:
+          type: string
+        owner:
+          type: string
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+    ListCardsResponse:
+      type: object
+      required:
+        - countOfCards
+        - cards
+      properties:
+        countOfCards:
+          type: integer
+          format: int32
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+    PostCount:
+      type: object
+      required:
+        - countType
+      properties:
+        countType:
+          type: string
+        subtype:
           type: string
     Role:
       type: object
@@ -417,29 +728,16 @@ components:
           type: string
         active:
           type: boolean
-    ValidationError:
-      type: object
-      required:
-        - code
-        - message
-        - details
-      properties:
-        code:
-          type: string
-          enum:
-            - VALIDATION_ERROR
-        message:
-          type: string
-        details:
-          type: array
-          items:
-            type: string
     right:
       type: string
       enum:
         - right1
         - right2
         - right3
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
 servers:
   - url: https://example.com/api
     description: Server endpoint

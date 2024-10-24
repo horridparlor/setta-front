@@ -1,7 +1,8 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { Box, TextField, Typography, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, IconButton, InputAdornment } from '@mui/material';
+import { Box, TextField, Typography, FormControl, InputLabel, Select, MenuItem, IconButton, InputAdornment } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { CardType } from '../../types/card';
+import { SelectChangeEvent } from '@mui/material/Select'; // Import correct SelectChangeEvent
 
 interface BackgroundTabProps {
   updatePromptValues: (values: Partial<{ backgroundDescription: string; backgroundType: string }>) => void;
@@ -9,7 +10,7 @@ interface BackgroundTabProps {
 
 const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => {
   const [backgroundDescription, setBackgroundDescription] = useState<string>('');
-  const [selectedType, setSelectedType] = useState<string | undefined>(CardType.MONSTER);
+  const [selectedType, setSelectedType] = useState<string>(CardType.MONSTER);
 
   // Transmit the default background type to the promptbox
   useEffect(() => {
@@ -22,8 +23,9 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
     updatePromptValues({ backgroundDescription: newDescription });
   };
 
+  // Fix the type for the event argument here to SelectChangeEvent<string>
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
-    const newType = event.target.value as string;
+    const newType = event.target.value;
     setSelectedType(newType);
     updatePromptValues({ backgroundType: newType });
   };
@@ -36,7 +38,7 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
   return (
     <Box>
       <Box sx={{ marginBottom: '1rem' }}>
-        <Typography variant="subtitle1">Description</Typography>
+        <Typography variant="subtitle1">Background Description</Typography>
         <TextField
           fullWidth
           variant="outlined"
@@ -62,11 +64,11 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => 
             labelId="background-type-selector-label"
             value={selectedType || ''}
             label="Type"
-            onChange={handleTypeChange}
+            onChange={handleTypeChange} // Correct handler with SelectChangeEvent type
           >
             {Object.values(CardType)
               .filter(value => value !== CardType.NONE)
-              .map((cardType) => (
+              .map(cardType => (
                 <MenuItem key={cardType} value={cardType}>
                   {cardType}
                 </MenuItem>
