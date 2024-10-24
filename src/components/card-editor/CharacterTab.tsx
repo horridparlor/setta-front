@@ -27,10 +27,10 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   // Full character object, including fields not directly displayed in the prompt
   const [characterFields, setCharacterFields] = useState({
     characterName: '',
-    race: 'Human', 
-    gender: 'Male', 
-    age: 'Young', 
-    Charactertype: 'Main', 
+    race: 'Human',
+    gender: 'Male',
+    age: 'Young',
+    charactertype: 'Main',
     appearance: '',
     tool: '',
     inherited_tool: false,
@@ -45,34 +45,43 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   }, []);
 
   // Function to handle input changes for text fields and dropdowns
-  const handleInputChange = (field: string) => (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
-  ) => {
-    const newValue = event.target.value as string;
-    setCharacterFields(prevFields => ({ ...prevFields, [field]: newValue }));
-    updatePromptValues({ [field]: newValue }); 
-  };
+  const handleInputChange =
+    (field: string) =>
+    (
+      event:
+        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | SelectChangeEvent<string>
+    ) => {
+      const newValue = event.target.value as string;
+      setCharacterFields(prevFields => ({ ...prevFields, [field]: newValue }));
+      updatePromptValues({ [field]: newValue });
+    };
 
-  
   const clearField = (field: string) => () => {
     setCharacterFields(prevFields => ({ ...prevFields, [field]: '' }));
     updatePromptValues({ [field]: '' });
   };
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.checked;
-    setCharacterFields(prevFields => ({ ...prevFields, inherited_tool: newValue }));
+    setCharacterFields(prevFields => ({
+      ...prevFields,
+      inherited_tool: newValue,
+    }));
     updatePromptValues({ inherited_tool: newValue });
   };
   const [characterSubTabId, setCharacterSubTabId] = useState(0);
 
-  const handleCharacterSubTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleCharacterSubTabChange = (
+    event: React.ChangeEvent<{}>,
+    newValue: number
+  ) => {
     setCharacterSubTabId(newValue);
   };
 
-  // Sub-tab 
+  // Sub-tab
   const NEW_CHARACTER_TAB = 0;
   const SIDE_CHARACTER_TAB = 1;
-  const CHARACTER2_TAB = 2; //tb implemented  
+  const CHARACTER2_TAB = 2; //tb implemented
   const HIDDEN_TAB = 3; //tb implemented
 
   return (
@@ -88,7 +97,11 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
         <Tab label="Hidden" />
       </Tabs>
 
-      <Box sx={{ display: characterSubTabId === NEW_CHARACTER_TAB ? 'block' : 'none' }}>
+      <Box
+        sx={{
+          display: characterSubTabId === NEW_CHARACTER_TAB ? 'block' : 'none',
+        }}
+      >
         <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
           <Button variant="contained" color="primary">
             Hide Character
@@ -159,7 +172,6 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             </Button>
           )}
         </Box>
-
 
         <Box sx={{ marginBottom: '1rem' }}>
           <Typography variant="subtitle1">Appearance</Typography>
@@ -233,14 +245,12 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             </Select>
           </FormControl>
 
-
-
           {/* Character Type */}
           <FormControl fullWidth>
             <InputLabel id="type-selector-label">Type</InputLabel>
             <Select
               labelId="type-selector-label"
-              value={characterFields.Charactertype}
+              value={characterFields.charactertype}
               label="Type"
               onChange={handleInputChange('Charactertype')}
             >
@@ -302,11 +312,14 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           />
         </Box>
       </Box>
-      <Box sx={{ display: characterSubTabId === SIDE_CHARACTER_TAB ? 'block' : 'none' }}>
-          <SideCharacterTab updateSideCharacterValues={updatePromptValues} />
-        </Box>
+      <Box
+        sx={{
+          display: characterSubTabId === SIDE_CHARACTER_TAB ? 'block' : 'none',
+        }}
+      >
+        <SideCharacterTab updateSideCharacterValues={updatePromptValues} />
+      </Box>
     </Box>
-
   );
 };
 

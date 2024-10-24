@@ -1,15 +1,30 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { Box, TextField, Typography, FormControl, InputLabel, Select, MenuItem, IconButton, InputAdornment } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  IconButton,
+  InputAdornment,
+} from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { CardType } from '../../types/card';
 import { SelectChangeEvent } from '@mui/material/Select'; // Import correct SelectChangeEvent
 
 interface BackgroundTabProps {
-  updatePromptValues: (values: Partial<{ backgroundDescription: string; backgroundType: string }>) => void;
+  updatePromptValues: (
+    values: Partial<{ backgroundDescription: string; backgroundType: string }>
+  ) => void;
 }
 
-const BackgroundTab: React.FC<BackgroundTabProps> = ({ updatePromptValues }) => {
-  const [backgroundDescription, setBackgroundDescription] = useState<string>('');
+const BackgroundTab: React.FC<BackgroundTabProps> = ({
+  updatePromptValues,
+}) => {
+  const [backgroundDescription, setBackgroundDescription] =
+    useState<string>('');
   const [selectedType, setSelectedType] = useState<string>(CardType.MONSTER);
 
   // Transmit the default background type to the promptbox

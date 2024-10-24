@@ -18,8 +18,9 @@ interface SideCharacterTabProps {
   updateSideCharacterValues: (values: Partial<any>) => void; // Thistransmits side character values
 }
 
-const SideCharacterTab: React.FC<SideCharacterTabProps> = ({ updateSideCharacterValues }) => {
-
+const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
+  updateSideCharacterValues,
+}) => {
   const [sideCharacterFields, setSideCharacterFields] = useState({
     sideCharacterName: '',
     sideCharacterRace: '',
@@ -37,13 +38,20 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({ updateSideCharacter
   }, []);
 
   // Function to handle input changes for text fields and dropdowns
-  const handleInputChange = (field: string) => (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
-  ) => {
-    const newValue = event.target.value as string;
-    setSideCharacterFields(prevFields => ({ ...prevFields, [field]: newValue }));
-    updateSideCharacterValues({ [field]: newValue }); // Transmit the updated values
-  };
+  const handleInputChange =
+    (field: string) =>
+    (
+      event:
+        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | SelectChangeEvent<string>
+    ) => {
+      const newValue = event.target.value as string;
+      setSideCharacterFields(prevFields => ({
+        ...prevFields,
+        [field]: newValue,
+      }));
+      updateSideCharacterValues({ [field]: newValue }); // Transmit the updated values
+    };
 
   const clearField = (field: string) => () => {
     setSideCharacterFields(prevFields => ({ ...prevFields, [field]: '' }));
@@ -151,19 +159,19 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({ updateSideCharacter
       </Box>
       {/* what side character it is*/}
       <FormControl fullWidth>
-            <InputLabel id="type-selector-label">Type</InputLabel>
-            <Select
-              labelId="type-selector-label"
-              value={sideCharacterFields.sideCharacterType}
-              label="Type"
-              onChange={handleInputChange('Charactertype')}
-            >
-              <MenuItem value="Supporting">Supporting</MenuItem>
-              <MenuItem value="Antagonist">Antagonist</MenuItem>
-              <MenuItem value="Background-actor">Background-actor</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+        <InputLabel id="type-selector-label">Type</InputLabel>
+        <Select
+          labelId="type-selector-label"
+          value={sideCharacterFields.sideCharacterType}
+          label="Type"
+          onChange={handleInputChange('Charactertype')}
+        >
+          <MenuItem value="Supporting">Supporting</MenuItem>
+          <MenuItem value="Antagonist">Antagonist</MenuItem>
+          <MenuItem value="Background-actor">Background-actor</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
   );
 };
 

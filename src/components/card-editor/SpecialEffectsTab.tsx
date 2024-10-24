@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
+import {
+  Box,
+  Typography,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 
 interface SpecialEffectsTabProps {
   updatePromptValues: (values: Partial<{ effect: string }>) => void;
 }
 
-const SpecialEffectsTab: React.FC<SpecialEffectsTabProps> = ({ updatePromptValues }) => {
+const SpecialEffectsTab: React.FC<SpecialEffectsTabProps> = ({
+  updatePromptValues,
+}) => {
   // State to store the special effect
   const [effect, setEffect] = useState<string>('');
 
