@@ -5,8 +5,162 @@ info:
 tags:
   - name: auth
   - name: cards
-  - name: planned
+  - name: expansions
+  - name: users_planned
+  - name: decks_planned
+  - name: card_links_planned
+  - name: roles_planned
+  - name: token_requests_planned
 paths:
+  /card_links:
+    post:
+      operationId: CardLinks_createCardLink
+      description: add card to deck
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardLink'
+      tags:
+        - card_links_planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardLink'
+    patch:
+      operationId: CardLinks_updateCardLink
+      description: update count of cards in deck
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardLink'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - card_links_planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardLinkUpdate'
+    delete:
+      operationId: CardLinks_deleteCardLink
+      description: remove card from deck
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - card_links_planned
+  /decks:
+    get:
+      operationId: Decks_listDecks
+      description: returns all decks user has access to
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeckList'
+      tags:
+        - decks_planned
+    post:
+      operationId: Decks_createDeck
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+      tags:
+        - decks_planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeckCreate'
+  /decks/{deckId}/:copy:
+    post:
+      operationId: Decks_copyDeck
+      description: copies current deck with name '<deckname> (copy)'
+      parameters:
+        - name: deckId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - decks_planned
+  /decks/{userId}:
+    patch:
+      operationId: Decks_updateDeck
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deck'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - decks_planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeckUpdate'
   /roles:
     get:
       operationId: Roles_listRoles
@@ -21,7 +175,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Role'
       tags:
-        - planned
+        - roles_planned
     post:
       operationId: Roles_createRole
       parameters: []
@@ -33,7 +187,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Role'
       tags:
-        - planned
+        - roles_planned
       requestBody:
         required: true
         content:
@@ -64,7 +218,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       tags:
-        - planned
+        - roles_planned
     post:
       operationId: Roles_updateRole
       parameters:
@@ -82,7 +236,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Role'
       tags:
-        - planned
+        - roles_planned
       requestBody:
         required: true
         content:
@@ -108,7 +262,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       tags:
-        - planned
+        - roles_planned
   /token_requests:
     get:
       operationId: TokenRequests_listTokenRequests
@@ -123,7 +277,19 @@ paths:
                 items:
                   $ref: '#/components/schemas/TokenRequest'
       tags:
-        - planned
+        - token_requests_planned
+    post:
+      operationId: TokenRequests_requestTokens
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRequest'
+      tags:
+        - token_requests_planned
   /token_requests/{tokenRequestId}:
     delete:
       operationId: TokenRequests_deleteTokenRequest
@@ -144,7 +310,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       tags:
-        - planned
+        - token_requests_planned
   /user/authenticate:
     post:
       operationId: Authenticate_authenticate
@@ -155,7 +321,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthenticateResponse'
+                $ref: '#/components/schemas/AuthResponse'
       tags:
         - auth
       requestBody:
@@ -163,7 +329,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthenticateRequest'
+              $ref: '#/components/schemas/Credentials'
   /user/cards:
     get:
       operationId: Cards_listCards
@@ -174,9 +340,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListCardsResponse'
+                $ref: '#/components/schemas/CardList'
       tags:
         - cards
+  /user/expansions:
+    get:
+      operationId: Expansions_listExpansions
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpansionList'
+      tags:
+        - expansions
   /user/users:
     get:
       operationId: Users_listUsers
@@ -197,7 +376,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       tags:
-        - planned
+        - users_planned
     post:
       operationId: Users_createUser
       parameters: []
@@ -209,7 +388,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
       tags:
-        - planned
+        - users_planned
       requestBody:
         required: true
         content:
@@ -240,7 +419,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       tags:
-        - planned
+        - users_planned
     patch:
       operationId: Users_updateUser
       parameters:
@@ -258,7 +437,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
       tags:
-        - planned
+        - users_planned
       requestBody:
         required: true
         content:
@@ -284,22 +463,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       tags:
-        - planned
+        - users_planned
 security:
   - BearerAuth: []
 components:
   schemas:
-    AuthenticateRequest:
-      type: object
-      required:
-        - username
-        - password
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-    AuthenticateResponse:
+    AuthResponse:
       type: object
       required:
         - authToken
@@ -324,6 +493,8 @@ components:
       required:
         - cardId
         - ownerId
+        - image
+        - prompt
         - ownerFirstname
         - ownerLastname
         - cardName
@@ -357,6 +528,10 @@ components:
         ownerId:
           type: integer
           format: int32
+        image:
+          $ref: '#/components/schemas/Image'
+        prompt:
+          type: string
         errataOfId:
           type: integer
           format: int32
@@ -447,6 +622,47 @@ components:
           $ref: '#/components/schemas/EffectsCost'
         effect:
           $ref: '#/components/schemas/EffectsEffect'
+    CardLink:
+      type: object
+      required:
+        - deckId
+        - cardId
+        - count
+      properties:
+        deckId:
+          type: integer
+          format: int32
+        cardId:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+    CardLinkUpdate:
+      type: object
+      properties:
+        deckId:
+          type: integer
+          format: int32
+        cardId:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+    CardList:
+      type: object
+      required:
+        - countOfCards
+        - cards
+      properties:
+        countOfCards:
+          type: integer
+          format: int32
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
     ChainEffect:
       type: object
       required:
@@ -461,6 +677,73 @@ components:
         amount:
           type: integer
           format: int32
+    Credentials:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Deck:
+      type: object
+      required:
+        - ownerId
+        - formatId
+        - name
+        - released
+        - releasedAt
+        - cardsLinks
+      properties:
+        ownerId:
+          type: integer
+          format: int32
+        formatId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        released:
+          type: boolean
+        releasedAt:
+          type: string
+          nullable: true
+        cardsLinks:
+          type: array
+          items:
+            $ref: '#/components/schemas/CardLink'
+    DeckCreate:
+      type: object
+      required:
+        - name
+        - released
+      properties:
+        name:
+          type: string
+        released:
+          type: boolean
+    DeckList:
+      type: object
+      required:
+        - countOfDecks
+        - decks
+      properties:
+        countOfDecks:
+          type: integer
+          format: int32
+        decks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deck'
+    DeckUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        released:
+          type: boolean
     EffectsCost:
       type: object
       required:
@@ -566,19 +849,68 @@ components:
       properties:
         error:
           type: string
-    ListCardsResponse:
+    Expansion:
       type: object
       required:
-        - countOfCards
-        - cards
+        - id
+        - ownedId
+        - name
+        - releaseYear
+        - isReleased
       properties:
-        countOfCards:
+        id:
           type: integer
           format: int32
-        cards:
+        ownedId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        releaseYear:
+          type: integer
+          format: int32
+        isReleased:
+          type: boolean
+    ExpansionList:
+      type: object
+      required:
+        - countOfExpansions
+        - expansions
+      properties:
+        countOfExpansions:
+          type: integer
+          format: int32
+        expansions:
           type: array
           items:
-            $ref: '#/components/schemas/Card'
+            $ref: '#/components/schemas/Expansion'
+    Format:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int32
+    Image:
+      type: object
+      required:
+        - status
+        - generatedByUserId
+        - generatedAt
+      properties:
+        status:
+          type: string
+          enum:
+            - accepted
+            - generated
+            - queued
+            - error
+        generatedByUserId:
+          type: integer
+          format: int32
+        generatedAt:
+          type: string
     PostCount:
       type: object
       required:
@@ -660,6 +992,7 @@ components:
         - email
         - phoneNumber
         - active
+        - tokens
         - tokenRequests
       properties:
         id:
@@ -682,6 +1015,9 @@ components:
           type: string
         active:
           type: boolean
+        tokens:
+          type: integer
+          format: int32
         tokenRequests:
           type: array
           items:
@@ -694,6 +1030,7 @@ components:
         - lastName
         - email
         - phoneNumber
+        - tokens
       properties:
         roleId:
           type: integer
@@ -714,6 +1051,9 @@ components:
           type: string
         sendPasswordEmail:
           type: boolean
+        tokens:
+          type: integer
+          format: int32
     UserUpdate:
       type: object
       properties:
@@ -734,6 +1074,9 @@ components:
           type: string
         active:
           type: boolean
+        tokens:
+          type: integer
+          format: int32
     right:
       type: string
       enum:

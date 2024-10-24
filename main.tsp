@@ -21,18 +21,18 @@ namespace SettaBackend;
 @route("/user/authenticate")
 namespace Authenticate {
   @post
-  op authenticate(@body request: AuthenticateRequest): {
+  op authenticate(@body request: Credentials): {
     @statusCode statusCode: 200;
-    @body response: AuthenticateResponse;
+    @body body: AuthResponse;
   };
 }
 
-model AuthenticateRequest {
+model Credentials {
   username: string;
   password: string;
 }
 
-model AuthenticateResponse {
+model AuthResponse {
   authToken: string;
   userId: int32;
   firstname: string;
@@ -47,11 +47,11 @@ namespace Cards {
   @get
   op listCards(): {
     @statusCode statusCode: 200;
-    @body response: ListCardsResponse;
+    @body body: CardList;
   };
 }
 
-model ListCardsResponse {
+model CardList {
   countOfCards: int32;
   cards: Card[];
 }
@@ -59,6 +59,8 @@ model ListCardsResponse {
 model Card {
   cardId: int32;
   ownerId: int32;
+  image: Image;
+  prompt: string;
   errataOfId?: int32;
   ownerFirstname: string;
   ownerLastname: string;
@@ -91,6 +93,12 @@ model Card {
   createdAt: string;
   updatedAt: string;
   cardEffects: CardEffects;
+}
+
+model Image {
+  status: "accepted" | "generated" | "queued" | "error";
+  generatedByUserId: int32;
+  generatedAt: string;
 }
 
 model CardEffects {
@@ -158,45 +166,69 @@ model ChainEffect {
   amount?: int32;
 }
 
+// ––– Expansions
+@tag("expansions")
+@route("/user/expansions")
+namespace Expansions {
+  @get
+  op listExpansions(): {
+    @statusCode statusCode: 200;
+    @body body: ExpansionList;
+  };
+}
+
+model ExpansionList {
+  countOfExpansions: int32;
+  expansions: Expansion[];
+}
+
+model Expansion {
+  id: int32;
+  ownedId: int32;
+  name: string;
+  releaseYear: int32;
+  isReleased: boolean;
+}
+
 // ––– Users
 @route("/user/users")
 namespace Users {
-  @tag("planned")
   @get
+  @tag("users_planned")
   op listUsers(): {
     @statusCode statusCode: 200;
-    @body users: User[];
+    @body body: User[];
   } | {
     @statusCode statusCode: 401;
     @body error: Error;
   };
 
-  @tag("planned")
   @get
+  @tag("users_planned")
   op getUser(@path userId: int32): {
     @statusCode statusCode: 200;
-    @body role: User;
+    @body body: User;
   } | {
     @statusCode statusCode: 404;
     @body error: Error;
   };
 
-  @tag("planned")
   @post
+  @tag("users_planned")
   op createUser(@body create: UserCreate): {
     @statusCode statusCode: 201;
-    @body user: User;
+    @body body: User;
   };
 
-  @tag("planned")
   @patch
+  @tag("users_planned")
   op updateUser(@path userId: int32, @body update: UserUpdate): {
     @statusCode statusCode: 200;
-    @body user: User;
+    @body body: User;
   };
 
-  @tag("planned")
   @delete
+  @tag("users_planned")
   op deleteUser(@path userId: int32): {
     @statusCode statusCode: 204;
   } | {
@@ -215,6 +247,7 @@ model User {
   username?: string;
   penName?: string;
   active: boolean;
+  tokens: int32;
   tokenRequests: TokenRequest[];
 }
 
@@ -228,6 +261,7 @@ model UserCreate {
   password?: string;
   penName?: string;
   sendPasswordEmail?: boolean;
+  tokens: int32;
 }
 
 model UserUpdate {
@@ -239,44 +273,154 @@ model UserUpdate {
   username?: string;
   penName?: string;
   active?: boolean;
+  tokens?: int32;
+}
+
+// --- DECKS
+@route("/decks")
+namespace Decks {
+  @get
+  @tag("decks_planned")
+  @doc("returns all decks user has access to")
+  op listDecks(): {
+    @statusCode statusCode: 200;
+    @body body: DeckList;
+  };
+
+  @post
+  @tag("decks_planned")
+  op createDeck(@body create: DeckCreate): {
+    @statusCode statusCode: 201;
+    @body body: Deck;
+  };
+
+  @patch
+  @tag("decks_planned")
+  op updateDeck(@path userId: int32, @body update: DeckUpdate): {
+    @statusCode statusCode: 200;
+    @body body: Deck;
+  } | {
+    @statusCode statusCode: 404;
+    @body error: Error;
+  };
+
+  @route("{deckId}/:copy")
+  @post
+  @tag("decks_planned")
+  @doc("copies current deck with name '<deckname> (copy)'")
+  op copyDeck(@path deckId: int32): {
+    @statusCode statusCode: 201;
+    @body body: Deck;
+  } | {
+    @statusCode statusCode: 404;
+    @body error: Error;
+  };
+}
+
+model DeckList {
+  countOfDecks: int32;
+  decks: Deck[];
+}
+
+model Deck {
+  ownerId: int32;
+  formatId: int32;
+  name: string;
+  released: boolean;
+  releasedAt: string | null;
+  cardsLinks: CardLink[];
+}
+
+model DeckCreate {
+  name: string;
+  released: boolean;
+}
+
+model DeckUpdate {
+  name?: string;
+  released?: boolean;
+}
+
+model Format {
+  id: int32;
+}
+
+// --- CARD_LINKS
+
+@route("/card_links")
+namespace CardLinks {
+  @post
+  @tag("card_links_planned")
+  @doc("add card to deck")
+  op createCardLink(@body create: CardLink): {
+    @statusCode statusCode: 201;
+    @body body: CardLink;
+  };
+
+  @patch
+  @tag("card_links_planned")
+  @doc("update count of cards in deck")
+  op updateCardLink(@body update: CardLink): {
+    @statusCode statusCode: 201;
+    @body body: CardLink;
+  } | {
+    @statusCode statusCode: 404;
+    @body error: Error;
+  };
+
+  @delete
+  @tag("card_links_planned")
+  @doc("remove card from deck")
+  op deleteCardLink(): {
+    @statusCode statusCode: 204;
+  } | {
+    @statusCode statusCode: 404;
+    @body error: Error;
+  };
+}
+
+model CardLink {
+  deckId: int32;
+  cardId: int32;
+  count: int32;
 }
 
 // --- ROLES
 
 @route("/roles")
 namespace Roles {
-  @tag("planned")
+  @tag("roles_planned")
   @get
   op listRoles(): {
     @statusCode statusCode: 200;
-    @body roles: Role[];
+    @body body: Role[];
   };
 
-  @tag("planned")
+  @tag("roles_planned")
   @get
   op getRole(@path roleId: int32): {
     @statusCode statusCode: 200;
-    @body role: Role;
+    @body body: Role;
   } | {
     @statusCode statusCode: 404;
     @body error: Error;
   };
 
-  @tag("planned")
+  @tag("roles_planned")
   @post
   op createRole(@body create: RoleCreate): {
     @statusCode statusCode: 201;
-    @body role: Role;
+    @body body: Role;
   };
 
-  @tag("planned")
+  @tag("roles_planned")
   @post
   op updateRole(@path roleId: int32, @body update: RoleUpdate): {
     @statusCode statusCode: 200;
-    @body role: Role;
+    @body body: Role;
   };
 
-  @tag("planned")
+  @tag("roles_planned")
   @delete
   op deleteRole(@path roleId: int32): {
     @statusCode statusCode: 204;
@@ -314,14 +458,21 @@ enum right {
 
 @route("/token_requests")
 namespace TokenRequests {
-  @tag("planned")
+  @tag("token_requests_planned")
   @get
   op listTokenRequests(): {
     @statusCode statusCode: 200;
-    @body tokenRequests: TokenRequest[];
+    @body body: TokenRequest[];
   };
 
-  @tag("planned")
+  @tag("token_requests_planned")
+  @post
+  op requestTokens(): {
+    @statusCode statusCode: 200;
+    @body body: TokenRequest;
+  };
+
+  @tag("token_requests_planned")
   @delete
   op deleteTokenRequest(@path tokenRequestId: int32): {
     @statusCode statusCode: 204;
