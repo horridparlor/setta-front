@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { CardExpansion } from '../types/expansion';
 import { UpdateFrequencies } from '../types/time';
-import {
-  getHeaders,
-} from '../types/api';
-import {apiClient} from "../api/client.ts";
+import { getHeaders } from '../types/api';
+import { apiClient } from '../api/client.ts';
 
 const useExpansions = () => {
   const [expansions, setExpansions] = useState<Array<CardExpansion>>([]);
@@ -13,18 +11,21 @@ const useExpansions = () => {
 
   const fetchExpansions = async () => {
     setIsLoading(true);
-    const { data: responseData, error } = await apiClient.GET('/user/expansions', {
-      headers: getHeaders()
-    });
+    const { data: responseData, error } = await apiClient.GET(
+      '/user/expansions',
+      {
+        headers: getHeaders(),
+      }
+    );
     if (error) {
       setError(error);
       setIsLoading(false);
     }
     const expansions = responseData.expansions.sort(
-        (expansionA: CardExpansion, expansionB: CardExpansion) =>
-            expansionA.name.localeCompare(expansionB.name, undefined, {
-              numeric: true,
-            })
+      (expansionA: CardExpansion, expansionB: CardExpansion) =>
+        expansionA.name.localeCompare(expansionB.name, undefined, {
+          numeric: true,
+        })
     );
     setExpansions(expansions);
     setIsLoading(false);

@@ -44,7 +44,7 @@ export interface SystemUser {
 
 export type AccessRights = {
   isAdmin?: boolean;
-}
+};
 
 const DEFAULT_SYSTEM_USER = {
   firstName: 'Nota',

@@ -1,18 +1,30 @@
-import {ChangeEvent, forwardRef, useEffect, useImperativeHandle, useRef, useState,} from 'react';
+import {
+  ChangeEvent,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
 import domtoimage from 'dom-to-image';
-import {Box} from '@mui/material';
-import {CardData, DEFAULT_CARD_DATA, getOwnerId} from '../../types/card';
-import {CardMainFrameColor} from '../../types/color';
-import {toast} from 'react-toastify';
-import {getHeaders, RequestMethod, showError,} from '../../types/api';
+import { Box } from '@mui/material';
+import { CardData, DEFAULT_CARD_DATA, getOwnerId } from '../../types/card';
+import { CardMainFrameColor } from '../../types/color';
+import { toast } from 'react-toastify';
+import { getHeaders, RequestMethod, showError } from '../../types/api';
 import useExpansions from '../../hooks/useExpansions';
-import {encodeEffectsString, encodeNameString, normalizeName, serializeName,} from '../../utils/string';
-import {convertToBase64} from '../../types/files';
-import {useParams} from 'react-router-dom';
-import {CardEffects} from '../../types/cardEffects';
-import {apiClient} from "../../api/client.ts";
+import {
+  encodeEffectsString,
+  encodeNameString,
+  normalizeName,
+  serializeName,
+} from '../../utils/string';
+import { convertToBase64 } from '../../types/files';
+import { useParams } from 'react-router-dom';
+import { CardEffects } from '../../types/cardEffects';
+import { apiClient } from '../../api/client.ts';
 
 interface CardEditorProps {
   closeUpdate: () => void;
@@ -61,16 +73,15 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
         serializedName: serializeName(cardData),
         oldSerializedName: serializeName(oldName),
       };
-      const { data: responseData, error } = await ( method === RequestMethod.POST
-              ? apiClient.POST('/admin/card', {
-                headers: getHeaders(),
-                body: params
-              })
-              : apiClient.PUT('/admin/card', {
-                headers: getHeaders(),
-                body: params
-              })
-      )
+      const { data: responseData, error } = await (method === RequestMethod.POST
+        ? apiClient.POST('/admin/card', {
+            headers: getHeaders(),
+            body: params,
+          })
+        : apiClient.PUT('/admin/card', {
+            headers: getHeaders(),
+            body: params,
+          }));
       if (error) {
         showError(error);
         setIsSaving(false);
@@ -83,7 +94,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
         serializedName: serializeName(cardData),
       }));
       toast.success(
-          `Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`
+        `Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`
       );
       await handleUploadImage(cardId);
       setIsSaving(false);
@@ -94,8 +105,8 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
       const { error } = await apiClient.DELETE('/admin/card', {
         headers: getHeaders(),
         body: {
-          cardId: cardData.cardId
-        }
+          cardId: cardData.cardId,
+        },
       });
       if (error) {
         showError(error);
@@ -121,10 +132,13 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
       };
       const actionWord = doErrata ? 'errata' : 'copy';
 
-      const { data: responseData, error } = await apiClient.POST('/admin/copy-card', {
-        headers: getHeaders(),
-        body: params
-      });
+      const { data: responseData, error } = await apiClient.POST(
+        '/admin/copy-card',
+        {
+          headers: getHeaders(),
+          body: params,
+        }
+      );
       if (error) {
         showError(error);
         return;
@@ -205,7 +219,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
         };
         const { error } = await apiClient.POST('/admin/image', {
           headers: getHeaders(),
-          body: data
+          body: data,
         });
         if (error) {
           showError(error);

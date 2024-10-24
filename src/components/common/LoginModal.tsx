@@ -10,13 +10,10 @@ import {
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
-import {
-  getHeaders,
-  showError,
-} from '../../types/api';
+import { getHeaders, showError } from '../../types/api';
 import { AuthCookie } from '../../types/cookie';
 import { useTranslation } from 'react-i18next';
-import {apiClient} from "../../api/client.ts";
+import { apiClient } from '../../api/client.ts';
 
 interface LoginModalProps {
   open: boolean;
@@ -33,19 +30,24 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
   const [retypeNewPassword, setRetypeNewPassword] = useState('');
 
   const handleLogin = async () => {
-    const { data: responseData, error } = await apiClient.POST('/user/authenticate', {
-      headers: getHeaders(),
-      body: {
-        username: username,
-        password: password
+    const { data: responseData, error } = await apiClient.POST(
+      '/user/authenticate',
+      {
+        headers: getHeaders(),
+        body: {
+          username: username,
+          password: password,
+        },
       }
-    });
+    );
     if (error) {
       showError(error);
       return;
     }
     Cookies.set(AuthCookie.AUTH_TOKEN, responseData.authToken, { expires: 1 });
-    Cookies.set(AuthCookie.USER_ID, responseData.userId.toString(), { expires: 7 });
+    Cookies.set(AuthCookie.USER_ID, responseData.userId.toString(), {
+      expires: 7,
+    });
     Cookies.set(
       AuthCookie.SYSTEM_USER,
       JSON.stringify({
@@ -61,7 +63,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
         lastName: responseData.lastname,
       })
     );
-    toast.success(t('AUTHENTICATED', { firstName: responseData.firstname, lastName: responseData.lastname }));
+    toast.success(
+      t('AUTHENTICATED', {
+        firstName: responseData.firstname,
+        lastName: responseData.lastname,
+      })
+    );
     await refetch();
     onClose();
   };
@@ -74,8 +81,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
     const { error } = await apiClient.POST('/user/change-password', {
       headers: getHeaders(),
       body: {
-        password: newPassword
-      }
+        password: newPassword,
+      },
     });
     if (error) {
       showError(error);
