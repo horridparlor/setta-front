@@ -221,11 +221,20 @@ model GetUserResponse {
 }
 
 model PostUserRequest {
-
+    username: string;
+    password: string;
+    firstname: string;
+    lastname: string;
+    penName?: string;
+    email?: string;
+    phoneNumber?: string;
+    isActive?: boolean;
+    roleId?: int32;
+    accessRights: AccessRights;
 }
 
 model PostUserResponse {
-
+    userId: int32;
 }
 
 model PutUserRequest {
