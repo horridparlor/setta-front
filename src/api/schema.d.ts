@@ -4,6 +4,75 @@
  */
 
 export interface paths {
+  '/card_links': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description add card to deck */
+    post: operations['CardLinks_createCardLink'];
+    /** @description remove card from deck */
+    delete: operations['CardLinks_deleteCardLink'];
+    options?: never;
+    head?: never;
+    /** @description update count of cards in deck */
+    patch: operations['CardLinks_updateCardLink'];
+    trace?: never;
+  };
+  '/decks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description returns all decks user has access to */
+    get: operations['Decks_listDecks'];
+    put?: never;
+    post: operations['Decks_createDeck'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/decks/{deckId}/:copy': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description copies current deck with name '<deckname> (copy)' */
+    post: operations['Decks_copyDeck'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/decks/{userId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['Decks_updateDeck'];
+    trace?: never;
+  };
   '/roles': {
     parameters: {
       query?: never;
@@ -45,7 +114,7 @@ export interface paths {
     };
     get: operations['TokenRequests_listTokenRequests'];
     put?: never;
-    post?: never;
+    post: operations['TokenRequests_requestTokens'];
     delete?: never;
     options?: never;
     head?: never;
@@ -100,6 +169,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/user/expansions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Expansions_listExpansions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/user/users': {
     parameters: {
       query?: never;
@@ -136,11 +221,7 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    AuthenticateRequest: {
-      username: string;
-      password: string;
-    };
-    AuthenticateResponse: {
+    AuthResponse: {
       authToken: string;
       /** Format: int32 */
       userId: number;
@@ -153,6 +234,9 @@ export interface components {
       cardId: number;
       /** Format: int32 */
       ownerId: number;
+      /** @description generated images need to be stored as array to allow multiple generations for same card */
+      image: components['schemas']['Image'][];
+      prompt: string;
       /** Format: int32 */
       errataOfId?: number;
       ownerFirstname: string;
@@ -206,12 +290,60 @@ export interface components {
       cost: components['schemas']['EffectsCost'];
       effect: components['schemas']['EffectsEffect'];
     };
+    CardLink: {
+      /** Format: int32 */
+      deckId: number;
+      /** Format: int32 */
+      cardId: number;
+      /** Format: int32 */
+      count: number;
+    };
+    CardLinkUpdate: {
+      /** Format: int32 */
+      deckId?: number;
+      /** Format: int32 */
+      cardId?: number;
+      /** Format: int32 */
+      count?: number;
+    };
+    CardList: {
+      /** Format: int32 */
+      countOfCards: number;
+      cards: components['schemas']['Card'][];
+    };
     ChainEffect: {
       chainType: string;
       subtype?: string;
       direction?: string;
       /** Format: int32 */
       amount?: number;
+    };
+    Credentials: {
+      username: string;
+      password: string;
+    };
+    Deck: {
+      /** Format: int32 */
+      ownerId: number;
+      /** Format: int32 */
+      formatId: number;
+      name: string;
+      released: boolean;
+      releasedAt: string | null;
+      cardsLinks: components['schemas']['CardLink'][];
+    };
+    DeckCreate: {
+      name: string;
+      released: boolean;
+    };
+    DeckList: {
+      /** Format: int32 */
+      countOfDecks: number;
+      decks: components['schemas']['Deck'][];
+    };
+    DeckUpdate: {
+      name?: string;
+      released?: boolean;
     };
     EffectsCost: {
       prestate?: string;
@@ -267,10 +399,36 @@ export interface components {
     Error: {
       error: string;
     };
-    ListCardsResponse: {
+    Expansion: {
       /** Format: int32 */
-      countOfCards: number;
-      cards: components['schemas']['Card'][];
+      id: number;
+      /** Format: int32 */
+      ownedId: number;
+      name: string;
+      /** Format: int32 */
+      releaseYear: number;
+      isReleased: boolean;
+    };
+    ExpansionList: {
+      /** Format: int32 */
+      countOfExpansions: number;
+      expansions: components['schemas']['Expansion'][];
+    };
+    Format: {
+      /** Format: int32 */
+      id: number;
+    };
+    Image: {
+      /**
+       * Format: int32
+       * @description use this id in backend to identify the generated assets
+       */
+      id: number;
+      /** @enum {string} */
+      status: 'accepted' | 'generated' | 'queued' | 'error';
+      /** Format: int32 */
+      generatedByUserId: number;
+      generatedAt: string;
     };
     PostCount: {
       countType: string;
@@ -313,6 +471,8 @@ export interface components {
       username?: string;
       penName?: string;
       active: boolean;
+      /** Format: int32 */
+      tokens: number;
       tokenRequests: components['schemas']['TokenRequest'][];
     };
     UserCreate: {
@@ -326,6 +486,8 @@ export interface components {
       password?: string;
       penName?: string;
       sendPasswordEmail?: boolean;
+      /** Format: int32 */
+      tokens: number;
     };
     UserUpdate: {
       /** Format: int32 */
@@ -337,6 +499,8 @@ export interface components {
       username?: string;
       penName?: string;
       active?: boolean;
+      /** Format: int32 */
+      tokens?: number;
     };
     /** @enum {string} */
     right: 'right1' | 'right2' | 'right3';
@@ -349,6 +513,200 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  CardLinks_createCardLink: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CardLink'];
+      };
+    };
+    responses: {
+      /** @description The request has succeeded and a new resource has been created as a result. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CardLink'];
+        };
+      };
+    };
+  };
+  CardLinks_deleteCardLink: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description There is no content to send for this request, but the headers may be useful.  */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  CardLinks_updateCardLink: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CardLinkUpdate'];
+      };
+    };
+    responses: {
+      /** @description The request has succeeded and a new resource has been created as a result. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CardLink'];
+        };
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  Decks_listDecks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DeckList'];
+        };
+      };
+    };
+  };
+  Decks_createDeck: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DeckCreate'];
+      };
+    };
+    responses: {
+      /** @description The request has succeeded and a new resource has been created as a result. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Deck'];
+        };
+      };
+    };
+  };
+  Decks_copyDeck: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        deckId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded and a new resource has been created as a result. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Deck'];
+        };
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  Decks_updateDeck: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DeckUpdate'];
+      };
+    };
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Deck'];
+        };
+      };
+      /** @description The server cannot find the requested resource. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
   Roles_listRoles: {
     parameters: {
       query?: never;
@@ -499,6 +857,26 @@ export interface operations {
       };
     };
   };
+  TokenRequests_requestTokens: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TokenRequest'];
+        };
+      };
+    };
+  };
   TokenRequests_deleteTokenRequest: {
     parameters: {
       query?: never;
@@ -537,7 +915,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['AuthenticateRequest'];
+        'application/json': components['schemas']['Credentials'];
       };
     };
     responses: {
@@ -547,7 +925,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['AuthenticateResponse'];
+          'application/json': components['schemas']['AuthResponse'];
         };
       };
     };
@@ -567,7 +945,27 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['ListCardsResponse'];
+          'application/json': components['schemas']['CardList'];
+        };
+      };
+    };
+  };
+  Expansions_listExpansions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The request has succeeded. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ExpansionList'];
         };
       };
     };
