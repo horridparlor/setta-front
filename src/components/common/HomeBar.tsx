@@ -65,7 +65,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
     const getPageName = () => {
       const location = useLocation();
       const pageLocation =
-        '/' + location.pathname.split('/').filter(Boolean)[0] ?? '';
+        '/' + location.pathname.split('/').filter(Boolean)[0] || '';
       const appPage = isAppPage(pageLocation) ? pageLocation : AppPage.Error;
       switch (appPage) {
         case AppPage.CardCatalogue:
@@ -74,6 +74,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           return t('PAGE_NAME.CARD_EDITOR');
         case AppPage.CardExpansions:
           return t('PAGE_NAME.CARD_EXPANSIONS');
+        case AppPage.UserManagement:
+          return t('PAGE_NAME.USER_MANAGEMENT');
         case AppPage.Error:
           return t('ERROR') + ': ' + pageLocation;
       }
@@ -92,7 +94,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             </IconButton>
             <Drawer open={open}>
               <Box sx={{ p: 2 }}>
-                <IconButton onClick={() => setOpen(false)}>
+                <IconButton
+                  onClick={() => setOpen(false)}
+                  sx={{ mb: '0.75rem' }}
+                >
                   <CloseIcon />
                 </IconButton>
                 <Divider />
@@ -110,7 +115,16 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_EDITOR')} />
                 </ListItemButton>
-                <Accordion>
+
+                <Accordion
+                  disableGutters
+                  elevation={0}
+                  sx={{
+                    '&:before': {
+                      display: 'none',
+                    },
+                  }}
+                >
                   <AccordionSummary expandIcon={<ExpandMore />}>
                     <ListItemIcon>
                       <FormatPaint />
@@ -128,11 +142,14 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     </ListItemButton>
                   </AccordionDetails>
                 </Accordion>
-                <ListItemButton>
+
+                <ListItemButton
+                  onClick={() => navigateTo(AppPage.UserManagement)}
+                >
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
-                  <ListItemText primary={t('USER_MANAGEMENT')} />
+                  <ListItemText primary={t('PAGE_NAME.USER_MANAGEMENT')} />
                 </ListItemButton>
                 <ListItemButton onClick={() => navigateTo(AppPage.UserRoles)}>
                   <ListItemText primary={t('USER_ROLES')} />
@@ -143,8 +160,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PROFILE')} />
                 </ListItemButton>
-                <LanguageIcon sx={{ ml: 2, mr: 3 }} />
-                <LanguageSelect />
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <LanguageIcon sx={{ ml: 2, mr: 3 }} />
+                  <LanguageSelect />
+                </Box>
               </Box>
             </Drawer>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>

@@ -275,14 +275,12 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
         ref={ref}
         sx={{
           display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
+          alignItems: 'start',
           justifyContent: 'space-around',
           width: '100%',
-          margin: '20px',
         }}
       >
-        <Box sx={{ marginRight: '2rem' }}>
+        <Box>
           <CardPreviewer
             cards={cards}
             expansions={expansions}

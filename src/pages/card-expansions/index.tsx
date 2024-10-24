@@ -24,7 +24,7 @@ const CardExpansionsPage = (props: CardExpansionsPageProps) => {
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ width: '100%', p: 2 }}>
+      <Box sx={{ width: '100%' }}>
         <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
       <Box
@@ -34,6 +34,7 @@ const CardExpansionsPage = (props: CardExpansionsPageProps) => {
           justifyContent: 'center',
           alignItems: 'center',
           overflow: 'auto',
+          p: 2,
         }}
       ></Box>
     </Box>

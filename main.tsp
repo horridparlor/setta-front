@@ -174,7 +174,7 @@ namespace User {
     ): {
         @statusCode statusCode: 200;
         @body response: GetUserResponse;
-    } | ErrorUnauthorized;
+    } | ErrorUnauthorized | ErrorNotFound;
     @post
     op postUser(
         @body request: PostUserRequest;
@@ -213,11 +213,11 @@ model SystemUser {
 }
 
 model GetUserRequest {
-
+    userId: int32;
 }
 
 model GetUserResponse {
-
+    user: SystemUser;
 }
 
 model PostUserRequest {
@@ -255,7 +255,8 @@ namespace Users {
 }
 
 model ListUsersResponse {
-
+    countOfUsers: int32;
+    users: User[];
 }
 
 /// ––––– USER –––––
@@ -549,11 +550,135 @@ model TokenRequest {
 // ––– ERRORS
 
 @error
-model Error {
+model ErrorNotFound {
+    error: string;
+}
+@error
+model ErrorUnauthorized {
     error: string;
 }
 
-model ErrorUnauthorized {
-    @statusCode statusCode: 401;
+// ––– TODO
+
+model CardImage {
+  @doc("use this id in backend to identify the generated assets")
+  id: int32;
+
+  status: "accepted" | "generated" | "queued" | "error";
+  generatedByUserId: int32;
+  generatedAt: string;
+}
+
+
+// --- DECKS
+@route("/decks")
+namespace Decks {
+  @get
+  @tag("decks_planned")
+  @doc("returns all decks user has access to")
+  op listDecks(): {
+    @statusCode statusCode: 200;
+    @body body: DeckList;
+  };
+
+  @post
+  @tag("decks_planned")
+  op createDeck(@body create: DeckCreate): {
+    @statusCode statusCode: 201;
+    @body body: Deck;
+  };
+
+  @patch
+  @tag("decks_planned")
+  op updateDeck(@path userId: int32, @body update: DeckUpdate): {
+    @statusCode statusCode: 200;
+    @body body: Deck;
+  } | {
+    @statusCode statusCode: 404;
     @body error: Error;
+  };
+
+  @route("{deckId}/:copy")
+  @post
+  @tag("decks_planned")
+  @doc("copies current deck with name '<deckname> (copy)'")
+  op copyDeck(@path deckId: int32): {
+    @statusCode statusCode: 201;
+    @body body: Deck;
+  } | {
+    @statusCode statusCode: 404;
+    @body error: Error;
+  };
+}
+
+model DeckList {
+  countOfDecks: int32;
+  decks: Deck[];
+}
+
+model Deck {
+  ownerId: int32;
+  formatId: int32;
+  name: string;
+  released: boolean;
+  releasedAt: string | null;
+  cardsLinks: CardLink[];
+}
+
+model DeckCreate {
+  name: string;
+  released: boolean;
+}
+
+model DeckUpdate {
+  name?: string;
+  released?: boolean;
+}
+
+model Format {
+  id: int32;
+}
+
+// --- CARD_LINKS
+
+@route("/card_links")
+namespace CardLinks {
+  @post
+  @tag("card_links_planned")
+  @doc("add card to deck")
+  op createCardLink(@body create: CardLink): {
+    @statusCode statusCode: 201;
+    @body body: CardLink;
+  };
+
+  @patch
+  @tag("card_links_planned")
+  @doc("update count of cards in deck")
+  op updateCardLink(@body update: CardLink): {
+    @statusCode statusCode: 201;
+    @body body: CardLink;
+  } | {
+    @statusCode statusCode: 404;
+    @body error: Error;
+  };
+
+  @delete
+  @tag("card_links_planned")
+  @doc("remove card from deck")
+  op deleteCardLink(): {
+    @statusCode statusCode: 204;
+  } | {
+    @statusCode statusCode: 404;
+    @body error: Error;
+  };
+}
+
+model CardLink {
+  deckId: int32;
+  cardId: int32;
+  count: int32;
+}
+
+model Error {
+    error: string;
 }
