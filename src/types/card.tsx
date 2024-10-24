@@ -351,9 +351,9 @@ export const getSupertypeOptions = (
     ));
 };
 
-export const getOwnerId = (cardData: CardData) => {
+export const getOwnerId = (cardData: CardData): number => {
   const userId = Cookies.get(AuthCookie.USER_ID);
-  return cardData.ownerId ? cardData.ownerId : (userId ?? 0);
+  return cardData.ownerId ? cardData.ownerId : (userId ? parseInt(userId) : 0);
 };
 
 export const getOwnerName = (cardData: CardData) => {

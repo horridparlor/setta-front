@@ -12,10 +12,7 @@ import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
 import {
   getHeaders,
-  getUserEndpoint,
-  RequestMethod,
   showError,
-  UserEndpoint,
 } from '../../types/api';
 import { AuthCookie } from '../../types/cookie';
 import { useTranslation } from 'react-i18next';
@@ -54,7 +51,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
       JSON.stringify({
         firstName: responseData.firstname,
         lastName: responseData.lastname,
-        isAdmin: responseData.isAdmin,
+        accessRights: responseData.accessRights,
       }),
       { expires: 7 }
     );
@@ -74,21 +71,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
       toast.error(t('PASSWORDS_DO_NOT_MATCH'));
       return;
     }
-    const data = {
-      password: newPassword,
-    };
-    const body = JSON.stringify(data);
-    const response = await fetch(
-      getUserEndpoint(UserEndpoint.CHANGE_PASSWORD),
-      {
-        method: RequestMethod.POST,
-        headers: getHeaders(),
-        body,
+    const { error } = await apiClient.POST('/user/change-password', {
+      headers: getHeaders(),
+      body: {
+        password: newPassword
       }
-    );
-    const responseData = await response.json();
-    if (!response.ok) {
-      showError(responseData);
+    });
+    if (error) {
+      showError(error);
       return;
     }
     toast.success(t('PASSWORD_CHANGED_SUCCESS'));

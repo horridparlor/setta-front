@@ -2,20 +2,6 @@ import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
 import { AuthCookie } from './cookie';
 
-export enum AdminEndpoint {
-  CARD = 'card',
-  COPY_CARD = 'copy-card',
-  IMAGE = 'image',
-}
-
-export enum UserEndpoint {
-  AUTHENTICATE = 'authenticate',
-  CARDS = 'cards',
-  CHANGE_PASSWORD = 'change-password',
-  EXPANSIONS = 'expansions',
-  USER = 'user',
-}
-
 export enum RequestMethod {
   GET = 'GET',
   POST = 'POST',
@@ -29,14 +15,6 @@ export enum AssetEndpoint {
   LEVEL_FRAME = 'icons/level-frame',
   SMALL_CARD_ART = 'small-art',
 }
-
-export const getAdminEndpoint = (endpoint: AdminEndpoint) => {
-  return `${import.meta.env.VITE_REACT_APP_DOMAIN}api/admin/${endpoint}`;
-};
-
-export const getUserEndpoint = (endpoint: UserEndpoint) => {
-  return `${import.meta.env.VITE_REACT_APP_DOMAIN}api/user/${endpoint}`;
-};
 
 export const getAsset = (
   endpoint: AssetEndpoint,
@@ -61,13 +39,17 @@ export const getHeaders = () => {
 export interface SystemUser {
   firstName: string;
   lastName: string;
-  isAdmin: boolean;
+  accessRights: AccessRights;
+}
+
+export type AccessRights = {
+  isAdmin?: boolean;
 }
 
 const DEFAULT_SYSTEM_USER = {
   firstName: 'Nota',
   lastName: 'Uthenticated',
-  isAdmin: false,
+  accessRights: {},
 };
 
 export const getUser = (): SystemUser => {
