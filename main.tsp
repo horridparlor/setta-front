@@ -230,6 +230,7 @@ model PostUserRequest {
     phoneNumber?: string;
     isActive?: boolean;
     roleId?: int32;
+    roleName?: string;
     accessRights: AccessRights;
 }
 
@@ -296,7 +297,22 @@ model AuthenticateResponse {
 }
 
 model AccessRights {
-    idAdmin?: boolean;
+    canRelease?: boolean;
+    canManageAdmins?: boolean;
+    canManageUsers?: boolean;
+    canClearContent?: boolean;
+    hasUnlimitedTokens?: boolean;
+    canShareTokens?: boolean;
+    canMessageAdmins?: boolean;
+    canMassExport?: boolean;
+    canCreateContent?: boolean;
+    canGenerateImages?: boolean;
+    canMessage?: boolean;
+    autoRefillTokens?: boolean;
+    isRegularUser?: boolean;
+    isPriorityUser?: boolean;
+    isEmployee?: boolean;
+    isContentCreator?: boolean;
 }
 
 // ––– Cards
