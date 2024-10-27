@@ -14,7 +14,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import GenerateTab from './GenerateTab';
+import ArtTab from './ArtTab';
+import DeckTab from './DeckTab';
 import {
   BACKROW_CARD_TYPES,
   canEditCard,
@@ -177,10 +178,13 @@ interface RightPanelSettingsProps {
   canUpload: boolean;
   onErrata: () => void;
   onCopy: () => void;
+  tabId: number;
+  onActiveTabChange: (activeTab: number) => void;
 }
 import { useTranslation } from 'react-i18next';
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
+  onActiveTabChange,
   cardData,
   expansions,
   onCardDataChange,
@@ -196,8 +200,13 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   const STATS_TAB = 0;
   const { t } = useTranslation();
   const EFFECTS_TAB = 1;
-  const GENERATE_TAB = 2;
+  const Art_TAB = 2;
+  const DECK_TAB = 3;
   const [tabId, setTabId] = useState<number>(0);
+  const handleTabChange = (_event: React.SyntheticEvent, newTabId: number) => {
+    setTabId(newTabId);
+    onActiveTabChange(newTabId);
+  };
   const countsAsSelector = () => {
     const countsAsOptions = Object.values(SpecialCountsAs).map(countsAs => {
       const id = SpecialCountsAsId[countsAs];
@@ -434,10 +443,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
 
   const hideHiddenButton = () => {
     return { display: cannotEdit() ? 'none' : 'flex' };
-  };
-
-  const onTabClicked = (_event: React.ChangeEvent<{}>, newId: number) => {
-    setTabId(newId);
   };
 
   const handleCostTypeChange = (
@@ -2712,13 +2717,15 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
       <Tabs
         value={tabId}
-        onChange={onTabClicked}
+        onChange={handleTabChange}
         aria-label="form tabs"
         sx={{ marginBottom: '2rem', marginTop: '2rem' }}
       >
         <Tab label={t('TAB_STATS')} />
         <Tab label={t('TAB_EFFECTS')} onClick={() => fixEffects()} />
-        <Tab label="Generate" />
+
+        <Tab label="Art" />
+        <Tab label="Deck" />
       </Tabs>
       <Box sx={{ display: tabId === STATS_TAB ? 'block' : 'none' }}>
         <Box sx={rowContainerStyle}>
@@ -3133,8 +3140,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
       <Box sx={{ display: tabId === EFFECTS_TAB ? 'block' : 'none' }}>
         {getEffectsTab()}
       </Box>
-      <Box sx={{ display: tabId === GENERATE_TAB ? 'block' : 'none' }}>
-        <GenerateTab />
+      <Box sx={{ display: tabId === Art_TAB ? 'block' : 'none' }}>
+        <ArtTab />
+      </Box>
+      <Box sx={{ display: tabId === DECK_TAB ? 'block' : 'none' }}>
+        <DeckTab />
       </Box>
       <Box sx={{ ...rowContainerStyle, marginBottom: 0 }}>
         <Button
