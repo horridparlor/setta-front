@@ -71,7 +71,7 @@ export const encodeEffectsString = (message: string) => {
       .replace('{/sb} {sb}normal{/sb} {b}', '{/sb} normal {b}')
       .replace('/i}{sb}', '/i}')
       .replace('/i}{b}', '/i}')
-      .replace('{sb}attack{/sb}', 'attack')
+      .replace('{sb}attack{/sb} ', 'attack ')
   );
 };
 
