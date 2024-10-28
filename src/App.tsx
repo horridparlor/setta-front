@@ -55,9 +55,9 @@ export default function App() {
               />
             }
           />
-          <Route 
+          <Route
             path="/process-management"
-            element={<ProcessManagementPage refetch={refetch} />}     
+            element={<ProcessManagementPage refetch={refetch} />}
           />
           <Route
             path="/user-roles"
