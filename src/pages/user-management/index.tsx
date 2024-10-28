@@ -18,6 +18,8 @@ import {
 import { Edit, Delete, Check, Close } from '@mui/icons-material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
+import { useNavigate } from 'react-router-dom';
+import { AppPage } from '../../types/navigation';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
@@ -26,7 +28,7 @@ interface UserManagementPageProps {
 const UserManagementPage = (props: UserManagementPageProps) => {
   const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
-
+  const navigate = useNavigate();
   // mock data
   const testRoles = [
     {
@@ -108,7 +110,9 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       active: false,
     },
   ];
-
+  const handleButtonClick = () => {
+    navigate(AppPage.UserCreation);
+  };
   const renderStatusChip = (active: boolean) => (
     <Tooltip title={active ? 'Deactivate' : 'Activate'}>
       <Chip
@@ -312,7 +316,11 @@ const UserManagementPage = (props: UserManagementPageProps) => {
                   <MenuItem>Token Requests</MenuItem>
                 </Select>
               </FormControl>
-              <Button variant="contained" sx={{ ml: 'auto' }}>
+              <Button
+                variant="contained"
+                sx={{ ml: 'auto' }}
+                onClick={handleButtonClick}
+              >
                 Create a New User
               </Button>
             </Box>

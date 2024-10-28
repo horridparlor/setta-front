@@ -11,6 +11,7 @@ import CardEditorPage from './pages/card-editor';
 import CardExpansionsPage from './pages/card-expansions';
 import UserManagementPage from './pages/user-management';
 import UserRolesPage from './pages/user-roles';
+import UserCreationPage from './pages/user-creation';
 
 export default function App() {
   const { expansions, fetchExpansions } = useExpansions();
@@ -61,6 +62,10 @@ export default function App() {
           <Route
             path="/user-management"
             element={<UserManagementPage refetch={refetch} />}
+          />
+          <Route
+            path="/user-creation"
+            element={<UserCreationPage refetch={refetch} />}
           />
         </Routes>
       </BrowserRouter>

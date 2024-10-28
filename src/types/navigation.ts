@@ -4,6 +4,7 @@ export enum AppPage {
   CardExpansions = '/card-expansions',
   UserManagement = '/user-management',
   UserRoles = '/user-roles',
+  UserCreation = '/user-creation',
   Error = '/error',
 }
 
