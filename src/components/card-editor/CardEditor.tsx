@@ -8,18 +8,13 @@ import {
 } from 'react';
 import CardPreviewer from './card-previewer/CardPreviewer';
 import RightPanelSettings from './RightPanelSettings';
+import GenerateBox from './GenerateBox';
 import domtoimage from 'dom-to-image';
 import { Box } from '@mui/material';
 import { CardData, DEFAULT_CARD_DATA, getOwnerId } from '../../types/card';
 import { CardMainFrameColor } from '../../types/color';
 import { toast } from 'react-toastify';
-import {
-  AdminEndpoint,
-  getAdminEndpoint,
-  getHeaders,
-  RequestMethod,
-  showError,
-} from '../../types/api';
+import { getHeaders, RequestMethod, showError } from '../../types/api';
 import useExpansions from '../../hooks/useExpansions';
 import {
   encodeEffectsString,
@@ -30,6 +25,7 @@ import {
 import { convertToBase64 } from '../../types/files';
 import { useParams } from 'react-router-dom';
 import { CardEffects } from '../../types/cardEffects';
+import { apiClient } from '../../api/client.ts';
 
 interface CardEditorProps {
   closeUpdate: () => void;
@@ -52,9 +48,17 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
     const [imageFile, setImageFile] = useState<File | undefined>(undefined);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [oldName, setOldName] = useState<string>('');
+    const [activeTab, setActiveTab] = useState<number>(0);
     const { cardId } = useParams();
-
     const cardRef = useRef<HTMLDivElement>(null);
+    const handleActiveTabChange = (newTabId: number) => {
+      setActiveTab(newTabId);
+    };
+    const handleResetFields = () => {
+      // Logic to reset all fields in BackgroundTab, CharacterTab, and SpecialEffectsTab
+      setCardData(DEFAULT_CARD_DATA);
+      // Assuming that each tab component has a reset method, call those here if needed.
+    };
 
     const handleCardDataChange = (
       field: keyof CardData,
@@ -72,67 +76,53 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
         return;
       }
       setIsSaving(true);
-      const url = getAdminEndpoint(AdminEndpoint.CARD);
       const method = cardData.cardId ? RequestMethod.PUT : RequestMethod.POST;
-      const body = JSON.stringify({
+      const params = {
         ...cardData,
         serializedName: serializeName(cardData),
         oldSerializedName: serializeName(oldName),
-      });
-
-      try {
-        const response = await fetch(url, {
-          method: method,
-          headers: getHeaders(),
-          body: body,
-        });
-        const responseData = await response.json();
-        if (!response.ok) {
-          showError(responseData);
-          setIsSaving(false);
-          return;
-        }
-        const cardId = responseData.cardId;
-        setCardData(cardData => ({
-          ...cardData,
-          cardId: cardId,
-          serializedName: serializeName(cardData),
-        }));
-        toast.success(
-          `Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`
-        );
-        await handleUploadImage(cardId);
+      };
+      const { data: responseData, error } = await (method === RequestMethod.POST
+        ? apiClient.POST('/admin/card', {
+            headers: getHeaders(),
+            body: params,
+          })
+        : apiClient.PUT('/admin/card', {
+            headers: getHeaders(),
+            body: params,
+          }));
+      if (error) {
+        showError(error);
         setIsSaving(false);
-        closeUpdate();
-      } catch (error) {
-        toast.error('Failed to save card: ' + error);
-        setIsSaving(false);
+        return;
       }
+      const cardId = responseData.cardId;
+      setCardData(cardData => ({
+        ...cardData,
+        cardId: cardId,
+        serializedName: serializeName(cardData),
+      }));
+      toast.success(
+        `Card ${method === 'POST' ? `created` : `updated`}: ${normalizeName(cardData)}`
+      );
+      await handleUploadImage(cardId);
+      setIsSaving(false);
+      closeUpdate();
     };
 
     const handleDelete = async () => {
-      const url = getAdminEndpoint(AdminEndpoint.CARD);
-      const method = RequestMethod.DELETE;
-      const body = JSON.stringify({
-        cardId: cardData.cardId,
+      const { error } = await apiClient.DELETE('/admin/card', {
+        headers: getHeaders(),
+        body: {
+          cardId: cardData.cardId,
+        },
       });
-
-      try {
-        const response = await fetch(url, {
-          method: method,
-          headers: getHeaders(),
-          body: body,
-        });
-        const responseData = await response.json();
-        if (!response.ok) {
-          showError(responseData);
-          return;
-        }
-        toast.success(`Card deleted: ${normalizeName(cardData)}`);
-        closeUpdate();
-      } catch (error) {
-        toast.error('Failed to delete card: ' + error);
+      if (error) {
+        showError(error);
+        return;
       }
+      toast.success(`Card deleted: ${normalizeName(cardData)}`);
+      closeUpdate();
     };
 
     const handleErrata = async () => {
@@ -144,32 +134,27 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
     };
 
     const copyCard = async (doErrata = false) => {
-      const url = getAdminEndpoint(AdminEndpoint.COPY_CARD);
-      const method = RequestMethod.POST;
-      const body = JSON.stringify({
+      const params = {
         cardId: cardData.cardId,
         serializedName: serializeName(cardData),
         doErrata: doErrata,
-      });
+      };
       const actionWord = doErrata ? 'errata' : 'copy';
 
-      try {
-        const response = await fetch(url, {
-          method: method,
+      const { data: responseData, error } = await apiClient.POST(
+        '/admin/copy-card',
+        {
           headers: getHeaders(),
-          body: body,
-        });
-        const responseData = await response.json();
-        if (!response.ok) {
-          showError(responseData);
-          return;
+          body: params,
         }
-        toast.success(`New ${actionWord} of card: ${normalizeName(cardData)}`);
-        goToCard(responseData.cardId);
-        await refetch();
-      } catch (error) {
-        toast.error(`Failed to ${actionWord} card: ` + error);
+      );
+      if (error) {
+        showError(error);
+        return;
       }
+      toast.success(`New ${actionWord} of card: ${normalizeName(cardData)}`);
+      goToCard(responseData.cardId);
+      await refetch();
     };
 
     const handleExport = async () => {
@@ -241,15 +226,12 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
           artYOffset: cardData.artYOffset,
           base64String: base64String,
         };
-        const body = JSON.stringify(data);
-        const response = await fetch(getAdminEndpoint(AdminEndpoint.IMAGE), {
-          method: RequestMethod.POST,
+        const { error } = await apiClient.POST('/admin/image', {
           headers: getHeaders(),
-          body: body,
+          body: data,
         });
-        const responseData = await response.json();
-        if (!response.ok) {
-          showError(responseData);
+        if (error) {
+          showError(error);
           return;
         }
         setImageFile(undefined);
@@ -317,6 +299,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
             overwriteArt={imageFile}
             oldName={oldName}
           />
+          {activeTab === 2 && <GenerateBox />}
         </Box>
         <RightPanelSettings
           cards={cards}
@@ -331,6 +314,8 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
           onDelete={handleDelete}
           onErrata={handleErrata}
           onCopy={handleCopy}
+          tabId={activeTab}
+          onActiveTabChange={setActiveTab}
         />
       </Box>
     );
