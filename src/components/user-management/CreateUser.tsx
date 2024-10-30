@@ -14,19 +14,11 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ConfirmationDialog from '../common/ConfirmationDialog';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import { useTranslation } from 'react-i18next';
-
-const phoneRegex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/;
 
 const defaultRoles: string[] = [
   'SuperAdmin',
@@ -65,13 +57,15 @@ export interface UserCreationRef {
 type CheckboxState = {
   [label: string]: boolean;
 };
-const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
+const UserCreation = () => {
+  const { t } = useTranslation();
+  const dialogRef = useRef(null);
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userID, setUserID] = useState('');
-  const [userName, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [penName, setPenName] = useState('');
   const [role, setRole] = useState('');
@@ -84,6 +78,7 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
   const [checkedAdminBoxes, setCheckedAdminBoxes] = useState<CheckboxState>(
     adminCheckboxLabels.reduce((acc, label) => ({ ...acc, [label]: false }), {})
   );
+
   // Common level access rights
   const [checkedCommonBoxes, setCheckedCommonBoxes] = useState<CheckboxState>(
     commonCheckboxLabels.reduce(
@@ -91,9 +86,11 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
       {}
     )
   );
+
   const isAllAdminSelected = Object.values(checkedAdminBoxes).every(
     checked => checked
   );
+
   const isAllCommonSelected = Object.values(checkedCommonBoxes).every(
     checked => checked
   );
@@ -104,6 +101,7 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
       [label]: !prev[label],
     }));
   };
+
   const handleCommonCheckboxChange = (label: string) => {
     setCheckedCommonBoxes(prev => ({
       ...prev,
@@ -119,6 +117,7 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
     );
     setCheckedAdminBoxes(updatedBoxes);
   };
+
   const handleCommonSelectAllChange = () => {
     const newCheckedState = !isAllCommonSelected;
     const updatedBoxes = commonCheckboxLabels.reduce(
@@ -127,13 +126,9 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
     );
     setCheckedCommonBoxes(updatedBoxes);
   };
-  useEffect(() => {
-    const firstNameLastName = `${firstName}.${lastName}`.toLowerCase();
-    setUsername(firstNameLastName);
-  }, [firstName, lastName]);
 
-  const dialogRef = useRef(null);
-  const { t } = useTranslation();
+  const userName = `${firstName}.${lastName}`.toLowerCase();
+
   const handleSave = () => {
     // Add code for save handling
   };
@@ -163,9 +158,6 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
     navigate(AppPage.UserManagement);
     setOpen(false);
   };
-  useImperativeHandle(ref, () => ({
-    handleSave,
-  }));
 
   const fetchAccessRightCopies = () => {
     try {
@@ -174,9 +166,11 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
       console.error('Failed to fetch');
     }
   };
+
   useEffect(() => {
     fetchAccessRightCopies();
   }, []);
+
   const rowContainerStyle = {
     flexDirection: 'row',
     alignItems: 'center',
@@ -184,6 +178,7 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
     marginBottom: 2,
     display: 'flex',
   };
+
   return (
     <Box>
       <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
@@ -266,7 +261,7 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
             <Box sx={{ flex: 1 }}>
               <TextField
                 label="Pen name"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                onChange={event => {
                   setPenName(event.target.value);
                 }}
                 placeholder="Pen name"
@@ -483,6 +478,6 @@ const UserCreation = forwardRef<UserCreationRef>((props, ref) => {
       </Box>
     </Box>
   );
-});
+};
 
 export default UserCreation;

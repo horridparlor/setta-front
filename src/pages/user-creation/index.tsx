@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useRef } from 'react';
-import UserCreation from '../../components/user-management/create-user';
+import UserCreation from '../../components/user-management/CreateUser';
 
 interface UserCreationProps {
   refetch: () => Promise<void>;
@@ -23,7 +23,7 @@ const UserCreationPage = (props: UserCreationProps) => {
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ width: '100%', p: 2 }}>
+      <Box sx={{ width: '100%' }}>
         <HomeBar refetch={refetch} ref={homeBarRef} onLeavePage={onLeavePage} />
       </Box>
       <Box
