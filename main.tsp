@@ -17,185 +17,167 @@ namespace SettaBackend;
 // ––– Card
 @route("admin/card")
 namespace Card {
-    @post
-    op postCard (
-        @body request: PostCardRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: PostCardResponse;
-    } | ErrorUnauthorized;
-    @put
-    op putCard (
-        @body request: PutCardRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: PutCardResponse;
-    } | ErrorUnauthorized;
-    @delete
-    op deleteCard (
-        @body request: DeleteCardRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: DeleteCardResponse;
-    } | ErrorUnauthorized;
+  @post
+  op postCard(@body request: PostCardRequest): {
+    @statusCode statusCode: 200;
+    @body response: PostCardResponse;
+  } | ErrorUnauthorized;
+  @put
+  op putCard(@body request: PutCardRequest): {
+    @statusCode statusCode: 200;
+    @body response: PutCardResponse;
+  } | ErrorUnauthorized;
+  @delete
+  op deleteCard(@body request: DeleteCardRequest): {
+    @statusCode statusCode: 200;
+    @body response: DeleteCardResponse;
+  } | ErrorUnauthorized;
 }
 
 model PostCardRequest {
-    cardName: string;
-    serializedName: string;
-    isAce: boolean;
-    cardClass: string;
-    cardType: string;
-    subtype: string;
-    supertype: string;
-    maximumPiece: string;
-    level: int32;
-    atk: int32;
-    def: int32;
-    primaryMaterialId: int32|null;
-    secondaryMaterialId: int32|null;
-    tertiaryMaterialId: int32|null;
-    materialsReminder: string;
-    costText: string;
-    effectText: string;
-    flavourText: string;
-    countsAsId: int32|null;
-    artScale: int32;
-    artXOffset: int32;
-    artYOffset: int32;
-    nameSize: int32;
-    materialsSize: int32;
-    effectsSize: int32;
-    expansionId: int32;
-    cardEffects: CardEffects;
+  cardName: string;
+  serializedName: string;
+  isAce: boolean;
+  cardClass: string;
+  cardType: string;
+  subtype: string;
+  supertype: string;
+  maximumPiece: string;
+  level: int32;
+  atk: int32;
+  def: int32;
+  primaryMaterialId: int32 | null;
+  secondaryMaterialId: int32 | null;
+  tertiaryMaterialId: int32 | null;
+  materialsReminder: string;
+  costText: string;
+  effectText: string;
+  flavourText: string;
+  countsAsId: int32 | null;
+  artScale: int32;
+  artXOffset: int32;
+  artYOffset: int32;
+  nameSize: int32;
+  materialsSize: int32;
+  effectsSize: int32;
+  expansionId: int32;
+  cardEffects: CardEffects;
 }
 
 model PostCardResponse {
-    cardId: int32;
+  cardId: int32;
 }
 
 model PutCardRequest {
-    cardId: int32;
-    cardName: string;
-    serializedName: string;
-    isAce: boolean;
-    cardClass: string;
-    cardType: string;
-    subtype: string;
-    supertype: string;
-    maximumPiece: string;
-    level: int32;
-    atk: int32;
-    def: int32;
-    primaryMaterialId: int32|null;
-    secondaryMaterialId: int32|null;
-    tertiaryMaterialId: int32|null;
-    materialsReminder: string;
-    costText: string;
-    effectText: string;
-    flavourText: string;
-    countsAsId: int32|null;
-    artScale: int32;
-    artXOffset: int32;
-    artYOffset: int32;
-    nameSize: int32;
-    materialsSize: int32;
-    effectsSize: int32;
-    expansionId: int32;
-    cardEffects: CardEffects;
+  cardId: int32;
+  cardName: string;
+  serializedName: string;
+  isAce: boolean;
+  cardClass: string;
+  cardType: string;
+  subtype: string;
+  supertype: string;
+  maximumPiece: string;
+  level: int32;
+  atk: int32;
+  def: int32;
+  primaryMaterialId: int32 | null;
+  secondaryMaterialId: int32 | null;
+  tertiaryMaterialId: int32 | null;
+  materialsReminder: string;
+  costText: string;
+  effectText: string;
+  flavourText: string;
+  countsAsId: int32 | null;
+  artScale: int32;
+  artXOffset: int32;
+  artYOffset: int32;
+  nameSize: int32;
+  materialsSize: int32;
+  effectsSize: int32;
+  expansionId: int32;
+  cardEffects: CardEffects;
 }
 
 model PutCardResponse {
-    cardId: int32;
+  cardId: int32;
 }
 
 model DeleteCardRequest {
-    cardId: int32;
+  cardId: int32;
 }
 
 model DeleteCardResponse {
-    cardId: int32;
+  cardId: int32;
 }
 
 // ––– CopyCard
 @route("admin/copy-card")
 namespace CopyCard {
-    @post
-    op copyCard (
-        @body request: CopyCardRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: CopyCardResponse;
-    } | ErrorUnauthorized;
+  @post
+  op copyCard(@body request: CopyCardRequest): {
+    @statusCode statusCode: 200;
+    @body response: CopyCardResponse;
+  } | ErrorUnauthorized;
 }
 
 model CopyCardRequest {
-    cardId: int32;
-    serializedName: string;
-    doErrata: boolean;
+  cardId: int32;
+  serializedName: string;
+  doErrata: boolean;
 }
 
 model CopyCardResponse {
-    cardId: int32;
+  cardId: int32;
 }
 
 // ––– Image
 @route("admin/image")
 namespace Image {
-    @post
-    op postImage (
-        @body request: PostImageRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: PostImageResponse;
-    } | ErrorUnauthorized;
+  @post
+  op postImage(@body request: PostImageRequest): {
+    @statusCode statusCode: 200;
+    @body response: PostImageResponse;
+  } | ErrorUnauthorized;
 }
 
 model PostImageRequest {
-    cardId: int32;
-    ownerId: int32;
-    imageName: string;
-    artScale: int32;
-    artXOffset: int32;
-    artYOffset: int32;
-    base64String: string;
+  cardId: int32;
+  ownerId: int32;
+  imageName: string;
+  artScale: int32;
+  artXOffset: int32;
+  artYOffset: int32;
+  base64String: string;
 }
 
 model PostImageResponse {
-    imagePath: string;
+  imagePath: string;
 }
 
 // ––– User
 @route("user/user")
 namespace User {
-    @get
-    op getUser(
-        @body request: GetUserRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: GetUserResponse;
-    } | ErrorUnauthorized | ErrorNotFound;
-    @post
-    op postUser(
-        @body request: PostUserRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: PostUserResponse;
-    } | ErrorUnauthorized;
-    @put
-    op putUser(
-        @body request: PutUserRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: PutUserResponse;
-    } | ErrorUnauthorized;
-    @delete
-    op deleteUser(
-        @body request: DeleteUserRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: DeleteUserResponse;
-    } | ErrorUnauthorized;
+  @get
+  op getUser(@body request: GetUserRequest): {
+    @statusCode statusCode: 200;
+    @body response: GetUserResponse;
+  } | ErrorUnauthorized | ErrorNotFound;
+  @post
+  op postUser(@body request: PostUserRequest): {
+    @statusCode statusCode: 200;
+    @body response: PostUserResponse;
+  } | ErrorUnauthorized;
+  @put
+  op putUser(@body request: PutUserRequest): {
+    @statusCode statusCode: 200;
+    @body response: PutUserResponse;
+  } | ErrorUnauthorized;
+  @delete
+  op deleteUser(@body request: DeleteUserRequest): {
+    @statusCode statusCode: 200;
+    @body response: DeleteUserResponse;
+  } | ErrorUnauthorized;
 }
 
 model SystemUser {
@@ -213,60 +195,52 @@ model SystemUser {
 }
 
 model GetUserRequest {
-    userId: int32;
+  userId: int32;
 }
 
 model GetUserResponse {
-    user: SystemUser;
+  user: SystemUser;
 }
 
 model PostUserRequest {
-    username: string;
-    password: string;
-    firstname: string;
-    lastname: string;
-    penName?: string;
-    email?: string;
-    phoneNumber?: string;
-    isActive?: boolean;
-    roleId?: int32;
-    roleName?: string;
-    accessRights: AccessRights;
+  username: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+  penName?: string;
+  email?: string;
+  phoneNumber?: string;
+  isActive?: boolean;
+  roleId?: int32;
+  roleName?: string;
+  accessRights: AccessRights;
 }
 
 model PostUserResponse {
-    userId: int32;
+  userId: int32;
 }
 
-model PutUserRequest {
+model PutUserRequest {}
 
-}
+model PutUserResponse {}
 
-model PutUserResponse {
+model DeleteUserRequest {}
 
-}
-
-model DeleteUserRequest {
-
-}
-
-model DeleteUserResponse {
-
-}
+model DeleteUserResponse {}
 
 // ––– Users
 @route("user/users")
 namespace Users {
-    @get
-    op listUsers (): {
-        @statusCode statusCode: 200;
-        @body response: ListUsersResponse;
-    } | ErrorUnauthorized;
+  @get
+  op listUsers(): {
+    @statusCode statusCode: 200;
+    @body response: ListUsersResponse;
+  } | ErrorUnauthorized;
 }
 
 model ListUsersResponse {
-    countOfUsers: int32;
-    users: User[];
+  countOfUsers: int32;
+  users: SystemUser[];
 }
 
 /// ––––– USER –––––
@@ -274,205 +248,201 @@ model ListUsersResponse {
 // ––– Authenticate
 @route("user/authenticate")
 namespace Authenticate {
-    @post
-    op authenticate (
-        @body request: AuthenticateRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: AuthenticateResponse;
-    } | ErrorUnauthorized;
+  @post
+  op authenticate(@body request: AuthenticateRequest): {
+    @statusCode statusCode: 200;
+    @body response: AuthenticateResponse;
+  } | ErrorUnauthorized;
 }
 
 model AuthenticateRequest {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 model AuthenticateResponse {
-    authToken: string;
-    userId: int32;
-    firstname: string;
-    lastname: string;
-    accessRights: AccessRights;
+  authToken: string;
+  userId: int32;
+  firstname: string;
+  lastname: string;
+  accessRights: AccessRights;
 }
 
 model AccessRights {
-    canRelease?: boolean;
-    canManageAdmins?: boolean;
-    canManageUsers?: boolean;
-    canClearContent?: boolean;
-    hasUnlimitedTokens?: boolean;
-    canShareTokens?: boolean;
-    canMessageAdmins?: boolean;
-    canMassExport?: boolean;
-    canCreateContent?: boolean;
-    canGenerateImages?: boolean;
-    canMessage?: boolean;
-    autoRefillTokens?: boolean;
-    isRegularUser?: boolean;
-    isPriorityUser?: boolean;
-    isEmployee?: boolean;
-    isContentCreator?: boolean;
+  canRelease?: boolean;
+  canManageAdmins?: boolean;
+  canManageUsers?: boolean;
+  canClearContent?: boolean;
+  hasUnlimitedTokens?: boolean;
+  canShareTokens?: boolean;
+  canMessageAdmins?: boolean;
+  canMassExport?: boolean;
+  canCreateContent?: boolean;
+  canGenerateImages?: boolean;
+  canMessage?: boolean;
+  autoRefillTokens?: boolean;
+  isRegularUser?: boolean;
+  isPriorityUser?: boolean;
+  isEmployee?: boolean;
+  isContentCreator?: boolean;
 }
 
 // ––– Cards
 @route("user/cards")
 namespace Cards {
-    @get
-    op listCards (): {
-        @statusCode statusCode: 200;
-        @body response: ListCardsResponse;
-    };
+  @get
+  op listCards(): {
+    @statusCode statusCode: 200;
+    @body response: ListCardsResponse;
+  };
 }
 
 model ListCardsResponse {
-    countOfCards: int32;
-    cards: CardData[];
+  countOfCards: int32;
+  cards: CardData[];
 }
 
 model CardData {
-    cardId: int32;
-    ownerId: int32;
-    errataOfId?: int32;
-    ownerFirstname: string;
-    ownerLastname: string;
-    cardName: string;
-    isAce: boolean;
-    cardClass: string;
-    cardType: string;
-    subtype: string;
-    supertype: string;
-    maximumPiece: string;
-    level: int32;
-    atk: int32;
-    def: int32;
-    primaryMaterialId?: int32;
-    secondaryMaterialId?: int32;
-    tertiaryMaterialId?: int32;
-    materialsReminder?: string;
-    costText: string;
-    effectText: string;
-    flavourText: string;
-    countsAsId?: int32;
-    artScale: float32;
-    artXOffset: float32;
-    artYOffset: float32;
-    nameSize: float32;
-    materialsSize: float32;
-    effectsSize: float32;
-    expansionId: int32;
-    originalExpansionId: int32;
-    createdAt: string;
-    updatedAt: string;
-    cardEffects: CardEffects;
+  cardId: int32;
+  ownerId: int32;
+  errataOfId?: int32;
+  ownerFirstname: string;
+  ownerLastname: string;
+  cardName: string;
+  isAce: boolean;
+  cardClass: string;
+  cardType: string;
+  subtype: string;
+  supertype: string;
+  maximumPiece: string;
+  level: int32;
+  atk: int32;
+  def: int32;
+  primaryMaterialId?: int32;
+  secondaryMaterialId?: int32;
+  tertiaryMaterialId?: int32;
+  materialsReminder?: string;
+  costText: string;
+  effectText: string;
+  flavourText: string;
+  countsAsId?: int32;
+  artScale: float32;
+  artXOffset: float32;
+  artYOffset: float32;
+  nameSize: float32;
+  materialsSize: float32;
+  effectsSize: float32;
+  expansionId: int32;
+  originalExpansionId: int32;
+  createdAt: string;
+  updatedAt: string;
+  cardEffects: CardEffects;
 }
 
 model CardEffects {
-    cost: EffectsCost;
-    effect: EffectsEffect;
+  cost: EffectsCost;
+  effect: EffectsEffect;
 }
 
 model EffectsCost {
-    prestate: string|null;
-    costType: string;
-    subtype: string|null;
-    supertype: string|null;
-    amount: int32|null;
-    target: EffectsTarget|null;
-    payment: EffectsPayment|null;
-    postCount: PostCount|null;
+  prestate: string | null;
+  costType: string;
+  subtype: string | null;
+  supertype: string | null;
+  amount: int32 | null;
+  target: EffectsTarget | null;
+  payment: EffectsPayment | null;
+  postCount: PostCount | null;
 }
 
 model EffectsTarget {
-    cardType: string|null;
-    cardClass: string|null;
-    subtype: string|null;
-    minLevel: int32|null;
-    maxLevel: int32|null;
-    atk: int32|null;
-    def: int32|null;
-    zone: string|null;
-    targetType: string|null;
-    owner: string|null;
+  cardType: string | null;
+  cardClass: string | null;
+  subtype: string | null;
+  minLevel: int32 | null;
+  maxLevel: int32 | null;
+  atk: int32 | null;
+  def: int32 | null;
+  zone: string | null;
+  targetType: string | null;
+  owner: string | null;
 }
 
 model EffectsPayment {
-    paymentType: string|null;
-    amount: int32|null;
-    cardType: string|null;
+  paymentType: string | null;
+  amount: int32 | null;
+  cardType: string | null;
 }
 
 model PostCount {
-    countType: string;
-    subtype: string|null;
+  countType: string;
+  subtype: string | null;
 }
 
 model EffectsEffect {
-    effectType: string;
-    subtype: string|null;
-    supertype: string|null;
-    amount: int32|EffectsCount|null;
-    maxAmount: int32|null;
-    target: EffectsTarget|null;
-    direction: string|null;
-    hindrance: string|null;
-    benefit: string|null;
-    chainEffect: ChainEffect|null;
+  effectType: string;
+  subtype: string | null;
+  supertype: string | null;
+  amount: int32 | EffectsCount | null;
+  maxAmount: int32 | null;
+  target: EffectsTarget | null;
+  direction: string | null;
+  hindrance: string | null;
+  benefit: string | null;
+  chainEffect: ChainEffect | null;
 }
 
 model EffectsCount {
-    multiplier: int32;
-    target: EffectsTarget|null;
+  multiplier: int32;
+  target: EffectsTarget | null;
 }
 
 model ChainEffect {
-    chainType: string;
-    subtype: string|null;
-    direction: string|null;
-    amount: int32|null;
+  chainType: string;
+  subtype: string | null;
+  direction: string | null;
+  amount: int32 | null;
 }
 
 // ––– ChangePassword
 @route("user/change-password")
 namespace ChangePassword {
-    @post
-    op changePassword (
-        @body request: ChangePasswordRequest;
-    ): {
-        @statusCode statusCode: 200;
-        @body response: ChangePasswordResponse;
-    } | ErrorUnauthorized;
+  @post
+  op changePassword(@body request: ChangePasswordRequest): {
+    @statusCode statusCode: 200;
+    @body response: ChangePasswordResponse;
+  } | ErrorUnauthorized;
 }
 
 model ChangePasswordRequest {
-    password: string;
+  password: string;
 }
 
 model ChangePasswordResponse {
-    status: string;
+  status: string;
 }
 
 // ––– Expansions
 @route("user/expansions")
 namespace Expansions {
-    @get
-    op listExpansions (): {
-        @statusCode statusCode: 200;
-        @body response: ListExpansionsResponse;
-    };
+  @get
+  op listExpansions(): {
+    @statusCode statusCode: 200;
+    @body response: ListExpansionsResponse;
+  };
 }
 
 model ListExpansionsResponse {
-    countOfExpansions: int32;
-    expansions: CardExpansion[];
+  countOfExpansions: int32;
+  expansions: CardExpansion[];
 }
 
 model CardExpansion {
-    id: int32;
-    ownerId: int32;
-    name: string;
-    releaseYear: int32;
-    isReleased: boolean;
+  id: int32;
+  ownerId: int32;
+  name: string;
+  releaseYear: int32;
+  isReleased: boolean;
 }
 
 // --- ROLES
@@ -576,11 +546,11 @@ model TokenRequest {
 
 @error
 model ErrorNotFound {
-    error: string;
+  error: string;
 }
 @error
 model ErrorUnauthorized {
-    error: string;
+  error: string;
 }
 
 // ––– TODO
@@ -593,7 +563,6 @@ model CardImage {
   generatedByUserId: int32;
   generatedAt: string;
 }
-
 
 // --- DECKS
 @route("/decks")
@@ -705,5 +674,5 @@ model CardLink {
 }
 
 model Error {
-    error: string;
+  error: string;
 }
