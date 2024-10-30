@@ -5,6 +5,7 @@ export enum AppPage {
   ProcessManagement = '/process-management',
   UserManagement = '/user-management',
   UserRoles = '/user-roles',
+  UserCreation = '/user-creation',
   Error = '/error',
 }
 
