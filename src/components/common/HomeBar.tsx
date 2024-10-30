@@ -99,7 +99,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             >
               <MenuIcon />
             </IconButton>
-            <Drawer open={open}>
+            <Drawer
+              open={open}
+              ModalProps={{ onBackdropClick: () => setOpen(false) }}
+            >
               <Box sx={{ p: 2 }}>
                 <IconButton
                   onClick={() => setOpen(false)}

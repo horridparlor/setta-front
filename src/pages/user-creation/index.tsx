@@ -33,6 +33,7 @@ const UserCreationPage = (props: UserCreationProps) => {
           justifyContent: 'center',
           alignItems: 'center',
           overflow: 'auto',
+          p: 2,
         }}
       >
         <UserCreation />
