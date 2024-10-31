@@ -230,7 +230,6 @@ model PostUserRequest {
     phoneNumber?: string;
     isActive?: boolean;
     roleId?: int32;
-    roleName?: string;
     accessRights: AccessRights;
 }
 
@@ -297,6 +296,7 @@ model AuthenticateResponse {
 }
 
 model AccessRights {
+    isSuperAdmin?: boolean;
     canRelease?: boolean;
     canManageAdmins?: boolean;
     canManageUsers?: boolean;
