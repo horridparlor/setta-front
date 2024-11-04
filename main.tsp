@@ -62,6 +62,7 @@ model PostCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
+  art: Art;
 }
 
 model PostCardResponse {
@@ -97,6 +98,7 @@ model PutCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
+  art: Art;
 }
 
 model PutCardResponse {
@@ -337,6 +339,12 @@ model CardData {
   createdAt: string;
   updatedAt: string;
   cardEffects: CardEffects;
+
+  // consider grouping other card tabs like this as well to clean up the api (stats, effects)
+  art: Art;
+
+  // multiple images can be generated for a single card
+  images: CardImage[];
 }
 
 model CardEffects {
@@ -562,6 +570,31 @@ model CardImage {
   status: "accepted" | "generated" | "queued" | "error";
   generatedByUserId: int32;
   generatedAt: string;
+
+  // art/prompt used for generating this image
+  art: Art;
+}
+
+model Art {
+  prompt: string;
+  manualPrompt: string;
+  background: string;
+  type: "monster" | "backrow" | "spell" | "trap";
+  characters: Character[];
+  specialEffects: string;
+}
+
+model Character {
+  hidden: boolean;
+  who: string;
+  name: string;
+  appearance: string;
+  race: "none" | "human" | "animal" | "beastial" | "monster" | "abstract";
+  gender: "none" | "undefined" | "female" | "male";
+  age: "none" | "adult" | "teen" | "elderly" | "child";
+  type: "main" | "supporting" | "antagonist" | "background";
+  tool: string;
+  action: string;
 }
 
 // --- DECKS
