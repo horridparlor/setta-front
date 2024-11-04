@@ -2726,8 +2726,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
 
         <Tab label="Art" />
         <Tab label="Deck" />
-
-
       </Tabs>
       <Box sx={{ display: tabId === STATS_TAB ? 'block' : 'none' }}>
         <Box sx={rowContainerStyle}>

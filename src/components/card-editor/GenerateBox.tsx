@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
+} from '@mui/material';
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
@@ -8,12 +16,12 @@ interface GenerateBoxProps {}
 const GenerateBox: React.FC<GenerateBoxProps> = () => {
   const [selectedDate, setSelectedDate] = useState<string>('2024-10-03'); // Default selection of mock data
   const [dropdownItems, setDropdownItems] = useState<string[]>([
-    '2024-10-01', 
+    '2024-10-01',
     '2024-10-02',
-    '2024-10-03', 
+    '2024-10-03',
     // Mocked data;
   ]);
-  
+
   const handleArrowLeftClick = () => {
     const currentIndex = dropdownItems.indexOf(selectedDate);
     if (currentIndex > 0) {
@@ -45,11 +53,11 @@ const GenerateBox: React.FC<GenerateBoxProps> = () => {
         gap: 2,
         width: '100%',
         backgroundColor: 'white',
-        borderRadius:1,
+        borderRadius: 1,
         paddingBottom: 2,
         paddingLeft: 0,
         paddingTop: 2,
-        paddingRight:0,
+        paddingRight: 0,
       }}
     >
       {/* Arrow button to shift to older generations */}
@@ -66,9 +74,8 @@ const GenerateBox: React.FC<GenerateBoxProps> = () => {
           value={selectedDate}
           onChange={handleDropdownChange}
           label="Generation Date"
-          
         >
-          {dropdownItems.map((date) => (
+          {dropdownItems.map(date => (
             <MenuItem key={date} value={date}>
               {date}
             </MenuItem>

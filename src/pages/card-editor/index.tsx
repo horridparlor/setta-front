@@ -123,18 +123,18 @@ const CardEditorPage = (props: CardEditorPageProps) => {
         height: '100vh',
         backgroundColor: '#244775',
         overflowX: 'hidden',
+        overflowY: 'auto',
       }}
     >
-      <Box sx={{ width: '100%', p: 2 }}>
+      <Box>
         <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
       <Box
         sx={{
-          flex: 1,
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center',
-          overflow: 'auto',
+          alignItems: 'start',
+          p: 2,
         }}
       >
         <CardEditor

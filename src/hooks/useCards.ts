@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { UpdateFrequencies } from '../types/time';
-import { getHeaders, getUserEndpoint, UserEndpoint } from '../types/api';
+import { getHeaders } from '../types/api';
 import { CardData } from '../types/card';
 import { CardOwner } from '../types/user';
 import { apiClient } from '../api/client.ts';
@@ -10,7 +10,6 @@ const useCards = () => {
   const [cardOwners, setCardOwners] = useState<Array<CardOwner>>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const url = getUserEndpoint(UserEndpoint.CARDS);
 
   const fetchCards = async () => {
     setIsLoading(true);
@@ -44,7 +43,7 @@ const useCards = () => {
     fetchCards();
     const interval = setInterval(fetchCards, UpdateFrequencies.ONE_HOUR);
     return () => clearInterval(interval);
-  }, [url]);
+  }, []);
 
   return { cards, cardOwners, isLoading, error, fetchCards };
 };
