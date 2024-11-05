@@ -62,6 +62,15 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
     <Box>
       <Typography variant="h6">Side Character</Typography>
 
+      <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
+        <Button variant="contained" color="primary">
+          Hide Character
+        </Button>
+        <Button variant="outlined" color="error">
+          Delete Character
+        </Button>
+      </Box>
+
       {/* Name */}
       <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
         <TextField
@@ -81,60 +90,6 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
             ),
           }}
         />
-      </Box>
-
-      {/* Race, Gender, and Age Fields */}
-      <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
-        {/* Race */}
-        <FormControl fullWidth>
-          <InputLabel id="side-character-race-label">Race</InputLabel>
-          <Select
-            labelId="side-character-race-label"
-            value={sideCharacterFields.sideCharacterRace}
-            label="Race"
-            onChange={handleInputChange('sideCharacterRace')}
-          >
-            <MenuItem value="None">None</MenuItem>
-            <MenuItem value="Human">Human</MenuItem>
-            <MenuItem value="Animal">Animal</MenuItem>
-            <MenuItem value="Beastial">Beastial</MenuItem>
-            <MenuItem value="Monster">Monster</MenuItem>
-            <MenuItem value="Abstract">Abstract</MenuItem>
-          </Select>
-        </FormControl>
-
-        {/* Gender */}
-        <FormControl fullWidth>
-          <InputLabel id="side-character-gender-label">Gender</InputLabel>
-          <Select
-            labelId="side-character-gender-label"
-            value={sideCharacterFields.sideCharacterGender}
-            label="Gender"
-            onChange={handleInputChange('sideCharacterGender')}
-          >
-            <MenuItem value="None">None</MenuItem>
-            <MenuItem value="Undefined">Undefined</MenuItem>
-            <MenuItem value="Male">Male</MenuItem>
-            <MenuItem value="Female">Female</MenuItem>
-          </Select>
-        </FormControl>
-
-        {/* Age */}
-        <FormControl fullWidth>
-          <InputLabel id="side-character-age-label">Age</InputLabel>
-          <Select
-            labelId="side-character-age-label"
-            value={sideCharacterFields.sideCharacterAge}
-            label="Age"
-            onChange={handleInputChange('sideCharacterAge')}
-          >
-            <MenuItem value="None">None</MenuItem>
-            <MenuItem value="Adult">Adult</MenuItem>
-            <MenuItem value="Teen">Teen</MenuItem>
-            <MenuItem value="Elderly">Elderly</MenuItem>
-            <MenuItem value="Child">Child</MenuItem>
-          </Select>
-        </FormControl>
       </Box>
 
       {/* Appearance */}
