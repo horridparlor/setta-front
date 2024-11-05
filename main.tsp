@@ -238,19 +238,29 @@ model PostUserResponse {
 }
 
 model PutUserRequest {
-
+    userId: int32;
+    username: string;
+    firstname: string;
+    lastname: string;
+    penName?: string;
+    email?: string;
+    phoneNumber?: string;
+    isActive?: boolean;
+    roleId?: int32;
+    accessRights: AccessRights;
 }
 
 model PutUserResponse {
-
+    userId: int32;
 }
 
 model DeleteUserRequest {
-
+    userId: int32;
+    deleteAllTheirContent?: boolean;
 }
 
 model DeleteUserResponse {
-
+    userId: int32;
 }
 
 // ––– Users
