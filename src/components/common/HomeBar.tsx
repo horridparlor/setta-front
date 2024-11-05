@@ -1,19 +1,19 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
+  Box,
+  Divider,
+  ListItemButton,
+  AppBar,
+  Toolbar,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  Drawer,
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  AppBar,
-  Box,
-  Divider,
-  Drawer,
-  IconButton,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Typography,
 } from '@mui/material';
 import { AppPage, isAppPage } from '../../types/navigation';
 import LoginModal from './LoginModal';
@@ -28,7 +28,12 @@ import LoginIcon from '@mui/icons-material/Login';
 import { useTranslation } from 'react-i18next';
 import LanguageSelect from './LanguageSelect';
 import LanguageIcon from '@mui/icons-material/Language';
-import { ExpandMore, FormatPaint, Inventory } from '@mui/icons-material';
+import {
+  ExpandMore,
+  FormatPaint,
+  Inventory,
+  GridViewRounded,
+} from '@mui/icons-material';
 import { getUsername } from '../../types/cookie.ts';
 
 interface HomeBarProps {
@@ -74,6 +79,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           return t('PAGE_NAME.CARD_EDITOR');
         case AppPage.CardExpansions:
           return t('PAGE_NAME.CARD_EXPANSIONS');
+        case AppPage.ProcessManagement:
+          return t('PAGE_NAME.PROCESS_MANAGEMENT');
         case AppPage.UserManagement:
           return t('PAGE_NAME.USER_MANAGEMENT');
         case AppPage.Error:
@@ -92,7 +99,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             >
               <MenuIcon />
             </IconButton>
-            <Drawer open={open}>
+            <Drawer
+              open={open}
+              ModalProps={{ onBackdropClick: () => setOpen(false) }}
+            >
               <Box sx={{ p: 2 }}>
                 <IconButton
                   onClick={() => setOpen(false)}
@@ -131,6 +141,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     </ListItemIcon>
                     <ListItemText primary={t('PAGE_NAME.RELEASING')} />
                   </AccordionSummary>
+
                   <AccordionDetails>
                     <ListItemButton
                       onClick={() => navigateTo(AppPage.CardExpansions)}
@@ -139,6 +150,16 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                         <Inventory />
                       </ListItemIcon>
                       <ListItemText primary={t('PAGE_NAME.CARD_EXPANSIONS')} />
+                    </ListItemButton>
+                    <ListItemButton
+                      onClick={() => navigateTo(AppPage.ProcessManagement)}
+                    >
+                      <ListItemIcon>
+                        <GridViewRounded />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t('PAGE_NAME.PROCESS_MANAGEMENT')}
+                      />
                     </ListItemButton>
                   </AccordionDetails>
                 </Accordion>
@@ -150,9 +171,6 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                     <PeopleIcon />
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.USER_MANAGEMENT')} />
-                </ListItemButton>
-                <ListItemButton onClick={() => navigateTo(AppPage.UserRoles)}>
-                  <ListItemText primary={t('USER_ROLES')} />
                 </ListItemButton>
                 <ListItemButton>
                   <ListItemIcon>
