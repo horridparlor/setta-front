@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {
   Box,
   InputLabel,
@@ -20,12 +20,27 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
+import { fetchUsers } from '../../api/userManagementApi';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
 }
 
 const UserManagementPage = (props: UserManagementPageProps) => {
+  const [users, setUsers] = useState([]);
+
+  const loadUsers = async () => {
+    try {
+      const fetchedUsers = await fetchUsers();
+      setUsers(fetchedUsers);
+    } catch (error) {
+      console.error('Error loading users:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
   const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
   const navigate = useNavigate();
@@ -326,7 +341,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
             </Box>
             <Box sx={{ mt: 2 }}>
               <DataGrid
-                rows={testUsers}
+                rows={users}
                 columns={userColumns}
                 checkboxSelection
                 // pagination not ready

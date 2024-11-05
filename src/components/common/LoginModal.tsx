@@ -31,7 +31,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
 
   const handleLogin = async () => {
     const { data: responseData, error } = await apiClient.POST(
-      '/user/authenticate',
+      '/api/user/authenticate',
       {
         headers: getHeaders(),
         body: {

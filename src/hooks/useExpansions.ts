@@ -12,8 +12,9 @@ const useExpansions = () => {
   const fetchExpansions = async () => {
     setIsLoading(true);
     const { data: responseData, error } = await apiClient.GET(
-      '/user/expansions',
+      '/api/user/expansions',
       {
+        credentials: 'same-origin',
         headers: getHeaders(),
       }
     );
