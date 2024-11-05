@@ -158,12 +158,12 @@ model PostImageResponse {
 }
 
 // ––– User
-@route("user/user")
+@route("admin/user")
 namespace User {
   @get
   op getUser(@body request: GetUserRequest): {
     @statusCode statusCode: 200;
-    @body response: GetUserResponse;
+    @body response: SystemUser;
   } | ErrorUnauthorized | ErrorNotFound;
   @post
   op postUser(@body request: PostUserRequest): {
@@ -198,10 +198,6 @@ model SystemUser {
 
 model GetUserRequest {
   userId: int32;
-}
-
-model GetUserResponse {
-  user: SystemUser;
 }
 
 model PostUserRequest {
@@ -248,7 +244,7 @@ model DeleteUserResponse {
 }
 
 // ––– Users
-@route("user/users")
+@route("admin/users")
 namespace Users {
   @get
   op listUsers(): {
@@ -260,6 +256,82 @@ namespace Users {
 model ListUsersResponse {
   countOfUsers: int32;
   users: SystemUser[];
+}
+
+// ––– ROLES
+
+@route("admin/role")
+namespace Role {
+  @get
+  op getRole(@body request: GetRoleRequest): {
+    @statusCode statusCode: 200;
+    @body response: UserRole;
+  } | ErrorUnauthorized | ErrorNotFound;
+  @post
+  op postRole(@body request: PostRoleRequest): {
+    @statusCode statusCode: 200;
+    @body response: PostRoleResponse;
+  } | ErrorUnauthorized;
+  @put
+  op putRole(@body request: PutRoleRequest): {
+    @statusCode statusCode: 200;
+    @body response: PutRoleResponse;
+  } | ErrorUnauthorized;
+  @delete
+  op deleteRole(@body request: DeleteRoleRequest): {
+    @statusCode statusCode: 200;
+    @body response: DeleteRoleResponse;
+  } | ErrorUnauthorized;
+}
+
+model GetRoleRequest {
+    roleId: int32;
+}
+
+model PostRoleRequest {
+    roleId: int32;
+}
+
+model PostRoleResponse {
+    roleId: int32;
+}
+
+model PutRoleRequest {
+    roleId: int32;
+}
+
+model PutRoleResponse {
+    roleId: int32;
+}
+
+model DeleteRoleRequest {
+    roleId: int32;
+}
+
+model DeleteRoleResponse {
+    roleId: int32;
+}
+
+@route("admin/roles")
+namespace Roles {
+  @get
+  op listRoles(): {
+    @statusCode statusCode: 200;
+    @body response: ListRolesResponse;
+  } | ErrorUnauthorized;
+}
+
+model ListRolesResponse {
+    countOfRoles: int32;
+    roles: UserRole[];
+}
+
+model UserRole {
+  id: int32;
+  name: string;
+  accessRights: AccessRights;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /// ––––– USER –––––
@@ -469,75 +541,6 @@ model CardExpansion {
   name: string;
   releaseYear: int32;
   isReleased: boolean;
-}
-
-// --- ROLES
-
-@route("/roles")
-namespace Roles {
-  @tag("planned")
-  @get
-  op listRoles(): {
-    @statusCode statusCode: 200;
-    @body roles: Role[];
-  };
-
-  @tag("planned")
-  @get
-  op getRole(@path roleId: int32): {
-    @statusCode statusCode: 200;
-    @body role: Role;
-  } | {
-    @statusCode statusCode: 404;
-    @body error: Error;
-  };
-
-  @tag("planned")
-  @post
-  op createRole(@body create: RoleCreate): {
-    @statusCode statusCode: 201;
-    @body role: Role;
-  };
-
-  @tag("planned")
-  @post
-  op updateRole(@path roleId: int32, @body update: RoleUpdate): {
-    @statusCode statusCode: 200;
-    @body role: Role;
-  };
-
-  @tag("planned")
-  @delete
-  op deleteRole(@path roleId: int32): {
-    @statusCode statusCode: 204;
-  } | {
-    @statusCode statusCode: 404;
-    @body error: Error;
-  };
-}
-
-model Role {
-  id: int32;
-  name: string;
-  rights: right[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-model RoleCreate {
-  name: string;
-  rights: right[];
-}
-
-model RoleUpdate {
-  name?: string;
-  rights?: right[];
-}
-
-enum right {
-  right1: "right1",
-  right2: "right2",
-  right3: "right3",
 }
 
 // --- TOKEN REQUESTS
