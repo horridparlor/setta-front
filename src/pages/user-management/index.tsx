@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Edit, Delete, Check, Close } from '@mui/icons-material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
@@ -31,6 +31,8 @@ const UserManagementPage = (props: UserManagementPageProps) => {
   const homeBarRef = useRef<HomeBarRef>(null);
   const navigate = useNavigate();
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [selectedUserRows, setSelectedUserRows] =
+    useState<GridRowSelectionModel>([]);
   // mock data
   const testRoles = [
     {
@@ -124,6 +126,10 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       case 'Create a New User':
         return navigate(AppPage.UserCreation);
     }
+  };
+
+  const handleUserSelectionChange = (newSelection: GridRowSelectionModel) => {
+    setSelectedUserRows(newSelection);
   };
 
   const renderStatusChip = (active: boolean) => (
@@ -333,13 +339,15 @@ const UserManagementPage = (props: UserManagementPageProps) => {
                   <MenuItem>Token Requests</MenuItem>
                 </Select>
               </FormControl>
-              <Button
-                variant="contained"
-                sx={{ ml: 'auto' }}
-                onClick={() => handleButtonClick('Change Role')}
-              >
-                Change Role
-              </Button>
+              {selectedUserRows.length > 0 && (
+                <Button
+                  variant="contained"
+                  sx={{ ml: 'auto' }}
+                  onClick={() => handleButtonClick('Change Role')}
+                >
+                  Change Role
+                </Button>
+              )}
               <Button
                 variant="contained"
                 sx={{ ml: 'auto' }}
@@ -359,6 +367,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
                 rows={testUsers}
                 columns={userColumns}
                 checkboxSelection
+                onRowSelectionModelChange={handleUserSelectionChange}
                 // pagination not ready
               />
             </Box>
