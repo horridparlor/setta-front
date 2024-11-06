@@ -113,11 +113,19 @@ const UserManagementPage = (props: UserManagementPageProps) => {
     },
   ];
 
-  const handleButtonClick = (action: 'Change Role' | 'Create a New User') => {
-    action === 'Change Role'
-      ? setDialogOpen(true)
-      : navigate(AppPage.UserCreation);
+  const handleButtonClick = (
+    action: 'Create a New Role' | 'Change Role' | 'Create a New User'
+  ) => {
+    switch (action) {
+      case 'Create a New Role':
+        return navigate(AppPage.UserRoles);
+      case 'Change Role':
+        return setDialogOpen(true);
+      case 'Create a New User':
+        return navigate(AppPage.UserCreation);
+    }
   };
+
   const renderStatusChip = (active: boolean) => (
     <Tooltip title={active ? 'Deactivate' : 'Activate'}>
       <Chip
@@ -271,7 +279,11 @@ const UserManagementPage = (props: UserManagementPageProps) => {
                   <MenuItem>Customized</MenuItem>
                 </Select>
               </FormControl>
-              <Button variant="contained" sx={{ ml: 'auto' }}>
+              <Button
+                variant="contained"
+                sx={{ ml: 'auto' }}
+                onClick={() => handleButtonClick('Create a New Role')}
+              >
                 Create a New Role
               </Button>
             </Box>
