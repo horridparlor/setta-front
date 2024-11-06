@@ -56,6 +56,8 @@
   "LAST_30_DAYS": "Viimeiset 30 päivää",
   "LEVEL": "Taso",
   "LOGIN": "Kirjaudu sisään",
+  "LOGOUT": "Kirjaudu Ulos",
+  "LOGOUT_SUCCESS": "log Out Success",
   "LOGIN_TITLE": "Kirjaudu sisään",
   "MATERIALS_REMINDER": "Materiaalimuistutus",
   "MATERIALS_SIZE": "Materiaalin koko",
