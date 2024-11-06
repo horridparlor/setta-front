@@ -25,14 +25,33 @@ import { fetchUsers } from '../../api/userManagementApi';
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
 }
-
+interface User {
+  id: number;
+  name: string;
+  role: string;
+  username: string;
+  activeRequest: boolean;
+  active: boolean;
+}
 const UserManagementPage = (props: UserManagementPageProps) => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const loadUsers = async () => {
     try {
-      const fetchedUsers = await fetchUsers();
-      setUsers(fetchedUsers);
+      const fetchedData = await fetchUsers();
+      if (Array.isArray(fetchedData)) {
+        const formattedUsers = fetchedData.map((user: any) => ({
+          id: user.id,
+          name: `${user.firstname} ${user.lastname}`,
+          role: user.roleId === 2 ? 'Admin' : 'Standard User', //lets uypdate this to map or somthign when we get there
+          username: user.username,
+          activeRequest: !!user.tokenRequest,
+          active: user.isActive === 1,
+        }));
+        setUsers(formattedUsers);
+      } else {
+        console.error('Unexpected data structure:', fetchedData);
+      }
     } catch (error) {
       console.error('Error loading users:', error);
     }
@@ -44,6 +63,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
   const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
   const navigate = useNavigate();
+
   // mock data
   const testRoles = [
     {
@@ -82,49 +102,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       active: true,
     },
   ];
-  // mock data
-  const testUsers = [
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: true,
-      id: '1',
-      active: true,
-    },
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: false,
-      id: '2',
-      active: true,
-    },
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: false,
-      id: '3',
-      active: true,
-    },
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: true,
-      id: '4',
-      active: true,
-    },
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: false,
-      id: '5',
-      active: false,
-    },
-  ];
+
   const handleButtonClick = () => {
     navigate(AppPage.UserCreation);
   };
