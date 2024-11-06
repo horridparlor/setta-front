@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   Box,
   InputLabel,
@@ -20,6 +20,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
+import RoleChangeModal from '../../components/common/RoleChangeModal';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
@@ -29,6 +30,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
   const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
   const navigate = useNavigate();
+  const [isDialogOpen, setDialogOpen] = useState(false);
   // mock data
   const testRoles = [
     {
@@ -110,8 +112,11 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       active: false,
     },
   ];
-  const handleButtonClick = () => {
-    navigate(AppPage.UserCreation);
+
+  const handleButtonClick = (action: 'Change Role' | 'Create a New User') => {
+    action === 'Change Role'
+      ? setDialogOpen(true)
+      : navigate(AppPage.UserCreation);
   };
   const renderStatusChip = (active: boolean) => (
     <Tooltip title={active ? 'Deactivate' : 'Activate'}>
@@ -319,10 +324,23 @@ const UserManagementPage = (props: UserManagementPageProps) => {
               <Button
                 variant="contained"
                 sx={{ ml: 'auto' }}
-                onClick={handleButtonClick}
+                onClick={() => handleButtonClick('Change Role')}
+              >
+                Change Role
+              </Button>
+              <Button
+                variant="contained"
+                sx={{ ml: 'auto' }}
+                onClick={() => handleButtonClick('Create a New User')}
               >
                 Create a New User
               </Button>
+              {isDialogOpen && (
+                <RoleChangeModal
+                  open={isDialogOpen}
+                  onClose={() => setDialogOpen(false)}
+                />
+              )}
             </Box>
             <Box sx={{ mt: 2 }}>
               <DataGrid
