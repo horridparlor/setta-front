@@ -289,7 +289,8 @@ model GetRoleRequest {
 }
 
 model PostRoleRequest {
-    roleId: int32;
+    name: string;
+    accessRights: AccessRights;
 }
 
 model PostRoleResponse {
@@ -298,6 +299,8 @@ model PostRoleResponse {
 
 model PutRoleRequest {
     roleId: int32;
+    name: string;
+    accessRights: AccessRights;
 }
 
 model PutRoleResponse {
