@@ -46,7 +46,10 @@ interface HomeBarProps {
 export interface HomeBarRef {
   toggleLoginOpen: () => void;
 }
-
+export const isUserLoggedIn = () => {
+  const userId = Cookies.get(AuthCookie.USER_ID);
+  return !!userId && !isNaN(parseInt(userId));
+};
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
   ({ refetch, onLeavePage }, ref) => {
     const { t } = useTranslation();
@@ -66,7 +69,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
       // Update username whenever cookies change
       setUsername(getUsername(t));
     }, []);
-
+    const isLoggedIn = isUserLoggedIn();
     const handleLogout = () => {
       // Clear authentication cookies on logout
       Cookies.remove(AuthCookie.AUTH_TOKEN);
@@ -233,7 +236,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
               {username}
             </Typography>
 
-            {username !== t('GUEST') ? (
+            {isLoggedIn ? (
               <Button
                 variant="contained"
                 color="secondary"
@@ -257,7 +260,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
               open={isLoginOpen}
               onClose={() => setLoginOpen(false)}
               refetch={refetch}
-              onLoginSuccess={handleLoginSuccess} // Pass login success handler
+              onLoginSuccess={handleLoginSuccess}
             />
           </Toolbar>
         </AppBar>
