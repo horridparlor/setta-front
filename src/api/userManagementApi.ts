@@ -11,7 +11,7 @@ export const fetchUsers = async () => {
       'Content-Type': 'application/json',
     };
 
-    const response = await apiClient.GET('/api/admin/users', { headers });
+    const response = await apiClient.GET('/admin/users', { headers });
 
     if (response.error) {
       console.error('API Error:', response.error);
