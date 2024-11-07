@@ -13,13 +13,10 @@ const useCards = () => {
 
   const fetchCards = async () => {
     setIsLoading(true);
-    const { data: responseData, error } = await apiClient.GET(
-      '/api/user/cards',
-      {
-        credentials: 'same-origin',
-        headers: getHeaders(),
-      }
-    );
+    const { data: responseData, error } = await apiClient.GET('/user/cards', {
+      credentials: 'same-origin',
+      headers: getHeaders(),
+    });
     if (error) {
       console.log();
       setError(error);
