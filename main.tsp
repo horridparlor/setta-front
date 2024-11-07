@@ -193,7 +193,7 @@ model SystemUser {
   isActive: boolean;
   roleId: int32;
   accessRights: AccessRights;
-  tokenRequest?: TokenRequest;
+  tokenRequest?: UserTokenRequest;
 }
 
 model GetUserRequest {
@@ -335,6 +335,59 @@ model UserRole {
   accessRights: AccessRights;
   createdAt: string;
   updatedAt: string;
+}
+
+// ––– TOKEN REQUESTS
+
+@route("admin/token-requests")
+namespace TokenRequests {
+  @get
+  op listTokenRequests(): {
+    @statusCode statusCode: 200;
+    @body response: ListTokenRequestsResponse;
+  } | ErrorUnauthorized;
+}
+
+model ListTokenRequestsResponse {
+    countOfTokenRequests: int32;
+    tokenRequests: UserTokenRequest[];
+}
+
+@route("admin/token-request")
+namespace TokenRequest {
+  @post
+  op postTokenRequest(@body request: PostTokenRequestRequest): {
+    @statusCode statusCode: 200;
+    @body response: PostTokenRequestResponse;
+  } | ErrorUnauthorized | ErrorForbidden;
+  @delete
+  op deleteTokenRequest(@body request: DeleteTokenRequestRequest): {
+    @statusCode statusCode: 200;
+    @body response: DeleteTokenRequestResponse;
+  } | ErrorUnauthorized;
+}
+
+model PostTokenRequestRequest {
+    userId?: int32,
+}
+
+model PostTokenRequestResponse {
+    tokenRequestId: int32;
+}
+
+model DeleteTokenRequestRequest {
+    userId?: int32,
+}
+
+model DeleteTokenRequestResponse {
+    userId: int32;
+}
+
+model UserTokenRequest {
+  id: int32;
+  userId: int32;
+  cardsInQueue: int32;
+  createdAt: string;
 }
 
 /// ––––– USER –––––
@@ -546,34 +599,6 @@ model CardExpansion {
   isReleased: boolean;
 }
 
-// --- TOKEN REQUESTS
-
-@route("/token_requests")
-namespace TokenRequests {
-  @tag("planned")
-  @get
-  op listTokenRequests(): {
-    @statusCode statusCode: 200;
-    @body tokenRequests: TokenRequest[];
-  };
-
-  @tag("planned")
-  @delete
-  op deleteTokenRequest(@path tokenRequestId: int32): {
-    @statusCode statusCode: 204;
-  } | {
-    @statusCode statusCode: 404;
-    @body error: Error;
-  };
-}
-
-model TokenRequest {
-  id: int32;
-  userId: int32;
-  createdAt: string;
-  cardsInQueue: int32;
-}
-
 // ––– ERRORS
 
 @error
@@ -582,6 +607,10 @@ model ErrorNotFound {
 }
 @error
 model ErrorUnauthorized {
+  error: string;
+}
+@error
+model ErrorForbidden {
   error: string;
 }
 
