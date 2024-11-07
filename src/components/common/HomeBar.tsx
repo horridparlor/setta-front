@@ -93,6 +93,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
         <AppBar position="static">
           <Toolbar>
             <IconButton
+              data-testid="menu-open-button"
               color="inherit"
               sx={{ mr: 2 }}
               onClick={() => setOpen(true)}
@@ -105,6 +106,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             >
               <Box sx={{ p: 2 }}>
                 <IconButton
+                  data-testid="menu-close-button"
                   onClick={() => setOpen(false)}
                   sx={{ mb: '0.75rem' }}
                 >
@@ -112,6 +114,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                 </IconButton>
                 <Divider />
                 <ListItemButton
+                  data-testid="nav-card-catalogue-button"
                   onClick={() => navigateTo(AppPage.CardCatalogue)}
                 >
                   <ListItemIcon>
@@ -119,7 +122,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_CATALOGUE')} />
                 </ListItemButton>
-                <ListItemButton onClick={() => navigateTo(AppPage.CardEditor)}>
+                <ListItemButton
+                  data-testid="nav-card-editor-button"
+                  onClick={() => navigateTo(AppPage.CardEditor)}
+                >
                   <ListItemIcon>
                     <AddToPhotosIcon />
                   </ListItemIcon>
@@ -127,6 +133,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                 </ListItemButton>
 
                 <Accordion
+                  data-testid="releasing-accordion"
                   disableGutters
                   elevation={0}
                   sx={{
@@ -144,6 +151,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
                   <AccordionDetails>
                     <ListItemButton
+                      data-testid="nav-card-expansions-button"
                       onClick={() => navigateTo(AppPage.CardExpansions)}
                     >
                       <ListItemIcon>
@@ -152,6 +160,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                       <ListItemText primary={t('PAGE_NAME.CARD_EXPANSIONS')} />
                     </ListItemButton>
                     <ListItemButton
+                      data-testid="nav-process-management-button"
                       onClick={() => navigateTo(AppPage.ProcessManagement)}
                     >
                       <ListItemIcon>
@@ -165,6 +174,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                 </Accordion>
 
                 <ListItemButton
+                  data-testid="nav-user-management-button"
                   onClick={() => navigateTo(AppPage.UserManagement)}
                 >
                   <ListItemIcon>
