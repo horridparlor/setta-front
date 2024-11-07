@@ -27,6 +27,8 @@
   "IS_ACE": "Это туз",
   "LEVEL": "Уровень",
   "LOGIN": "авторизоваться",
+  "LOGOUT": "Log Out",
+  "LOGOUT_SUCCESS": "log Out Success",
   "LOGIN_TITLE": "авторизоваться",
   "MATERIALS_REMINDER": "Напоминание о материалах",
   "MATERIALS_SIZE": "Размер материалов",
