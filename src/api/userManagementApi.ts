@@ -31,9 +31,6 @@ export const fetchUsers = async () => {
   }
 };
 
-// Function to create a new user
-// userManagementApi.ts
-
 export const createUser = async (userData: {
   username: string;
   password: string;
@@ -59,13 +56,11 @@ export const createUser = async (userData: {
       body: userData,
     });
 
-    // Check if there was an error in the response structure
     if (response.error) {
       console.error('API Error:', response.error);
-      throw new Error(response.error.error); // Provide error message directly
+      throw new Error(response.error.error);
     }
 
-    // Check for valid data in the response
     if (response.data) {
       console.log('User created successfully:', response.data);
       return response.data;
@@ -75,11 +70,10 @@ export const createUser = async (userData: {
     }
   } catch (error) {
     console.error('Error creating user:', error);
-    throw error; // Forward the error so it can be caught in the calling function
+    throw error;
   }
 };
 
-// userManagementApi.ts
 export const deleteUser = async (
   userId: number,
   deleteAllTheirContent = true

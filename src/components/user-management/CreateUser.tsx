@@ -88,7 +88,6 @@ const UserCreation = () => {
       try {
         const response = await listRoles();
 
-        // Check if response is directly an array of roles
         if (Array.isArray(response)) {
           setRoles(response);
         } else if (
@@ -96,7 +95,6 @@ const UserCreation = () => {
           response.data &&
           Array.isArray(response.data.roles)
         ) {
-          // If response has data.roles as an array
           setRoles(response.data.roles);
         } else {
           console.error('Roles data is missing in the response:', response);
@@ -121,8 +119,7 @@ const UserCreation = () => {
     event.preventDefault();
     const filteredAccessRights = { ...accessRights };
     delete filteredAccessRights.isSuperAdmin;
-    const filteredAccessRights2 = { ...accessRights };
-    delete filteredAccessRights2.isSuperAdmin;
+
     const username = `${firstName}.${lastName}`.toLowerCase();
     let customRoleId;
 
@@ -130,7 +127,7 @@ const UserCreation = () => {
       try {
         const roleData = {
           name: customRoleName,
-          accessRights: filteredAccessRights2,
+          accessRights: filteredAccessRights,
         };
         const response = await createRole(roleData);
         console.log('Role created:', roleData);
@@ -257,8 +254,8 @@ const UserCreation = () => {
       setRoleId(selectedRole.id);
       setIsCustomRole(false);
     } else if (selectedRoleName === 'Custom role') {
-      setAccessRights({}); // Reset access rights for custom role
-      setIsCustomRole(true); // Enable custom role creation
+      setAccessRights({});
+      setIsCustomRole(true);
     }
   };
 
