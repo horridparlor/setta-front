@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import { useTranslation } from 'react-i18next';
 import { createUser } from '../../api/userManagementApi';
+import { listRoles, createRole } from '../../api/rolesApi';
 
 const defaultRoles: string[] = [
   'SuperAdmin',
@@ -77,6 +78,36 @@ const UserCreation = () => {
   const [isActive, setIsActive] = useState(true);
   const [roleId, setRoleId] = useState<number | undefined>();
   const userName = `${firstName}.${lastName}`.toLowerCase();
+  const [roles, setRoles] = useState<UserRole[]>([]);
+  const [customRoleName, setCustomRoleName] = useState('');
+  const [isCustomRole, setIsCustomRole] = useState(false);
+
+  // Fetch roles from the backend
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await listRoles();
+
+        // Check if response is directly an array of roles
+        if (Array.isArray(response)) {
+          setRoles(response);
+        } else if (
+          response &&
+          response.data &&
+          Array.isArray(response.data.roles)
+        ) {
+          // If response has data.roles as an array
+          setRoles(response.data.roles);
+        } else {
+          console.error('Roles data is missing in the response:', response);
+        }
+      } catch (error) {
+        console.error('Failed to fetch roles:', error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   useEffect(() => {
     const initialAccessRights = [
@@ -86,18 +117,32 @@ const UserCreation = () => {
     setAccessRights(initialAccessRights);
   }, []);
 
-  const handleCheckboxChange = (label: string) => {
-    setAccessRights(prev => ({
-      ...prev,
-      [label]: !prev[label],
-    }));
-  };
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const filteredAccessRights = { ...accessRights };
     delete filteredAccessRights.isSuperAdmin;
+    const filteredAccessRights2 = { ...accessRights };
+    delete filteredAccessRights2.isSuperAdmin;
     const username = `${firstName}.${lastName}`.toLowerCase();
+    let customRoleId;
+
+    if (isCustomRole && customRoleName) {
+      try {
+        const roleData = {
+          name: customRoleName,
+          accessRights: filteredAccessRights2,
+        };
+        const response = await createRole(roleData);
+        console.log('Role created:', roleData);
+        alert('Custom role created successfully!');
+      } catch (error) {
+        console.error('Failed to create custom role:', error);
+        alert(
+          `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
+    }
+
     try {
       await createUser({
         username,
@@ -107,17 +152,13 @@ const UserCreation = () => {
         email,
         phoneNumber,
         isActive,
-        roleId,
+        roleId: customRoleId || roleId,
         accessRights: filteredAccessRights,
       });
       alert('User created successfully!');
     } catch (error) {
-      console.error('Error creating usersss:', error);
-      if (error instanceof Error) {
-        alert(`Failed to create user: ${error.message}`);
-      } else {
-        alert('Failed to create user: An unknown error occurred');
-      }
+      console.error('Error creating user:', error);
+      alert(`Failed to create user: ${error.message}`);
     }
   };
 
@@ -207,7 +248,18 @@ const UserCreation = () => {
   };
 
   const handleRoleChange = (event: SelectChangeEvent) => {
-    setRole(event.target.value);
+    const selectedRoleName = event.target.value;
+    setRole(selectedRoleName);
+
+    const selectedRole = roles.find(r => r.name === selectedRoleName);
+    if (selectedRole) {
+      setAccessRights(selectedRole.accessRights);
+      setRoleId(selectedRole.id);
+      setIsCustomRole(false);
+    } else if (selectedRoleName === 'Custom role') {
+      setAccessRights({}); // Reset access rights for custom role
+      setIsCustomRole(true); // Enable custom role creation
+    }
   };
 
   const navigate = useNavigate();
@@ -350,12 +402,11 @@ const UserCreation = () => {
                 id="select-role"
                 value={role}
                 label="Select role"
-                placeholder="Select role"
                 onChange={handleRoleChange}
               >
-                {defaultRoles.map(role => (
-                  <MenuItem key={role} value={role}>
-                    {role}
+                {roles.map(role => (
+                  <MenuItem key={role.id} value={role.id}>
+                    {role.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -498,9 +549,10 @@ const UserCreation = () => {
           <Box sx={{ marginTop: 3, display: 'flex' }}>
             <TextField
               fullWidth
-              label="Create a new custom role"
-              variant="outlined"
-              size="medium"
+              label="Custom Role Name"
+              value={customRoleName}
+              onChange={e => setCustomRoleName(e.target.value)}
+              placeholder="Enter custom role name"
             />
           </Box>
           <Box sx={rowContainerStyle}>
