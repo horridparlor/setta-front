@@ -20,7 +20,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
-import { fetchUsers } from '../../api/userManagementApi';
+import DeleteUserDialog from './DeleteUserDialog';
+import { fetchUsers, deleteUser } from '../../api/userManagementApi';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
@@ -35,6 +36,8 @@ interface User {
 }
 const UserManagementPage = (props: UserManagementPageProps) => {
   const [users, setUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const loadUsers = async () => {
     try {
@@ -64,6 +67,21 @@ const UserManagementPage = (props: UserManagementPageProps) => {
   const homeBarRef = useRef<HomeBarRef>(null);
   const navigate = useNavigate();
 
+  const handleDeleteIconClick = (user: User) => {
+    setSelectedUser(user);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      console.log(userId);
+      await deleteUser(userId);
+      setUsers(users.filter(user => user.id !== userId));
+      setIsDeleteDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+    }
+  };
   // mock data
   const testRoles = [
     {
@@ -189,12 +207,12 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       field: 'options',
       headerName: 'Options',
       flex: 1,
-      renderCell: () => (
+      renderCell: params => (
         <>
           <IconButton>
             <Edit />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => handleDeleteIconClick(params.row)}>
             <Delete />
           </IconButton>
         </>
@@ -328,6 +346,12 @@ const UserManagementPage = (props: UserManagementPageProps) => {
           </CardContent>
         </Card>
       </Box>
+      <DeleteUserDialog
+        open={isDeleteDialogOpen}
+        user={selectedUser}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDeleteUser}
+      />
     </Box>
   );
 };

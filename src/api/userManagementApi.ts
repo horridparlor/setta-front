@@ -78,3 +78,34 @@ export const createUser = async (userData: {
     throw error; // Forward the error so it can be caught in the calling function
   }
 };
+
+// userManagementApi.ts
+export const deleteUser = async (
+  userId: number,
+  deleteAllTheirContent = true
+) => {
+  try {
+    const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await apiClient.DELETE('/admin/user', {
+      headers,
+      body: JSON.stringify({ userId, deleteAllTheirContent }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Backend Error:', errorText);
+      throw new Error('Failed to delete user');
+    }
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+};
