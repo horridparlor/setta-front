@@ -3,6 +3,8 @@ import { initReactI18next } from 'react-i18next';
 
 import en from './locales/en.json';
 import fi from './locales/fi.json';
+import ru from './locales/ru.json';
+import jp from './locales/jp.json';
 
 i18n.use(initReactI18next).init({
   resources: {
