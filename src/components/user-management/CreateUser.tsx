@@ -19,6 +19,7 @@ import ConfirmationDialog from '../common/ConfirmationDialog';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import { useTranslation } from 'react-i18next';
+import { createUser } from '../../api/userManagementApi';
 
 const defaultRoles: string[] = [
   'SuperAdmin',
@@ -66,13 +67,59 @@ const UserCreation = () => {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userID, setUserID] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('testi');
   const [penName, setPenName] = useState('');
   const [role, setRole] = useState('');
   const [userCopy, setUserCopy] = useState(userCopies);
-  const [accessRights, setAccessRights] = useState('');
+  const [accessRights, setAccessRights] = useState<Record<string, boolean>>({});
   const [open, setOpen] = useState(false);
   const [sendPasswordChecked, setSendPasswordChecked] = useState('');
+  const [isActive, setIsActive] = useState(true);
+  const [roleId, setRoleId] = useState<number | undefined>();
+  const userName = `${firstName}.${lastName}`.toLowerCase();
+
+  useEffect(() => {
+    const initialAccessRights = [
+      ...adminCheckboxLabels,
+      ...commonCheckboxLabels,
+    ].reduce((acc, label) => ({ ...acc, [label]: false }), {});
+    setAccessRights(initialAccessRights);
+  }, []);
+
+  const handleCheckboxChange = (label: string) => {
+    setAccessRights(prev => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const filteredAccessRights = { ...accessRights };
+    delete filteredAccessRights.isSuperAdmin;
+    const username = `${firstName}.${lastName}`.toLowerCase();
+    try {
+      await createUser({
+        username,
+        password,
+        firstname: firstName,
+        lastname: lastName,
+        email,
+        phoneNumber,
+        isActive,
+        roleId,
+        accessRights: filteredAccessRights,
+      });
+      alert('User created successfully!');
+    } catch (error) {
+      console.error('Error creating usersss:', error);
+      if (error instanceof Error) {
+        alert(`Failed to create user: ${error.message}`);
+      } else {
+        alert('Failed to create user: An unknown error occurred');
+      }
+    }
+  };
 
   // Admin level access rights
   const [checkedAdminBoxes, setCheckedAdminBoxes] = useState<CheckboxState>(
@@ -96,17 +143,33 @@ const UserCreation = () => {
   );
 
   const handleAdminCheckboxChange = (label: string) => {
-    setCheckedAdminBoxes(prev => ({
-      ...prev,
-      [label]: !prev[label],
-    }));
+    setCheckedAdminBoxes(prev => {
+      const newCheckedState = !prev[label];
+      const updatedAdminBoxes = { ...prev, [label]: newCheckedState };
+
+      // Update access rights based on the checkbox state
+      setAccessRights(prevAccessRights => ({
+        ...prevAccessRights,
+        [label]: newCheckedState,
+      }));
+
+      return updatedAdminBoxes;
+    });
   };
 
   const handleCommonCheckboxChange = (label: string) => {
-    setCheckedCommonBoxes(prev => ({
-      ...prev,
-      [label]: !prev[label],
-    }));
+    setCheckedCommonBoxes(prev => {
+      const newCheckedState = !prev[label];
+      const updatedCommonBoxes = { ...prev, [label]: newCheckedState };
+
+      // Update access rights based on the checkbox state
+      setAccessRights(prevAccessRights => ({
+        ...prevAccessRights,
+        [label]: newCheckedState,
+      }));
+
+      return updatedCommonBoxes;
+    });
   };
 
   const handleAdminSelectAllChange = () => {
@@ -115,6 +178,20 @@ const UserCreation = () => {
       (acc, label) => ({ ...acc, [label]: newCheckedState }),
       {}
     );
+    const updatedAccessRights = {
+      ...accessRights,
+      ...updatedBoxes,
+      ...updatedBoxes,
+      isSuperAdmin: newCheckedState,
+    };
+
+    setCheckedAdminBoxes(updatedBoxes);
+    setCheckedCommonBoxes(updatedBoxes);
+    handleCommonSelectAllChange();
+    setAccessRights(updatedAccessRights);
+
+    // Set roleId to 2 if all are checked, or reset if not
+    setRoleId(newCheckedState ? 2 : undefined);
     setCheckedAdminBoxes(updatedBoxes);
   };
 
@@ -126,8 +203,6 @@ const UserCreation = () => {
     );
     setCheckedCommonBoxes(updatedBoxes);
   };
-
-  const userName = `${firstName}.${lastName}`.toLowerCase();
 
   const handleSave = () => {
     // Add code for save handling
@@ -185,7 +260,7 @@ const UserCreation = () => {
         <Typography variant="h4" gutterBottom>
           {t('CREATE_A_NEW_USER')}
         </Typography>
-        <form onSubmit={handleFormSubmit}>
+        <form onSubmit={handleSubmit}>
           <Box sx={rowContainerStyle}>
             <TextField
               required

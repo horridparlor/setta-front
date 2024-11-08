@@ -30,3 +30,51 @@ export const fetchUsers = async () => {
     throw error;
   }
 };
+
+// Function to create a new user
+// userManagementApi.ts
+
+export const createUser = async (userData: {
+  username: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+  penName?: string;
+  email?: string;
+  phoneNumber?: string;
+  isActive?: boolean;
+  roleId?: number;
+  accessRights: object;
+}) => {
+  try {
+    console.log('User data being sent:', userData);
+    const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await apiClient.POST('/admin/user', {
+      headers,
+      body: userData,
+    });
+
+    // Check if there was an error in the response structure
+    if (response.error) {
+      console.error('API Error:', response.error);
+      throw new Error(response.error.error); // Provide error message directly
+    }
+
+    // Check for valid data in the response
+    if (response.data) {
+      console.log('User created successfully:', response.data);
+      return response.data;
+    } else {
+      console.error('Unexpected response format:', response);
+      throw new Error('Unexpected response format');
+    }
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error; // Forward the error so it can be caught in the calling function
+  }
+};
