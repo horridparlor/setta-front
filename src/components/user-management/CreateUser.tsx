@@ -187,7 +187,9 @@ const UserCreation = () => {
 
     setCheckedAdminBoxes(updatedBoxes);
     setCheckedCommonBoxes(updatedBoxes);
-    handleCommonSelectAllChange();
+    if (!isAllCommonSelected) {
+      handleCommonSelectAllChange();
+    }
     setAccessRights(updatedAccessRights);
 
     // Set roleId to 2 if all are checked, or reset if not
@@ -204,28 +206,10 @@ const UserCreation = () => {
     setCheckedCommonBoxes(updatedBoxes);
   };
 
-  const handleSave = () => {
-    // Add code for save handling
-  };
   const handleRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value);
   };
-  const handleAccessRightsChange = (event: SelectChangeEvent) => {
-    setAccessRights(event.target.value);
-  };
-  const handleFirstNameChange = (event: SelectChangeEvent) => {
-    setFirstName(event.target.value);
-  };
-  const handleLastNameChange = (event: SelectChangeEvent) => {
-    setLastName(event.target.value);
-  };
-  const handleUserIdChange = (event: SelectChangeEvent) => {
-    setPhoneNumber(event.target.value);
-  };
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    //Add logic for submitting form
-    e.preventDefault();
-  };
+
   const navigate = useNavigate();
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
