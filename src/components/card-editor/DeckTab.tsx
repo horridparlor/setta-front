@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
-  AccordionSummary,
   AppBar,
   Box,
   Button,
@@ -12,7 +11,10 @@ import {
   DialogTitle,
   Divider,
   IconButton,
+  List,
+  ListItem,
   Paper,
+  styled,
   Table,
   TableBody,
   TableCell,
@@ -28,7 +30,10 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Grid from '@mui/system/Grid';
+import MuiAccordionSummary, {
+  AccordionSummaryProps,
+} from '@mui/material/AccordionSummary';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 
 const rowContainerStyle = {
   flexDirection: 'row',
@@ -37,16 +42,42 @@ const rowContainerStyle = {
   marginBottom: 2,
   display: 'flex',
 };
-const initialDecks = [
-  { name: 'Deck 1', count: 3 },
-  { name: 'Deck 2', count: 5 },
-  { name: 'Deck 3', count: 1 },
+const placeholderDeck = [
+  { id: '1', name: 'Deck 1', count: 3, creator: 'Firstname Lastname' },
+  { id: '2', name: 'Deck 2', count: 5, creator: 'First Last' },
+  { id: '3', name: 'Deck 3', count: 1, creator: 'Etunimi Sukunimi' },
 ];
-const otherDecks = [];
+
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+    {...props}
+  />
+))(({ theme }) => ({
+  //backgroundColor: 'rgba(0, 0, 0, .03)',
+  flexDirection: 'row-reverse',
+  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+  },
+  '& .MuiAccordionSummary-content': {
+    marginLeft: theme.spacing(1),
+  },
+  ...theme.applyStyles('dark', {
+    backgroundColor: 'rgba(255, 255, 255, .05)',
+  }),
+}));
+
+
 
 const DeckTab: React.FC = () => {
-  const [decks, setDecks] = useState(initialDecks);
+  const [decks, setDecks] = useState(placeholderDeck);
   const [open, setOpen] = useState(false);
+  const [isIncluded, setIsIncluded] = useState(0);
+  const [unreleasedDecks, setUnreleasedDecks] = useState(0);
+  const [releasedDecks, setReleasedDecks] = useState(0);
+  const [myDecks, setMyDecks] = useState(0);
+  const [otherDecks, setOtherDecks] = useState(0);
+  const [textFieldValue, setTextFieldValue] = useState('');
+
   const handleIncrement = name => {
     setDecks(prevDecks => {
       return prevDecks.map(deck =>
@@ -64,18 +95,34 @@ const DeckTab: React.FC = () => {
       );
     });
   };
+  const handleTextFieldChange = (event) => {
+    setTextFieldValue(event.target.value);
+  };
   const handleOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (value) => {
     setOpen(false);
+    setTextFieldValue('');
   };
   const { t } = useTranslation();
+
+  const handleUpdateChanges = () => {
+    //logic for updating
+  }
+  const handleCreate = (value) => {
+    if (value) {
+      decks.push({ 'id': '4', name: value, count: 1, 'creator': '' });
+      setTextFieldValue('');
+      // add to backend
+    }
+  }
+
   return (
     <Box>
       <Box sx={rowContainerStyle}>
-        <Typography variant="h5">This card is included in {} decks</Typography>
+        <Typography variant="h5">This card is included in {placeholderDeck.length} decks</Typography>
         <Button
           sx={{ color: 'purple' }}
           variant="outlined"
@@ -93,7 +140,9 @@ const DeckTab: React.FC = () => {
               fullWidth
               placeholder="Value"
               variant="outlined"
+              value={textFieldValue}
               margin="dense"
+              onChange={handleTextFieldChange}
             />
           </Box>
         </DialogContent>
@@ -104,7 +153,7 @@ const DeckTab: React.FC = () => {
             color="info"
             component="label"
             onClick={() => {
-              /* Add create logic here */ handleClose();
+              handleCreate(textFieldValue);
             }}
           >
             Create
@@ -118,74 +167,89 @@ const DeckTab: React.FC = () => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography sx={{ marginRight: 2 }} variant="subtitle1">
-              My unreleased decks {}
+            <Typography sx={{ marginRight: 2, marginLeft: 2 }} variant="subtitle1">
+              My unreleased decks ({unreleasedDecks})
             </Typography>
-            <Button variant="outlined" startIcon={<RefreshIcon />}>
+            <Button variant="outlined" startIcon={<RefreshIcon />} onClick={(e) => { e.stopPropagation(); handleUpdateChanges(); }}>
               {t('UPDATE_CHANGES')}
             </Button>
           </Box>
         </AccordionSummary>
+        <Divider sx={{ borderColor: 'lightgrey' }} />
         <AccordionDetails>
-          {decks.map(deck => (
-            <Grid>
-              <Box sx={rowContainerStyle}>
-                <IconButton onClick={() => handleDecrement(deck.name)}>
+          <List disablePadding>
+            {decks.map(deck => (
+              <ListItem disableGutters key={deck.id}>
+                <IconButton sx={{ color: 'purple' }} onClick={() => handleDecrement(deck.name)}>
                   <RemoveIcon />
                 </IconButton>
-                <TableCell>{deck.count}</TableCell>
-                <IconButton onClick={() => handleIncrement(deck.name)}>
+                <Box sx={{ width: '12px', textAlign: 'center' }}>
+                  <Typography>{deck.count}</Typography>
+                </Box>
+                <IconButton sx={{ color: 'purple' }} onClick={() => handleIncrement(deck.name)}>
                   <AddIcon />
                 </IconButton>
                 <Typography>{deck.name}</Typography>
-              </Box>
-            </Grid>
-          ))}
+              </ListItem>
+            ))}
+          </List>
         </AccordionDetails>
       </Accordion>
-      <Accordion defaultExpanded>
+      <Accordion defaultExpanded sx={{ marginBottom: 2 }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Box
             display="flex"
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography sx={{ marginRight: 2 }} variant="subtitle1">
-              Released decks ({})
+            <Typography sx={{ marginRight: 2, marginLeft: 2 }} variant="subtitle1">
+              Released decks ({releasedDecks})
             </Typography>
           </Box>
         </AccordionSummary>
+        <Divider sx={{ borderColor: 'lightgrey' }} />
         <AccordionDetails>
-          {decks.length > 0 && (
-            <>
-              <Typography sx={{ fontWeight: 'bold' }}>My decks ({})</Typography>
-              {decks.map(deck => (
-                <Grid>
-                  <Box sx={rowContainerStyle}>
-                    <TableCell>{deck.count}</TableCell>
+          <List disablePadding>
+            {decks.length > 0 && (
+              <>
+                <ListItem><Typography>My decks ({myDecks})</Typography></ListItem>
+                {decks.map(deck => (
+                  <ListItem key={deck.id}>
+                    <Box sx={{ width: '40px', textAlign: 'center' }}>
+                      <Typography sx={{ paddingRight: 2 }}>{deck.count}</Typography>
+                    </Box>
                     <Typography>{deck.name}</Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </>
-          )}
+                  </ListItem>
+                ))}
+              </>
+            )}
+          </List>
         </AccordionDetails>
         <AccordionDetails>
-          {decks.length > 0 && (
-            <>
-              <Typography sx={{ marginBottom: 2, fontWeight: 'bold' }}>
-                Other decks ({})
-              </Typography>
-              {decks.map(deck => (
-                <Grid>
-                  <Box sx={rowContainerStyle}>
-                    <TableCell>Created by {}</TableCell>
-                    <Typography>{deck.name}</Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </>
-          )}
+          <List disablePadding>
+            {decks.length > 0 && (
+              <>
+                <ListItem>
+                  <Typography>
+                    Other decks ({otherDecks})
+                  </Typography>
+                </ListItem>
+                {decks.map(deck => (
+                  <ListItem key={deck.id}>
+                    <Box sx={{ width: '40px', textAlign: 'center' }}>
+                      <Typography sx={{ paddingRight: 2 }}>{deck.count}</Typography>
+                    </Box>
+                    <Box sx={{ width: '100px', textAlign: 'center', marginRight: 4 }}>
+                      <Typography sx={{ paddingRight: 5 }}>{deck.name}</Typography>
+                    </Box>
+                    <Box sx={{ width: '300px', textAlign: 'left' }}>
+                      <Typography>Created by {deck.creator}</Typography>
+                    </Box>
+                  </ListItem>
+                ))}
+              </>
+            )}
+          </List>
         </AccordionDetails>
       </Accordion>
     </Box>
@@ -193,24 +257,3 @@ const DeckTab: React.FC = () => {
 };
 
 export default DeckTab;
-
-/*
-<TableContainer>
-        <Box display="flex">
-          <Typography variant="h6">Unreleased decks</Typography>
-          <Button variant="outlined" startIcon={<RefreshIcon />}>{t("UPDATE_CHANGES")}</Button>
-        </Box>
-        <Table>
-          <TableBody>
-            {decks.map((deck, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <IconButton onClick={() => handleDecrement(index)}></IconButton>
-                  <IconButton onClick={() => handleIncrement(index)}></IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-*/

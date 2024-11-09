@@ -84,13 +84,13 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
       };
       const { data: responseData, error } = await (method === RequestMethod.POST
         ? apiClient.POST('/admin/card', {
-            headers: getHeaders(),
-            body: params,
-          })
+          headers: getHeaders(),
+          body: params,
+        })
         : apiClient.PUT('/admin/card', {
-            headers: getHeaders(),
-            body: params,
-          }));
+          headers: getHeaders(),
+          body: params,
+        }));
       if (error) {
         showError(error);
         setIsSaving(false);
@@ -299,7 +299,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
             overwriteArt={imageFile}
             oldName={oldName}
           />
-          {activeTab === 2 && <GenerateBox />}
+          {(activeTab === 2 || activeTab == 3) && <GenerateBox />}
         </Box>
         <RightPanelSettings
           cards={cards}
