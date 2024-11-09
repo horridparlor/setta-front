@@ -56,8 +56,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 ))(({ theme }) => ({
   //backgroundColor: 'rgba(0, 0, 0, .03)',
   flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-  },
+  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {},
   '& .MuiAccordionSummary-content': {
     marginLeft: theme.spacing(1),
   },
@@ -65,8 +64,6 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     backgroundColor: 'rgba(255, 255, 255, .05)',
   }),
 }));
-
-
 
 const DeckTab: React.FC = () => {
   const [decks, setDecks] = useState(placeholderDeck);
@@ -95,14 +92,14 @@ const DeckTab: React.FC = () => {
       );
     });
   };
-  const handleTextFieldChange = (event) => {
+  const handleTextFieldChange = event => {
     setTextFieldValue(event.target.value);
   };
   const handleOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (value) => {
+  const handleClose = value => {
     setOpen(false);
     setTextFieldValue('');
   };
@@ -110,19 +107,21 @@ const DeckTab: React.FC = () => {
 
   const handleUpdateChanges = () => {
     //logic for updating
-  }
-  const handleCreate = (value) => {
+  };
+  const handleCreate = value => {
     if (value) {
-      decks.push({ 'id': '4', name: value, count: 1, 'creator': '' });
+      decks.push({ id: '4', name: value, count: 1, creator: '' });
       setTextFieldValue('');
       // add to backend
     }
-  }
+  };
 
   return (
     <Box>
       <Box sx={rowContainerStyle}>
-        <Typography variant="h5">This card is included in {placeholderDeck.length} decks</Typography>
+        <Typography variant="h5">
+          This card is included in {placeholderDeck.length} decks
+        </Typography>
         <Button
           sx={{ color: 'purple' }}
           variant="outlined"
@@ -167,10 +166,20 @@ const DeckTab: React.FC = () => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography sx={{ marginRight: 2, marginLeft: 2 }} variant="subtitle1">
+            <Typography
+              sx={{ marginRight: 2, marginLeft: 2 }}
+              variant="subtitle1"
+            >
               My unreleased decks ({unreleasedDecks})
             </Typography>
-            <Button variant="outlined" startIcon={<RefreshIcon />} onClick={(e) => { e.stopPropagation(); handleUpdateChanges(); }}>
+            <Button
+              variant="outlined"
+              startIcon={<RefreshIcon />}
+              onClick={e => {
+                e.stopPropagation();
+                handleUpdateChanges();
+              }}
+            >
               {t('UPDATE_CHANGES')}
             </Button>
           </Box>
@@ -180,13 +189,19 @@ const DeckTab: React.FC = () => {
           <List disablePadding>
             {decks.map(deck => (
               <ListItem disableGutters key={deck.id}>
-                <IconButton sx={{ color: 'purple' }} onClick={() => handleDecrement(deck.name)}>
+                <IconButton
+                  sx={{ color: 'purple' }}
+                  onClick={() => handleDecrement(deck.name)}
+                >
                   <RemoveIcon />
                 </IconButton>
                 <Box sx={{ width: '12px', textAlign: 'center' }}>
                   <Typography>{deck.count}</Typography>
                 </Box>
-                <IconButton sx={{ color: 'purple' }} onClick={() => handleIncrement(deck.name)}>
+                <IconButton
+                  sx={{ color: 'purple' }}
+                  onClick={() => handleIncrement(deck.name)}
+                >
                   <AddIcon />
                 </IconButton>
                 <Typography>{deck.name}</Typography>
@@ -202,7 +217,10 @@ const DeckTab: React.FC = () => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography sx={{ marginRight: 2, marginLeft: 2 }} variant="subtitle1">
+            <Typography
+              sx={{ marginRight: 2, marginLeft: 2 }}
+              variant="subtitle1"
+            >
               Released decks ({releasedDecks})
             </Typography>
           </Box>
@@ -212,11 +230,15 @@ const DeckTab: React.FC = () => {
           <List disablePadding>
             {decks.length > 0 && (
               <>
-                <ListItem><Typography>My decks ({myDecks})</Typography></ListItem>
+                <ListItem>
+                  <Typography>My decks ({myDecks})</Typography>
+                </ListItem>
                 {decks.map(deck => (
                   <ListItem key={deck.id}>
                     <Box sx={{ width: '40px', textAlign: 'center' }}>
-                      <Typography sx={{ paddingRight: 2 }}>{deck.count}</Typography>
+                      <Typography sx={{ paddingRight: 2 }}>
+                        {deck.count}
+                      </Typography>
                     </Box>
                     <Typography>{deck.name}</Typography>
                   </ListItem>
@@ -230,17 +252,25 @@ const DeckTab: React.FC = () => {
             {decks.length > 0 && (
               <>
                 <ListItem>
-                  <Typography>
-                    Other decks ({otherDecks})
-                  </Typography>
+                  <Typography>Other decks ({otherDecks})</Typography>
                 </ListItem>
                 {decks.map(deck => (
                   <ListItem key={deck.id}>
                     <Box sx={{ width: '40px', textAlign: 'center' }}>
-                      <Typography sx={{ paddingRight: 2 }}>{deck.count}</Typography>
+                      <Typography sx={{ paddingRight: 2 }}>
+                        {deck.count}
+                      </Typography>
                     </Box>
-                    <Box sx={{ width: '100px', textAlign: 'center', marginRight: 4 }}>
-                      <Typography sx={{ paddingRight: 5 }}>{deck.name}</Typography>
+                    <Box
+                      sx={{
+                        width: '100px',
+                        textAlign: 'center',
+                        marginRight: 4,
+                      }}
+                    >
+                      <Typography sx={{ paddingRight: 5 }}>
+                        {deck.name}
+                      </Typography>
                     </Box>
                     <Box sx={{ width: '300px', textAlign: 'left' }}>
                       <Typography>Created by {deck.creator}</Typography>

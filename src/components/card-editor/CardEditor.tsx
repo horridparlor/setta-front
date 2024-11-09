@@ -84,13 +84,13 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
       };
       const { data: responseData, error } = await (method === RequestMethod.POST
         ? apiClient.POST('/admin/card', {
-          headers: getHeaders(),
-          body: params,
-        })
+            headers: getHeaders(),
+            body: params,
+          })
         : apiClient.PUT('/admin/card', {
-          headers: getHeaders(),
-          body: params,
-        }));
+            headers: getHeaders(),
+            body: params,
+          }));
       if (error) {
         showError(error);
         setIsSaving(false);
