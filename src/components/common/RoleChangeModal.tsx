@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,7 +11,7 @@ import {
 } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import { User } from '../../api/types';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 
 interface RoleChangeModalProps {
   open: boolean;
@@ -23,10 +24,24 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
   onClose,
   selectedUsers,
 }) => {
+  const [selectedUserRows, setSelectedUserRows] =
+    useState<GridRowSelectionModel>(selectedUsers.map(user => user.id));
+
+  const [isChecked, setIsChecked] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setSelectedUserRows(selectedUsers.map(user => user.id));
+      setIsChecked(false);
+    }
+  }, [open, selectedUsers]);
+
   const gridColumns: GridColDef[] = [
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'role', headerName: 'Role', flex: 1 },
   ];
+
+  const isSaveButtonDisabled = !isChecked || selectedUserRows.length === 0;
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
@@ -36,6 +51,11 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
           <DataGrid
             rows={selectedUsers}
             columns={gridColumns}
+            checkboxSelection
+            rowSelectionModel={selectedUserRows}
+            onRowSelectionModelChange={newSelection => {
+              setSelectedUserRows(newSelection);
+            }}
             getRowId={row => row.id}
           />
         </Box>
@@ -54,20 +74,35 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
             Changing user role will change user's access rights accordingly.
           </Typography>
         </Box>
-        <div
-          style={{
+        <Box
+          sx={{
             display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'nowrap',
+            flexDirection: 'column',
             alignItems: 'center',
+            justifyContent: 'center',
           }}
-        ></div>
+        >
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isChecked}
+                onChange={e => setIsChecked(e.target.checked)}
+              />
+            }
+            label="I Understand"
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button sx={{ ml: 'auto' }} onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="contained" sx={{ ml: 'auto' }} onClick={onClose}>
+        <Button
+          variant="contained"
+          sx={{ ml: 'auto' }}
+          onClick={onClose}
+          disabled={isSaveButtonDisabled}
+        >
           Save Changes
         </Button>
       </DialogActions>
