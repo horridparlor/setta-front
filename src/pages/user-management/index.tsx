@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {
   Box,
   InputLabel,
@@ -20,13 +20,47 @@ import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
+import { fetchUsers } from '../../api/userManagementApi';
 import RoleChangeModal from '../../components/common/RoleChangeModal';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
 }
-
+interface User {
+  id: number;
+  name: string;
+  role: string;
+  username: string;
+  activeRequest: boolean;
+  active: boolean;
+}
 const UserManagementPage = (props: UserManagementPageProps) => {
+  const [users, setUsers] = useState<User[]>([]);
+
+  const loadUsers = async () => {
+    try {
+      const fetchedData = await fetchUsers();
+      if (Array.isArray(fetchedData)) {
+        const formattedUsers = fetchedData.map((user: any) => ({
+          id: user.id,
+          name: `${user.firstname} ${user.lastname}`,
+          role: user.roleId === 2 ? 'Admin' : 'Standard User', //lets uypdate this to map or somthign when we get there
+          username: user.username,
+          activeRequest: !!user.tokenRequest,
+          active: user.isActive === 1,
+        }));
+        setUsers(formattedUsers);
+      } else {
+        console.error('Unexpected data structure:', fetchedData);
+      }
+    } catch (error) {
+      console.error('Error loading users:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
   const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
   const navigate = useNavigate();
@@ -364,7 +398,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
             </Box>
             <Box sx={{ mt: 2 }}>
               <DataGrid
-                rows={testUsers}
+                rows={users}
                 columns={userColumns}
                 checkboxSelection
                 onRowSelectionModelChange={handleUserSelectionChange}

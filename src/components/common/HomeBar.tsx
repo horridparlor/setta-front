@@ -1,4 +1,5 @@
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import Button from '@mui/material/Button';
 import {
   Box,
@@ -16,6 +17,7 @@ import {
   AccordionSummary,
 } from '@mui/material';
 import { AppPage, isAppPage } from '../../types/navigation';
+import { toast } from 'react-toastify';
 import LoginModal from './LoginModal';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -34,7 +36,7 @@ import {
   Inventory,
   GridViewRounded,
 } from '@mui/icons-material';
-import { getUsername } from '../../types/cookie.ts';
+import { getUsername, AuthCookie } from '../../types/cookie.ts';
 
 interface HomeBarProps {
   refetch: () => Promise<void>;
@@ -44,19 +46,47 @@ interface HomeBarProps {
 export interface HomeBarRef {
   toggleLoginOpen: () => void;
 }
-
+export const isUserLoggedIn = () => {
+  const userId = Cookies.get(AuthCookie.USER_ID);
+  return !!userId && !isNaN(parseInt(userId));
+};
 const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
   ({ refetch, onLeavePage }, ref) => {
     const { t } = useTranslation();
     const [isLoginOpen, setLoginOpen] = useState(false);
+    const [username, setUsername] = useState(getUsername(t)); // Track username for login state
     const navigate = useNavigate();
 
     const toggleLoginOpen = () => {
       setLoginOpen(!isLoginOpen);
     };
+
     useImperativeHandle(ref, () => ({
       toggleLoginOpen,
     }));
+
+    useEffect(() => {
+      // Update username whenever cookies change
+      setUsername(getUsername(t));
+    }, []);
+    const isLoggedIn = isUserLoggedIn();
+    const handleLogout = () => {
+      // Clear authentication cookies on logout
+      Cookies.remove(AuthCookie.AUTH_TOKEN);
+      Cookies.remove(AuthCookie.USER_ID);
+      Cookies.remove(AuthCookie.SYSTEM_USER);
+      setUsername(t('GUEST'));
+      toast.success(t('LOGOUT_SUCCESS'));
+      refetch();
+      window.location.reload();
+    };
+
+    const handleLoginSuccess = () => {
+      setUsername(getUsername(t));
+      setLoginOpen(false);
+      refetch();
+      window.location.reload();
+    };
 
     const navigateTo = (page: AppPage) => {
       if (onLeavePage) {
@@ -93,6 +123,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
         <AppBar position="static">
           <Toolbar>
             <IconButton
+              data-testid="menu-open-button"
               color="inherit"
               sx={{ mr: 2 }}
               onClick={() => setOpen(true)}
@@ -105,6 +136,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             >
               <Box sx={{ p: 2 }}>
                 <IconButton
+                  data-testid="menu-close-button"
                   onClick={() => setOpen(false)}
                   sx={{ mb: '0.75rem' }}
                 >
@@ -112,6 +144,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                 </IconButton>
                 <Divider />
                 <ListItemButton
+                  data-testid="nav-card-catalogue-button"
                   onClick={() => navigateTo(AppPage.CardCatalogue)}
                 >
                   <ListItemIcon>
@@ -119,7 +152,10 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.CARD_CATALOGUE')} />
                 </ListItemButton>
-                <ListItemButton onClick={() => navigateTo(AppPage.CardEditor)}>
+                <ListItemButton
+                  data-testid="nav-card-editor-button"
+                  onClick={() => navigateTo(AppPage.CardEditor)}
+                >
                   <ListItemIcon>
                     <AddToPhotosIcon />
                   </ListItemIcon>
@@ -127,6 +163,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                 </ListItemButton>
 
                 <Accordion
+                  data-testid="releasing-accordion"
                   disableGutters
                   elevation={0}
                   sx={{
@@ -144,6 +181,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
                   <AccordionDetails>
                     <ListItemButton
+                      data-testid="nav-card-expansions-button"
                       onClick={() => navigateTo(AppPage.CardExpansions)}
                     >
                       <ListItemIcon>
@@ -152,6 +190,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                       <ListItemText primary={t('PAGE_NAME.CARD_EXPANSIONS')} />
                     </ListItemButton>
                     <ListItemButton
+                      data-testid="nav-process-management-button"
                       onClick={() => navigateTo(AppPage.ProcessManagement)}
                     >
                       <ListItemIcon>
@@ -165,6 +204,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                 </Accordion>
 
                 <ListItemButton
+                  data-testid="nav-user-management-button"
                   onClick={() => navigateTo(AppPage.UserManagement)}
                 >
                   <ListItemIcon>
@@ -193,22 +233,34 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
             </Typography>
 
             <Typography variant="h6" sx={{ marginRight: 2 }}>
-              {getUsername(t)}
+              {username}
             </Typography>
 
-            <Button
-              variant="contained"
-              color="info"
-              startIcon={<LoginIcon />}
-              onClick={() => setLoginOpen(true)}
-              sx={{ marginLeft: '0.4rem' }}
-            >
-              {t('LOGIN')}
-            </Button>
+            {isLoggedIn ? (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleLogout}
+                sx={{ marginLeft: '0.4rem' }}
+              >
+                {t('LOGOUT')}
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="info"
+                startIcon={<LoginIcon />}
+                onClick={() => setLoginOpen(true)}
+                sx={{ marginLeft: '0.4rem' }}
+              >
+                {t('LOGIN')}
+              </Button>
+            )}
             <LoginModal
               open={isLoginOpen}
               onClose={() => setLoginOpen(false)}
               refetch={refetch}
+              onLoginSuccess={handleLoginSuccess}
             />
           </Toolbar>
         </AppBar>
