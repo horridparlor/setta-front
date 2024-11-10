@@ -62,6 +62,7 @@ model PostCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
+  art: Art;
 }
 
 model PostCardResponse {
@@ -97,6 +98,7 @@ model PutCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
+  art: Art;
 }
 
 model PutCardResponse {
@@ -156,12 +158,12 @@ model PostImageResponse {
 }
 
 // ––– User
-@route("user/user")
+@route("admin/user")
 namespace User {
   @get
   op getUser(@body request: GetUserRequest): {
     @statusCode statusCode: 200;
-    @body response: GetUserResponse;
+    @body response: SystemUser;
   } | ErrorUnauthorized | ErrorNotFound;
   @post
   op postUser(@body request: PostUserRequest): {
@@ -191,15 +193,11 @@ model SystemUser {
   isActive: boolean;
   roleId: int32;
   accessRights: AccessRights;
-  tokenRequest?: TokenRequest;
+  tokenRequest?: UserTokenRequest;
 }
 
 model GetUserRequest {
   userId: int32;
-}
-
-model GetUserResponse {
-  user: SystemUser;
 }
 
 model PostUserRequest {
@@ -212,7 +210,6 @@ model PostUserRequest {
   phoneNumber?: string;
   isActive?: boolean;
   roleId?: int32;
-  roleName?: string;
   accessRights: AccessRights;
 }
 
@@ -220,16 +217,34 @@ model PostUserResponse {
   userId: int32;
 }
 
-model PutUserRequest {}
+model PutUserRequest {
+    userId: int32;
+    username: string;
+    firstname: string;
+    lastname: string;
+    penName?: string;
+    email?: string;
+    phoneNumber?: string;
+    isActive?: boolean;
+    roleId?: int32;
+    accessRights: AccessRights;
+}
 
-model PutUserResponse {}
+model PutUserResponse {
+    userId: int32;
+}
 
-model DeleteUserRequest {}
+model DeleteUserRequest {
+    userId: int32;
+    deleteAllTheirContent?: boolean;
+}
 
-model DeleteUserResponse {}
+model DeleteUserResponse {
+    userId: int32;
+}
 
 // ––– Users
-@route("user/users")
+@route("admin/users")
 namespace Users {
   @get
   op listUsers(): {
@@ -241,6 +256,138 @@ namespace Users {
 model ListUsersResponse {
   countOfUsers: int32;
   users: SystemUser[];
+}
+
+// ––– ROLES
+
+@route("admin/role")
+namespace Role {
+  @get
+  op getRole(@body request: GetRoleRequest): {
+    @statusCode statusCode: 200;
+    @body response: UserRole;
+  } | ErrorUnauthorized | ErrorNotFound;
+  @post
+  op postRole(@body request: PostRoleRequest): {
+    @statusCode statusCode: 200;
+    @body response: PostRoleResponse;
+  } | ErrorUnauthorized;
+  @put
+  op putRole(@body request: PutRoleRequest): {
+    @statusCode statusCode: 200;
+    @body response: PutRoleResponse;
+  } | ErrorUnauthorized;
+  @delete
+  op deleteRole(@body request: DeleteRoleRequest): {
+    @statusCode statusCode: 200;
+    @body response: DeleteRoleResponse;
+  } | ErrorUnauthorized;
+}
+
+model GetRoleRequest {
+    roleId: int32;
+}
+
+model PostRoleRequest {
+    name: string;
+    accessRights: AccessRights;
+}
+
+model PostRoleResponse {
+    roleId: int32;
+}
+
+model PutRoleRequest {
+    roleId: int32;
+    name: string;
+    accessRights: AccessRights;
+}
+
+model PutRoleResponse {
+    roleId: int32;
+}
+
+model DeleteRoleRequest {
+    roleId: int32;
+}
+
+model DeleteRoleResponse {
+    roleId: int32;
+}
+
+@route("admin/roles")
+namespace Roles {
+  @get
+  op listRoles(): {
+    @statusCode statusCode: 200;
+    @body response: ListRolesResponse;
+  } | ErrorUnauthorized;
+}
+
+model ListRolesResponse {
+    countOfRoles: int32;
+    roles: UserRole[];
+}
+
+model UserRole {
+  id: int32;
+  name: string;
+  accessRights: AccessRights;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ––– TOKEN REQUESTS
+
+@route("admin/token-requests")
+namespace TokenRequests {
+  @get
+  op listTokenRequests(): {
+    @statusCode statusCode: 200;
+    @body response: ListTokenRequestsResponse;
+  } | ErrorUnauthorized;
+}
+
+model ListTokenRequestsResponse {
+    countOfTokenRequests: int32;
+    tokenRequests: UserTokenRequest[];
+}
+
+@route("admin/token-request")
+namespace TokenRequest {
+  @post
+  op postTokenRequest(@body request: PostTokenRequestRequest): {
+    @statusCode statusCode: 200;
+    @body response: PostTokenRequestResponse;
+  } | ErrorUnauthorized | ErrorForbidden;
+  @delete
+  op deleteTokenRequest(@body request: DeleteTokenRequestRequest): {
+    @statusCode statusCode: 200;
+    @body response: DeleteTokenRequestResponse;
+  } | ErrorUnauthorized;
+}
+
+model PostTokenRequestRequest {
+    userId?: int32,
+}
+
+model PostTokenRequestResponse {
+    tokenRequestId: int32;
+}
+
+model DeleteTokenRequestRequest {
+    userId?: int32,
+}
+
+model DeleteTokenRequestResponse {
+    userId: int32;
+}
+
+model UserTokenRequest {
+  id: int32;
+  userId: int32;
+  cardsInQueue: int32;
+  createdAt: string;
 }
 
 /// ––––– USER –––––
@@ -269,22 +416,23 @@ model AuthenticateResponse {
 }
 
 model AccessRights {
-  canRelease?: boolean;
-  canManageAdmins?: boolean;
-  canManageUsers?: boolean;
-  canClearContent?: boolean;
-  hasUnlimitedTokens?: boolean;
-  canShareTokens?: boolean;
-  canMessageAdmins?: boolean;
-  canMassExport?: boolean;
-  canCreateContent?: boolean;
-  canGenerateImages?: boolean;
-  canMessage?: boolean;
-  autoRefillTokens?: boolean;
-  isRegularUser?: boolean;
-  isPriorityUser?: boolean;
-  isEmployee?: boolean;
-  isContentCreator?: boolean;
+    isSuperAdmin?: boolean;
+    canRelease?: boolean;
+    canManageAdmins?: boolean;
+    canManageUsers?: boolean;
+    canClearContent?: boolean;
+    hasUnlimitedTokens?: boolean;
+    canShareTokens?: boolean;
+    canMessageAdmins?: boolean;
+    canMassExport?: boolean;
+    canCreateContent?: boolean;
+    canGenerateImages?: boolean;
+    canMessage?: boolean;
+    autoRefillTokens?: boolean;
+    isRegularUser?: boolean;
+    isPriorityUser?: boolean;
+    isEmployee?: boolean;
+    isContentCreator?: boolean;
 }
 
 // ––– Cards
@@ -337,6 +485,12 @@ model CardData {
   createdAt: string;
   updatedAt: string;
   cardEffects: CardEffects;
+
+  // consider grouping other card tabs like this as well to clean up the api (stats, effects)
+  art: Art;
+
+  // multiple images can be generated for a single card
+  images: CardImage[];
 }
 
 model CardEffects {
@@ -445,103 +599,6 @@ model CardExpansion {
   isReleased: boolean;
 }
 
-// --- ROLES
-
-@route("/roles")
-namespace Roles {
-  @tag("planned")
-  @get
-  op listRoles(): {
-    @statusCode statusCode: 200;
-    @body roles: Role[];
-  };
-
-  @tag("planned")
-  @get
-  op getRole(@path roleId: int32): {
-    @statusCode statusCode: 200;
-    @body role: Role;
-  } | {
-    @statusCode statusCode: 404;
-    @body error: Error;
-  };
-
-  @tag("planned")
-  @post
-  op createRole(@body create: RoleCreate): {
-    @statusCode statusCode: 201;
-    @body role: Role;
-  };
-
-  @tag("planned")
-  @post
-  op updateRole(@path roleId: int32, @body update: RoleUpdate): {
-    @statusCode statusCode: 200;
-    @body role: Role;
-  };
-
-  @tag("planned")
-  @delete
-  op deleteRole(@path roleId: int32): {
-    @statusCode statusCode: 204;
-  } | {
-    @statusCode statusCode: 404;
-    @body error: Error;
-  };
-}
-
-model Role {
-  id: int32;
-  name: string;
-  rights: right[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-model RoleCreate {
-  name: string;
-  rights: right[];
-}
-
-model RoleUpdate {
-  name?: string;
-  rights?: right[];
-}
-
-enum right {
-  right1: "right1",
-  right2: "right2",
-  right3: "right3",
-}
-
-// --- TOKEN REQUESTS
-
-@route("/token_requests")
-namespace TokenRequests {
-  @tag("planned")
-  @get
-  op listTokenRequests(): {
-    @statusCode statusCode: 200;
-    @body tokenRequests: TokenRequest[];
-  };
-
-  @tag("planned")
-  @delete
-  op deleteTokenRequest(@path tokenRequestId: int32): {
-    @statusCode statusCode: 204;
-  } | {
-    @statusCode statusCode: 404;
-    @body error: Error;
-  };
-}
-
-model TokenRequest {
-  id: int32;
-  userId: int32;
-  createdAt: string;
-  cardsInQueue: int32;
-}
-
 // ––– ERRORS
 
 @error
@@ -550,6 +607,10 @@ model ErrorNotFound {
 }
 @error
 model ErrorUnauthorized {
+  error: string;
+}
+@error
+model ErrorForbidden {
   error: string;
 }
 
@@ -562,6 +623,31 @@ model CardImage {
   status: "accepted" | "generated" | "queued" | "error";
   generatedByUserId: int32;
   generatedAt: string;
+
+  // art/prompt used for generating this image
+  art: Art;
+}
+
+model Art {
+  prompt: string;
+  manualPrompt: string;
+  background: string;
+  type: "monster" | "backrow" | "spell" | "trap";
+  characters: Character[];
+  specialEffects: string;
+}
+
+model Character {
+  hidden: boolean;
+  who: string;
+  name: string;
+  appearance: string;
+  race: "none" | "human" | "animal" | "beastial" | "monster" | "abstract";
+  gender: "none" | "undefined" | "female" | "male";
+  age: "none" | "adult" | "teen" | "elderly" | "child";
+  type: "main" | "supporting" | "antagonist" | "background";
+  tool: string;
+  action: string;
 }
 
 // --- DECKS
