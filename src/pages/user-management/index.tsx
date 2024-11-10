@@ -393,6 +393,9 @@ const UserManagementPage = (props: UserManagementPageProps) => {
                 <RoleChangeModal
                   open={isDialogOpen}
                   onClose={() => setDialogOpen(false)}
+                  selectedUsers={users.filter(user =>
+                    selectedUserRows.includes(user.id)
+                  )}
                 />
               )}
             </Box>
