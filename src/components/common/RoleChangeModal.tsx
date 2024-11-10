@@ -7,6 +7,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
   Typography,
 } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -62,11 +67,32 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
         <Box
           sx={{
             display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mt: 2,
+            mb: 2,
+          }}
+        >
+          <Typography>Select a new role for selected users:</Typography>
+          <FormControl variant="outlined" sx={{ width: '30%' }}>
+            <InputLabel id="select-role">Select Role</InputLabel>
+            <Select id="select-role" label="select-role">
+              // mock data
+              <MenuItem>SuperAdmin</MenuItem>
+              <MenuItem>Admin</MenuItem>
+              <MenuItem>Designer</MenuItem>
+              <MenuItem>Releaser</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
             flexDirection: 'row',
             flexWrap: 'nowrap',
             alignItems: 'center',
-            mt: 2,
-            mb: 2,
+            justifyContent: 'center',
           }}
         >
           <WarningIcon color="warning" fontSize="medium" />
