@@ -184,8 +184,6 @@ const UserCreation = () => {
     setCheckedAdminBoxes(prev => {
       const newCheckedState = !prev[label];
       const updatedAdminBoxes = { ...prev, [label]: newCheckedState };
-
-      // Update access rights based on the checkbox state
       setAccessRights(prevAccessRights => ({
         ...prevAccessRights,
         [label]: newCheckedState,
@@ -199,8 +197,6 @@ const UserCreation = () => {
     setCheckedCommonBoxes(prev => {
       const newCheckedState = !prev[label];
       const updatedCommonBoxes = { ...prev, [label]: newCheckedState };
-
-      // Update access rights based on the checkbox state
       setAccessRights(prevAccessRights => ({
         ...prevAccessRights,
         [label]: newCheckedState,
@@ -231,6 +227,7 @@ const UserCreation = () => {
     setAccessRights(updatedAccessRights);
 
     // Set roleId to 2 if all are checked, or reset if not
+    // this needs updating to suit the customer wihses of
     setRoleId(newCheckedState ? 2 : undefined);
     setCheckedAdminBoxes(updatedBoxes);
   };
@@ -269,6 +266,7 @@ const UserCreation = () => {
 
   const fetchAccessRightCopies = () => {
     try {
+      //this is for copying the accessrights form a selected role but role fetching is nto yet implemented
       //const response = await fetch()
     } catch (error) {
       console.error('Failed to fetch');
@@ -434,7 +432,7 @@ const UserCreation = () => {
             variant="caption"
             sx={{
               position: 'absolute',
-              backgroundColor: 'white', // Background to cut into the line
+              backgroundColor: 'white',
               px: 1,
               transform: 'translate(10px, -12px)',
               zIndex: 1,
@@ -491,7 +489,7 @@ const UserCreation = () => {
               variant="caption"
               sx={{
                 position: 'absolute',
-                backgroundColor: 'white', // Background to cut into the line
+                backgroundColor: 'white',
                 px: 1,
                 transform: 'translate(10px, -12px)',
                 zIndex: 1,
