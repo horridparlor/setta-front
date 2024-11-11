@@ -1,15 +1,22 @@
 import { apiClient } from './client';
+import Cookies from 'js-cookie';
+import { AuthCookie } from '../types/cookie';
 
 export const createRole = async (roleData: {
   name: string;
   accessRights: Record<string, boolean>;
 }) => {
+  const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
   try {
-    const response = await apiClient.POST('/admin/roles', {
+    const response = await apiClient.POST('/admin/role', {
       headers: {
+        Authorization: `Bearer ${authToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(roleData),
+      body: {
+        name: roleData.name,
+        accessRights: roleData.accessRights,
+      },
     });
     console.log('POST /admin/roles response:', response);
 
