@@ -63,9 +63,6 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
       <Typography variant="h6">Side Character</Typography>
 
       <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
-        <Button variant="contained" color="primary">
-          Hide Character
-        </Button>
         <Button variant="outlined" color="error">
           Delete Character
         </Button>
