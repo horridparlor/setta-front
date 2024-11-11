@@ -74,7 +74,6 @@ const UserManagementPage = (props: UserManagementPageProps) => {
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      console.log(userId);
       await deleteUser(userId);
       setUsers(users.filter(user => user.id !== userId));
       setIsDeleteDialogOpen(false);
