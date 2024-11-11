@@ -3,6 +3,46 @@ import { apiClient } from './client';
 import Cookies from 'js-cookie';
 import { AuthCookie } from '../types/cookie';
 
+//how to use:
+//        import { fetchLoggedInUser } from '../../api/userManagementApi';
+//        const userData = await fetchLoggedInUser();
+//        console.log('Logged-in User Data:', userData); to see the whole object you get
+export const fetchLoggedInUser = async () => {
+  try {
+    const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+    const userId = Cookies.get(AuthCookie.USER_ID);
+
+    if (!authToken || !userId) {
+      throw new Error('Authentication token or user ID missing');
+    }
+
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await apiClient.GET(`/admin/user?userId=${userId}`, {
+      headers,
+    });
+
+    if (response.error) {
+      console.error('API Error:', response.error);
+      throw new Error(response.error);
+    }
+
+    if (response.data) {
+      console.log('Fetched User Data:', response.data);
+      return response.data; // This is the logged-in user's data object
+    } else {
+      console.error('Unexpected response format:', response);
+      throw new Error('Unexpected response format');
+    }
+  } catch (error) {
+    console.error('Error fetching logged-in user data:', error);
+    throw error;
+  }
+};
+
 export const fetchUsers = async () => {
   try {
     const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
