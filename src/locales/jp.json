@@ -27,6 +27,8 @@
   "IS_ACE": "エースです",
   "LEVEL": "レベル",
   "LOGIN": "ログイン",
+  "LOGOUT": "Log Out",
+  "LOGOUT_SUCCESS": "log Out Success",
   "LOGIN_TITLE": "ログイン",
   "MATERIALS_REMINDER": "材料のリマインダー",
   "MATERIALS_SIZE": "材料のサイズ",

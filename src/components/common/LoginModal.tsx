@@ -19,9 +19,15 @@ interface LoginModalProps {
   open: boolean;
   onClose: () => void;
   refetch: () => Promise<void>;
+  onLoginSuccess?: () => void; // Add onLoginSuccess as an optional prop
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
+const LoginModal: React.FC<LoginModalProps> = ({
+  open,
+  onClose,
+  refetch,
+  onLoginSuccess,
+}) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -63,12 +69,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, refetch }) => {
         lastName: responseData.lastname,
       })
     );
-    toast.success(
-      t('AUTHENTICATED', {
-        firstName: responseData.firstname,
-        lastName: responseData.lastname,
-      })
-    );
+
+    if (onLoginSuccess) {
+      onLoginSuccess(); // Call the onLoginSuccess callback if provided
+    }
+
     await refetch();
     onClose();
   };
