@@ -20,7 +20,7 @@ export const createRole = async (roleData: {
       },
     });
     console.log('POST /admin/roles response:', response);
-
+    return response;
     alert('Custom role created successfully!');
   } catch (error) {
     console.error('Failed to create custom role:', error);
