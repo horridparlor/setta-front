@@ -140,3 +140,40 @@ export const deleteUser = async (
     throw error;
   }
 };
+
+//returns the user data object
+export const fetchUserById = async (userId: any) => {
+  try {
+    const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+
+    if (!authToken) {
+      throw new Error('Authentication token missing');
+    }
+
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await apiClient.GET(`/admin/user?userId=${userId}`, {
+      headers,
+    });
+
+    if (response.error) {
+      console.error('API Error:', response.error);
+      throw new Error(response.error);
+    }
+
+    if (response.data) {
+      //for test, removve before production
+      console.log('Fetched User Data:', response.data);
+      return response.data;
+    } else {
+      console.error('Unexpected response format:', response);
+      throw new Error('Unexpected response format');
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
+};
