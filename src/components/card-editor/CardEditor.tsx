@@ -299,7 +299,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
             overwriteArt={imageFile}
             oldName={oldName}
           />
-          {activeTab === 2 && <GenerateBox />}
+          {(activeTab === 2 || activeTab == 3) && <GenerateBox />}
         </Box>
         <RightPanelSettings
           cards={cards}

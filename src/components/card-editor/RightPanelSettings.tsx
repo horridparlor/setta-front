@@ -2716,10 +2716,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   return (
     <Box sx={{ bgcolor: 'background.paper', p: 2, width: '45%' }}>
       <Tabs
+        variant="fullWidth"
         value={tabId}
         onChange={handleTabChange}
         aria-label="form tabs"
-        sx={{ marginBottom: '2rem', marginTop: '2rem' }}
+        sx={{ marginBottom: '2rem' }}
       >
         <Tab label={t('TAB_STATS')} />
         <Tab label={t('TAB_EFFECTS')} onClick={() => fixEffects()} />
