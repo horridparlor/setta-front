@@ -49,7 +49,6 @@ const commonCheckboxLabels = [
   'isContentCreator',
   'autoRefillTokens',
 ];
-const userCopies: string[] = ['User1, role', 'User2, role', 'User3, role'];
 
 export interface UserCreationRef {
   handleSave: () => void;
@@ -65,14 +64,11 @@ const UserCreation = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [userID, setUserID] = useState('');
-  const [password, setPassword] = useState('');
+  const [userID] = useState('');
+  const [password] = useState('');
   const [penName, setPenName] = useState('');
   const [role, setRole] = useState('');
-  const [userCopy, setUserCopy] = useState(userCopies);
-  const [accessRights, setAccessRights] = useState('');
   const [open, setOpen] = useState(false);
-  const [sendPasswordChecked, setSendPasswordChecked] = useState('');
 
   // Admin level access rights
   const [checkedAdminBoxes, setCheckedAdminBoxes] = useState<CheckboxState>(
@@ -129,23 +125,8 @@ const UserCreation = () => {
 
   const userName = `${firstName}.${lastName}`.toLowerCase();
 
-  const handleSave = () => {
-    // Add code for save handling
-  };
   const handleRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value);
-  };
-  const handleAccessRightsChange = (event: SelectChangeEvent) => {
-    setAccessRights(event.target.value);
-  };
-  const handleFirstNameChange = (event: SelectChangeEvent) => {
-    setFirstName(event.target.value);
-  };
-  const handleLastNameChange = (event: SelectChangeEvent) => {
-    setLastName(event.target.value);
-  };
-  const handleUserIdChange = (event: SelectChangeEvent) => {
-    setPhoneNumber(event.target.value);
   };
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     //Add logic for submitting form

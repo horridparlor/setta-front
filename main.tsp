@@ -62,7 +62,6 @@ model PostCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
-  art: Art;
 }
 
 model PostCardResponse {
@@ -98,7 +97,6 @@ model PutCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
-  art: Art;
 }
 
 model PutCardResponse {
