@@ -182,3 +182,42 @@ export const fetchUserById = async (userId: any) => {
     throw error;
   }
 };
+
+export const updateUser = async (user: any) => {
+  try {
+    const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+
+    if (!authToken) {
+      throw new Error('Authentication token missing');
+    }
+
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await apiClient.PUT(`/admin/user`, {
+      headers,
+      body: {
+        userId: user.userId,
+        username: user.username,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        penName: user.penName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        isActive: user.isActive,
+        roleId: user.roleId,
+        accessRights: user.accessRights,
+      },
+    });
+
+    const responseData = await response;
+    //for seeing that it passed, remove before in production
+    console.log('Updated User Role:', responseData);
+    return responseData;
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    throw error;
+  }
+};

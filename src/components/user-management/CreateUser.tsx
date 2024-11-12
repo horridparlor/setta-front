@@ -125,12 +125,6 @@ const UserCreation = () => {
         };
         const response2 = await createRole(roleData);
         customRoleId = response2.data.roleId;
-        console.log(
-          'Role created:',
-          roleData,
-          'role id set as: ',
-          response2.data.roleId
-        );
 
         alert('Custom role created successfully!');
       } catch (error) {
