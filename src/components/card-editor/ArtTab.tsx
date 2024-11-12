@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Tabs,
@@ -8,10 +8,6 @@ import {
   Button,
   Modal,
   IconButton,
-  FormControl,
-  Select,
-  MenuItem,
-  InputLabel,
   InputAdornment,
 } from '@mui/material';
 import BackgroundTab from './BackgroundTab';

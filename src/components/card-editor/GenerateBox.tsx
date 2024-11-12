@@ -15,7 +15,7 @@ interface GenerateBoxProps {}
 
 const GenerateBox: React.FC<GenerateBoxProps> = () => {
   const [selectedDate, setSelectedDate] = useState<string>('2024-10-03'); // Default selection of mock data
-  const [dropdownItems, setDropdownItems] = useState<string[]>([
+  const [dropdownItems] = useState<string[]>([
     '2024-10-01',
     '2024-10-02',
     '2024-10-03',

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { BASE_URL } from './config';
+import { BASE_URL } from '../config';
 
 test.describe('[navigation]', () => {
   test('[drawer] drawer can be opened and closed', async ({ page }) => {

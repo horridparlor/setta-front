@@ -62,7 +62,6 @@ model PostCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
-  art: Art;
 }
 
 model PostCardResponse {
@@ -98,7 +97,6 @@ model PutCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
-  art: Art;
 }
 
 model PutCardResponse {
@@ -161,7 +159,8 @@ model PostImageResponse {
 @route("admin/user")
 namespace User {
   @get
-  op getUser(@body request: GetUserRequest): {
+  @route("/{userId}")
+  op getUser(@path userId: int32): {
     @statusCode statusCode: 200;
     @body response: SystemUser;
   } | ErrorUnauthorized | ErrorNotFound;
@@ -194,10 +193,6 @@ model SystemUser {
   roleId: int32;
   accessRights: AccessRights;
   tokenRequest?: UserTokenRequest;
-}
-
-model GetUserRequest {
-  userId: int32;
 }
 
 model PostUserRequest {
@@ -263,7 +258,8 @@ model ListUsersResponse {
 @route("admin/role")
 namespace Role {
   @get
-  op getRole(@body request: GetRoleRequest): {
+  @route("/{roleId}")
+  op getRole(@path roleId: int32): {
     @statusCode statusCode: 200;
     @body response: UserRole;
   } | ErrorUnauthorized | ErrorNotFound;
@@ -282,10 +278,6 @@ namespace Role {
     @statusCode statusCode: 200;
     @body response: DeleteRoleResponse;
   } | ErrorUnauthorized;
-}
-
-model GetRoleRequest {
-    roleId: int32;
 }
 
 model PostRoleRequest {

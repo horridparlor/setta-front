@@ -69,28 +69,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     }));
     updatePromptValues({ inherited_tool: newValue });
   };
-  const [characterSubTabId, setCharacterSubTabId] = useState(0);
-
-  const handleCharacterSubTabChange = (
-    event: React.ChangeEvent<{}>,
-    newValue: number
-  ) => {
-    setCharacterSubTabId(newValue);
-  };
+  const [characterSubTabId] = useState(0);
 
   // Sub-tab
   const NEW_CHARACTER_TAB = 0;
   const SIDE_CHARACTER_TAB = 1;
-  const CHARACTER2_TAB = 2; //tb implemented
-  const HIDDEN_TAB = 3; //tb implemented
 
   return (
     <Box>
-      <Tabs
-        value={characterSubTabId}
-        onChange={handleCharacterSubTabChange}
-        aria-label="character sub-tabs"
-      >
+      <Tabs value={characterSubTabId} aria-label="character sub-tabs">
         <Tab label="Main Character" />
         <Tab label="Side Character" />
         <Tab label="Character 2" />

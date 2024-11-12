@@ -1,6 +1,7 @@
 import { apiClient } from './client';
 import Cookies from 'js-cookie';
 import { AuthCookie } from '../types/cookie';
+import { UserRole } from './types.ts';
 
 export const createRole = async (roleData: {
   name: string;
