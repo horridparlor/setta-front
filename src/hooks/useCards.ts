@@ -14,10 +14,13 @@ const useCards = () => {
   const fetchCards = async () => {
     setIsLoading(true);
     const { data: responseData, error } = await apiClient.GET('/user/cards', {
+      credentials: 'same-origin',
       headers: getHeaders(),
     });
     if (error) {
+      console.log();
       setError(error);
+
       setIsLoading(false);
     }
     const cards = responseData.cards as CardData[];

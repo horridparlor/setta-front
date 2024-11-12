@@ -43,7 +43,23 @@ export interface SystemUser {
 }
 
 export type AccessRights = {
-  isAdmin?: boolean;
+  isSuperAdmin?: boolean;
+  canRelease?: boolean;
+  canManageAdmins?: boolean;
+  canManageUsers?: boolean;
+  canClearContent?: boolean;
+  hasUnlimitedTokens?: boolean;
+  canShareTokens?: boolean;
+  canMessageAdmins?: boolean;
+  canMassExport?: boolean;
+  canCreateContent?: boolean;
+  canGenerateImages?: boolean;
+  canMessage?: boolean;
+  autoRefillTokens?: boolean;
+  isRegularUser?: boolean;
+  isPriorityUser?: boolean;
+  isEmployee?: boolean;
+  isContentCreator?: boolean;
 };
 
 const DEFAULT_SYSTEM_USER = {
