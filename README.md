@@ -39,6 +39,7 @@ npm run format:write (autofix)
 
 ```
 npm run test:playwright
+npm run test:playwright:heavy (run playwright tests which might take more time)
 npm run test:playwright:report (view test result report)
 ```
 
