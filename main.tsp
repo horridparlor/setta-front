@@ -62,7 +62,6 @@ model PostCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
-  art: Art;
 }
 
 model PostCardResponse {
@@ -98,7 +97,6 @@ model PutCardRequest {
   effectsSize: int32;
   expansionId: int32;
   cardEffects: CardEffects;
-  art: Art;
 }
 
 model PutCardResponse {
@@ -161,7 +159,8 @@ model PostImageResponse {
 @route("admin/user")
 namespace User {
   @get
-  op getUser(@body request: GetUserRequest): {
+  @route("/{userId}")
+  op getUser(@path userId: int32): {
     @statusCode statusCode: 200;
     @body response: SystemUser;
   } | ErrorUnauthorized | ErrorNotFound;
@@ -196,10 +195,6 @@ model SystemUser {
   tokenRequest?: UserTokenRequest;
 }
 
-model GetUserRequest {
-  userId: int32;
-}
-
 model PostUserRequest {
   username: string;
   password: string;
@@ -218,29 +213,29 @@ model PostUserResponse {
 }
 
 model PutUserRequest {
-    userId: int32;
-    username: string;
-    firstname: string;
-    lastname: string;
-    penName?: string;
-    email?: string;
-    phoneNumber?: string;
-    isActive?: boolean;
-    roleId?: int32;
-    accessRights: AccessRights;
+  userId: int32;
+  username: string;
+  firstname: string;
+  lastname: string;
+  penName?: string;
+  email?: string;
+  phoneNumber?: string;
+  isActive?: boolean;
+  roleId?: int32;
+  accessRights: AccessRights;
 }
 
 model PutUserResponse {
-    userId: int32;
+  userId: int32;
 }
 
 model DeleteUserRequest {
-    userId: int32;
-    deleteAllTheirContent?: boolean;
+  userId: int32;
+  deleteAllTheirContent?: boolean;
 }
 
 model DeleteUserResponse {
-    userId: int32;
+  userId: int32;
 }
 
 // ––– Users
@@ -263,7 +258,8 @@ model ListUsersResponse {
 @route("admin/role")
 namespace Role {
   @get
-  op getRole(@body request: GetRoleRequest): {
+  @route("/{roleId}")
+  op getRole(@path roleId: int32): {
     @statusCode statusCode: 200;
     @body response: UserRole;
   } | ErrorUnauthorized | ErrorNotFound;
@@ -284,35 +280,31 @@ namespace Role {
   } | ErrorUnauthorized;
 }
 
-model GetRoleRequest {
-    roleId: int32;
-}
-
 model PostRoleRequest {
-    name: string;
-    accessRights: AccessRights;
+  name: string;
+  accessRights: AccessRights;
 }
 
 model PostRoleResponse {
-    roleId: int32;
+  roleId: int32;
 }
 
 model PutRoleRequest {
-    roleId: int32;
-    name: string;
-    accessRights: AccessRights;
+  roleId: int32;
+  name: string;
+  accessRights: AccessRights;
 }
 
 model PutRoleResponse {
-    roleId: int32;
+  roleId: int32;
 }
 
 model DeleteRoleRequest {
-    roleId: int32;
+  roleId: int32;
 }
 
 model DeleteRoleResponse {
-    roleId: int32;
+  roleId: int32;
 }
 
 @route("admin/roles")
@@ -325,8 +317,8 @@ namespace Roles {
 }
 
 model ListRolesResponse {
-    countOfRoles: int32;
-    roles: UserRole[];
+  countOfRoles: int32;
+  roles: UserRole[];
 }
 
 model UserRole {
@@ -349,8 +341,8 @@ namespace TokenRequests {
 }
 
 model ListTokenRequestsResponse {
-    countOfTokenRequests: int32;
-    tokenRequests: UserTokenRequest[];
+  countOfTokenRequests: int32;
+  tokenRequests: UserTokenRequest[];
 }
 
 @route("admin/token-request")
@@ -368,19 +360,19 @@ namespace TokenRequest {
 }
 
 model PostTokenRequestRequest {
-    userId?: int32,
+  userId?: int32;
 }
 
 model PostTokenRequestResponse {
-    tokenRequestId: int32;
+  tokenRequestId: int32;
 }
 
 model DeleteTokenRequestRequest {
-    userId?: int32,
+  userId?: int32;
 }
 
 model DeleteTokenRequestResponse {
-    userId: int32;
+  userId: int32;
 }
 
 model UserTokenRequest {
@@ -416,23 +408,23 @@ model AuthenticateResponse {
 }
 
 model AccessRights {
-    isSuperAdmin?: boolean;
-    canRelease?: boolean;
-    canManageAdmins?: boolean;
-    canManageUsers?: boolean;
-    canClearContent?: boolean;
-    hasUnlimitedTokens?: boolean;
-    canShareTokens?: boolean;
-    canMessageAdmins?: boolean;
-    canMassExport?: boolean;
-    canCreateContent?: boolean;
-    canGenerateImages?: boolean;
-    canMessage?: boolean;
-    autoRefillTokens?: boolean;
-    isRegularUser?: boolean;
-    isPriorityUser?: boolean;
-    isEmployee?: boolean;
-    isContentCreator?: boolean;
+  isSuperAdmin?: boolean;
+  canRelease?: boolean;
+  canManageAdmins?: boolean;
+  canManageUsers?: boolean;
+  canClearContent?: boolean;
+  hasUnlimitedTokens?: boolean;
+  canShareTokens?: boolean;
+  canMessageAdmins?: boolean;
+  canMassExport?: boolean;
+  canCreateContent?: boolean;
+  canGenerateImages?: boolean;
+  canMessage?: boolean;
+  autoRefillTokens?: boolean;
+  isRegularUser?: boolean;
+  isPriorityUser?: boolean;
+  isEmployee?: boolean;
+  isContentCreator?: boolean;
 }
 
 // ––– Cards

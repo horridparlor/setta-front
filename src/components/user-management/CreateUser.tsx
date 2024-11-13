@@ -21,6 +21,7 @@ import { AppPage } from '../../types/navigation';
 import { useTranslation } from 'react-i18next';
 import { createUser } from '../../api/userManagementApi';
 import { listRoles, createRole } from '../../api/rolesApi';
+import { UserRole } from '../../api/types.ts';
 
 const defaultRoles: string[] = [
   'SuperAdmin',
@@ -51,7 +52,6 @@ const commonCheckboxLabels = [
   'isContentCreator',
   'autoRefillTokens',
 ];
-const userCopies: string[] = ['User1, role', 'User2, role', 'User3, role'];
 
 export interface UserCreationRef {
   handleSave: () => void;
@@ -67,15 +67,13 @@ const UserCreation = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [userID, setUserID] = useState('');
-  const [password, setPassword] = useState('testi');
+  const [userID] = useState('');
+  const [password] = useState('testi');
   const [penName, setPenName] = useState('');
   const [role, setRole] = useState('');
-  const [userCopy, setUserCopy] = useState(userCopies);
   const [accessRights, setAccessRights] = useState<Record<string, boolean>>({});
   const [open, setOpen] = useState(false);
-  const [sendPasswordChecked, setSendPasswordChecked] = useState('');
-  const [isActive, setIsActive] = useState(true);
+  const [isActive] = useState(true);
   const [roleId, setRoleId] = useState<number | undefined>();
   const userName = `${firstName}.${lastName}`.toLowerCase();
   const [roles, setRoles] = useState<UserRole[]>([]);
@@ -90,12 +88,8 @@ const UserCreation = () => {
 
         if (Array.isArray(response)) {
           setRoles(response);
-        } else if (
-          response &&
-          response.data &&
-          Array.isArray(response.data.roles)
-        ) {
-          setRoles(response.data.roles);
+        } else if (response && Array.isArray(response)) {
+          setRoles(response);
         } else {
           console.error('Roles data is missing in the response:', response);
         }
@@ -129,8 +123,9 @@ const UserCreation = () => {
           name: customRoleName,
           accessRights: filteredAccessRights,
         };
-        const response = await createRole(roleData);
-        console.log('Role created:', roleData);
+        const response2 = await createRole(roleData);
+        customRoleId = response2?.data?.roleId;
+
         alert('Custom role created successfully!');
       } catch (error) {
         console.error('Failed to create custom role:', error);
@@ -155,7 +150,7 @@ const UserCreation = () => {
       alert('User created successfully!');
     } catch (error) {
       console.error('Error creating user:', error);
-      alert(`Failed to create user: ${error.message}`);
+      alert(`Failed to create user: ${error}`);
     }
   };
 

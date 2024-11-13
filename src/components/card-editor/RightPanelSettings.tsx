@@ -19,13 +19,13 @@ import DeckTab from './DeckTab';
 import {
   BACKROW_CARD_TYPES,
   canEditCard,
-  canErrataCard,
+  // canErrataCard,
   CardClass,
   CardData,
   CardSubtype,
   CardSupertype,
   CardType,
-  combineEffectsTexts,
+  // combineEffectsTexts,
   DefaultTextSize,
   EXTRA_DECK_SUBTYPES,
   getEffectsChainEffect,
@@ -188,14 +188,14 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   cardData,
   expansions,
   onCardDataChange,
-  onExport,
+  // onExport,
   onSave,
-  onImageFileChange,
-  onDelete,
-  onEncode,
+  // onImageFileChange,
+  // onDelete,
+  // onEncode,
   cards,
-  onErrata,
-  onCopy,
+  // onErrata,
+  // onCopy,
 }) => {
   const STATS_TAB = 0;
   const { t } = useTranslation();
@@ -2714,12 +2714,13 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   };
 
   return (
-    <Box sx={{ bgcolor: 'background.paper', p: 2 }}>
+    <Box sx={{ bgcolor: 'background.paper', p: 2, width: '45%' }}>
       <Tabs
+        variant="fullWidth"
         value={tabId}
         onChange={handleTabChange}
         aria-label="form tabs"
-        sx={{ marginBottom: '2rem', marginTop: '2rem' }}
+        sx={{ marginBottom: '2rem' }}
       >
         <Tab label={t('TAB_STATS')} />
         <Tab label={t('TAB_EFFECTS')} onClick={() => fixEffects()} />
@@ -3156,6 +3157,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         >
           {t('SAVE')}
         </Button>
+        {/*
         <Button
           onClick={onExport}
           variant="contained"
@@ -3210,7 +3212,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         </Button>
         <Button onClick={onCopy} variant="contained" color="secondary">
           {t('COPY')}
-        </Button>
+        </Button> */}
       </Box>
     </Box>
   );
