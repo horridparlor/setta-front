@@ -24,18 +24,16 @@ import DeleteUserDialog from './DeleteUserDialog';
 import { fetchUsers, deleteUser } from '../../api/userManagementApi';
 import { listRoles } from '../../api/rolesApi';
 import RoleChangeModal from '../../components/common/RoleChangeModal';
+import { User } from '../../api/types';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
 }
-interface User {
-  id: number;
+interface ManagedUser extends User {
   name: string;
   role: string;
-  username: string;
-  activeRequest: boolean;
-  active: boolean;
 }
+
 interface Role {
   id: number;
   role: string;
@@ -44,22 +42,20 @@ interface Role {
   active: boolean;
 }
 const UserManagementPage = (props: UserManagementPageProps) => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<ManagedUser[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<ManagedUser | null>(null);
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const loadUsers = async () => {
     try {
       const fetchedData = await fetchUsers();
       if (Array.isArray(fetchedData)) {
-        const formattedUsers = fetchedData.map((user: any) => ({
-          id: user.id,
+        const formattedUsers = fetchedData.map(user => ({
+          ...user,
           name: `${user.firstname} ${user.lastname}`,
           role: user.roleId === 2 ? 'Admin' : 'Standard User', //lets uypdate this to map or somthign when we get there
-          username: user.username,
-          activeRequest: !!user.tokenRequest,
-          active: user.isActive === 1,
         }));
         setUsers(formattedUsers);
       } else {
@@ -100,7 +96,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
   const [selectedUserRows, setSelectedUserRows] =
     useState<GridRowSelectionModel>([]);
 
-  const handleDeleteIconClick = (user: User) => {
+  const handleDeleteIconClick = (user: ManagedUser) => {
     setSelectedUser(user);
     setIsDeleteDialogOpen(true);
   };
@@ -179,7 +175,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
     },
   ];
 
-  const userColumns: GridColDef[] = [
+  const userColumns: GridColDef<ManagedUser>[] = [
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'role', headerName: 'Role', flex: 1 },
     { field: 'username', headerName: 'Username', flex: 1 },
@@ -188,7 +184,8 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       headerName: 'Requests',
       flex: 1,
       renderCell: params => {
-        if (params.row.activeRequest) {
+        const activeTokenRequest = !!params.row.tokenRequest;
+        if (activeTokenRequest) {
           return (
             <Chip
               label="tokenRequest"
@@ -206,7 +203,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       field: 'active',
       headerName: 'Status',
       flex: 1,
-      renderCell: params => renderStatusChip(params.row.active),
+      renderCell: params => renderStatusChip(params.row.isActive),
     },
     {
       field: 'options',
