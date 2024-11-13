@@ -15,24 +15,29 @@ import {
   Typography,
 } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
-import { User } from '../../api/types';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import { UserWithRole } from '../../pages/user-management/userUsersAndRoles';
+import { UserRole } from '../../api/types';
 
 interface RoleChangeModalProps {
   open: boolean;
   onClose: () => void;
-  selectedUsers: User[];
+  selectedUsers: UserWithRole[];
+  roles: UserRole[];
 }
 
 const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
   open,
   onClose,
   selectedUsers,
+  roles,
 }) => {
   const [selectedUserRows, setSelectedUserRows] =
     useState<GridRowSelectionModel>(selectedUsers.map(user => user.id));
-
   const [isChecked, setIsChecked] = useState(false);
+  const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
+    null
+  );
 
   useEffect(() => {
     if (open) {
@@ -41,9 +46,23 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
     }
   }, [open, selectedUsers]);
 
-  const gridColumns: GridColDef[] = [
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'role', headerName: 'Role', flex: 1 },
+  const handleSubmitRoleChanges = () => {
+    // Fetch api call to update user roles
+  };
+
+  const gridColumns: GridColDef<UserWithRole>[] = [
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+      valueGetter: (_, row) => `${row.firstname} ${row.lastname}`,
+    },
+    {
+      field: 'role',
+      headerName: 'Role',
+      flex: 1,
+      valueGetter: (_, row) => row.role?.name ?? 'Unkown role name',
+    },
   ];
 
   const isSaveButtonDisabled = !isChecked || selectedUserRows.length === 0;
@@ -77,12 +96,22 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
           <Typography>Select a new role for selected users:</Typography>
           <FormControl variant="outlined" sx={{ width: '30%' }}>
             <InputLabel id="select-role">Select Role</InputLabel>
-            <Select id="select-role" label="select-role">
-              // mock data
-              <MenuItem>SuperAdmin</MenuItem>
-              <MenuItem>Admin</MenuItem>
-              <MenuItem>Designer</MenuItem>
-              <MenuItem>Releaser</MenuItem>
+            <Select<number>
+              id="select-role"
+              label="select-role"
+              value={selectedUserRole?.id ?? -1}
+              onChange={event => {
+                setSelectedUserRole(
+                  roles.find(role => role.id === event.target.value) ?? null
+                );
+              }}
+            >
+              <MenuItem value={-1}>Show All</MenuItem>
+              {roles.map(role => (
+                <MenuItem key={role.id} value={role.id}>
+                  {role.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>
@@ -126,7 +155,7 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
         <Button
           variant="contained"
           sx={{ ml: 'auto' }}
-          onClick={onClose}
+          onClick={handleSubmitRoleChanges}
           disabled={isSaveButtonDisabled}
         >
           Save Changes
