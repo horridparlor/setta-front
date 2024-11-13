@@ -18,6 +18,8 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 import { SelectChangeEvent } from '@mui/material/Select';
 import SideCharacterTab from './SideCharacterTab';
+import SideCharacter2Tab from './SideCharacter2Tab';
+import HiddenTab from './HiddenTab';
 
 interface CharacterTabProps {
   updatePromptValues: (values: Partial<any>) => void; // This will include even non-prompt values like race, gender, etc.
@@ -38,11 +40,21 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     search: '',
     who: '',
   });
+  const [showSelect, setShowSelect] = useState<boolean>(false);
+  const [user, setUser] = useState<string>('');
+  const [isFieldsActive, setFieldsActive] = useState<boolean>(false);
 
   // On component mount, this transmits the default values to the prompt object
   useEffect(() => {
     updatePromptValues(characterFields);
   }, []);
+
+  useEffect(() => {
+    setFieldsActive(
+      // Set fields to active if search or who is entered
+      characterFields.search.trim() !== '' || characterFields.who.trim() !== ''
+    );
+  }, [characterFields.search, characterFields.who]);
 
   // Function to handle input changes for text fields and dropdowns
   const handleInputChange =
@@ -61,6 +73,20 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     setCharacterFields(prevFields => ({ ...prevFields, [field]: '' }));
     updatePromptValues({ [field]: '' });
   };
+
+  // Impersonate checkbox change
+  const handleImpersonateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setShowSelect(event.target.checked);
+  };
+
+  // Function for impersonate user selector
+  const handleUserSelectChange = (event: SelectChangeEvent<string>) => {
+    const newUser = event.target.value as string;
+    setUser(newUser);
+  };
+
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.checked;
     setCharacterFields(prevFields => ({
@@ -72,7 +98,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   const [characterSubTabId, setCharacterSubTabId] = useState(0);
 
   const handleCharacterSubTabChange = (
-    event: React.ChangeEvent<{}>,
+    _event: React.ChangeEvent<unknown>,
     newValue: number
   ) => {
     setCharacterSubTabId(newValue);
@@ -81,8 +107,8 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   // Sub-tab
   const NEW_CHARACTER_TAB = 0;
   const SIDE_CHARACTER_TAB = 1;
-  const CHARACTER2_TAB = 2; //tb implemented
-  const HIDDEN_TAB = 3; //tb implemented
+  const SIDE_CHARACTER2_TAB = 2;
+  const HIDDEN_TAB = 3;
 
   return (
     <Box>
@@ -93,7 +119,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
       >
         <Tab label="Main Character" />
         <Tab label="Side Character" />
-        <Tab label="Character 2" />
+        <Tab label="Side Character 2" />
         <Tab label="Hidden" />
       </Tabs>
 
@@ -102,16 +128,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           display: characterSubTabId === NEW_CHARACTER_TAB ? 'block' : 'none',
         }}
       >
-        <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
-          <Button variant="contained" color="primary">
-            Hide Character
-          </Button>
+        <Typography variant="h6">Main Character</Typography>
+
+        <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
           <Button variant="outlined" color="error">
             Delete Character
           </Button>
         </Box>
 
-        <Box sx={{ marginBottom: '1rem' }}>
+        <Box>
           <Typography variant="subtitle1">Character</Typography>
           <TextField
             fullWidth
@@ -129,6 +154,35 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
               ),
             }}
           />
+        </Box>
+
+        <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showSelect}
+                onChange={handleImpersonateChange}
+              />
+            }
+            label="Impersonate"
+          />
+
+          {/*If impersonate checked, select user and style */}
+          {showSelect && (
+            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+              <FormControl fullWidth>
+                <InputLabel id="select-user">Select User</InputLabel>
+                <Select
+                  labelId="select-user"
+                  value={user}
+                  label="User"
+                  onChange={handleUserSelectChange}
+                >
+                  <MenuItem value="User">Users coming soon...</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          )}
         </Box>
 
         <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
@@ -174,13 +228,19 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
         </Box>
 
         <Box sx={{ marginBottom: '1rem' }}>
-          <Typography variant="subtitle1">Appearance</Typography>
+          <Typography
+            variant="subtitle1"
+            sx={{ color: isFieldsActive ? 'text.primary' : 'gray' }}
+          >
+            Appearance
+          </Typography>
           <TextField
             fullWidth
             variant="outlined"
             placeholder="What do you look like?"
             value={characterFields.appearance}
             onChange={handleInputChange('appearance')}
+            disabled={!isFieldsActive}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -195,7 +255,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
 
         <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
           {/* Race Selection */}
-          <FormControl fullWidth>
+          <FormControl fullWidth disabled={!isFieldsActive}>
             <InputLabel id="race-selector-label">Race</InputLabel>
             <Select
               labelId="race-selector-label"
@@ -213,7 +273,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           </FormControl>
 
           {/* Gender Selection */}
-          <FormControl fullWidth>
+          <FormControl fullWidth disabled={!isFieldsActive}>
             <InputLabel id="gender-selector-label">Gender</InputLabel>
             <Select
               labelId="gender-selector-label"
@@ -229,7 +289,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           </FormControl>
 
           {/* Age Selection */}
-          <FormControl fullWidth>
+          <FormControl fullWidth disabled={!isFieldsActive}>
             <InputLabel id="age-selector-label">Age</InputLabel>
             <Select
               labelId="age-selector-label"
@@ -244,22 +304,6 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
               <MenuItem value="Child">Child</MenuItem>
             </Select>
           </FormControl>
-
-          {/* Character Type */}
-          <FormControl fullWidth>
-            <InputLabel id="type-selector-label">Type</InputLabel>
-            <Select
-              labelId="type-selector-label"
-              value={characterFields.charactertype}
-              label="Type"
-              onChange={handleInputChange('Charactertype')}
-            >
-              <MenuItem value="Main">Main</MenuItem>
-              <MenuItem value="Supporting">Supporting</MenuItem>
-              <MenuItem value="Antagonist">Antagonist</MenuItem>
-              <MenuItem value="Background-actor">Background-actor</MenuItem>
-            </Select>
-          </FormControl>
         </Box>
 
         {/* Tool and Action fields */}
@@ -271,6 +315,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             label="Tool"
             value={characterFields.tool}
             onChange={handleInputChange('tool')}
+            disabled={!isFieldsActive}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -282,6 +327,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             }}
           />
           <FormControlLabel
+            disabled={!isFieldsActive}
             control={
               <Checkbox
                 checked={characterFields.inherited_tool}
@@ -300,6 +346,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             label="Action"
             value={characterFields.action}
             onChange={handleInputChange('action')}
+            disabled={!isFieldsActive}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -318,6 +365,20 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
         }}
       >
         <SideCharacterTab updateSideCharacterValues={updatePromptValues} />
+      </Box>
+      <Box
+        sx={{
+          display: characterSubTabId === SIDE_CHARACTER2_TAB ? 'block' : 'none',
+        }}
+      >
+        <SideCharacter2Tab updateSideCharacter2Values={updatePromptValues} />
+      </Box>
+      <Box
+        sx={{
+          display: characterSubTabId === HIDDEN_TAB ? 'block' : 'none',
+        }}
+      >
+        <HiddenTab />
       </Box>
     </Box>
   );

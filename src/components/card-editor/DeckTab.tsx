@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -66,11 +66,11 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 const DeckTab: React.FC = () => {
   const [decks, setDecks] = useState(placeholderDeck);
   const [open, setOpen] = useState(false);
-  const [isIncluded, setIsIncluded] = useState(0);
-  const [unreleasedDecks, setUnreleasedDecks] = useState(0);
-  const [releasedDecks, setReleasedDecks] = useState(0);
-  const [myDecks, setMyDecks] = useState(0);
-  const [otherDecks, setOtherDecks] = useState(0);
+  // const [isIncluded, setIsIncluded] = useState(0);
+  const [unreleasedDecks] = useState(0);
+  const [releasedDecks] = useState(0);
+  const [myDecks] = useState(0);
+  const [otherDecks] = useState(0);
   const [textFieldValue, setTextFieldValue] = useState('');
 
   const handleIncrement = (name: string): void => {
@@ -81,6 +81,7 @@ const DeckTab: React.FC = () => {
     });
   };
   // Function to handle decrement
+
   const handleDecrement = (name: string): void => {
     setDecks(prevDecks => {
       return prevDecks.map(deck =>
@@ -90,10 +91,11 @@ const DeckTab: React.FC = () => {
       );
     });
   };
+
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    setTextFieldValue(event.target.value);
+    setTextFieldValue(event.currentTarget.value);
   };
   const handleOpen = (): void => {
     setOpen(true);
@@ -108,6 +110,7 @@ const DeckTab: React.FC = () => {
   const handleUpdateChanges = () => {
     //logic for updating
   };
+
   const handleCreate = (value: string): void => {
     if (value) {
       decks.push({ id: '4', name: value, count: 1, creator: '' });

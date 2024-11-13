@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {
   Box,
   InputLabel,
@@ -20,96 +20,97 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
+import DeleteUserDialog from './DeleteUserDialog';
+import { fetchUsers, deleteUser } from '../../api/userManagementApi';
+import { listRoles } from '../../api/rolesApi';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
 }
-
+interface User {
+  id: number;
+  name: string;
+  role: string;
+  username: string;
+  activeRequest: boolean;
+  active: boolean;
+}
+interface Role {
+  id: number;
+  role: string;
+  custom: boolean;
+  lastedited: string;
+  active: boolean;
+}
 const UserManagementPage = (props: UserManagementPageProps) => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const loadUsers = async () => {
+    try {
+      const fetchedData = await fetchUsers();
+      if (Array.isArray(fetchedData)) {
+        const formattedUsers = fetchedData.map((user: any) => ({
+          id: user.id,
+          name: `${user.firstname} ${user.lastname}`,
+          role: user.roleId === 2 ? 'Admin' : 'Standard User', //lets uypdate this to map or somthign when we get there
+          username: user.username,
+          activeRequest: !!user.tokenRequest,
+          active: user.isActive === 1,
+        }));
+        setUsers(formattedUsers);
+      } else {
+        console.error('Unexpected data structure:', fetchedData);
+      }
+    } catch (error) {
+      console.error('Error loading users:', error);
+    }
+  };
+  const loadRoles = async () => {
+    try {
+      const fetchedRoles = await listRoles();
+      if (Array.isArray(fetchedRoles)) {
+        const formattedRoles = fetchedRoles.map((role: any) => ({
+          id: role.id,
+          role: role.name,
+          custom: role.custom || false, // Adjust based on your data structure
+          lastedited: role.lastedited || 'Unknown', // Replace with actual data if available
+          active: role.isActive,
+        }));
+        setRoles(formattedRoles);
+      } else {
+        console.error('Unexpected roles data structure:', fetchedRoles);
+      }
+    } catch (error) {
+      console.error('Error loading roles:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+    loadRoles();
+  }, []);
   const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
   const navigate = useNavigate();
-  // mock data
-  const testRoles = [
-    {
-      id: 1,
-      role: 'SuperAdmin',
-      custom: false,
-      lastedited: 'dd/mm/yyyy',
-      active: true,
-    },
-    {
-      id: 2,
-      role: 'Admin',
-      custom: false,
-      lastedited: 'dd/mm/yyyy',
-      active: false,
-    },
-    {
-      id: 3,
-      role: 'Designer',
-      custom: false,
-      lastedited: 'dd/mm/yyyy',
-      active: false,
-    },
-    {
-      id: 4,
-      role: 'Releaser',
-      custom: false,
-      lastedited: 'dd/mm/yyyy',
-      active: true,
-    },
-    {
-      id: 5,
-      role: 'Junior Designer',
-      custom: true,
-      lastedited: 'dd/mm/yyyy',
-      active: true,
-    },
-  ];
-  // mock data
-  const testUsers = [
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: true,
-      id: '1',
-      active: true,
-    },
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: false,
-      id: '2',
-      active: true,
-    },
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: false,
-      id: '3',
-      active: true,
-    },
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: true,
-      id: '4',
-      active: true,
-    },
-    {
-      name: 'Firstname Lastname',
-      role: 'userRole',
-      username: 'userName',
-      activeRequest: false,
-      id: '5',
-      active: false,
-    },
-  ];
+
+  const handleDeleteIconClick = (user: User) => {
+    setSelectedUser(user);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      await deleteUser(userId);
+      setUsers(users.filter(user => user.id !== userId));
+      setIsDeleteDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+    }
+  };
+
   const handleButtonClick = () => {
     navigate(AppPage.UserCreation);
   };
@@ -131,10 +132,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       headerName: 'Type',
       flex: 1,
       renderCell: params => {
-        if (params.row.custom) {
-          return <span>Customized</span>;
-        }
-        return null;
+        return params.row.custom ? <span>Customized</span> : null;
       },
     },
     { field: 'lastedited', headerName: 'Last Edited', flex: 1 },
@@ -196,12 +194,12 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       field: 'options',
       headerName: 'Options',
       flex: 1,
-      renderCell: () => (
+      renderCell: params => (
         <>
           <IconButton>
             <Edit />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => handleDeleteIconClick(params.row)}>
             <Delete />
           </IconButton>
         </>
@@ -273,7 +271,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
 
             <Box sx={{ mt: 2 }}>
               <DataGrid
-                rows={testRoles}
+                rows={roles}
                 columns={roleColumns}
                 checkboxSelection={false}
                 // pagination not ready
@@ -326,7 +324,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
             </Box>
             <Box sx={{ mt: 2 }}>
               <DataGrid
-                rows={testUsers}
+                rows={users}
                 columns={userColumns}
                 checkboxSelection
                 // pagination not ready
@@ -335,6 +333,12 @@ const UserManagementPage = (props: UserManagementPageProps) => {
           </CardContent>
         </Card>
       </Box>
+      <DeleteUserDialog
+        open={isDeleteDialogOpen}
+        user={selectedUser}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDeleteUser}
+      />
     </Box>
   );
 };

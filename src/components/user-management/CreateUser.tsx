@@ -19,6 +19,9 @@ import ConfirmationDialog from '../common/ConfirmationDialog';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import { useTranslation } from 'react-i18next';
+import { createUser } from '../../api/userManagementApi';
+import { listRoles, createRole } from '../../api/rolesApi';
+import { UserRole } from '../../api/types.ts';
 
 const defaultRoles: string[] = [
   'SuperAdmin',
@@ -49,7 +52,6 @@ const commonCheckboxLabels = [
   'isContentCreator',
   'autoRefillTokens',
 ];
-const userCopies: string[] = ['User1, role', 'User2, role', 'User3, role'];
 
 export interface UserCreationRef {
   handleSave: () => void;
@@ -65,14 +67,92 @@ const UserCreation = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [userID, setUserID] = useState('');
-  const [password, setPassword] = useState('');
+  const [userID] = useState('');
+  const [password] = useState('testi');
   const [penName, setPenName] = useState('');
   const [role, setRole] = useState('');
-  const [userCopy, setUserCopy] = useState(userCopies);
-  const [accessRights, setAccessRights] = useState('');
+  const [accessRights, setAccessRights] = useState<Record<string, boolean>>({});
   const [open, setOpen] = useState(false);
-  const [sendPasswordChecked, setSendPasswordChecked] = useState('');
+  const [isActive] = useState(true);
+  const [roleId, setRoleId] = useState<number | undefined>();
+  const userName = `${firstName}.${lastName}`.toLowerCase();
+  const [roles, setRoles] = useState<UserRole[]>([]);
+  const [customRoleName, setCustomRoleName] = useState('');
+  const [isCustomRole, setIsCustomRole] = useState(false);
+
+  // Fetch roles from the backend
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await listRoles();
+
+        if (Array.isArray(response)) {
+          setRoles(response);
+        } else if (response && Array.isArray(response)) {
+          setRoles(response);
+        } else {
+          console.error('Roles data is missing in the response:', response);
+        }
+      } catch (error) {
+        console.error('Failed to fetch roles:', error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    const initialAccessRights = [
+      ...adminCheckboxLabels,
+      ...commonCheckboxLabels,
+    ].reduce((acc, label) => ({ ...acc, [label]: false }), {});
+    setAccessRights(initialAccessRights);
+  }, []);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const filteredAccessRights = { ...accessRights };
+    delete filteredAccessRights.isSuperAdmin;
+
+    const username = `${firstName}.${lastName}`.toLowerCase();
+    let customRoleId;
+
+    if (isCustomRole && customRoleName) {
+      try {
+        const roleData = {
+          name: customRoleName,
+          accessRights: filteredAccessRights,
+        };
+        const response2 = await createRole(roleData);
+        customRoleId = response2?.data?.roleId;
+
+        alert('Custom role created successfully!');
+      } catch (error) {
+        console.error('Failed to create custom role:', error);
+        alert(
+          `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
+    }
+
+    try {
+      await createUser({
+        username,
+        password,
+        firstname: firstName,
+        lastname: lastName,
+        email,
+        phoneNumber,
+        isActive,
+        roleId: customRoleId || roleId,
+        accessRights: filteredAccessRights,
+      });
+      alert('User created successfully!');
+    } catch (error) {
+      console.error('Error creating user:', error);
+      alert(`Failed to create user: ${error}`);
+    }
+  };
 
   // Admin level access rights
   const [checkedAdminBoxes, setCheckedAdminBoxes] = useState<CheckboxState>(
@@ -96,17 +176,29 @@ const UserCreation = () => {
   );
 
   const handleAdminCheckboxChange = (label: string) => {
-    setCheckedAdminBoxes(prev => ({
-      ...prev,
-      [label]: !prev[label],
-    }));
+    setCheckedAdminBoxes(prev => {
+      const newCheckedState = !prev[label];
+      const updatedAdminBoxes = { ...prev, [label]: newCheckedState };
+      setAccessRights(prevAccessRights => ({
+        ...prevAccessRights,
+        [label]: newCheckedState,
+      }));
+
+      return updatedAdminBoxes;
+    });
   };
 
   const handleCommonCheckboxChange = (label: string) => {
-    setCheckedCommonBoxes(prev => ({
-      ...prev,
-      [label]: !prev[label],
-    }));
+    setCheckedCommonBoxes(prev => {
+      const newCheckedState = !prev[label];
+      const updatedCommonBoxes = { ...prev, [label]: newCheckedState };
+      setAccessRights(prevAccessRights => ({
+        ...prevAccessRights,
+        [label]: newCheckedState,
+      }));
+
+      return updatedCommonBoxes;
+    });
   };
 
   const handleAdminSelectAllChange = () => {
@@ -115,6 +207,23 @@ const UserCreation = () => {
       (acc, label) => ({ ...acc, [label]: newCheckedState }),
       {}
     );
+    const updatedAccessRights = {
+      ...accessRights,
+      ...updatedBoxes,
+      ...updatedBoxes,
+      isSuperAdmin: newCheckedState,
+    };
+
+    setCheckedAdminBoxes(updatedBoxes);
+    setCheckedCommonBoxes(updatedBoxes);
+    if (!isAllCommonSelected) {
+      handleCommonSelectAllChange();
+    }
+    setAccessRights(updatedAccessRights);
+
+    // Set roleId to 2 if all are checked, or reset if not
+    // this needs updating to suit the customer wihses of
+    setRoleId(newCheckedState ? 2 : undefined);
     setCheckedAdminBoxes(updatedBoxes);
   };
 
@@ -127,30 +236,21 @@ const UserCreation = () => {
     setCheckedCommonBoxes(updatedBoxes);
   };
 
-  const userName = `${firstName}.${lastName}`.toLowerCase();
-
-  const handleSave = () => {
-    // Add code for save handling
-  };
   const handleRoleChange = (event: SelectChangeEvent) => {
-    setRole(event.target.value);
+    const selectedRoleName = event.target.value;
+    setRole(selectedRoleName);
+
+    const selectedRole = roles.find(r => r.name === selectedRoleName);
+    if (selectedRole) {
+      setAccessRights(selectedRole.accessRights);
+      setRoleId(selectedRole.id);
+      setIsCustomRole(false);
+    } else if (selectedRoleName === 'Custom role') {
+      setAccessRights({});
+      setIsCustomRole(true);
+    }
   };
-  const handleAccessRightsChange = (event: SelectChangeEvent) => {
-    setAccessRights(event.target.value);
-  };
-  const handleFirstNameChange = (event: SelectChangeEvent) => {
-    setFirstName(event.target.value);
-  };
-  const handleLastNameChange = (event: SelectChangeEvent) => {
-    setLastName(event.target.value);
-  };
-  const handleUserIdChange = (event: SelectChangeEvent) => {
-    setPhoneNumber(event.target.value);
-  };
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    //Add logic for submitting form
-    e.preventDefault();
-  };
+
   const navigate = useNavigate();
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -161,6 +261,7 @@ const UserCreation = () => {
 
   const fetchAccessRightCopies = () => {
     try {
+      //this is for copying the accessrights form a selected role but role fetching is nto yet implemented
       //const response = await fetch()
     } catch (error) {
       console.error('Failed to fetch');
@@ -185,7 +286,7 @@ const UserCreation = () => {
         <Typography variant="h4" gutterBottom>
           {t('CREATE_A_NEW_USER')}
         </Typography>
-        <form onSubmit={handleFormSubmit}>
+        <form onSubmit={handleSubmit}>
           <Box sx={rowContainerStyle}>
             <TextField
               required
@@ -291,12 +392,11 @@ const UserCreation = () => {
                 id="select-role"
                 value={role}
                 label="Select role"
-                placeholder="Select role"
                 onChange={handleRoleChange}
               >
-                {defaultRoles.map(role => (
-                  <MenuItem key={role} value={role}>
-                    {role}
+                {roles.map(role => (
+                  <MenuItem key={role.id} value={role.id}>
+                    {role.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -327,7 +427,7 @@ const UserCreation = () => {
             variant="caption"
             sx={{
               position: 'absolute',
-              backgroundColor: 'white', // Background to cut into the line
+              backgroundColor: 'white',
               px: 1,
               transform: 'translate(10px, -12px)',
               zIndex: 1,
@@ -384,7 +484,7 @@ const UserCreation = () => {
               variant="caption"
               sx={{
                 position: 'absolute',
-                backgroundColor: 'white', // Background to cut into the line
+                backgroundColor: 'white',
                 px: 1,
                 transform: 'translate(10px, -12px)',
                 zIndex: 1,
@@ -439,9 +539,10 @@ const UserCreation = () => {
           <Box sx={{ marginTop: 3, display: 'flex' }}>
             <TextField
               fullWidth
-              label="Create a new custom role"
-              variant="outlined"
-              size="medium"
+              label="Custom Role Name"
+              value={customRoleName}
+              onChange={e => setCustomRoleName(e.target.value)}
+              placeholder="Enter custom role name"
             />
           </Box>
           <Box sx={rowContainerStyle}>
