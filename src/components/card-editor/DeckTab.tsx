@@ -26,6 +26,14 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 
+// Change this interface
+interface Deck {
+  id: string;
+  name: string;
+  count: number;
+  creator: string;
+}
+
 const rowContainerStyle = {
   flexDirection: 'row',
   alignItems: 'center',
@@ -33,7 +41,7 @@ const rowContainerStyle = {
   marginBottom: 2,
   display: 'flex',
 };
-const placeholderDeck = [
+const placeholderDeck: Deck[] = [
   { id: '1', name: 'Deck 1', count: 3, creator: 'Firstname Lastname' },
   { id: '2', name: 'Deck 2', count: 5, creator: 'First Last' },
   { id: '3', name: 'Deck 3', count: 1, creator: 'Etunimi Sukunimi' },
@@ -45,7 +53,6 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     {...props}
   />
 ))(({ theme }) => ({
-  //backgroundColor: 'rgba(0, 0, 0, .03)',
   flexDirection: 'row-reverse',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {},
   '& .MuiAccordionSummary-content': {
@@ -66,7 +73,7 @@ const DeckTab: React.FC = () => {
   const [otherDecks] = useState(0);
   const [textFieldValue, setTextFieldValue] = useState('');
 
-  const handleIncrement = (name: string) => {
+  const handleIncrement = (name: string): void => {
     setDecks(prevDecks => {
       return prevDecks.map(deck =>
         deck.name === name ? { ...deck, count: deck.count + 1 } : deck
@@ -74,7 +81,8 @@ const DeckTab: React.FC = () => {
     });
   };
   // Function to handle decrement
-  const handleDecrement = (name: string) => {
+
+  const handleDecrement = (name: string): void => {
     setDecks(prevDecks => {
       return prevDecks.map(deck =>
         deck.name === name && deck.count > 0
@@ -83,14 +91,17 @@ const DeckTab: React.FC = () => {
       );
     });
   };
-  const handleTextFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
+
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setTextFieldValue(event.currentTarget.value);
   };
-  const handleOpen = () => {
+  const handleOpen = (): void => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setOpen(false);
     setTextFieldValue('');
   };
@@ -99,10 +110,12 @@ const DeckTab: React.FC = () => {
   const handleUpdateChanges = () => {
     //logic for updating
   };
-  const handleCreate = (value: string) => {
+
+  const handleCreate = (value: string): void => {
     if (value) {
       decks.push({ id: '4', name: value, count: 1, creator: '' });
       setTextFieldValue('');
+      setOpen(false);
       // add to backend
     }
   };
