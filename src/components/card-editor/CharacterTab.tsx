@@ -98,7 +98,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   const [characterSubTabId, setCharacterSubTabId] = useState(0);
 
   const handleCharacterSubTabChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     newValue: number
   ) => {
     setCharacterSubTabId(newValue);

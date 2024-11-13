@@ -75,7 +75,7 @@ export const updateRole = async (roleData: {
   }
 };
 
-export const deleteRole = async roleId => {
+export const deleteRole = async (roleId: number) => {
   try {
     const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
 
@@ -88,16 +88,15 @@ export const deleteRole = async roleId => {
       'Content-Type': 'application/json',
     };
 
-    const response = await apiClient.DELETE(`/admin/role`, {
+    const { data } = await apiClient.DELETE(`/admin/role`, {
       headers,
       body: {
         roleId: roleId,
       },
     });
 
-    const responseData = await response;
-    console.log('Role deleted successfully:', responseData);
-    return responseData;
+    console.log('Role deleted successfully:', data);
+    return data;
   } catch (error) {
     console.error('Error deleting role:', error);
     throw error;

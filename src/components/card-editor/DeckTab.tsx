@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
-  AppBar,
   Box,
   Button,
   Dialog,
@@ -13,16 +12,8 @@ import {
   IconButton,
   List,
   ListItem,
-  Paper,
   styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   TextField,
-  Toolbar,
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -68,14 +59,14 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 const DeckTab: React.FC = () => {
   const [decks, setDecks] = useState(placeholderDeck);
   const [open, setOpen] = useState(false);
-  const [isIncluded, setIsIncluded] = useState(0);
-  const [unreleasedDecks, setUnreleasedDecks] = useState(0);
-  const [releasedDecks, setReleasedDecks] = useState(0);
-  const [myDecks, setMyDecks] = useState(0);
-  const [otherDecks, setOtherDecks] = useState(0);
+  // const [isIncluded, setIsIncluded] = useState(0);
+  const [unreleasedDecks] = useState(0);
+  const [releasedDecks] = useState(0);
+  const [myDecks] = useState(0);
+  const [otherDecks] = useState(0);
   const [textFieldValue, setTextFieldValue] = useState('');
 
-  const handleIncrement = name => {
+  const handleIncrement = (name: string) => {
     setDecks(prevDecks => {
       return prevDecks.map(deck =>
         deck.name === name ? { ...deck, count: deck.count + 1 } : deck
@@ -83,7 +74,7 @@ const DeckTab: React.FC = () => {
     });
   };
   // Function to handle decrement
-  const handleDecrement = name => {
+  const handleDecrement = (name: string) => {
     setDecks(prevDecks => {
       return prevDecks.map(deck =>
         deck.name === name && deck.count > 0
@@ -92,14 +83,14 @@ const DeckTab: React.FC = () => {
       );
     });
   };
-  const handleTextFieldChange = event => {
-    setTextFieldValue(event.target.value);
+  const handleTextFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTextFieldValue(event.currentTarget.value);
   };
   const handleOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = value => {
+  const handleClose = () => {
     setOpen(false);
     setTextFieldValue('');
   };
@@ -108,7 +99,7 @@ const DeckTab: React.FC = () => {
   const handleUpdateChanges = () => {
     //logic for updating
   };
-  const handleCreate = value => {
+  const handleCreate = (value: string) => {
     if (value) {
       decks.push({ id: '4', name: value, count: 1, creator: '' });
       setTextFieldValue('');

@@ -21,11 +21,7 @@ import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
 import DeleteUserDialog from './DeleteUserDialog';
-import {
-  fetchUsers,
-  deleteUser,
-  updateUser,
-} from '../../api/userManagementApi';
+import { fetchUsers, deleteUser } from '../../api/userManagementApi';
 import { listRoles } from '../../api/rolesApi';
 
 interface UserManagementPageProps {

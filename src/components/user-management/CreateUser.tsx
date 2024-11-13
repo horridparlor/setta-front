@@ -124,7 +124,7 @@ const UserCreation = () => {
           accessRights: filteredAccessRights,
         };
         const response2 = await createRole(roleData);
-        customRoleId = response2.data.roleId;
+        customRoleId = response2?.data?.roleId;
 
         alert('Custom role created successfully!');
       } catch (error) {

@@ -160,13 +160,18 @@ export const fetchUserById = async (userId: any) => {
       'Content-Type': 'application/json',
     };
 
-    const response = await apiClient.GET(`/admin/user?userId=${userId}`, {
+    const response = await apiClient.GET(`/admin/user/{userId}`, {
       headers,
+      params: {
+        path: {
+          userId: userId,
+        },
+      },
     });
 
     if (response.error) {
       console.error('API Error:', response.error);
-      throw new Error(response.error);
+      throw new Error(response.error.error);
     }
 
     if (response.data) {
