@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
 import DeleteUserDialog from './DeleteUserDialog';
 import { fetchUsers, deleteUser } from '../../api/userManagementApi';
+import { listRoles } from '../../api/rolesApi';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
@@ -34,8 +35,16 @@ interface User {
   activeRequest: boolean;
   active: boolean;
 }
+interface Role {
+  id: number;
+  role: string;
+  custom: boolean;
+  lastedited: string;
+  active: boolean;
+}
 const UserManagementPage = (props: UserManagementPageProps) => {
   const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -59,9 +68,29 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       console.error('Error loading users:', error);
     }
   };
+  const loadRoles = async () => {
+    try {
+      const fetchedRoles = await listRoles();
+      if (Array.isArray(fetchedRoles)) {
+        const formattedRoles = fetchedRoles.map((role: any) => ({
+          id: role.id,
+          role: role.name,
+          custom: role.custom || false, // Adjust based on your data structure
+          lastedited: role.lastedited || 'Unknown', // Replace with actual data if available
+          active: role.isActive,
+        }));
+        setRoles(formattedRoles);
+      } else {
+        console.error('Unexpected roles data structure:', fetchedRoles);
+      }
+    } catch (error) {
+      console.error('Error loading roles:', error);
+    }
+  };
 
   useEffect(() => {
     loadUsers();
+    loadRoles();
   }, []);
   const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
@@ -81,44 +110,6 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       console.error('Failed to delete user:', error);
     }
   };
-  // mock data
-  const testRoles = [
-    {
-      id: 1,
-      role: 'SuperAdmin',
-      custom: false,
-      lastedited: 'dd/mm/yyyy',
-      active: true,
-    },
-    {
-      id: 2,
-      role: 'Admin',
-      custom: false,
-      lastedited: 'dd/mm/yyyy',
-      active: false,
-    },
-    {
-      id: 3,
-      role: 'Designer',
-      custom: false,
-      lastedited: 'dd/mm/yyyy',
-      active: false,
-    },
-    {
-      id: 4,
-      role: 'Releaser',
-      custom: false,
-      lastedited: 'dd/mm/yyyy',
-      active: true,
-    },
-    {
-      id: 5,
-      role: 'Junior Designer',
-      custom: true,
-      lastedited: 'dd/mm/yyyy',
-      active: true,
-    },
-  ];
 
   const handleButtonClick = () => {
     navigate(AppPage.UserCreation);
@@ -141,10 +132,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
       headerName: 'Type',
       flex: 1,
       renderCell: params => {
-        if (params.row.custom) {
-          return <span>Customized</span>;
-        }
-        return null;
+        return params.row.custom ? <span>Customized</span> : null;
       },
     },
     { field: 'lastedited', headerName: 'Last Edited', flex: 1 },
@@ -283,7 +271,7 @@ const UserManagementPage = (props: UserManagementPageProps) => {
 
             <Box sx={{ mt: 2 }}>
               <DataGrid
-                rows={testRoles}
+                rows={roles}
                 columns={roleColumns}
                 checkboxSelection={false}
                 // pagination not ready
