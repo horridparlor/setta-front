@@ -51,6 +51,14 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
     const [activeTab, setActiveTab] = useState<number>(0);
     const { cardId } = useParams();
     const cardRef = useRef<HTMLDivElement>(null);
+    // const handleActiveTabChange = (newTabId: number) => {
+    //   setActiveTab(newTabId);
+    // };
+    // const handleResetFields = () => {
+    //   // Logic to reset all fields in BackgroundTab, CharacterTab, and SpecialEffectsTab
+    //   setCardData(DEFAULT_CARD_DATA);
+    //   // Assuming that each tab component has a reset method, call those here if needed.
+    // };
 
     const handleCardDataChange = (
       field: keyof CardData,
@@ -291,7 +299,7 @@ const CardEditor = forwardRef<CardEditorRef, CardEditorProps>(
             overwriteArt={imageFile}
             oldName={oldName}
           />
-          {activeTab === 2 && <GenerateBox />}
+          {(activeTab === 2 || activeTab == 3) && <GenerateBox />}
         </Box>
         <RightPanelSettings
           cards={cards}

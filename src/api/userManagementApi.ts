@@ -36,7 +36,6 @@ export const fetchLoggedInUser = async () => {
     }
 
     if (response.data) {
-      console.log('Fetched User Data:', response.data);
       return response.data; // This is the logged-in user's data object
     } else {
       console.error('Unexpected response format:', response);
@@ -64,7 +63,6 @@ export const fetchUsers = async () => {
     }
 
     if (response.data) {
-      console.log('Fetched Data:', response.data);
       return response.data.users;
     } else {
       console.error('Unexpected response format:', response);
@@ -142,6 +140,87 @@ export const deleteUser = async (
     return responseData;
   } catch (error) {
     console.error('Error deleting user:', error);
+    throw error;
+  }
+};
+
+//returns the user data object
+export const fetchUserById = async (userId: any) => {
+  try {
+    const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+
+    if (!authToken) {
+      throw new Error('Authentication token missing');
+    }
+
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await apiClient.GET(`/admin/user/{userId}`, {
+      headers,
+      params: {
+        path: {
+          userId: userId,
+        },
+      },
+    });
+
+    if (response.error) {
+      console.error('API Error:', response.error);
+      throw new Error(response.error.error);
+    }
+
+    if (response.data) {
+      //for test, removve before production
+      console.log('Fetched User Data:', response.data);
+      return response.data;
+    } else {
+      console.error('Unexpected response format:', response);
+      throw new Error('Unexpected response format');
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
+};
+
+export const updateUser = async (user: any) => {
+  try {
+    const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+
+    if (!authToken) {
+      throw new Error('Authentication token missing');
+    }
+
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await apiClient.PUT(`/admin/user`, {
+      headers,
+      body: {
+        userId: user.userId,
+        username: user.username,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        penName: user.penName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        isActive: user.isActive,
+        roleId: user.roleId,
+        accessRights: user.accessRights,
+      },
+    });
+
+    const responseData = await response;
+    //for seeing that it passed, remove before in production
+    console.log('Updated User Role:', responseData);
+    return responseData;
+  } catch (error) {
+    console.error('Error updating user role:', error);
     throw error;
   }
 };

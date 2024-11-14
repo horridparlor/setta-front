@@ -36,11 +36,11 @@ const ArtTab = () => {
     action: string;
     effect: string;
     sideCharacterName?: string;
-    sideCharacterRace?: string;
-    sideCharacterGender?: string;
-    sideCharacterAge?: string;
     sideCharacterAppearance?: string;
     sideCharacterType?: string;
+    sideCharacter2Name?: string;
+    sideCharacter2Appearance?: string;
+    sideCharacter2Type?: string;
   }
 
   const [promptValues, setPromptValues] = useState<PromptValues>({
@@ -57,11 +57,11 @@ const ArtTab = () => {
     action: '',
     effect: '',
     sideCharacterName: '',
-    sideCharacterRace: '',
-    sideCharacterGender: '',
-    sideCharacterAge: '',
     sideCharacterAppearance: '',
     sideCharacterType: '',
+    sideCharacter2Name: '',
+    sideCharacter2Appearance: '',
+    sideCharacter2Type: '',
   });
 
   const updatePromptValues = (newValues: Partial<typeof promptValues>) => {
@@ -88,18 +88,18 @@ const ArtTab = () => {
   Race: ${promptValues.race || 'N/A'}
   Gender: ${promptValues.gender || 'N/A'}
   Age: ${promptValues.age || 'N/A'}
-  Character type: ${promptValues.charactertype || 'N/A'}
+  Character Type: ${promptValues.charactertype || 'N/A'}
   Appearance: ${promptValues.appearance || 'N/A'}
   Tool: ${promptValues.tool || 'N/A'}
   Inherited Tool: ${promptValues.inherited_tool ? 'Yes' : 'No'} 
   Action: ${promptValues.action || 'N/A'}
   Effect: ${promptValues.effect || 'N/A'}
   Side Character: ${promptValues.sideCharacterName || 'N/A'}
-  Side Character Race: ${promptValues.sideCharacterRace || 'N/A'}
-  Side Character Gender: ${promptValues.sideCharacterGender || 'N/A'}
-  Side Character Age: ${promptValues.sideCharacterAge || 'N/A'}
   Side Character Appearance: ${promptValues.sideCharacterAppearance || 'N/A'}
-  Side Character Type: ${promptValues.sideCharacterType || 'N/A'}`;
+  Side Character Type: ${promptValues.sideCharacterType || 'N/A'}
+  Side Character 2: ${promptValues.sideCharacter2Name || 'N/A'}
+  Side Character 2 Appearance: ${promptValues.sideCharacter2Appearance || 'N/A'}
+  Side Character 2 Type: ${promptValues.sideCharacter2Type || 'N/A'}`;
 
   // The current prompt to display (either auto-generated or manually edited)
   const promptText =
@@ -141,7 +141,11 @@ const ArtTab = () => {
       </Box>
 
       {/* Style Modal Button */}
-      <Button variant="contained" onClick={handleOpenStyleModal}>
+      <Button
+        variant="contained"
+        onClick={handleOpenStyleModal}
+        sx={{ marginTop: 2 }}
+      >
         Add New Style
       </Button>
 
@@ -200,6 +204,23 @@ const ArtTab = () => {
         }}
         onChange={isEditMode ? e => setManualPrompt(e.target.value) : undefined}
       />
+
+      <Box
+        sx={{
+          marginTop: '1rem',
+          marginBottom: '1rem',
+          display: 'flex',
+          gap: 2,
+        }}
+      >
+        <Button variant="contained">Generate</Button>
+        <Button variant="outlined" color="warning">
+          Return
+        </Button>
+        <Button variant="outlined" color="error">
+          Reset
+        </Button>
+      </Box>
     </Box>
   );
 };

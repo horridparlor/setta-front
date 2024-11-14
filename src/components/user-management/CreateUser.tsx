@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import { useTranslation } from 'react-i18next';
 import { createUser } from '../../api/userManagementApi';
-import { listRoles } from '../../api/rolesApi';
+import { listRoles, createRole } from '../../api/rolesApi';
 import { UserRole } from '../../api/types.ts';
 
 const defaultRoles: string[] = [
@@ -123,7 +123,9 @@ const UserCreation = () => {
           name: customRoleName,
           accessRights: filteredAccessRights,
         };
-        console.log('Role created:', roleData);
+        const response2 = await createRole(roleData);
+        customRoleId = response2?.data?.roleId;
+
         alert('Custom role created successfully!');
       } catch (error) {
         console.error('Failed to create custom role:', error);

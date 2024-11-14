@@ -8,10 +8,11 @@ import {
   Button,
 } from '@mui/material';
 import React from 'react';
+import { UserWithRole } from './userUsersAndRoles';
 
 interface DeleteUserDialogProps {
   open: boolean;
-  user: { id: number; name: string; role: string } | null;
+  user: UserWithRole | null;
   onClose: () => void;
   onConfirm: (userId: number) => void;
 }
@@ -29,8 +30,12 @@ const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
       <DialogTitle>Confirm Deletion</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to delete user <strong>{user.name}</strong> with
-          role <strong>{user.role}</strong>? This action cannot be undone.
+          Are you sure you want to delete user{' '}
+          <strong>
+            {user.firstname} {user.lastname}
+          </strong>{' '}
+          with role <strong>{user.role?.name ?? 'Unkown role name'}</strong>?
+          This action cannot be undone.
         </DialogContentText>
       </DialogContent>
       <DialogActions>

@@ -39,4 +39,4 @@ dist-ssr
 
 # Generated API files
 .api/
-src/api/schema.d.ts
+# src/api/schema.d.ts <- this should be kept in version control to avoid type errors in different branches

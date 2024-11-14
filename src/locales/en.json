@@ -8,6 +8,8 @@
   "AUTHENTICATED": "Authenticated: {{firstName}} {{lastName}}",
   "CANCEL": "Cancel",
   "CREATE_A_NEW_USER": "Create a new user",
+  "CREATE_A_DECK_WITH_THIS_CARD": "Create a deck with this card",
+  "UPDATE_CHANGES": "Update changes",
   "DISCARD_CHANGES": "Discard changes",
   "COMMON_ACCESS_RIGHTS": "Common access rights",
   "ROLE_AND_ACCESS_RIGHTS": "Role and access rights",

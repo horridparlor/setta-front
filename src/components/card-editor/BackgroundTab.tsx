@@ -11,7 +11,6 @@ import {
   InputAdornment,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
-import { CardType } from '../../types/card';
 import { SelectChangeEvent } from '@mui/material/Select'; // Import correct SelectChangeEvent
 
 interface BackgroundTabProps {
@@ -25,7 +24,7 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({
 }) => {
   const [backgroundDescription, setBackgroundDescription] =
     useState<string>('');
-  const [selectedType, setSelectedType] = useState<string>(CardType.MONSTER);
+  const [selectedType, setSelectedType] = useState<string>('');
 
   // Transmit the default background type to the promptbox
   useEffect(() => {
@@ -81,13 +80,9 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({
             label="Type"
             onChange={handleTypeChange} // Correct handler with SelectChangeEvent type
           >
-            {Object.values(CardType)
-              .filter(value => value !== CardType.NONE)
-              .map(cardType => (
-                <MenuItem key={cardType} value={cardType}>
-                  {cardType}
-                </MenuItem>
-              ))}
+            <MenuItem value="Indoors">Indoors</MenuItem>
+            <MenuItem value="Outdoors">Outdoors</MenuItem>
+            <MenuItem value="Abstract">Abstract</MenuItem>
           </Select>
         </FormControl>
       </Box>

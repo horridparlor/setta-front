@@ -14,27 +14,27 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 import { SelectChangeEvent } from '@mui/material/Select';
 
-interface SideCharacterTabProps {
-  updateSideCharacterValues: (values: Partial<any>) => void; // Thistransmits side character values
+interface SideCharacter2TabProps {
+  updateSideCharacter2Values: (values: Partial<any>) => void; // Thistransmits side character values
 }
 
-const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
-  updateSideCharacterValues,
+const SideCharacter2Tab: React.FC<SideCharacter2TabProps> = ({
+  updateSideCharacter2Values,
 }) => {
-  const [sideCharacterFields, setSideCharacterFields] = useState({
-    sideCharacterName: '',
-    sideCharacterRace: '',
-    sideCharacterGender: '',
-    sideCharacterAge: '',
-    sideCharacterType: '',
-    sideCharacterAppearance: '',
-    sideCharacterTool: '',
-    sideCharacterAction: '',
+  const [sideCharacter2Fields, setSideCharacter2Fields] = useState({
+    sideCharacter2Name: '',
+    sideCharacter2Race: '',
+    sideCharacter2Gender: '',
+    sideCharacter2Age: '',
+    sideCharacter2Type: '',
+    sideCharacter2Appearance: '',
+    sideCharacter2Tool: '',
+    sideCharacter2Action: '',
   });
 
   // On component mount, transmit the default values
   useEffect(() => {
-    updateSideCharacterValues(sideCharacterFields);
+    updateSideCharacter2Values(sideCharacter2Fields);
   }, []);
 
   // Function to handle input changes for text fields and dropdowns
@@ -46,21 +46,21 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
         | SelectChangeEvent<string>
     ) => {
       const newValue = event.target.value as string;
-      setSideCharacterFields(prevFields => ({
+      setSideCharacter2Fields(prevFields => ({
         ...prevFields,
         [field]: newValue,
       }));
-      updateSideCharacterValues({ [field]: newValue }); // Transmit the updated values
+      updateSideCharacter2Values({ [field]: newValue }); // Transmit the updated values
     };
 
   const clearField = (field: string) => () => {
-    setSideCharacterFields(prevFields => ({ ...prevFields, [field]: '' }));
-    updateSideCharacterValues({ [field]: '' });
+    setSideCharacter2Fields(prevFields => ({ ...prevFields, [field]: '' }));
+    updateSideCharacter2Values({ [field]: '' });
   };
 
   return (
     <Box>
-      <Typography variant="h6">Side Character</Typography>
+      <Typography variant="h6">Side Character 2</Typography>
 
       <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
         <Button variant="outlined" color="error">
@@ -75,12 +75,12 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
           variant="outlined"
           placeholder="Side Character Name"
           label="Name"
-          value={sideCharacterFields.sideCharacterName}
-          onChange={handleInputChange('sideCharacterName')}
+          value={sideCharacter2Fields.sideCharacter2Name}
+          onChange={handleInputChange('sideCharacter2Name')}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={clearField('sideCharacterName')}>
+                <IconButton onClick={clearField('sideCharacter2Name')}>
                   <ClearIcon />
                 </IconButton>
               </InputAdornment>
@@ -96,12 +96,12 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
           variant="outlined"
           placeholder="What does the side character look like?"
           label="Appearance"
-          value={sideCharacterFields.sideCharacterAppearance}
-          onChange={handleInputChange('sideCharacterAppearance')}
+          value={sideCharacter2Fields.sideCharacter2Appearance}
+          onChange={handleInputChange('sideCharacter2Appearance')}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={clearField('sideCharacterAppearance')}>
+                <IconButton onClick={clearField('sideCharacter2Appearance')}>
                   <ClearIcon />
                 </IconButton>
               </InputAdornment>
@@ -114,9 +114,9 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
         <InputLabel id="type-selector-label">Type</InputLabel>
         <Select
           labelId="type-selector-label"
-          value={sideCharacterFields.sideCharacterType}
+          value={sideCharacter2Fields.sideCharacter2Type}
           label="Type"
-          onChange={handleInputChange('Charactertype')}
+          onChange={handleInputChange('Character2type')}
         >
           <MenuItem value="Supporting">Supporting</MenuItem>
           <MenuItem value="Antagonist">Antagonist</MenuItem>
@@ -127,4 +127,4 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
   );
 };
 
-export default SideCharacterTab;
+export default SideCharacter2Tab;
