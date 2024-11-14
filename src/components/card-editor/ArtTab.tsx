@@ -204,23 +204,6 @@ const ArtTab = () => {
         }}
         onChange={isEditMode ? e => setManualPrompt(e.target.value) : undefined}
       />
-
-      <Box
-        sx={{
-          marginTop: '1rem',
-          marginBottom: '1rem',
-          display: 'flex',
-          gap: 2,
-        }}
-      >
-        <Button variant="contained">Generate</Button>
-        <Button variant="outlined" color="warning">
-          Return
-        </Button>
-        <Button variant="outlined" color="error">
-          Reset
-        </Button>
-      </Box>
     </Box>
   );
 };
