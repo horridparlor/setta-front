@@ -1,33 +1,64 @@
-import React from 'react';
+import { useState } from 'react';
 import {
   Box,
   IconButton,
   List,
   ListItem,
   ListItemText,
-  Tooltip,
   Typography,
+  Collapse,
+  Button,
 } from '@mui/material';
-import { Visibility } from '@mui/icons-material';
+import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
-const HiddenTab: React.FC = () => {
-  // mock data
-  const testCharacters = [{ who: 'Who1' }, { who: 'Who2' }, { who: 'Who3' }];
+interface HiddenTabProps {
+  hiddenCharacters: { who: string; prompt: string; values: any }[];
+  onRestore: (index: number) => void; // Pass index for restoration
+}
+
+const HiddenTab: React.FC<HiddenTabProps> = ({
+  hiddenCharacters,
+  onRestore,
+}) => {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  const handleToggle = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
+  };
 
   return (
     <Box>
       <Typography variant="h6">Hidden Characters</Typography>
       <List>
-        {testCharacters.map((character, index) => (
-          <ListItem key={index}>
-            <ListItemText>{character.who}</ListItemText>
-            {/*Button to unhide characters */}
-            <Tooltip title="Unhide">
-              <IconButton>
-                <Visibility />
+        {hiddenCharacters.map((character, index) => (
+          <Box key={index}>
+            <ListItem>
+              <ListItemText primary={character.who} />
+              <IconButton onClick={() => handleToggle(index)}>
+                {expandedIndex === index ? <ExpandLess /> : <ExpandMore />}
               </IconButton>
-            </Tooltip>
-          </ListItem>
+            </ListItem>
+            <Collapse in={expandedIndex === index} timeout="auto">
+              <Box
+                sx={{
+                  p: 2,
+                  border: 1,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                }}
+              >
+                <Typography
+                  sx={{ whiteSpace: 'pre-line', wordBreak: 'break-word' }}
+                >
+                  {character.prompt}
+                </Typography>
+                <Button variant="outlined" onClick={() => onRestore(index)}>
+                  Restore
+                </Button>
+              </Box>
+            </Collapse>
+          </Box>
         ))}
       </List>
     </Box>
