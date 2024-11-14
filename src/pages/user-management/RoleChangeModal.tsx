@@ -106,7 +106,6 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
                 );
               }}
             >
-              <MenuItem value={-1}>Show All</MenuItem>
               {roles.map(role => (
                 <MenuItem key={role.id} value={role.id}>
                   {role.name}
