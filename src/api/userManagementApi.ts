@@ -36,7 +36,6 @@ export const fetchLoggedInUser = async () => {
     }
 
     if (response.data) {
-      console.log('Fetched User Data:', response.data);
       return response.data; // This is the logged-in user's data object
     } else {
       console.error('Unexpected response format:', response);
@@ -64,7 +63,6 @@ export const fetchUsers = async () => {
     }
 
     if (response.data) {
-      console.log('Fetched Data:', response.data);
       return response.data.users;
     } else {
       console.error('Unexpected response format:', response);
