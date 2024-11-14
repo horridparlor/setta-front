@@ -38,7 +38,7 @@ export const RoleTable: React.FC<RoleTableProps> = () => {
       field: 'custom',
       headerName: 'Type',
       flex: 1,
-      renderCell: params => {
+      renderCell: _params => {
         return <span>Role types</span>;
       },
     },
@@ -47,7 +47,7 @@ export const RoleTable: React.FC<RoleTableProps> = () => {
       field: 'options',
       headerName: 'Options',
       flex: 1,
-      renderCell: params => (
+      renderCell: _params => (
         <>
           <IconButton>
             <Edit />
