@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { UserWithRole } from '../../pages/user-management/userUsersAndRoles';
+import { UserWithRole } from './userUsersAndRoles';
 import { UserRole } from '../../api/types';
 
 interface RoleChangeModalProps {

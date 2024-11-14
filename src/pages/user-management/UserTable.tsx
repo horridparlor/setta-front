@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import { UserWithRole, useUsersWithRoles } from './userUsersAndRoles';
-import RoleChangeModal from '../../components/common/RoleChangeModal';
+import RoleChangeModal from './RoleChangeModal';
 import DeleteUserDialog from './DeleteUserDialog';
 import { deleteUser } from '../../api/userManagementApi';
 
