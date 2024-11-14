@@ -43,11 +43,27 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   const [showSelect, setShowSelect] = useState<boolean>(false);
   const [user, setUser] = useState<string>('');
   const [isFieldsActive, setFieldsActive] = useState<boolean>(false);
+  const [hiddenCharacters, setHiddenCharacters] = useState<
+    { who: string; prompt: string; values: any }[]
+  >([]);
+  const defaultCharacterFields = {
+    characterName: '',
+    race: 'Human',
+    gender: 'Male',
+    age: 'Young',
+    charactertype: 'Main',
+    appearance: '',
+    tool: '',
+    inherited_tool: false,
+    action: '',
+    search: '',
+    who: '',
+  };
 
   // On component mount, this transmits the default values to the prompt object
   useEffect(() => {
     updatePromptValues(characterFields);
-  }, []);
+  }, [characterFields, updatePromptValues]);
 
   useEffect(() => {
     setFieldsActive(
@@ -55,6 +71,38 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
       characterFields.search.trim() !== '' || characterFields.who.trim() !== ''
     );
   }, [characterFields.search, characterFields.who]);
+
+  // Function to handle restoring a character from the hidden characters list
+  const handleRestore = (index: number) => {
+    const characterToRestore = hiddenCharacters[index];
+    setCharacterFields(characterToRestore.values);
+    updatePromptValues(characterToRestore.values);
+
+    // Remove the character from hiddenCharacters
+    setHiddenCharacters(prevHiddenCharacters =>
+      prevHiddenCharacters.filter((_, i) => i !== index)
+    );
+  };
+
+  // Function to move a character to the hidden tab
+  const handleDeleteCharacter = () => {
+    const newHiddenCharacter = {
+      who: characterFields.who,
+      prompt: `Character: ${characterFields.characterName}
+      Race: ${characterFields.race}
+      Gender: ${characterFields.gender}
+      Age: ${characterFields.age}
+      Type: ${characterFields.charactertype}
+      Appearance: ${characterFields.appearance}
+      Tool: ${characterFields.tool}`,
+      values: { ...characterFields },
+    };
+
+    // Add to hidden characters
+    setHiddenCharacters(prevState => [...prevState, newHiddenCharacter]);
+    // Clear fields
+    setCharacterFields(defaultCharacterFields);
+  };
 
   // Function to handle input changes for text fields and dropdowns
   const handleInputChange =
@@ -131,13 +179,23 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
         <Typography variant="h6">Main Character</Typography>
 
         <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
-          <Button variant="outlined" color="error">
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleDeleteCharacter}
+          >
             Delete Character
           </Button>
         </Box>
 
-        <Box>
-          <Typography variant="subtitle1">Character</Typography>
+        <Typography variant="subtitle1">Character</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            marginBottom: 2,
+          }}
+        >
           <TextField
             fullWidth
             variant="outlined"
@@ -154,9 +212,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
               ),
             }}
           />
-        </Box>
 
-        <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
           <FormControlLabel
             control={
               <Checkbox
@@ -167,21 +223,19 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
             label="Impersonate"
           />
 
-          {/*If impersonate checked, select user and style */}
+          {/*If impersonate checked, select user */}
           {showSelect && (
-            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
-              <FormControl fullWidth>
-                <InputLabel id="select-user">Select User</InputLabel>
-                <Select
-                  labelId="select-user"
-                  value={user}
-                  label="User"
-                  onChange={handleUserSelectChange}
-                >
-                  <MenuItem value="User">Users coming soon...</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+            <FormControl fullWidth>
+              <InputLabel id="select-user">Select User</InputLabel>
+              <Select
+                labelId="select-user"
+                value={user}
+                label="User"
+                onChange={handleUserSelectChange}
+              >
+                <MenuItem value="User">Users coming soon...</MenuItem>
+              </Select>
+            </FormControl>
           )}
         </Box>
 
@@ -220,11 +274,6 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
               ),
             }}
           />
-          {characterFields.characterName && (
-            <Button variant="contained" color="primary">
-              Save Character
-            </Button>
-          )}
         </Box>
 
         <Box sx={{ marginBottom: '1rem' }}>
@@ -378,7 +427,10 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           display: characterSubTabId === HIDDEN_TAB ? 'block' : 'none',
         }}
       >
-        <HiddenTab />
+        <HiddenTab
+          hiddenCharacters={hiddenCharacters}
+          onRestore={handleRestore}
+        />
       </Box>
     </Box>
   );
