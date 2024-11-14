@@ -90,7 +90,6 @@ export const UserTable: React.FC<UserTableProps> = () => {
       .filter(user => user.roleId === role?.id)
       .map(user => user.id);
     setSelectedUserRows(newSelection);
-    console.log('New selection:', newSelection);
   };
 
   const userColumns: GridColDef<UserWithRole>[] = [
