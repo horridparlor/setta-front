@@ -2,37 +2,63 @@ import {
   Box,
   Button,
   Checkbox,
-  Divider,
   FormControl,
   FormControlLabel,
-  FormGroup,
   Grid2,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ConfirmationDialog from '../common/ConfirmationDialog';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import { useTranslation } from 'react-i18next';
 import { createUser } from '../../api/userManagementApi';
-import { listRoles, createRole } from '../../api/rolesApi';
-import { UserRole } from '../../api/types.ts';
+import { createRole } from '../../api/rolesApi';
+import { AccessRights, UserRole } from '../../api/types.ts';
+import { RoleAccessRightsCheckboxesWidget } from './RoleCheckboxesWidget.tsx';
+import { useUsersWithRoles } from '../../pages/user-management/userUsersAndRoles.tsx';
 
-const defaultRoles: string[] = [
-  'SuperAdmin',
-  'Admin',
-  'Designer',
-  'Releaser',
-  'Custom role',
-];
-const adminCheckboxLabels = [
+export type AccessRightsRequired = Required<AccessRights>;
+export type AccessRightName = keyof AccessRightsRequired;
+
+export const EMPTY_ACCESS_RIGHTS: AccessRightsRequired = Object.freeze({
+  canManageAdmins: false,
+  canManageUsers: false,
+  canRelease: false,
+  canMessageAdmins: false,
+  canClearContent: false,
+  hasUnlimitedTokens: false,
+  canMassExport: false,
+  canShareTokens: false,
+  isRegularUser: false,
+  canMessage: false,
+  isEmployee: false,
+  canCreateContent: false,
+  isPriorityUser: false,
+  canGenerateImages: false,
+  isContentCreator: false,
+  autoRefillTokens: false,
+  isSuperAdmin: false,
+});
+
+export const createFullAccessRightsFromPartial = (
+  accessRights: AccessRights
+): AccessRightsRequired => {
+  const populated: AccessRightsRequired = { ...EMPTY_ACCESS_RIGHTS };
+  for (const key in accessRights) {
+    populated[key as AccessRightName] =
+      accessRights[key as AccessRightName] ?? false;
+  }
+
+  return populated;
+};
+
+export const ADMIN_LEVEL_ACCESS_RIGHTS: AccessRightName[] = [
   'canManageAdmins',
-  'canManageImageGeneration',
   'canManageUsers',
   'canRelease',
   'canMessageAdmins',
@@ -40,9 +66,9 @@ const adminCheckboxLabels = [
   'hasUnlimitedTokens',
   'canMassExport',
   'canShareTokens',
-  'canManageCards',
 ];
-const commonCheckboxLabels = [
+
+export const COMMON_ACCESS_RIGHTS: AccessRightName[] = [
   'isRegularUser',
   'canMessage',
   'isEmployee',
@@ -53,12 +79,15 @@ const commonCheckboxLabels = [
   'autoRefillTokens',
 ];
 
+export const isCommonAccessRight = (accessRight: AccessRightName): boolean =>
+  COMMON_ACCESS_RIGHTS.includes(accessRight);
+
+export const isAdminAccessRight = (accessRight: AccessRightName): boolean =>
+  ADMIN_LEVEL_ACCESS_RIGHTS.includes(accessRight);
+
 export interface UserCreationRef {
   handleSave: () => void;
 }
-type CheckboxState = {
-  [label: string]: boolean;
-};
 const UserCreation = () => {
   const { t } = useTranslation();
   const dialogRef = useRef(null);
@@ -70,61 +99,97 @@ const UserCreation = () => {
   const [userID] = useState('');
   const [password] = useState('testi');
   const [penName, setPenName] = useState('');
-  const [role, setRole] = useState('');
-  const [accessRights, setAccessRights] = useState<Record<string, boolean>>({});
+  const [accessRights, setAccessRights] = useState<AccessRightsRequired>({
+    canManageAdmins: false,
+    canManageUsers: false,
+    canRelease: false,
+    canMessageAdmins: false,
+    canClearContent: false,
+    hasUnlimitedTokens: false,
+    canMassExport: false,
+    canShareTokens: false,
+    isRegularUser: false,
+    canMessage: false,
+    isEmployee: false,
+    canCreateContent: false,
+    isPriorityUser: false,
+    canGenerateImages: false,
+    isContentCreator: false,
+    autoRefillTokens: false,
+    isSuperAdmin: false,
+  });
+  const { roles } = useUsersWithRoles();
   const [open, setOpen] = useState(false);
   const [isActive] = useState(true);
-  const [roleId, setRoleId] = useState<number | undefined>();
   const userName = `${firstName}.${lastName}`.toLowerCase();
-  const [roles, setRoles] = useState<UserRole[]>([]);
   const [customRoleName, setCustomRoleName] = useState('');
-  const [isCustomRole, setIsCustomRole] = useState(false);
+  const [selectedExistingRole, _setSelectedExistingRole] =
+    useState<UserRole | null>(null);
 
-  // Fetch roles from the backend
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await listRoles();
+  console.log('Role', selectedExistingRole);
 
-        if (Array.isArray(response)) {
-          setRoles(response);
-        } else if (response && Array.isArray(response)) {
-          setRoles(response);
-        } else {
-          console.error('Roles data is missing in the response:', response);
-        }
-      } catch (error) {
-        console.error('Failed to fetch roles:', error);
+  // Handle setting the accessrights fields to those of the role if a role is selected
+  const handleRoleSelect = useCallback((newRole: UserRole | null) => {
+    if (newRole) {
+      console.log('Updating access rights for changed role', newRole);
+      setAccessRights(createFullAccessRightsFromPartial(newRole.accessRights));
+      setCustomRoleName('');
+    }
+    _setSelectedExistingRole(newRole);
+  }, []);
+
+  // Handle copying access rights from a selected role
+  const copyAccessRightsFromRole = useCallback(
+    (copyFromRole: UserRole | null) => {
+      if (copyFromRole) {
+        console.log('Copying access rights from role', copyFromRole);
+        setAccessRights(
+          createFullAccessRightsFromPartial(copyFromRole.accessRights)
+        );
+        _setSelectedExistingRole(null);
       }
-    };
+    },
+    []
+  );
 
-    fetchRoles();
-  }, []);
-
+  // Handle managing the isSuperAdmin field in access rights when other fields are changed
+  // This should be done in the backend, but alas
   useEffect(() => {
-    const initialAccessRights = [
-      ...adminCheckboxLabels,
-      ...commonCheckboxLabels,
-    ].reduce((acc, label) => ({ ...acc, [label]: false }), {});
-    setAccessRights(initialAccessRights);
-  }, []);
+    const everythingRequiredForSuperAdminIsSelected = Object.entries(
+      accessRights
+    ).every(v => Boolean(v[1]) || v[0] === 'isSuperAdmin');
+
+    if (
+      everythingRequiredForSuperAdminIsSelected &&
+      accessRights.isSuperAdmin === false
+    ) {
+      setAccessRights(prev => ({ ...prev, isSuperAdmin: true }));
+    } else if (
+      !everythingRequiredForSuperAdminIsSelected &&
+      accessRights.isSuperAdmin === true
+    ) {
+      setAccessRights(prev => ({ ...prev, isSuperAdmin: false }));
+    }
+  }, [accessRights]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const filteredAccessRights = { ...accessRights };
-    delete filteredAccessRights.isSuperAdmin;
 
     const username = `${firstName}.${lastName}`.toLowerCase();
-    let customRoleId;
 
+    const isCustomRole = !selectedExistingRole;
+    let roleId = selectedExistingRole?.id;
+
+    // Create a new role before the user if a custom set of access rights was selected
     if (isCustomRole && customRoleName) {
       try {
         const roleData = {
           name: customRoleName,
           accessRights: filteredAccessRights,
         };
-        const response2 = await createRole(roleData);
-        customRoleId = response2?.data?.roleId;
+        const roleCreateResponse = await createRole(roleData);
+        roleId = roleCreateResponse?.data?.roleId;
 
         alert('Custom role created successfully!');
       } catch (error) {
@@ -144,110 +209,13 @@ const UserCreation = () => {
         email,
         phoneNumber,
         isActive,
-        roleId: customRoleId || roleId,
+        roleId,
         accessRights: filteredAccessRights,
       });
       alert('User created successfully!');
     } catch (error) {
       console.error('Error creating user:', error);
       alert(`Failed to create user: ${error}`);
-    }
-  };
-
-  // Admin level access rights
-  const [checkedAdminBoxes, setCheckedAdminBoxes] = useState<CheckboxState>(
-    adminCheckboxLabels.reduce((acc, label) => ({ ...acc, [label]: false }), {})
-  );
-
-  // Common level access rights
-  const [checkedCommonBoxes, setCheckedCommonBoxes] = useState<CheckboxState>(
-    commonCheckboxLabels.reduce(
-      (acc, label) => ({ ...acc, [label]: false }),
-      {}
-    )
-  );
-
-  const isAllAdminSelected = Object.values(checkedAdminBoxes).every(
-    checked => checked
-  );
-
-  const isAllCommonSelected = Object.values(checkedCommonBoxes).every(
-    checked => checked
-  );
-
-  const handleAdminCheckboxChange = (label: string) => {
-    setCheckedAdminBoxes(prev => {
-      const newCheckedState = !prev[label];
-      const updatedAdminBoxes = { ...prev, [label]: newCheckedState };
-      setAccessRights(prevAccessRights => ({
-        ...prevAccessRights,
-        [label]: newCheckedState,
-      }));
-
-      return updatedAdminBoxes;
-    });
-  };
-
-  const handleCommonCheckboxChange = (label: string) => {
-    setCheckedCommonBoxes(prev => {
-      const newCheckedState = !prev[label];
-      const updatedCommonBoxes = { ...prev, [label]: newCheckedState };
-      setAccessRights(prevAccessRights => ({
-        ...prevAccessRights,
-        [label]: newCheckedState,
-      }));
-
-      return updatedCommonBoxes;
-    });
-  };
-
-  const handleAdminSelectAllChange = () => {
-    const newCheckedState = !isAllAdminSelected;
-    const updatedBoxes = adminCheckboxLabels.reduce(
-      (acc, label) => ({ ...acc, [label]: newCheckedState }),
-      {}
-    );
-    const updatedAccessRights = {
-      ...accessRights,
-      ...updatedBoxes,
-      ...updatedBoxes,
-      isSuperAdmin: newCheckedState,
-    };
-
-    setCheckedAdminBoxes(updatedBoxes);
-    setCheckedCommonBoxes(updatedBoxes);
-    if (!isAllCommonSelected) {
-      handleCommonSelectAllChange();
-    }
-    setAccessRights(updatedAccessRights);
-
-    // Set roleId to 2 if all are checked, or reset if not
-    // this needs updating to suit the customer wihses of
-    setRoleId(newCheckedState ? 2 : undefined);
-    setCheckedAdminBoxes(updatedBoxes);
-  };
-
-  const handleCommonSelectAllChange = () => {
-    const newCheckedState = !isAllCommonSelected;
-    const updatedBoxes = commonCheckboxLabels.reduce(
-      (acc, label) => ({ ...acc, [label]: newCheckedState }),
-      {}
-    );
-    setCheckedCommonBoxes(updatedBoxes);
-  };
-
-  const handleRoleChange = (event: SelectChangeEvent) => {
-    const selectedRoleName = event.target.value;
-    setRole(selectedRoleName);
-
-    const selectedRole = roles.find(r => r.name === selectedRoleName);
-    if (selectedRole) {
-      setAccessRights(selectedRole.accessRights);
-      setRoleId(selectedRole.id);
-      setIsCustomRole(false);
-    } else if (selectedRoleName === 'Custom role') {
-      setAccessRights({});
-      setIsCustomRole(true);
     }
   };
 
@@ -386,19 +354,25 @@ const UserCreation = () => {
           <Box sx={{ display: 'flex', gap: 2 }}>
             <FormControl fullWidth>
               <InputLabel id="select-role">{t('SELECT_ROLE')}</InputLabel>
-              <Select
+              <Select<number>
                 required
-                labelId="select-role"
                 id="select-role"
-                value={role}
-                label="Select role"
-                onChange={handleRoleChange}
+                label="select-role"
+                value={selectedExistingRole?.id ?? -1}
+                onChange={event => {
+                  handleRoleSelect(
+                    roles.find(role => role.id === event.target.value) ?? null
+                  );
+                }}
               >
                 {roles.map(role => (
                   <MenuItem key={role.id} value={role.id}>
-                    {role.name}
+                    #{role.id} {role.name}
                   </MenuItem>
                 ))}
+                <MenuItem value={-1} sx={{ display: 'none' }}>
+                  Custom role
+                </MenuItem>
               </Select>
             </FormControl>
             <FormControl fullWidth>
@@ -408,148 +382,58 @@ const UserCreation = () => {
               <Select
                 labelId="copy-access-rights"
                 id="copy-access-rights"
-                value={role}
-                onChange={handleRoleChange}
                 label={t('COPY_ACCESS_RIGHTS_FROM_AN_EXISTING_ROLE')}
+                value={-1}
               >
-                {defaultRoles.map(role => (
-                  <MenuItem key={role} value={role}>
-                    {role}
+                {roles.map(role => (
+                  <MenuItem
+                    key={role.id}
+                    value={role.id}
+                    onClick={() => {
+                      copyAccessRightsFromRole(role);
+                    }}
+                  >
+                    {role.name}
                   </MenuItem>
                 ))}
+                <MenuItem value={-1} sx={{ display: 'none' }}>
+                  {t('SELECT_ROLE')}
+                </MenuItem>
               </Select>
             </FormControl>
           </Box>
 
           <Box sx={{ mt: 2 }}></Box>
 
-          <Typography
-            variant="caption"
+          <RoleAccessRightsCheckboxesWidget
+            value={accessRights}
+            onChange={v => {
+              setAccessRights(v);
+              handleRoleSelect(null);
+            }}
+          />
+          <Box
             sx={{
-              position: 'absolute',
-              backgroundColor: 'white',
-              px: 1,
-              transform: 'translate(10px, -12px)',
-              zIndex: 1,
+              marginTop: 3,
+              flexDirection: 'column',
+              display: selectedExistingRole ? 'none' : 'flex',
             }}
           >
-            {t('ADMIN_LEVEL_ACCESS_RIGHTS')}
-          </Typography>
-          <FormControl
-            fullWidth
-            sx={{
-              border: '1px solid red',
-              borderRadius: '4px',
-              paddingTop: '8px',
-              paddingLeft: '8px',
-              paddingBottom: '8px',
-            }}
-          >
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isAllAdminSelected}
-                    onChange={handleAdminSelectAllChange}
-                  />
-                }
-                label={'isSuperAdmin'}
-              />
-              <Divider />
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: 1,
-                }}
-              >
-                {adminCheckboxLabels.map(label => (
-                  <FormControlLabel
-                    key={label}
-                    control={
-                      <Checkbox
-                        checked={checkedAdminBoxes[label]}
-                        onChange={() => handleAdminCheckboxChange(label)}
-                      />
-                    }
-                    label={t(label, { defaultValue: label })}
-                  />
-                ))}
-              </Box>
-            </FormGroup>
-          </FormControl>
-
-          <Box sx={{ mt: 2 }}>
-            <Typography
-              variant="caption"
-              sx={{
-                position: 'absolute',
-                backgroundColor: 'white',
-                px: 1,
-                transform: 'translate(10px, -12px)',
-                zIndex: 1,
-              }}
-            >
-              {t('COMMON_ACCESS_RIGHTS')}
-            </Typography>
-            <FormControl
-              fullWidth
-              sx={{
-                border: '1px solid blue',
-                borderRadius: '4px',
-                paddingTop: '8px',
-                paddingLeft: '8px',
-                paddingBottom: '8px',
-              }}
-            >
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isAllCommonSelected}
-                      onChange={handleCommonSelectAllChange}
-                    />
-                  }
-                  label={t('SELECT_ALL')}
-                />
-                <Divider />
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: 1,
-                  }}
-                >
-                  {commonCheckboxLabels.map(label => (
-                    <FormControlLabel
-                      key={label}
-                      control={
-                        <Checkbox
-                          checked={checkedCommonBoxes[label]}
-                          onChange={() => handleCommonCheckboxChange(label)}
-                        />
-                      }
-                      label={t(label, { defaultValue: label })}
-                    />
-                  ))}
-                </Box>
-              </FormGroup>
-            </FormControl>
-          </Box>
-          <Box sx={{ marginTop: 3, display: 'flex' }}>
             <TextField
               fullWidth
               label="Custom Role Name"
               value={customRoleName}
+              disabled={!!selectedExistingRole}
+              required={!selectedExistingRole}
               onChange={e => setCustomRoleName(e.target.value)}
               placeholder="Enter custom role name"
             />
-          </Box>
-          <Box sx={rowContainerStyle}>
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Save as a new role"
-            />
+            <Box sx={rowContainerStyle}>
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Save as a new role"
+              />
+            </Box>
           </Box>
           <Grid2 container sx={{ justifyContent: 'flex-end', marginTop: 2 }}>
             <Button
