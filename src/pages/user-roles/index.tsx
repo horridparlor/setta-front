@@ -139,7 +139,7 @@ const UserRolesPage = (props: UserRolesPageProps) => {
         titleText={t('ARE_YOU_SURE')}
         contentText={t('ANY_UNSAVED_CHANGES_WILL_BE_LOST')}
         cancelText={t('CANCEL')}
-        discardText={t('DISCARD_CHANGES')}
+        confirmText={t('DISCARD_CHANGES')}
       />
     </Box>
   );
