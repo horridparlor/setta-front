@@ -130,7 +130,9 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
             mb: 2,
           }}
         >
-          <Typography>Select a new role for selected users:</Typography>
+          <Typography sx={{ mb: '12px' }}>
+            Select a new role for selected users:
+          </Typography>
           <FormControl variant="outlined" sx={{ width: '30%' }}>
             <InputLabel id="select-role">Select Role</InputLabel>
             <Select<number>

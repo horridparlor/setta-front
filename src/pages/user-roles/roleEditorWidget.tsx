@@ -5,6 +5,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from '@mui/material';
 import {
   AccessRightsRequired,
@@ -60,6 +61,7 @@ export const RoleEditorWidget: React.FC<RoleEditorWidgetProps> = ({
           display: 'flex',
           flexDirection: 'row',
           gap: 2,
+          paddingBottom: 2,
         }}
       >
         <FormControl fullWidth>
@@ -102,6 +104,9 @@ export const RoleEditorWidget: React.FC<RoleEditorWidgetProps> = ({
           </Select>
         </FormControl>
       </Box>
+      <Typography sx={{ marginBottom: 2 }} variant="h5">
+        {t('SELECT_ACCESS_RIGHTS')}
+      </Typography>
       <RoleAccessRightsCheckboxesWidget
         value={accessRights}
         onChange={v => {

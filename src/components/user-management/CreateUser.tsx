@@ -277,7 +277,6 @@ const UserCreation = () => {
               fullWidth
             />
             <TextField
-              required
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setPhoneNumber(event.target.value);
               }}
@@ -423,12 +422,11 @@ const UserCreation = () => {
               />
             </Box>
           </Box>
-          <Grid2 container sx={{ justifyContent: 'flex-end', marginTop: 2 }}>
-            <Button
-              onClick={handleCancel}
-              variant="outlined"
-              sx={{ marginRight: 2 }}
-            >
+          <Grid2
+            container
+            sx={{ justifyContent: 'flex-end', marginTop: 2, gap: 2 }}
+          >
+            <Button onClick={handleCancel} variant="outlined">
               {t('CANCEL')}
             </Button>
             <Button type="submit" variant="contained">

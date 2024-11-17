@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { Box, Button, Grid2 } from '@mui/material';
+import { Box, Button, Grid2, Typography } from '@mui/material';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { useTranslation } from 'react-i18next';
 import { AccessRights, UserRole } from '../../api/types';
@@ -95,52 +95,76 @@ const UserRolesPage = (props: UserRolesPageProps) => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
         overflowX: 'hidden',
       }}
     >
       <Box sx={{ width: '100%' }}>
         <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
-      <form onSubmit={handleSubmit}>
-        <Box sx={{ margin: '16px' }}>
-          <h1 style={{ marginLeft: 40 }}>{t('CREATE_NEW_ROLE')}</h1>
-          {formState && (
-            <RoleEditorWidget
-              name={formState.name}
-              accessRights={formState.accessRights}
-              onChange={value => {
-                setFormState(prev => {
-                  return {
-                    ...prev,
-                    ...value,
-                  };
-                });
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          overflow: 'auto',
+          p: 2,
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: 'background.paper',
+            p: 2,
+            width: '60vw',
+          }}
+        >
+          <Typography variant="h4" gutterBottom>
+            {t('CREATE_NEW_ROLE')}
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            {formState && (
+              <RoleEditorWidget
+                name={formState.name}
+                accessRights={formState.accessRights}
+                onChange={value => {
+                  setFormState(prev => {
+                    return {
+                      ...prev,
+                      ...value,
+                    };
+                  });
+                }}
+              />
+            )}
+            <Grid2
+              container
+              sx={{
+                justifyContent: 'flex-end',
+                gap: 2,
+                mt: 2,
               }}
-            />
-          )}
-          <Grid2
-            container
-            sx={{ justifyContent: 'flex-end', marginTop: 2, gap: 2 }}
-          >
-            <Button type="button" variant="outlined" onClick={handleCancel}>
-              {t('CANCEL')}
-            </Button>
-            <Button type="submit" variant="contained">
-              {t('SAVE')}
-            </Button>
-          </Grid2>
+            >
+              <Button type="button" variant="outlined" onClick={handleCancel}>
+                {t('CANCEL')}
+              </Button>
+              <Button type="submit" variant="contained">
+                {t('SAVE')}
+              </Button>
+            </Grid2>
+            <Box>
+              <ConfirmationDialog
+                open={confirmExitDialogOpen}
+                handleClose={() => setConfirmExitDialogOpen(false)}
+                handleConfirm={() => navigate(AppPage.UserManagement)}
+                titleText={t('ARE_YOU_SURE')}
+                contentText={t('ANY_UNSAVED_CHANGES_WILL_BE_LOST')}
+                cancelText={t('CANCEL')}
+                confirmText={t('DISCARD_CHANGES')}
+              />
+            </Box>
+          </form>
         </Box>
-      </form>
-      <ConfirmationDialog
-        open={confirmExitDialogOpen}
-        handleClose={() => setConfirmExitDialogOpen(false)}
-        handleConfirm={() => navigate(AppPage.UserManagement)}
-        titleText={t('ARE_YOU_SURE')}
-        contentText={t('ANY_UNSAVED_CHANGES_WILL_BE_LOST')}
-        cancelText={t('CANCEL')}
-        confirmText={t('DISCARD_CHANGES')}
-      />
+      </Box>
     </Box>
   );
 };

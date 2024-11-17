@@ -70,7 +70,7 @@ export const RoleAccessRightsCheckboxesWidget: React.FC<
           border: '1px solid red',
           borderRadius: '4px',
           paddingTop: '8px',
-          paddingLeft: '8px',
+          paddingLeft: '28px',
           paddingBottom: '8px',
         }}
       >
@@ -129,7 +129,7 @@ export const RoleAccessRightsCheckboxesWidget: React.FC<
           border: '1px solid blue',
           borderRadius: '4px',
           paddingTop: '8px',
-          paddingLeft: '8px',
+          paddingLeft: '28px',
           paddingBottom: '8px',
         }}
       >
