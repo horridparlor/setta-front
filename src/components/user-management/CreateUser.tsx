@@ -88,6 +88,7 @@ export const isAdminAccessRight = (accessRight: AccessRightName): boolean =>
 export interface UserCreationRef {
   handleSave: () => void;
 }
+
 const UserCreation = () => {
   const { t } = useTranslation();
   const dialogRef = useRef(null);
@@ -118,15 +119,13 @@ const UserCreation = () => {
     autoRefillTokens: false,
     isSuperAdmin: false,
   });
-  const { roles } = useUsersWithRoles();
+  const { roles, refetchUsersAndRoles } = useUsersWithRoles();
   const [open, setOpen] = useState(false);
   const [isActive] = useState(true);
   const userName = `${firstName}.${lastName}`.toLowerCase();
   const [customRoleName, setCustomRoleName] = useState('');
   const [selectedExistingRole, _setSelectedExistingRole] =
     useState<UserRole | null>(null);
-
-  console.log('Role', selectedExistingRole);
 
   // Handle setting the accessrights fields to those of the role if a role is selected
   const handleRoleSelect = useCallback((newRole: UserRole | null) => {
@@ -174,7 +173,8 @@ const UserCreation = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const filteredAccessRights = { ...accessRights };
+    const filteredAccessRights: AccessRights = { ...accessRights };
+    delete filteredAccessRights.isSuperAdmin;
 
     const username = `${firstName}.${lastName}`.toLowerCase();
 
@@ -213,6 +213,7 @@ const UserCreation = () => {
         accessRights: filteredAccessRights,
       });
       alert('User created successfully!');
+      await refetchUsersAndRoles();
     } catch (error) {
       console.error('Error creating user:', error);
       alert(`Failed to create user: ${error}`);
@@ -226,19 +227,6 @@ const UserCreation = () => {
     navigate(AppPage.UserManagement);
     setOpen(false);
   };
-
-  const fetchAccessRightCopies = () => {
-    try {
-      //this is for copying the accessrights form a selected role but role fetching is nto yet implemented
-      //const response = await fetch()
-    } catch (error) {
-      console.error('Failed to fetch');
-    }
-  };
-
-  useEffect(() => {
-    fetchAccessRightCopies();
-  }, []);
 
   const rowContainerStyle = {
     flexDirection: 'row',

@@ -43,7 +43,11 @@ export const StatusChip: React.FC<StatusChipProps> = ({ isActive }) => (
 );
 
 export const UserTable: React.FC<UserTableProps> = () => {
-  const { usersWithRoles: users, roles, refetchUsers } = useUsersWithRoles();
+  const {
+    usersWithRoles: users,
+    roles,
+    refetchUsersAndRoles: refetchUsers,
+  } = useUsersWithRoles();
   const navigate = useNavigate();
   const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
     null

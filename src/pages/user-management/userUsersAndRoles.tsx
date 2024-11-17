@@ -14,7 +14,7 @@ export const useUsersWithRoles = () => {
       await listRoles()
     ).map(role => ({
       ...role,
-      name: (role.name ?? role.id === 2) ? 'Admin' : 'Standard user',
+      name: role.name ?? (role.id === 2 ? 'Admin' : 'Standard user'),
       // TODO: REMOVE ASAP, THIS IS TEMPORARY BECAUSE THE BACKEND GIVES NULL FOR THE NAME FOR SOME REASON SEND HELP
     }));
     setRoles(roles);
@@ -36,7 +36,11 @@ export const useUsersWithRoles = () => {
   }, []);
 
   const result = useMemo(
-    () => ({ roles, usersWithRoles, refetchUsers: refetchUsersAndRoles }),
+    () => ({
+      roles,
+      usersWithRoles,
+      refetchUsersAndRoles,
+    }),
     [roles, usersWithRoles, refetchUsersAndRoles]
   );
 
