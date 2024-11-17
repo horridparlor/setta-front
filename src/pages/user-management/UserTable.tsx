@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { UserRole } from '../../api/types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import { UserWithRole, useUsersWithRoles } from './userUsersAndRoles';
@@ -41,11 +41,19 @@ export const StatusChip: React.FC<StatusChipProps> = ({ isActive }) => (
 );
 
 export const UserTable: React.FC = () => {
-  const {
-    usersWithRoles: users,
-    roles,
-    refetchUsersAndRoles: refetchUsers,
-  } = useUsersWithRoles();
+  const { usersWithRoles: users, refetchUsersAndRoles: refetchUsers } =
+    useUsersWithRoles();
+
+  // Filter out only roles that are assigned to users
+  const rolesOfUsers = useMemo(() => {
+    const roles: UserRole[] = [];
+    users.forEach(user => {
+      if (user.role && !roles.find(role => role.id === user.roleId)) {
+        roles.push(user.role);
+      }
+    });
+    return roles;
+  }, [users]);
   const navigate = useNavigate();
   const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
     null
@@ -131,7 +139,7 @@ export const UserTable: React.FC = () => {
         return null;
       },
     },
-    { field: 'id', headerName: 'UserID', flex: 1 },
+    { field: 'id', headerName: 'UserID', width: 80 },
     {
       field: 'active',
       headerName: 'Status',
@@ -180,14 +188,14 @@ export const UserTable: React.FC = () => {
                 label="select-role"
                 value={selectedUserRole?.id ?? -1}
                 onChange={event => {
-                  const roleFromId = roles.find(
+                  const roleFromId = rolesOfUsers.find(
                     role => role.id === event.target.value
                   );
                   handleRoleFilterSelect(roleFromId ?? null);
                 }}
               >
                 <MenuItem value={-1}>Show All</MenuItem>
-                {roles.map(role => (
+                {rolesOfUsers.map(role => (
                   <MenuItem key={role.id} value={role.id}>
                     {role.name}
                   </MenuItem>
@@ -223,10 +231,9 @@ export const UserTable: React.FC = () => {
               <RoleChangeModal
                 open={isRoleChangeDialogOpen}
                 onClose={() => setRoleChangeDialogOpen(false)}
-                selectedUsers={users.filter(user =>
+                initialSelectedUsers={users.filter(user =>
                   selectedUserRows.includes(user.id)
                 )}
-                roles={roles}
               />
             )}
           </Box>
@@ -238,9 +245,9 @@ export const UserTable: React.FC = () => {
                   : users
               }
               columns={userColumns}
-              checkboxSelection
               onRowSelectionModelChange={handleUserSelectionChange}
               rowSelectionModel={selectedUserRows}
+              checkboxSelection={selectedUserRows.length > 0}
               // pagination not ready
             />
           </Box>
