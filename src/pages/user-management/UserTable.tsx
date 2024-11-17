@@ -25,8 +25,6 @@ import RoleChangeModal from './RoleChangeModal';
 import DeleteUserDialog from './DeleteUserDialog';
 import { deleteUser } from '../../api/userManagementApi';
 
-export type UserTableProps = {};
-
 export type StatusChipProps = {
   isActive: boolean;
 };
@@ -42,7 +40,7 @@ export const StatusChip: React.FC<StatusChipProps> = ({ isActive }) => (
   </Tooltip>
 );
 
-export const UserTable: React.FC<UserTableProps> = () => {
+export const UserTable: React.FC = () => {
   const {
     usersWithRoles: users,
     roles,

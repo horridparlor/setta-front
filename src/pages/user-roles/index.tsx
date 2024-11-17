@@ -1,36 +1,94 @@
-import { useRef, useState } from 'react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Typography,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import WarningIcon from '@mui/icons-material/Warning';
+import { useCallback, useRef, useState } from 'react';
+import { Box, Button, Grid2 } from '@mui/material';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
-import AccessRightsForm from '../../components/common/AccessRightsForm';
 import { useTranslation } from 'react-i18next';
+import { AccessRights, UserRole } from '../../api/types';
+import {
+  AccessRightsRequired,
+  EMPTY_ACCESS_RIGHTS,
+} from '../../components/user-management/CreateUser';
+import { RoleEditorWidget } from './roleEditorWidget';
+import { useUsersWithRoles } from '../user-management/userUsersAndRoles';
+import { createRole } from '../../api/rolesApi';
+import { useNavigate } from 'react-router';
+import ConfirmationDialog from '../../components/common/ConfirmationDialog';
+import { AppPage } from '../../types/navigation';
+import { toast } from 'react-toastify';
 
 interface UserRolesPageProps {
   refetch: () => Promise<void>;
 }
 
+export type RoleCreationFormState = {
+  id: UserRole['id'] | null;
+  name: UserRole['name'];
+  accessRights: AccessRightsRequired;
+};
+
+const DEFAULT_FORM_STATE: RoleCreationFormState = {
+  id: null,
+  name: '',
+  accessRights: EMPTY_ACCESS_RIGHTS,
+};
 const UserRolesPage = (props: UserRolesPageProps) => {
   const { refetch } = props;
+  const { refetchUsersAndRoles } = useUsersWithRoles();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const homeBarRef = useRef<HomeBarRef>(null);
-  const [open, setOpen] = useState(false);
-  // Toggling between modes for now in the future use roleId props to determine mode
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [formState, setFormState] =
+    useState<RoleCreationFormState>(DEFAULT_FORM_STATE);
 
-  // Toggling between modes for now
-  const handleToggleMode = () => {
-    setIsEditMode(prev => !prev);
-  };
+  const [confirmExitDialogOpen, setConfirmExitDialogOpen] = useState(false);
+
+  const handleCancel = useCallback(() => {
+    const formWasTouched = formState !== DEFAULT_FORM_STATE;
+    if (formWasTouched) {
+      setConfirmExitDialogOpen(true);
+      return;
+    }
+    navigate(AppPage.UserManagement);
+  }, [navigate, formState]);
+
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
+      if (!formState) {
+        toast.error('Form state is not set');
+        return;
+      }
+      if (!formState.name || formState.name.trim().length === 0) {
+        toast.error('Role name cannot be empty');
+        return;
+      }
+      if (!formState.accessRights) {
+        return;
+      }
+      const filteredAccessRights: AccessRights = { ...formState.accessRights };
+      delete filteredAccessRights.isSuperAdmin;
+
+      // If we have no ID, we are creating a new role instead of editing one
+      const isCreatingNewRole = formState.id === null;
+      if (isCreatingNewRole) {
+        try {
+          const roleData = {
+            name: formState.name,
+            accessRights: filteredAccessRights,
+          };
+          const roleCreateResponse = await createRole(roleData);
+          if (roleCreateResponse?.data) {
+            await refetchUsersAndRoles();
+            navigate(AppPage.UserManagement);
+            toast.success('Role created successfully');
+          }
+        } catch (error) {
+          console.error('Failed to create custom role:', error);
+          toast.error('Failed to create role');
+        }
+      }
+    },
+    [formState, refetchUsersAndRoles, navigate]
+  );
 
   return (
     <Box
@@ -44,66 +102,45 @@ const UserRolesPage = (props: UserRolesPageProps) => {
       <Box sx={{ width: '100%' }}>
         <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
-      <h1 style={{ marginLeft: 40 }}>
-        {isEditMode ? t('EDIT_ROLE') : t('CREATE_NEW_ROLE')}
-      </h1>
-      <AccessRightsForm />
-      {isEditMode && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: 10,
-            p: 2,
-          }}
-        >
-          <Button
-            variant="contained"
-            onClick={() => setOpen(true)}
-            color="error"
-            endIcon={<DeleteIcon />}
+      <form onSubmit={handleSubmit}>
+        <Box sx={{ margin: '16px' }}>
+          <h1 style={{ marginLeft: 40 }}>{t('CREATE_NEW_ROLE')}</h1>
+          {formState && (
+            <RoleEditorWidget
+              name={formState.name}
+              accessRights={formState.accessRights}
+              onChange={value => {
+                setFormState(prev => {
+                  return {
+                    ...prev,
+                    ...value,
+                  };
+                });
+              }}
+            />
+          )}
+          <Grid2
+            container
+            sx={{ justifyContent: 'flex-end', marginTop: 2, gap: 2 }}
           >
-            {t('DELETE_USER_ROLE')}
-          </Button>
-          <Dialog open={open} onClose={() => setOpen(false)}>
-            <DialogTitle>{t('ARE_YOU_SURE')}</DialogTitle>
-            <DialogContent>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <WarningIcon color="error" />
-                <DialogContentText sx={{ marginTop: 2 }}>
-                  {t(
-                    'THIS_USER_ROLE_WILL_BE_DELETED_PERMANENTLY_AND_CANNOT_BE_RECOVERED'
-                  )}
-                </DialogContentText>
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpen(false)}>{t('CANCEL')}</Button>
-              <Button onClick={() => setOpen(false)} color="error">
-                {t('DELETE_ROLE')}
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <Typography variant="body2">
-            {t('DELETING_A_USER_ROLE_IS_AN_IRREVERSIBLE_OPERATION')}
-          </Typography>
-          <Typography variant="body2">
-            {t('ONCE_THE_ROLE_HAS_BEEN_DELETED_IT_CANNOT_BE_RECOVERED')}
-          </Typography>
+            <Button type="button" variant="outlined" onClick={handleCancel}>
+              {t('CANCEL')}
+            </Button>
+            <Button type="submit" variant="contained">
+              {t('SAVE')}
+            </Button>
+          </Grid2>
         </Box>
-      )}
-      <Button onClick={handleToggleMode}>
-        {isEditMode ? 'Switch to create mode' : 'Switch to edit mode'}
-      </Button>
+      </form>
+      <ConfirmationDialog
+        open={confirmExitDialogOpen}
+        handleClose={() => setConfirmExitDialogOpen(false)}
+        handleConfirm={() => navigate(AppPage.UserManagement)}
+        titleText={t('ARE_YOU_SURE')}
+        contentText={t('ANY_UNSAVED_CHANGES_WILL_BE_LOST')}
+        cancelText={t('CANCEL')}
+        discardText={t('DISCARD_CHANGES')}
+      />
     </Box>
   );
 };

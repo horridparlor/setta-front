@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ConfirmationDialog from '../common/ConfirmationDialog';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
@@ -21,6 +21,7 @@ import { createRole } from '../../api/rolesApi';
 import { AccessRights, UserRole } from '../../api/types.ts';
 import { RoleAccessRightsCheckboxesWidget } from './RoleCheckboxesWidget.tsx';
 import { useUsersWithRoles } from '../../pages/user-management/userUsersAndRoles.tsx';
+import { toast } from 'react-toastify';
 
 export type AccessRightsRequired = Required<AccessRights>;
 export type AccessRightName = keyof AccessRightsRequired;
@@ -91,14 +92,12 @@ export interface UserCreationRef {
 
 const UserCreation = () => {
   const { t } = useTranslation();
-  const dialogRef = useRef(null);
-
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userID] = useState('');
-  const [password] = useState('testi');
+  const [password] = useState('');
   const [penName, setPenName] = useState('');
   const [accessRights, setAccessRights] = useState<AccessRightsRequired>({
     canManageAdmins: false,
@@ -120,8 +119,9 @@ const UserCreation = () => {
     isSuperAdmin: false,
   });
   const { roles, refetchUsersAndRoles } = useUsersWithRoles();
-  const [open, setOpen] = useState(false);
+  const [confirmExitDialogOpen, setConfirmExitDialogOpen] = useState(false);
   const [isActive] = useState(true);
+  const navigate = useNavigate();
   const userName = `${firstName}.${lastName}`.toLowerCase();
   const [customRoleName, setCustomRoleName] = useState('');
   const [selectedExistingRole, _setSelectedExistingRole] =
@@ -171,6 +171,15 @@ const UserCreation = () => {
     }
   }, [accessRights]);
 
+  const handleCancel = useCallback(() => {
+    const formWasTouched = true; // screw doing this without react-hook-form
+    if (formWasTouched) {
+      setConfirmExitDialogOpen(true);
+      return;
+    }
+    navigate(AppPage.UserManagement);
+  }, [navigate]);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const filteredAccessRights: AccessRights = { ...accessRights };
@@ -191,12 +200,10 @@ const UserCreation = () => {
         const roleCreateResponse = await createRole(roleData);
         roleId = roleCreateResponse?.data?.roleId;
 
-        alert('Custom role created successfully!');
+        toast.success('Custom role created successfully!');
       } catch (error) {
         console.error('Failed to create custom role:', error);
-        alert(
-          `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-        );
+        toast.error('Error creating custom role!');
       }
     }
 
@@ -212,20 +219,12 @@ const UserCreation = () => {
         roleId,
         accessRights: filteredAccessRights,
       });
-      alert('User created successfully!');
+      toast.success('User created successfully');
       await refetchUsersAndRoles();
     } catch (error) {
       console.error('Error creating user:', error);
-      alert(`Failed to create user: ${error}`);
+      toast.error('Error creating user!');
     }
-  };
-
-  const navigate = useNavigate();
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleDiscard = () => {
-    navigate(AppPage.UserManagement);
-    setOpen(false);
   };
 
   const rowContainerStyle = {
@@ -425,7 +424,7 @@ const UserCreation = () => {
           </Box>
           <Grid2 container sx={{ justifyContent: 'flex-end', marginTop: 2 }}>
             <Button
-              onClick={handleClickOpen}
+              onClick={handleCancel}
               variant="outlined"
               sx={{ marginRight: 2 }}
             >
@@ -437,10 +436,9 @@ const UserCreation = () => {
           </Grid2>
           <Box>
             <ConfirmationDialog
-              ref={dialogRef}
-              open={open}
-              handleClose={handleClose}
-              handleDiscard={handleDiscard}
+              open={confirmExitDialogOpen}
+              handleClose={() => setConfirmExitDialogOpen(false)}
+              handleConfirm={() => navigate(AppPage.UserManagement)}
               titleText={t('ARE_YOU_SURE')}
               contentText={t('ANY_UNSAVED_CHANGES_WILL_BE_LOST')}
               cancelText={t('CANCEL')}

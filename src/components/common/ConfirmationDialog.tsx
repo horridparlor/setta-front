@@ -17,7 +17,7 @@ export interface DiscardDialogRef {
 interface ConfirmationDialogProps {
   open: boolean;
   handleClose: () => void;
-  handleDiscard: () => void;
+  handleConfirm: () => void;
   titleText: string;
   contentText?: string;
   cancelText?: string;
@@ -29,7 +29,7 @@ const ConfirmationDialog = forwardRef<HTMLDivElement, ConfirmationDialogProps>(
     {
       open,
       handleClose,
-      handleDiscard,
+      handleConfirm,
       titleText,
       contentText,
       cancelText,
@@ -52,7 +52,7 @@ const ConfirmationDialog = forwardRef<HTMLDivElement, ConfirmationDialogProps>(
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>{cancelText}</Button>
-          <Button onClick={handleDiscard} autoFocus>
+          <Button onClick={handleConfirm} autoFocus>
             {discardText}
           </Button>
         </DialogActions>

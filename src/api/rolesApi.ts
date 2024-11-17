@@ -21,12 +21,8 @@ export const createRole = async (roleData: {
     });
     console.log('POST /admin/roles response:', response);
     return response;
-    alert('Custom role created successfully!');
   } catch (error) {
     console.error('Failed to create custom role:', error);
-    alert(
-      `Failed to create custom role: ${error instanceof Error ? error.message : error}`
-    );
   }
 };
 
@@ -64,13 +60,9 @@ export const updateRole = async (roleData: {
     });
     console.log('PUT /admin/role response:', response);
 
-    alert('Role updated successfully!');
     return response;
   } catch (error) {
     console.error('Failed to update role:', error);
-    alert(
-      `Failed to update role: ${error instanceof Error ? error.message : error}`
-    );
     throw error;
   }
 };
