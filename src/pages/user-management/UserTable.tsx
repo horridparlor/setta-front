@@ -17,15 +17,15 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { UserRole } from '../../api/types';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
-import { UserWithRole, useUsersWithRoles } from './userUsersAndRoles';
 import RoleChangeModal from './RoleChangeModal';
-import DeleteUserDialog from './DeleteUserDialog';
 import { deleteUser } from '../../api/userManagementApi';
-
-export type UserTableProps = {};
+import { useTranslation } from 'react-i18next';
+import ConfirmationDialog from '../../components/common/ConfirmationDialog';
+import { toast } from 'react-toastify';
+import { UserWithRole } from '../../hooks/useUsersWithRoles';
 
 export type StatusChipProps = {
   isActive: boolean;
@@ -42,31 +42,59 @@ export const StatusChip: React.FC<StatusChipProps> = ({ isActive }) => (
   </Tooltip>
 );
 
-export const UserTable: React.FC<UserTableProps> = () => {
-  const { usersWithRoles: users, roles, refetchUsers } = useUsersWithRoles();
+type UserTableProps = {
+  roles: UserRole[];
+  users: UserWithRole[];
+  refetch: () => void;
+};
+
+export const UserTable: React.FC<UserTableProps> = ({
+  users,
+  roles,
+  refetch,
+}) => {
+  const { t } = useTranslation();
+
+  // Filter out only roles that are assigned to users
+  const rolesOfUsers = useMemo(() => {
+    const roles: UserRole[] = [];
+    users.forEach(user => {
+      if (user.role && !roles.find(role => role.id === user.roleId)) {
+        roles.push(user.role);
+      }
+    });
+    return roles;
+  }, [users]);
   const navigate = useNavigate();
   const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
     null
   );
-  const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [selectedUserRows, setSelectedUserRows] =
     useState<GridRowSelectionModel>([]);
-  const handleDeleteIconClick = (user: UserWithRole) => {
-    setSelectedUser(user);
-    setIsDeleteDialogOpen(true);
-  };
   const [isRoleChangeDialogOpen, setRoleChangeDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isConfirmingDeletionOfUser, setIsConfirmingDeletionOfUser] =
+    useState<UserWithRole | null>(null);
+  const adminRoleUsersThatAreSelected = users.filter(
+    u => u.roleId === 2 && selectedUserRows.includes(u.id)
+  );
 
   const handleDeleteUser = async (userId: number) => {
     try {
       await deleteUser(userId);
-      await refetchUsers();
-      setIsDeleteDialogOpen(false);
+      await refetch();
+      setIsConfirmingDeletionOfUser(null);
+      toast.success('User deleted successfully');
     } catch (error) {
       console.error('Failed to delete user:', error);
     }
   };
+
+  // Remove selected users that are not in the list of users, for example a deletion could cause this
+  useEffect(() => {
+    setSelectedUserRows(prev => {
+      return prev.filter(id => users.find(user => user.id === id));
+    });
+  }, [users]);
 
   const handleUserSelectionChange = (newSelection: GridRowSelectionModel) => {
     setSelectedUserRows(newSelection);
@@ -129,7 +157,7 @@ export const UserTable: React.FC<UserTableProps> = () => {
         return null;
       },
     },
-    { field: 'id', headerName: 'UserID', flex: 1 },
+    { field: 'id', headerName: 'UserID', width: 80 },
     {
       field: 'active',
       headerName: 'Status',
@@ -145,7 +173,10 @@ export const UserTable: React.FC<UserTableProps> = () => {
           <IconButton>
             <Edit />
           </IconButton>
-          <IconButton onClick={() => handleDeleteIconClick(params.row)}>
+          <IconButton
+            onClick={() => setIsConfirmingDeletionOfUser(params.row)}
+            disabled={params.row.roleId === 2}
+          >
             <Delete />
           </IconButton>
         </>
@@ -178,14 +209,14 @@ export const UserTable: React.FC<UserTableProps> = () => {
                 label="select-role"
                 value={selectedUserRole?.id ?? -1}
                 onChange={event => {
-                  const roleFromId = roles.find(
+                  const roleFromId = rolesOfUsers.find(
                     role => role.id === event.target.value
                   );
                   handleRoleFilterSelect(roleFromId ?? null);
                 }}
               >
                 <MenuItem value={-1}>Show All</MenuItem>
-                {roles.map(role => (
+                {rolesOfUsers.map(role => (
                   <MenuItem key={role.id} value={role.id}>
                     {role.name}
                   </MenuItem>
@@ -202,13 +233,24 @@ export const UserTable: React.FC<UserTableProps> = () => {
               </Select>
             </FormControl>
             {selectedUserRows.length > 0 && (
-              <Button
-                variant="contained"
-                sx={{ ml: 'auto' }}
-                onClick={handleChangeRoleClick}
+              <Tooltip
+                title={
+                  adminRoleUsersThatAreSelected.length > 0
+                    ? 'Role modification disabled because the selection includes users with an admin role which cannot be changed'
+                    : ''
+                }
               >
-                Change Role
-              </Button>
+                <span>
+                  <Button
+                    variant="contained"
+                    sx={{ ml: 'auto' }}
+                    onClick={handleChangeRoleClick}
+                    disabled={adminRoleUsersThatAreSelected.length > 0}
+                  >
+                    Change Role
+                  </Button>
+                </span>
+              </Tooltip>
             )}
             <Button
               variant="contained"
@@ -219,12 +261,14 @@ export const UserTable: React.FC<UserTableProps> = () => {
             </Button>
             {isRoleChangeDialogOpen && (
               <RoleChangeModal
+                roles={roles}
+                users={users}
+                refetch={refetch}
                 open={isRoleChangeDialogOpen}
                 onClose={() => setRoleChangeDialogOpen(false)}
-                selectedUsers={users.filter(user =>
+                initialSelectedUsers={users.filter(user =>
                   selectedUserRows.includes(user.id)
                 )}
-                roles={roles}
               />
             )}
           </Box>
@@ -236,20 +280,24 @@ export const UserTable: React.FC<UserTableProps> = () => {
                   : users
               }
               columns={userColumns}
-              checkboxSelection
               onRowSelectionModelChange={handleUserSelectionChange}
               rowSelectionModel={selectedUserRows}
+              checkboxSelection={selectedUserRows.length > 0}
               // pagination not ready
             />
           </Box>
         </CardContent>
       </Card>
 
-      <DeleteUserDialog
-        open={isDeleteDialogOpen}
-        user={selectedUser}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handleDeleteUser}
+      <ConfirmationDialog
+        open={isConfirmingDeletionOfUser !== null}
+        handleClose={() => setIsConfirmingDeletionOfUser(null)}
+        handleConfirm={() =>
+          handleDeleteUser(isConfirmingDeletionOfUser?.id ?? -1)
+        }
+        contentText={`Are you sure you want to delete the user ${isConfirmingDeletionOfUser?.firstname} ${isConfirmingDeletionOfUser?.lastname} with role ${isConfirmingDeletionOfUser?.role?.name}? This user account will be deleted permanently and cannot be recovered.`}
+        titleText={'Delete user'}
+        confirmText={t('DELETE')}
       />
     </>
   );

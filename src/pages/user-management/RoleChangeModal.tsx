@@ -15,39 +15,77 @@ import {
   Typography,
 } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { UserWithRole } from './userUsersAndRoles';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { UserRole } from '../../api/types';
+import { updateUser } from '../../api/userManagementApi';
+import { toast } from 'react-toastify';
+import { UserWithRole } from '../../hooks/useUsersWithRoles';
 
 interface RoleChangeModalProps {
   open: boolean;
   onClose: () => void;
-  selectedUsers: UserWithRole[];
   roles: UserRole[];
+  users: UserWithRole[];
+  refetch: () => void;
+  initialSelectedUsers: UserWithRole[];
 }
 
 const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
   open,
   onClose,
-  selectedUsers,
   roles,
+  users,
+  refetch,
+  initialSelectedUsers,
 }) => {
-  const [selectedUserRows, setSelectedUserRows] =
-    useState<GridRowSelectionModel>(selectedUsers.map(user => user.id));
   const [isChecked, setIsChecked] = useState(false);
   const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
     null
   );
+  const [selectedUserRows, setSelectedUserRows] = useState<number[]>([]);
 
   useEffect(() => {
     if (open) {
-      setSelectedUserRows(selectedUsers.map(user => user.id));
+      setSelectedUserRows(initialSelectedUsers.map(user => user.id));
       setIsChecked(false);
     }
-  }, [open, selectedUsers]);
+  }, [open, initialSelectedUsers]);
 
-  const handleSubmitRoleChanges = () => {
+  const handleSubmitRoleChanges = async () => {
     // Fetch api call to update user roles
+    if (!selectedUserRole) {
+      toast.error('Please select a role to update for the users');
+      return;
+    }
+
+    const selectedUsers = users.filter(user =>
+      selectedUserRows.includes(user.id)
+    );
+
+    for (const user of selectedUsers) {
+      if (user.role && user.role.id === selectedUserRole?.id) continue;
+
+      try {
+        await updateUser({
+          ...user,
+          userId: user.id,
+          roleId: selectedUserRole?.id,
+          isActive: Boolean(user.isActive),
+          accessRights: selectedUserRole?.accessRights ?? {},
+        });
+        toast.success(
+          `Role of user ${user.firstname} ${user.lastname} updated`
+        );
+      } catch (error) {
+        console.error('Error updating user role:', error);
+        toast.error(
+          `Error updating role of user ${user.firstname} ${user.lastname} `
+        );
+      }
+    }
+
+    await refetch();
+    onClose();
   };
 
   const gridColumns: GridColDef<UserWithRole>[] = [
@@ -73,12 +111,16 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
       <DialogContent>
         <Box sx={{ mt: 2 }}>
           <DataGrid
-            rows={selectedUsers}
+            rows={users.filter(user =>
+              initialSelectedUsers.some(
+                selectedUser => selectedUser.id === user.id
+              )
+            )}
             columns={gridColumns}
             checkboxSelection
             rowSelectionModel={selectedUserRows}
             onRowSelectionModelChange={newSelection => {
-              setSelectedUserRows(newSelection);
+              setSelectedUserRows(newSelection as number[]);
             }}
             getRowId={row => row.id}
           />
@@ -93,7 +135,9 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
             mb: 2,
           }}
         >
-          <Typography>Select a new role for selected users:</Typography>
+          <Typography sx={{ mb: '12px' }}>
+            Select a new role for selected users:
+          </Typography>
           <FormControl variant="outlined" sx={{ width: '30%' }}>
             <InputLabel id="select-role">Select Role</InputLabel>
             <Select<number>

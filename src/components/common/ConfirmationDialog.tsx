@@ -1,14 +1,18 @@
 import {
+  Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControlLabel,
   IconButton,
 } from '@mui/material';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import WarningIcon from '@mui/icons-material/Warning';
+import { useTranslation } from 'react-i18next';
 
 export interface DiscardDialogRef {
   handleSave: () => void;
@@ -17,11 +21,11 @@ export interface DiscardDialogRef {
 interface ConfirmationDialogProps {
   open: boolean;
   handleClose: () => void;
-  handleDiscard: () => void;
+  handleConfirm: () => void;
   titleText: string;
   contentText?: string;
   cancelText?: string;
-  discardText?: string;
+  confirmText?: string;
 }
 
 const ConfirmationDialog = forwardRef<HTMLDivElement, ConfirmationDialogProps>(
@@ -29,14 +33,18 @@ const ConfirmationDialog = forwardRef<HTMLDivElement, ConfirmationDialogProps>(
     {
       open,
       handleClose,
-      handleDiscard,
+      handleConfirm,
       titleText,
       contentText,
       cancelText,
-      discardText,
+      confirmText,
     },
     ref
   ) => {
+    const { t } = useTranslation();
+    const [isChecked, setIsChecked] = useState(false);
+    const isSaveButtonDisabled = !isChecked;
+
     return (
       <Dialog open={open} onClose={handleClose} ref={ref}>
         <DialogTitle align="center" id="alert-dialog-title">
@@ -49,11 +57,34 @@ const ConfirmationDialog = forwardRef<HTMLDivElement, ConfirmationDialogProps>(
           <DialogContentText id="alert-dialog-description">
             {contentText}
           </DialogContentText>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isChecked}
+                  onChange={e => setIsChecked(e.target.checked)}
+                />
+              }
+              label="I Understand"
+            />
+          </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>{cancelText}</Button>
-          <Button onClick={handleDiscard} autoFocus>
-            {discardText}
+          <Button onClick={handleClose}>{cancelText ?? t('CANCEL')}</Button>
+          <Button
+            color="error"
+            onClick={handleConfirm}
+            autoFocus
+            disabled={isSaveButtonDisabled}
+          >
+            {confirmText ?? t('CONFIRM')}
           </Button>
         </DialogActions>
       </Dialog>

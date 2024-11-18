@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import { RoleTable } from './RoleTable';
 import { UserTable } from './UserTable';
+import { useUsersWithRoles } from '../../hooks/useUsersWithRoles';
 
 interface UserManagementPageProps {
   refetch: () => Promise<void>;
@@ -11,6 +12,8 @@ interface UserManagementPageProps {
 const UserManagementPage = (props: UserManagementPageProps) => {
   const { refetch } = props;
   const homeBarRef = useRef<HomeBarRef>(null);
+
+  const { roles, usersWithRoles, fetchUsersAndRoles } = useUsersWithRoles();
 
   return (
     <Box
@@ -36,8 +39,16 @@ const UserManagementPage = (props: UserManagementPageProps) => {
           p: 2,
         }}
       >
-        <RoleTable />
-        <UserTable />
+        <RoleTable
+          roles={roles}
+          users={usersWithRoles}
+          refetch={fetchUsersAndRoles}
+        />
+        <UserTable
+          roles={roles}
+          users={usersWithRoles}
+          refetch={fetchUsersAndRoles}
+        />
       </Box>
     </Box>
   );
