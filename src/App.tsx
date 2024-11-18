@@ -13,6 +13,7 @@ import ProcessManagementPage from './pages/process-management';
 import UserManagementPage from './pages/user-management';
 import UserRolesPage from './pages/user-roles';
 import UserCreationPage from './pages/user-creation';
+import UserProfilePage from './pages/user-profile';
 
 export default function App() {
   const { expansions, fetchExpansions } = useExpansions();
@@ -72,7 +73,12 @@ export default function App() {
             path="/user-creation"
             element={<UserCreationPage refetch={refetch} />}
           />
+          <Route
+            path="/user-profile"
+            element={<UserProfilePage refetch={refetch} />}
+          />
         </Routes>
+        
       </BrowserRouter>
       <ToastContainer position="bottom-right" autoClose={2000} />
     </ThemeProvider>
