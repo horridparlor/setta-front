@@ -78,7 +78,6 @@ export default function App() {
             element={<UserProfilePage refetch={refetch} />}
           />
         </Routes>
-        
       </BrowserRouter>
       <ToastContainer position="bottom-right" autoClose={2000} />
     </ThemeProvider>

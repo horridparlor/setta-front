@@ -7,10 +7,6 @@ interface UserProfileProps {
   refetch: () => Promise<void>;
 }
 
-const onLeavePage = () => {
-  // const params = new URLSearchParams(location.search);
-};
-
 const UserProfilePage = (props: UserProfileProps) => {
   const homeBarRef = useRef<HomeBarRef>(null);
 
@@ -38,7 +34,6 @@ const UserProfilePage = (props: UserProfileProps) => {
           overflow: 'auto',
           p: 2,
         }}
-        
       >
         <UserProfile />
       </Box>
