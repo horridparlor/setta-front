@@ -113,6 +113,8 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
           return t('PAGE_NAME.PROCESS_MANAGEMENT');
         case AppPage.UserManagement:
           return t('PAGE_NAME.USER_MANAGEMENT');
+          case AppPage.UserProfile:
+          return t('PROFILE');
         case AppPage.Error:
           return t('ERROR') + ': ' + pageLocation;
       }
@@ -212,7 +214,9 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
                   </ListItemIcon>
                   <ListItemText primary={t('PAGE_NAME.USER_MANAGEMENT')} />
                 </ListItemButton>
-                <ListItemButton>
+                <ListItemButton
+                onClick={() => navigateTo(AppPage.UserProfile)}
+                >
                   <ListItemIcon>
                     <ManageAccountsIcon />
                   </ListItemIcon>
