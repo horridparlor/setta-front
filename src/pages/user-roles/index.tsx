@@ -8,12 +8,12 @@ import {
   EMPTY_ACCESS_RIGHTS,
 } from '../../components/user-management/CreateUser';
 import { RoleEditorWidget } from './roleEditorWidget';
-import { useUsersWithRoles } from '../user-management/userUsersAndRoles';
 import { createRole } from '../../api/rolesApi';
 import { useNavigate } from 'react-router';
 import ConfirmationDialog from '../../components/common/ConfirmationDialog';
 import { AppPage } from '../../types/navigation';
 import { toast } from 'react-toastify';
+import { useUsersWithRoles } from '../../hooks/useUsersWithRoles';
 
 interface UserRolesPageProps {
   refetch: () => Promise<void>;
@@ -30,9 +30,10 @@ const DEFAULT_FORM_STATE: RoleCreationFormState = {
   name: '',
   accessRights: EMPTY_ACCESS_RIGHTS,
 };
+
 const UserRolesPage = (props: UserRolesPageProps) => {
   const { refetch } = props;
-  const { refetchUsersAndRoles } = useUsersWithRoles();
+  const { roles, fetchUsersAndRoles } = useUsersWithRoles();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const homeBarRef = useRef<HomeBarRef>(null);
@@ -77,7 +78,7 @@ const UserRolesPage = (props: UserRolesPageProps) => {
           };
           const roleCreateResponse = await createRole(roleData);
           if (roleCreateResponse?.data) {
-            await refetchUsersAndRoles();
+            await fetchUsersAndRoles();
             navigate(AppPage.UserManagement);
             toast.success('Role created successfully');
           }
@@ -87,7 +88,7 @@ const UserRolesPage = (props: UserRolesPageProps) => {
         }
       }
     },
-    [formState, refetchUsersAndRoles, navigate]
+    [formState, fetchUsersAndRoles, navigate]
   );
 
   return (
@@ -124,6 +125,7 @@ const UserRolesPage = (props: UserRolesPageProps) => {
           <form onSubmit={handleSubmit}>
             {formState && (
               <RoleEditorWidget
+                roles={roles}
                 name={formState.name}
                 accessRights={formState.accessRights}
                 onChange={value => {

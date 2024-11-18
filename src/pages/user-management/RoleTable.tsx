@@ -18,22 +18,29 @@ import { UserRole } from '../../api/types';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
-import { UserWithRole, useUsersWithRoles } from './userUsersAndRoles';
 import { toast } from 'react-toastify';
 import { deleteRole } from '../../api/rolesApi';
 import { t } from 'i18next';
 import ConfirmationDialog from '../../components/common/ConfirmationDialog';
+import { UserWithRole } from '../../hooks/useUsersWithRoles';
 
-export type RoleTableProps = {};
+export type RoleTableProps = {
+  roles: UserRole[];
+  users: UserWithRole[];
+  refetch: () => void;
+};
 
-export const RoleTable: React.FC<RoleTableProps> = () => {
-  const { roles, usersWithRoles, refetchUsersAndRoles } = useUsersWithRoles();
+export const RoleTable: React.FC<RoleTableProps> = ({
+  roles,
+  users,
+  refetch,
+}) => {
   const navigate = useNavigate();
 
   const roleIdToUserMapping = useMemo(() => {
     const roleIdsInUseBy: Record<number, UserWithRole[]> = {};
 
-    usersWithRoles.forEach(user => {
+    users.forEach(user => {
       if (!roleIdsInUseBy[user.roleId]) {
         roleIdsInUseBy[user.roleId] = [];
       }
@@ -41,7 +48,7 @@ export const RoleTable: React.FC<RoleTableProps> = () => {
       roleIdsInUseBy[user.roleId].push(user);
     });
     return roleIdsInUseBy;
-  }, [usersWithRoles]);
+  }, [users]);
 
   const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
     null
@@ -52,7 +59,7 @@ export const RoleTable: React.FC<RoleTableProps> = () => {
   const handleDeleteRoleId = async (roleId: number) => {
     try {
       await deleteRole(roleId);
-      await refetchUsersAndRoles();
+      await refetch();
       toast.success('Role deleted successfully');
     } catch (e) {
       console.error(e);

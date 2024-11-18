@@ -20,12 +20,12 @@ import { UserRole } from '../../api/types';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
-import { UserWithRole, useUsersWithRoles } from './userUsersAndRoles';
 import RoleChangeModal from './RoleChangeModal';
 import { deleteUser } from '../../api/userManagementApi';
 import { useTranslation } from 'react-i18next';
 import ConfirmationDialog from '../../components/common/ConfirmationDialog';
 import { toast } from 'react-toastify';
+import { UserWithRole } from '../../hooks/useUsersWithRoles';
 
 export type StatusChipProps = {
   isActive: boolean;
@@ -42,10 +42,17 @@ export const StatusChip: React.FC<StatusChipProps> = ({ isActive }) => (
   </Tooltip>
 );
 
-export const UserTable: React.FC = () => {
-  const { usersWithRoles: users, refetchUsersAndRoles: refetchUsers } =
-    useUsersWithRoles();
+type UserTableProps = {
+  roles: UserRole[];
+  users: UserWithRole[];
+  refetch: () => void;
+};
 
+export const UserTable: React.FC<UserTableProps> = ({
+  users,
+  roles,
+  refetch,
+}) => {
   const { t } = useTranslation();
 
   // Filter out only roles that are assigned to users
@@ -74,7 +81,7 @@ export const UserTable: React.FC = () => {
   const handleDeleteUser = async (userId: number) => {
     try {
       await deleteUser(userId);
-      await refetchUsers();
+      await refetch();
       setIsConfirmingDeletionOfUser(null);
       toast.success('User deleted successfully');
     } catch (error) {
@@ -254,6 +261,9 @@ export const UserTable: React.FC = () => {
             </Button>
             {isRoleChangeDialogOpen && (
               <RoleChangeModal
+                roles={roles}
+                users={users}
+                refetch={refetch}
                 open={isRoleChangeDialogOpen}
                 onClose={() => setRoleChangeDialogOpen(false)}
                 initialSelectedUsers={users.filter(user =>

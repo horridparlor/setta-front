@@ -15,6 +15,7 @@ const UserCreationPage = (props: UserCreationProps) => {
   const homeBarRef = useRef<HomeBarRef>(null);
 
   const { refetch } = props;
+
   return (
     <Box
       sx={{

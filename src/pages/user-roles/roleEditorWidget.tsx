@@ -12,12 +12,12 @@ import {
   createFullAccessRightsFromPartial,
 } from '../../components/user-management/CreateUser';
 import { RoleAccessRightsCheckboxesWidget } from '../../components/user-management/RoleCheckboxesWidget';
-import { useUsersWithRoles } from '../user-management/userUsersAndRoles';
 import { useCallback } from 'react';
 import { UserRole } from '../../api/types';
 import { t } from 'i18next';
 
 export type RoleEditorWidgetProps = {
+  roles: UserRole[];
   name: string;
   accessRights: AccessRightsRequired;
   onChange: (role: {
@@ -27,12 +27,11 @@ export type RoleEditorWidgetProps = {
 };
 
 export const RoleEditorWidget: React.FC<RoleEditorWidgetProps> = ({
+  roles,
   name,
   accessRights,
   onChange,
 }) => {
-  const { roles } = useUsersWithRoles();
-
   // Handle copying access rights from a selected role
   const copyAccessRightsFromRole = useCallback(
     (copyFromRole: UserRole | null) => {

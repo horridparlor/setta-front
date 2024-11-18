@@ -16,23 +16,28 @@ import {
 } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { UserWithRole, useUsersWithRoles } from './userUsersAndRoles';
 import { UserRole } from '../../api/types';
 import { updateUser } from '../../api/userManagementApi';
 import { toast } from 'react-toastify';
+import { UserWithRole } from '../../hooks/useUsersWithRoles';
 
 interface RoleChangeModalProps {
   open: boolean;
   onClose: () => void;
+  roles: UserRole[];
+  users: UserWithRole[];
+  refetch: () => void;
   initialSelectedUsers: UserWithRole[];
 }
 
 const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
   open,
   onClose,
+  roles,
+  users,
+  refetch,
   initialSelectedUsers,
 }) => {
-  const { roles, usersWithRoles, refetchUsersAndRoles } = useUsersWithRoles();
   const [isChecked, setIsChecked] = useState(false);
   const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
     null
@@ -53,7 +58,7 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
       return;
     }
 
-    const selectedUsers = usersWithRoles.filter(user =>
+    const selectedUsers = users.filter(user =>
       selectedUserRows.includes(user.id)
     );
 
@@ -79,7 +84,7 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
       }
     }
 
-    await refetchUsersAndRoles();
+    await refetch();
     onClose();
   };
 
@@ -106,7 +111,7 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
       <DialogContent>
         <Box sx={{ mt: 2 }}>
           <DataGrid
-            rows={usersWithRoles.filter(user =>
+            rows={users.filter(user =>
               initialSelectedUsers.some(
                 selectedUser => selectedUser.id === user.id
               )

@@ -20,8 +20,8 @@ import { createUser } from '../../api/userManagementApi';
 import { createRole } from '../../api/rolesApi';
 import { AccessRights, UserRole } from '../../api/types.ts';
 import { RoleAccessRightsCheckboxesWidget } from './RoleCheckboxesWidget.tsx';
-import { useUsersWithRoles } from '../../pages/user-management/userUsersAndRoles.tsx';
 import { toast } from 'react-toastify';
+import { useUsersWithRoles } from '../../hooks/useUsersWithRoles.ts';
 
 export type AccessRightsRequired = Required<AccessRights>;
 export type AccessRightName = keyof AccessRightsRequired;
@@ -118,7 +118,7 @@ const UserCreation = () => {
     autoRefillTokens: false,
     isSuperAdmin: false,
   });
-  const { roles, refetchUsersAndRoles } = useUsersWithRoles();
+  const { roles, fetchUsersAndRoles } = useUsersWithRoles();
   const [confirmExitDialogOpen, setConfirmExitDialogOpen] = useState(false);
   const [isActive] = useState(true);
   const navigate = useNavigate();
@@ -220,7 +220,7 @@ const UserCreation = () => {
         accessRights: filteredAccessRights,
       });
       toast.success('User created successfully');
-      await refetchUsersAndRoles();
+      await fetchUsersAndRoles();
       navigate(AppPage.UserManagement);
     } catch (error) {
       console.error('Error creating user:', error);
