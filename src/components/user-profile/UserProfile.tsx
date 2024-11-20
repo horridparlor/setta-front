@@ -4,48 +4,66 @@ import {
   CardContent,
   CardHeader,
   Chip,
-  Button,
-  Grid2,
   TextField,
   Typography,
 } from '@mui/material';
-import { useRef, useState } from 'react';
-import ConfirmationDialog from '../common/ConfirmationDialog';
+import { useState, useEffect } from 'react';
+import { fetchLoggedInUser, fetchUserById } from '../../api/userManagementApi';
 import { useTranslation } from 'react-i18next';
 
-const UserProfile = () => {
+interface UserProfileProps {
+  userId?: string; // Optional user ID to fetch another user's data
+}
+
+//testfile
+const UserProfile = ({ userId }: UserProfileProps) => {
   const { t } = useTranslation();
-  const dialogRef = useRef(null);
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [userID] = useState('');
-  const [penName, setPenName] = useState('');
+  // State to store user data
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch user data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let data;
+        if (userId) {
+          data = await fetchUserById(userId);
+        } else {
+          data = await fetchLoggedInUser();
+        }
+        setUserData(data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [userId]);
+
+  if (loading) {
+    return <Typography variant="h6">"LOADING"</Typography>;
+  }
+
+  if (!userData) {
+    return <Typography variant="h6">"NO_USER_DATA"</Typography>;
+  }
+
+  // Destructure user data for rendering
+  const {
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    penName,
+    userID,
+    isActive,
+    activationDate,
+    role,
+  } = userData;
   const userName = `${firstName}.${lastName}`.toLowerCase();
-
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const rowContainerStyle = {
-    flexDirection: 'row',
-    alignItems: 'top-left',
-    gap: 2,
-    marginBottom: 2,
-    display: 'flex',
-  };
-
-  const columnContainerStyle = {
-    flexDirection: 'column',
-    alignItems: 'top-left',
-    gap: 2,
-    marginBottom: 2,
-    display: 'flex',
-    width: '60%',
-  };
 
   return (
     <Card sx={{ m: 1, pt: 60, width: '70%', overflow: 'auto' }}>
@@ -57,182 +75,95 @@ const UserProfile = () => {
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'top-left',
-            gap: 2,
             flexDirection: 'column',
+            gap: 2,
           }}
         >
+          {/* Personal Information */}
           <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'top-left',
-                gap: 2,
-                flexDirection: 'column',
-              }}
-            >
-              <Box sx={rowContainerStyle}>
-                <Box sx={{ pr: 10 }}>
-                  <Typography variant="h5" gutterBottom align="inherit">
-                    {t('PERSONAL_INFORMATION')}
-                  </Typography>
-                </Box>
-                <Box sx={columnContainerStyle}>
-                  <TextField
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setFirstName(event.target.value);
-                    }}
-                    value={firstName}
-                    label="First name"
-                    size="medium"
-                    variant="standard"
-                  />
-                  <TextField
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setLastName(event.target.value);
-                    }}
-                    value={lastName}
-                    label="Last name"
-                    size="medium"
-                    variant="standard"
-                  />
-                  <TextField
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setEmail(event.target.value);
-                    }}
-                    value={email}
-                    label="Email"
-                    size="medium"
-                    variant="standard"
-                  />
-                  <TextField
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setPhoneNumber(event.target.value);
-                    }}
-                    value={phoneNumber}
-                    label="Phone number"
-                    size="medium"
-                    variant="standard"
-                  />
-                </Box>
-              </Box>
+            <Typography variant="h5" gutterBottom>
+              {t('PERSONAL_INFORMATION')}
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                value={firstName || ''}
+                label={'FIRST_NAME'}
+                size="medium"
+                variant="standard"
+                disabled
+              />
+              <TextField
+                value={lastName || ''}
+                label={'LAST_NAME'}
+                size="medium"
+                variant="standard"
+                disabled
+              />
+              <TextField
+                value={email || ''}
+                label={'EMAIL'}
+                size="medium"
+                variant="standard"
+                disabled
+              />
+              <TextField
+                value={phoneNumber || ''}
+                label="PHONE_NUMBER"
+                size="medium"
+                variant="standard"
+                disabled
+              />
             </Box>
           </CardContent>
 
+          {/* User Account */}
           <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'top-left',
-                gap: 2,
-                flexDirection: 'column',
-              }}
-            >
-              <Box sx={rowContainerStyle}>
-                <Box sx={{ pr: 21 }}>
-                  <Typography variant="h5" gutterBottom>
-                    {t('USER_ACCOUNT')}
-                  </Typography>
-                </Box>
-                <Box sx={columnContainerStyle}>
-                  <Box>
-                    <Chip
-                      size="small"
-                      label="Active"
-                      variant="filled"
-                      color="success"
-                    />
-                  </Box>
-                  <Typography variant="caption" gutterBottom>
-                    {t('ACTIVE_SINCE')}/*activationdate */
-                  </Typography>
-                  <TextField
-                    value={userID}
-                    label="UserID"
-                    size="medium"
-                    variant="standard"
-                    disabled
-                  />
-                  <TextField
-                    value={userName}
-                    label="Username"
-                    size="medium"
-                    variant="standard"
-                    disabled
-                  />
-                  <TextField
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setPenName(event.target.value);
-                    }}
-                    value={penName}
-                    label="Pen name"
-                    size="medium"
-                    variant="standard"
-                    disabled
-                  />
-                </Box>
-              </Box>
+            <Typography variant="h5" gutterBottom>
+              {t('USER_ACCOUNT')}
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Chip
+                size="small"
+                label={isActive ? 'ACTIVE' : 'INACTIVE'}
+                variant="filled"
+                color={isActive ? 'success' : 'error'}
+              />
+              <Typography variant="caption" gutterBottom>
+                {t('ACTIVE_SINCE')} {activationDate || 'UNKNOWN'}
+              </Typography>
+              <TextField
+                value={userID || ''}
+                label={'USER_ID'}
+                size="medium"
+                variant="standard"
+                disabled
+              />
+              <TextField
+                value={userName || ''}
+                label={t('USERNAME')}
+                size="medium"
+                variant="standard"
+                disabled
+              />
+              <TextField
+                value={penName || ''}
+                label={'PEN_NAME'}
+                size="medium"
+                variant="standard"
+                disabled
+              />
             </Box>
           </CardContent>
 
+          {/* Role Information */}
           <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'top-left',
-                gap: 2,
-                flexDirection: 'column',
-              }}
-            >
-              <Box sx={rowContainerStyle}>
-                <Box sx={{ pr: 35 }}>
-                  <Typography variant="h5" gutterBottom>
-                    {t('ROLE')}
-                  </Typography>
-                </Box>
-                <Box sx={columnContainerStyle}>
-                  <Typography variant="h6" gutterBottom>
-                    {t('DESIGNER')}
-                  </Typography>
-                  <Typography variant="caption" gutterBottom>
-                    {t('CUSTOMIZED_ACCESS_RIGHTS')}
-                  </Typography>
-                  <Grid2
-                    container
-                    sx={{ justifyContent: 'flex-end', marginTop: 2 }}
-                  >
-                    <Button
-                      onClick={handleClickOpen}
-                      variant="outlined"
-                      size="small"
-                      sx={{ marginRight: 2 }}
-                    >
-                      {t('CANCEL')}
-                    </Button>
-                    <Button type="submit" variant="contained" size="small">
-                      {t('SAVE')}
-                    </Button>
-                  </Grid2>
-                  <Typography variant="caption" gutterBottom>
-                    {t('LAST_EDITED')}/*dd/mm/yyyy*/
-                  </Typography>
-                  <Typography variant="caption" gutterBottom>
-                    {t('EDITED_BY')}
-                    {userName}
-                  </Typography>
-                  <Box>
-                    <ConfirmationDialog
-                      ref={dialogRef}
-                      open={open}
-                      handleClose={handleClose}
-                      handleConfirm={() => {}}
-                      titleText={t('ARE_YOU_SURE')}
-                      contentText={t('ANY_UNSAVED_CHANGES_WILL_BE_LOST')}
-                      cancelText={t('CANCEL')}
-                    />
-                  </Box>
-                </Box>
-              </Box>
+            <Typography variant="h5" gutterBottom>
+              {t('ROLE')}
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                {role || 'UNKNOWN'}
+              </Typography>
             </Box>
           </CardContent>
         </Box>
@@ -240,4 +171,5 @@ const UserProfile = () => {
     </Card>
   );
 };
+
 export default UserProfile;
