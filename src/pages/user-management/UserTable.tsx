@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { UserRole } from '../../api/types';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import RoleChangeModal from './RoleChangeModal';
@@ -115,6 +115,12 @@ export const UserTable: React.FC<UserTableProps> = ({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(
     statusFilters['Show All']
   );
+
+  const resetToInitialStates = useCallback(() => {
+    setStatusFilter(statusFilters['Show All']);
+    setSelectedUserRole(null);
+    setSelectedUserRows([]);
+  }, []);
 
   const filteredUsers = useMemo(() => {
     return users
@@ -343,6 +349,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 users={users}
                 refetch={refetch}
                 open={isRoleChangeDialogOpen}
+                onSuccesfulSubmit={resetToInitialStates}
                 onClose={() => setRoleChangeDialogOpen(false)}
                 initialSelectedUsers={users.filter(user =>
                   selectedUserRows.includes(user.id)

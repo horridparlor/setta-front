@@ -24,6 +24,7 @@ import { UserWithRole } from '../../hooks/useUsersWithRoles';
 interface RoleChangeModalProps {
   open: boolean;
   onClose: () => void;
+  onSuccesfulSubmit?: () => void;
   roles: UserRole[];
   users: UserWithRole[];
   refetch: () => void;
@@ -33,6 +34,7 @@ interface RoleChangeModalProps {
 const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
   open,
   onClose,
+  onSuccesfulSubmit,
   roles,
   users,
   refetch,
@@ -85,6 +87,7 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
     }
 
     await refetch();
+    onSuccesfulSubmit?.();
     onClose();
   };
 
