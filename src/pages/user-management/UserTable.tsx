@@ -115,18 +115,30 @@ export const UserTable: React.FC<UserTableProps> = ({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(
     statusFilters['Show All']
   );
+  const [searchText, setSearchText] = useState('');
 
   const resetToInitialStates = useCallback(() => {
     setStatusFilter(statusFilters['Show All']);
     setSelectedUserRole(null);
     setSelectedUserRows([]);
+    setSearchText('');
   }, []);
 
   const filteredUsers = useMemo(() => {
     return users
       .filter(statusFilter.predicate)
-      .filter(user => !selectedUserRole || user.roleId === selectedUserRole.id);
-  }, [users, statusFilter, selectedUserRole]);
+      .filter(user => !selectedUserRole || user.roleId === selectedUserRole.id)
+      .filter(user => {
+        const search = searchText.toLowerCase().trim();
+        return (
+          user.firstname.toLowerCase().includes(search) ||
+          user.lastname.toLowerCase().includes(search) ||
+          user.username.toLowerCase().includes(search) ||
+          user.email?.toLowerCase().includes(search) ||
+          user.role?.name.toLowerCase().includes(search)
+        );
+      });
+  }, [users, statusFilter, selectedUserRole, searchText]);
 
   const handleDeleteUser = async (userId: number) => {
     try {
@@ -277,6 +289,8 @@ export const UserTable: React.FC<UserTableProps> = ({
             }}
           >
             <TextField
+              value={searchText}
+              onChange={event => setSearchText(event.target.value)}
               label="Search name, email, etc."
               variant="outlined"
               sx={{ width: '30%' }}

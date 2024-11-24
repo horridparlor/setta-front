@@ -50,6 +50,15 @@ export const RoleTable: React.FC<RoleTableProps> = ({
     return roleIdsInUseBy;
   }, [users]);
 
+  const [searchText, setSearchText] = useState('');
+
+  const filteredRoles = useMemo(() => {
+    return roles.filter(role => {
+      const search = searchText.toLowerCase().trim();
+      return role.name.toLowerCase().includes(search);
+    });
+  }, [roles, searchText]);
+
   const [confirmingDeletionOfRole, setConfirmDeletionOfRole] =
     useState<UserRole | null>(null);
 
@@ -145,6 +154,8 @@ export const RoleTable: React.FC<RoleTableProps> = ({
             }}
           >
             <TextField
+              value={searchText}
+              onChange={event => setSearchText(event.target.value)}
               label="Search"
               variant="outlined"
               sx={{ width: '30%' }}
@@ -167,7 +178,7 @@ export const RoleTable: React.FC<RoleTableProps> = ({
 
           <Box sx={{ mt: 2 }}>
             <DataGrid
-              rows={roles}
+              rows={filteredRoles}
               columns={roleColumns}
               disableRowSelectionOnClick
             />
