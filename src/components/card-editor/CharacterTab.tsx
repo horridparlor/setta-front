@@ -31,7 +31,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     characterName: '',
     race: 'Human',
     gender: 'Male',
-    age: 'Young',
+    age: 'Adult',
     charactertype: 'Main',
     appearance: '',
     tool: '',
