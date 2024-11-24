@@ -48,6 +48,30 @@ type UserTableProps = {
   refetch: () => void;
 };
 
+type StatusFilter = {
+  name: string;
+  predicate: (user: UserWithRole) => boolean;
+};
+
+const statusFilters: Record<string, StatusFilter> = {
+  'Show All': {
+    name: 'Show All',
+    predicate: () => true,
+  },
+  Active: {
+    name: 'Active',
+    predicate: user => user.isActive,
+  },
+  Deactive: {
+    name: 'Deactive',
+    predicate: user => !user.isActive,
+  },
+  'Token Requests': {
+    name: 'Token Requests',
+    predicate: user => !!user.tokenRequest,
+  },
+};
+
 export const UserTable: React.FC<UserTableProps> = ({
   users,
   roles,
@@ -77,6 +101,15 @@ export const UserTable: React.FC<UserTableProps> = ({
   const adminRoleUsersThatAreSelected = users.filter(
     u => u.roleId === 2 && selectedUserRows.includes(u.id)
   );
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(
+    statusFilters['Show All']
+  );
+
+  const filteredUsers = useMemo(() => {
+    return users
+      .filter(statusFilter.predicate)
+      .filter(user => !selectedUserRole || user.roleId === selectedUserRole.id);
+  }, [users, statusFilter, selectedUserRole]);
 
   const handleDeleteUser = async (userId: number) => {
     try {
@@ -225,11 +258,16 @@ export const UserTable: React.FC<UserTableProps> = ({
             </FormControl>
             <FormControl variant="outlined" sx={{ width: '20%' }}>
               <InputLabel id="filter">Status</InputLabel>
-              <Select id="status" label="status">
-                <MenuItem>Show All</MenuItem>
-                <MenuItem>Active</MenuItem>
-                <MenuItem>Deactive</MenuItem>
-                <MenuItem>Token Requests</MenuItem>
+              <Select id="status" label="status" value={statusFilter.name}>
+                {Object.keys(statusFilters).map(filterName => (
+                  <MenuItem
+                    key={filterName}
+                    value={filterName}
+                    onClick={() => setStatusFilter(statusFilters[filterName])}
+                  >
+                    {filterName}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             {selectedUserRows.length > 0 && (
@@ -274,11 +312,7 @@ export const UserTable: React.FC<UserTableProps> = ({
           </Box>
           <Box sx={{ mt: 2 }}>
             <DataGrid
-              rows={
-                selectedUserRole
-                  ? users.filter(user => user.roleId === selectedUserRole?.id)
-                  : users
-              }
+              rows={filteredUsers}
               columns={userColumns}
               onRowSelectionModelChange={handleUserSelectionChange}
               rowSelectionModel={selectedUserRows}
