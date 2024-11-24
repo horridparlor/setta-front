@@ -21,7 +21,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import RoleChangeModal from './RoleChangeModal';
-import { deleteUser } from '../../api/userManagementApi';
+import { deleteUser, updateUser } from '../../api/userManagementApi';
 import { useTranslation } from 'react-i18next';
 import ConfirmationDialog from '../../components/common/ConfirmationDialog';
 import { toast } from 'react-toastify';
@@ -29,12 +29,23 @@ import { UserWithRole } from '../../hooks/useUsersWithRoles';
 
 export type StatusChipProps = {
   isActive: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
 };
 
-export const StatusChip: React.FC<StatusChipProps> = ({ isActive }) => (
+export const StatusChip: React.FC<StatusChipProps> = ({
+  isActive,
+  onClick,
+  disabled,
+}) => (
   <Tooltip title={isActive ? 'Deactivate' : 'Activate'}>
     <Chip
-      clickable
+      disabled={disabled}
+      clickable={!!onClick}
+      onClick={e => {
+        e.stopPropagation();
+        onClick?.();
+      }}
       label={isActive ? 'Active' : 'Deactivated'}
       color={isActive ? 'success' : 'error'}
       icon={isActive ? <Close /> : <Check />}
@@ -122,6 +133,29 @@ export const UserTable: React.FC<UserTableProps> = ({
     }
   };
 
+  const handleStatusChipClick = async (user: UserWithRole) => {
+    const newStatus = !user.isActive;
+    console.log('Changing status of user:', user, 'to:', newStatus);
+    try {
+      await updateUser({
+        ...user,
+        userId: user.id,
+        isActive: !Boolean(user.isActive),
+      });
+      toast.success(
+        `Status of user ${user.firstname} ${user.lastname} changed to ${
+          newStatus ? 'active' : 'deactivated'
+        }`
+      );
+      refetch();
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      toast.error(
+        `Error updating status of user ${user.firstname} ${user.lastname}`
+      );
+    }
+  };
+
   // Remove selected users that are not in the list of users, for example a deletion could cause this
   useEffect(() => {
     setSelectedUserRows(prev => {
@@ -195,7 +229,13 @@ export const UserTable: React.FC<UserTableProps> = ({
       field: 'active',
       headerName: 'Status',
       flex: 1,
-      renderCell: params => <StatusChip isActive={params.row.isActive} />,
+      renderCell: params => (
+        <StatusChip
+          disabled={params.row.roleId === 2}
+          isActive={params.row.isActive}
+          onClick={() => handleStatusChipClick(params.row)}
+        />
+      ),
     },
     {
       field: 'options',
