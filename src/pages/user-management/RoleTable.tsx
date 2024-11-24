@@ -50,9 +50,6 @@ export const RoleTable: React.FC<RoleTableProps> = ({
     return roleIdsInUseBy;
   }, [users]);
 
-  const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
-    null
-  );
   const [confirmingDeletionOfRole, setConfirmDeletionOfRole] =
     useState<UserRole | null>(null);
 
@@ -152,26 +149,6 @@ export const RoleTable: React.FC<RoleTableProps> = ({
               variant="outlined"
               sx={{ width: '30%' }}
             />
-            <FormControl variant="outlined" sx={{ width: '20%' }}>
-              <InputLabel id="select-role">Select Role</InputLabel>
-              <Select<number>
-                id="select-role"
-                label="select-role"
-                value={selectedUserRole?.id ?? -1}
-                onChange={event => {
-                  setSelectedUserRole(
-                    roles.find(role => role.id === event.target.value) ?? null
-                  );
-                }}
-              >
-                <MenuItem value={-1}>Show All</MenuItem>
-                {roles.map(role => (
-                  <MenuItem key={role.id} value={role.id}>
-                    {role.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
             <FormControl variant="outlined" sx={{ width: '20%' }}>
               <InputLabel id="filter">Filter</InputLabel>
               <Select id="filter" label="filter">
