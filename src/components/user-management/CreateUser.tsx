@@ -214,7 +214,6 @@ const UserCreation = () => {
         firstname: firstName,
         lastname: lastName,
         email,
-        phoneNumber,
         isActive,
         roleId,
         accessRights: filteredAccessRights,
