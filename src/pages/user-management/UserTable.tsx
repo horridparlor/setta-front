@@ -44,7 +44,9 @@ export const StatusChip: React.FC<StatusChipProps> = ({
       clickable={!!onClick}
       onClick={e => {
         e.stopPropagation();
-        onClick?.();
+        if (onClick) {
+          onClick();
+        }
       }}
       label={isActive ? 'Active' : 'Deactivated'}
       color={isActive ? 'success' : 'error'}
@@ -143,7 +145,7 @@ export const UserTable: React.FC<UserTableProps> = ({
   const handleDeleteUser = async (userId: number) => {
     try {
       await deleteUser(userId);
-      await refetch();
+      refetch();
       setIsConfirmingDeletionOfUser(null);
       toast.success('User deleted successfully');
     } catch (error) {
