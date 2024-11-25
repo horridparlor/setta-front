@@ -52,6 +52,7 @@ export enum CardDeck {
   NONE = 'None',
   MAIN = 'Main',
   EXTRA = 'Extra',
+  SIDE = 'Side',
 }
 
 export const isCardDeck = (value: string): value is CardDeck => {
@@ -147,6 +148,7 @@ export interface CardData {
   createdAt: string;
   updatedAt: string;
   cardEffects: CardEffects;
+  count: number;
 }
 
 export enum StatType {

@@ -34,6 +34,9 @@ interface CardCatalogueProps {
   visibleCardCount: number;
   setVisibleCardCount: (newCount: number) => void;
   defaultCardsShown: number;
+  onToggleDeckBuilder: () => void;
+  showDeckBuilder: boolean;
+  handleRemoveCard: (cardName: string) => void;
 }
 
 export interface CardCatalogueRef {
@@ -52,6 +55,9 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
       visibleCardCount,
       setVisibleCardCount,
       defaultCardsShown,
+      onToggleDeckBuilder,
+      showDeckBuilder,
+      handleRemoveCard,
     },
     ref
   ) => {
@@ -413,6 +419,8 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
           resultCountString={resultCountString}
           resultsCount={filteredCards.length}
           handleExportAll={onExportAll}
+          onToggleDeckBuilder={onToggleDeckBuilder}
+          showDeckBuilder={showDeckBuilder}
         />
         <Box
           sx={{
@@ -433,6 +441,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
               <Card
                 key={index}
                 onClick={() => handleCardClick(cardData)}
+                onDoubleClick={() => handleRemoveCard(cardData.cardName)}
                 onContextMenu={event => {
                   event.preventDefault();
                   onGetReferences(cardData);
