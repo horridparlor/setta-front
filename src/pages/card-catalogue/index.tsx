@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Box } from '@mui/material';
-import { CardData } from '../../types/card';
+import { CardData, CardDeck, CardSubtype } from '../../types/card';
 import { CardOwner } from '../../types/user';
 import { CardExpansion } from '../../types/expansion';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
@@ -10,7 +10,13 @@ import CardCatalogue, {
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
 import { PageCookie } from '../../types/cookie';
+import DeckBuilder from '../../components/card-catalogue/DeckBuilder';
 
+export type DeckData = {
+  card: CardData;
+  count: number;
+  deckType: CardDeck;
+};
 interface CardCataloguePageProps {
   cards: Array<CardData>;
   cardOwners: Array<CardOwner>;
@@ -31,6 +37,12 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
   const homeBarRef = useRef<HomeBarRef>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [showDeckBuilder, setShowDeckBuilder] = useState<boolean>(false);
+  const [showClickedCards, setShowClickedCards] = useState(false);
+  const toggleClickedCards = () => {
+    setShowClickedCards(!showClickedCards);
+  };
+  const [deck, setDeck] = useState<DeckData[]>([]);
 
   const commitSave = () => {
     catalogueRef.current?.toggleFilters();
@@ -40,11 +52,6 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
   };
   const commitEscape = () => {
     catalogueRef.current?.backdownFilters();
-  };
-  const handleCardClick = (card: CardData) => {
-    onLeavePage();
-    const cardRoute = `${AppPage.CardEditor}/${card.cardId.toString()}`;
-    navigate(cardRoute);
   };
   const onLeavePage = () => {
     const params = new URLSearchParams(location.search);
@@ -56,6 +63,64 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
       PageCookie.CARD_CATALOGUE_FILTERS,
       params.toString()
     );
+  };
+
+  const handleCardClick = (card: CardData) => {
+    if (!showDeckBuilder) {
+      onLeavePage();
+      const cardRoute = `${AppPage.CardEditor}/${card.cardId.toString()}`;
+      navigate(cardRoute);
+      return;
+    }
+    setDeck(prevDeck => {
+      const existingEntryIndex = prevDeck.findIndex(
+        entry => entry.card.cardName === card.cardName
+      );
+
+      if (existingEntryIndex >= 0) {
+        return updateExistingDeckEntry(prevDeck, existingEntryIndex, card);
+      }
+      return [...prevDeck, createNewDeckEntry(card)];
+    });
+  };
+  const updateExistingDeckEntry = (
+    deck: DeckData[],
+    index: number,
+    card: CardData
+  ): DeckData[] => {
+    const updatedDeck = [...deck];
+    const existingEntry = updatedDeck[index];
+    const newCount = card.isAce ? 1 : Math.min(3, existingEntry.count + 1);
+    updatedDeck[index] = {
+      ...existingEntry,
+      count: newCount,
+      deckType: existingEntry.deckType,
+    };
+    return updatedDeck;
+  };
+  const createNewDeckEntry = (card: CardData): DeckData => {
+    const isExtraDeckCard = [
+      CardSubtype.FUSION,
+      CardSubtype.REVENGE,
+      CardSubtype.ROYAL,
+      CardSubtype.TIME_TRAVELLER,
+      CardSubtype.KILLER_MOVE,
+    ].includes(card.subtype);
+    return {
+      card,
+      count: 1,
+      deckType: isExtraDeckCard ? CardDeck.EXTRA : CardDeck.MAIN,
+    };
+  };
+
+  const handleRemoveCard = (cardName: string) => {
+    setDeck(prevDeck =>
+      prevDeck.filter(entry => entry.card.cardName !== cardName)
+    );
+  };
+
+  const clearDeck = (deckType: CardDeck) => {
+    setDeck(prevDeck => prevDeck.filter(entry => entry.deckType !== deckType));
   };
 
   useEffect(() => {
@@ -87,6 +152,10 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
     };
   });
 
+  const toggleDeckBuilder = () => {
+    setShowDeckBuilder(prev => !prev);
+  };
+
   return (
     <Box
       sx={{
@@ -104,22 +173,54 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
         sx={{
           flex: 1,
           display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          overflow: 'auto',
-          p: 2,
+          overflow: 'hidden',
         }}
       >
-        <CardCatalogue
-          cards={cards}
-          cardOwners={cardOwners}
-          expansions={expansions}
-          ref={catalogueRef}
-          handleCardClick={handleCardClick}
-          visibleCardCount={visibleCardCount}
-          setVisibleCardCount={setVisibleCardCount}
-          defaultCardsShown={DEFAULT_CARDS_SHOWN}
-        />
+        <Box
+          sx={{
+            flex: showDeckBuilder ? 2 : 1,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            overflow: 'auto',
+          }}
+        >
+          <CardCatalogue
+            cards={showClickedCards ? deck.map(entry => entry.card) : cards}
+            cardOwners={cardOwners}
+            expansions={expansions}
+            ref={catalogueRef}
+            handleCardClick={handleCardClick}
+            visibleCardCount={visibleCardCount}
+            setVisibleCardCount={setVisibleCardCount}
+            defaultCardsShown={DEFAULT_CARDS_SHOWN}
+            onToggleDeckBuilder={toggleDeckBuilder}
+            showDeckBuilder={showDeckBuilder}
+            handleRemoveCard={handleRemoveCard}
+          />
+        </Box>
+        {showDeckBuilder && (
+          <Box
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              p: 2,
+              overflow: 'auto',
+              backgroundColor: 'white',
+            }}
+          >
+            <DeckBuilder
+              onClose={toggleDeckBuilder}
+              deck={deck}
+              onRemoveCard={handleRemoveCard}
+              setDeck={setDeck}
+              clearDeck={clearDeck}
+              toggleClickedCards={toggleClickedCards}
+              showClickedCards={showClickedCards}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   );
