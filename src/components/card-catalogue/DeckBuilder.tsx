@@ -152,6 +152,21 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
     clearDeck(CardDeck.SIDE);
   };
 
+  const handleMoveCard = (cardName: string, deck: CardDeck) => {
+    setDeck(p =>
+      p.map(c => (c.card.cardName === cardName ? { ...c, deckType: deck } : c))
+    );
+    setSelectedCards(new Set());
+  };
+
+  const handleMoveSelectedCards = (deck: CardDeck) => {
+    setDeck(p =>
+      p.map(c =>
+        selectedCards.has(c.card.cardName) ? { ...c, deckType: deck } : c
+      )
+    );
+  };
+
   const updateCardCount = (cardName: string, increment: boolean) => {
     setDeck(prevCards => {
       const isBulkUpdate = selectedCards.size > 0;
@@ -268,6 +283,7 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </IconButton>
         <Collapse in={mainDeckOpen}>
           <DeckTable
+            type={CardDeck.MAIN}
             cards={deck.filter(card => card.deckType === CardDeck.MAIN)}
             groupBy="cardType"
             getGroupLabel={group => `${group}`}
@@ -275,6 +291,8 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
             handleCheckboxToggle={handleCheckboxToggle}
             updateCardCount={updateCardCount}
             onRemoveCard={onRemoveCard}
+            onMoveCard={handleMoveCard}
+            onMoveSelectedCards={handleMoveSelectedCards}
           />
         </Collapse>
 
@@ -290,6 +308,7 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </IconButton>
         <Collapse in={extraDeckOpen}>
           <DeckTable
+            type={CardDeck.EXTRA}
             cards={deck.filter(card => card.deckType === CardDeck.EXTRA)}
             groupBy="subtype"
             getGroupLabel={group => `${group}`}
@@ -297,6 +316,8 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
             handleCheckboxToggle={handleCheckboxToggle}
             updateCardCount={updateCardCount}
             onRemoveCard={onRemoveCard}
+            onMoveCard={handleMoveCard}
+            onMoveSelectedCards={handleMoveSelectedCards}
           />
         </Collapse>
 
@@ -306,6 +327,7 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </IconButton>
         <Collapse in={sideDeckOpen}>
           <DeckTable
+            type={CardDeck.SIDE}
             cards={deck.filter(card => card.deckType === CardDeck.SIDE)}
             groupBy="cardType"
             getGroupLabel={group => `${group}`}
@@ -313,10 +335,13 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
             handleCheckboxToggle={handleCheckboxToggle}
             updateCardCount={updateCardCount}
             onRemoveCard={onRemoveCard}
+            onMoveCard={handleMoveCard}
+            onMoveSelectedCards={handleMoveSelectedCards}
           />
         </Collapse>
       </CardContent>
     </Card>
   );
 };
+
 export default DeckBuilder;
