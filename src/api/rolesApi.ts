@@ -94,3 +94,34 @@ export const deleteRole = async (roleId: number) => {
     throw error;
   }
 };
+
+//This is not yet working due to backend not being up to REST API standards and will result in CORS errors
+export const getRoleById = async (roleId: number): Promise<UserRole> => {
+  const authToken = Cookies.get(AuthCookie.AUTH_TOKEN);
+  if (!authToken) {
+    throw new Error('Authentication token missing');
+  }
+
+  try {
+    const response = await apiClient.GET(`/admin/role/{roleId}`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+      params: {
+        path: {
+          roleId: roleId,
+        },
+      },
+    });
+
+    if (response.error) {
+      throw new Error(response.error.error || 'Failed to fetch role');
+    }
+
+    return response.data; // This should return a `UserRole` object.
+  } catch (error) {
+    console.error('Error fetching role by ID:', error);
+    throw error;
+  }
+};

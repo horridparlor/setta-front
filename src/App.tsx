@@ -14,6 +14,7 @@ import UserManagementPage from './pages/user-management';
 import UserRolesPage from './pages/user-roles';
 import UserCreationPage from './pages/user-creation';
 import UserProfilePage from './pages/user-profile';
+import EditUserPage from './pages/user-management/EditUserPage';
 
 export default function App() {
   const { expansions, fetchExpansions } = useExpansions();
@@ -69,6 +70,7 @@ export default function App() {
             path="/user-management"
             element={<UserManagementPage refetch={refetch} />}
           />
+          <Route path="/user-management/edit/:id" element={<EditUserPage />} />
           <Route
             path="/user-creation"
             element={<UserCreationPage refetch={refetch} />}

@@ -29,12 +29,12 @@ export const fetchLoggedInUser = async () => {
         },
       },
     });
-
     /*
+ 
     const response = await apiClient.GET(`/admin/user?userId=${userId}`, {
       headers,
     });
-     */
+    */
     if (response.error) {
       console.error('API Error:', response.error);
       throw new Error(response.error.error);
