@@ -14,6 +14,7 @@ const useExpansions = () => {
     const { data: responseData, error } = await apiClient.GET(
       '/user/expansions',
       {
+        credentials: 'same-origin',
         headers: getHeaders(),
       }
     );

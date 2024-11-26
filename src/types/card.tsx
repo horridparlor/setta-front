@@ -148,7 +148,6 @@ export interface CardData {
   createdAt: string;
   updatedAt: string;
   cardEffects: CardEffects;
-  count: number;
 }
 
 export enum StatType {

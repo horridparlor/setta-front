@@ -16,7 +16,7 @@ export const DecrementButton: React.FC<{
 
 export const IncrementButton: React.FC<{
   cardName: string;
-  count: number;
+  count: number | null;
   isAce: boolean;
   updateCardCount: (cardName: string, increment: boolean) => void;
 }> = ({ cardName, count, isAce, updateCardCount }) => (
@@ -30,9 +30,10 @@ export const IncrementButton: React.FC<{
 );
 
 export const VisibilityButton: React.FC<{
-  goToCardEditor: () => void;
-}> = ({ goToCardEditor }) => (
-  <IconButton size="small" onClick={goToCardEditor}>
+  goToCardEditor: (cardId: number) => void;
+  cardId: number;
+}> = ({ goToCardEditor, cardId }) => (
+  <IconButton size="small" onClick={() => goToCardEditor(cardId)}>
     <VisibilityIcon fontSize="small" />
   </IconButton>
 );

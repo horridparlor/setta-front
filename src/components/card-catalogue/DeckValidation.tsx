@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { CardData, CardSubtype, CardType } from '../../types/card';
+import { CardType, CardDeck } from '../../types/card';
+import { DeckData } from '../../pages/card-catalogue';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useTranslation } from 'react-i18next';
 
-const DeckValidation = (clickedCards: CardData[]) => {
+const DeckValidation = (deck: DeckData[]) => {
   const [deckValidityState, setDeckValidityState] = useState<
     '' | 'validUnreleased' | 'notValid' | 'released'
   >('');
@@ -13,73 +14,39 @@ const DeckValidation = (clickedCards: CardData[]) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const mainDeckCards = clickedCards.filter(
-      card =>
-        ![
-          CardSubtype.FUSION,
-          CardSubtype.REVENGE,
-          CardSubtype.ROYAL,
-          CardSubtype.TIME_TRAVELLER,
-          CardSubtype.KILLER_MOVE,
-        ].includes(card.subtype)
+    const mainDeckCards = deck.filter(card => card.deckType === CardDeck.MAIN);
+    const extraDeckCards = deck.filter(
+      card => card.deckType === CardDeck.EXTRA
     );
 
-    const extraDeckCards = clickedCards.filter(card =>
-      [
-        CardSubtype.FUSION,
-        CardSubtype.REVENGE,
-        CardSubtype.ROYAL,
-        CardSubtype.TIME_TRAVELLER,
-        CardSubtype.KILLER_MOVE,
-      ].includes(card.subtype)
-    );
-
-    const totalMainDeckCount = mainDeckCards.reduce(
-      (total, card) => total + card.count,
-      0
-    );
-    const totalExtraDeckCount = extraDeckCards.reduce(
-      (total, card) => total + card.count,
-      0
-    );
-
-    const checkMainDeckValidity = mainDeckCards.some(card => {
-      if (card.isAce) {
-        const totalAceCountByType: Record<CardType, number> =
-          mainDeckCards.reduce(
-            (acc, c) => {
-              if (c.isAce) {
-                acc[c.cardType] = (acc[c.cardType] || 0) + c.count;
-              }
-              return acc;
-            },
-            {} as Record<CardType, number>
-          );
-
-        for (const type in totalAceCountByType) {
-          if (totalAceCountByType[type as CardType] > 1) {
-            return true;
-          }
-        }
+    const totalCounts = {
+      main: 0,
+      extra: 0,
+      aceMainDeck: {} as Record<CardType, number>,
+      aceExtraDeck: 0,
+    };
+    mainDeckCards.forEach(deckEntry => {
+      totalCounts.main += deckEntry.count;
+      if (deckEntry.card.isAce) {
+        totalCounts.aceMainDeck[deckEntry.card.cardType] =
+          (totalCounts.aceMainDeck[deckEntry.card.cardType] || 0) +
+          deckEntry.count;
       }
-
-      return false;
+    });
+    extraDeckCards.forEach(deckEntry => {
+      totalCounts.extra += deckEntry.count;
+      if (deckEntry.card.isAce) {
+        totalCounts.aceExtraDeck += deckEntry.count;
+      }
     });
 
-    const checkExtraDeckValidity = extraDeckCards.some(card => {
-      if (card.isAce) {
-        const totalAceCount = extraDeckCards
-          .filter(c => c.isAce)
-          .reduce((total, aceCard) => total + aceCard.count, 0);
-
-        return totalAceCount > 1;
-      }
-      return false;
-    });
-
+    const checkMainDeckValidity = Object.values(totalCounts.aceMainDeck).some(
+      count => count > 1
+    );
+    const checkExtraDeckValidity = totalCounts.aceExtraDeck > 1;
     if (
-      totalMainDeckCount !== 60 ||
-      totalExtraDeckCount > 15 ||
+      totalCounts.main !== 60 ||
+      totalCounts.extra > 15 ||
       checkMainDeckValidity ||
       checkExtraDeckValidity
     ) {
@@ -89,7 +56,7 @@ const DeckValidation = (clickedCards: CardData[]) => {
       setDeckValidityState('validUnreleased');
       setInvalidDueToAce(false);
     }
-  }, [clickedCards]);
+  }, [deck]);
   const getDeckStateMessage = () => {
     switch (deckValidityState) {
       case 'validUnreleased':

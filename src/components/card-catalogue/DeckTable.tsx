@@ -21,8 +21,12 @@ import {
 } from './DeckActionButtons';
 import DeckValidation from './DeckValidation';
 import { useTranslation } from 'react-i18next';
+import { DeckData } from '../../pages/card-catalogue';
+import { useNavigate } from 'react-router-dom';
+import { AppPage } from '../../types/navigation';
+
 interface DeckTableProps {
-  cards: CardData[];
+  cards: DeckData[];
   groupBy: keyof CardData;
   getGroupLabel: (group: string) => string;
   isCardSelected: (cardName: string) => boolean;
@@ -41,6 +45,7 @@ const DeckTable: React.FC<DeckTableProps> = ({
   onRemoveCard,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { invalidDueToAce } = DeckValidation(cards);
   const [anchorElMore, setAnchorElMore] = React.useState<null | HTMLElement>(
     null
@@ -91,17 +96,18 @@ const DeckTable: React.FC<DeckTableProps> = ({
     }
     return color;
   };
-  const goToCardEditor = () => {
-    //navigate to card editor decks tab of the card
+  const goToCardEditor = (cardId: number) => {
+    const cardRoute = `${AppPage.CardEditor}/${cardId.toString()}`;
+    navigate(cardRoute);
   };
   const cardsByGroup = cards.reduce(
-    (acc, card) => {
-      const groupKey = String(card[groupBy]);
+    (acc, deckEntry) => {
+      const groupKey = String(deckEntry.card[groupBy]);
       if (!acc[groupKey]) acc[groupKey] = [];
-      acc[groupKey].push(card);
+      acc[groupKey].push(deckEntry);
       return acc;
     },
-    {} as Record<string, CardData[]>
+    {} as Record<string, DeckData[]>
   );
 
   return (
@@ -122,15 +128,17 @@ const DeckTable: React.FC<DeckTableProps> = ({
               </TableCell>
             </TableRow>
 
-            {groupedCards.map((card, index) => {
+            {groupedCards.map((deckEntry, index) => {
+              const { card, count } = deckEntry;
               const color = getCardColor(card.cardType, card.subtype);
               return (
                 <TableRow key={`${group}-${index}`}>
-                  <TableCell sx={{ padding: '2px' }}>
+                  <TableCell sx={{ padding: '0px' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Checkbox
                         checked={isCardSelected(card.cardName)}
                         onChange={handleCheckboxToggle(card.cardName)}
+                        sx={{ padding: '0px' }}
                       />
                       <Box
                         sx={{
@@ -138,6 +146,7 @@ const DeckTable: React.FC<DeckTableProps> = ({
                           height: 20,
                           backgroundColor: color,
                           marginRight: 1,
+                          marginLeft: 1,
                         }}
                       />
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -146,11 +155,11 @@ const DeckTable: React.FC<DeckTableProps> = ({
                           updateCardCount={updateCardCount}
                         />
                         <Typography variant="body2" sx={{ margin: '0 4px' }}>
-                          {card.count}
+                          {count}
                         </Typography>
                         <IncrementButton
                           cardName={card.cardName}
-                          count={card.count}
+                          count={count}
                           isAce={card.isAce}
                           updateCardCount={updateCardCount}
                         />
@@ -176,7 +185,10 @@ const DeckTable: React.FC<DeckTableProps> = ({
                     </Box>
                   </TableCell>
                   <TableCell sx={{ padding: '2px' }}>
-                    <VisibilityButton goToCardEditor={goToCardEditor} />
+                    <VisibilityButton
+                      goToCardEditor={goToCardEditor}
+                      cardId={deckEntry.card.cardId}
+                    />
                     <IconButton size="small" onClick={handleMoreClick}>
                       <MoreVertIcon fontSize="small" />
                     </IconButton>

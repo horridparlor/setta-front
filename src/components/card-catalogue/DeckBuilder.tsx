@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CardData, CardDeck, CardSubtype } from '../../types/card';
+import { CardDeck } from '../../types/card';
 import DeckValidation from './DeckValidation';
 import DeckTable from './DeckTable';
 import DeckBuilderManagement from './DeckBuilderManagement';
@@ -26,25 +26,26 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { useTranslation } from 'react-i18next';
+import { DeckData } from '../../pages/card-catalogue';
 
 interface DeckBuilderProps {
   onClose: () => void;
-  clickedCards: CardData[];
+  deck: DeckData[];
   onRemoveCard: (cardName: string) => void;
   clearDeck: (deckType: CardDeck) => void;
   toggleClickedCards: () => void;
   showClickedCards: boolean;
-  setClickedCards: React.Dispatch<React.SetStateAction<CardData[]>>;
+  setDeck: React.Dispatch<React.SetStateAction<DeckData[]>>;
 }
 
 const DeckBuilder: React.FC<DeckBuilderProps> = ({
   onClose,
-  clickedCards,
+  deck,
   onRemoveCard,
   clearDeck,
   toggleClickedCards,
   showClickedCards,
-  setClickedCards,
+  setDeck,
 }) => {
   const [openExitDialog, setOpenExitDialog] = useState(false);
   const [deckName, setDeckName] = useState('');
@@ -52,45 +53,20 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
   const [mainDeckOpen, setMainDeckOpen] = useState(false);
   const [extraDeckOpen, setExtraDeckOpen] = useState(false);
   const [sideDeckOpen, setSideDeckOpen] = useState(false);
-  const { deckValidityState } = DeckValidation(clickedCards);
+  const { deckValidityState } = DeckValidation(deck);
   const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
-  const [mainDeck, setMainDeck] = useState<CardData[]>([]);
-  const [extraDeck, setExtraDeck] = useState<CardData[]>([]);
-  const [sideDeck, setSideDeck] = useState<CardData[]>([]);
   const { t } = useTranslation();
   const [userToggled, setUserToggled] = useState(false);
 
-  useEffect(() => {
-    const updatedExtraDeck = clickedCards.filter(card =>
-      [
-        CardSubtype.FUSION,
-        CardSubtype.REVENGE,
-        CardSubtype.ROYAL,
-        CardSubtype.TIME_TRAVELLER,
-        CardSubtype.KILLER_MOVE,
-      ].includes(card.subtype)
-    );
-
-    const updatedMainDeck = clickedCards.filter(
-      card =>
-        ![
-          CardSubtype.FUSION,
-          CardSubtype.REVENGE,
-          CardSubtype.ROYAL,
-          CardSubtype.TIME_TRAVELLER,
-          CardSubtype.KILLER_MOVE,
-        ].includes(card.subtype)
-    );
-    setMainDeck(updatedMainDeck);
-    setExtraDeck(updatedExtraDeck);
-  }, [clickedCards, sideDeck, setMainDeck, setExtraDeck]);
-
-  const extraDeckCount = extraDeck.reduce(
-    (total, card) => total + card.count,
-    0
-  );
-  const mainDeckCount = mainDeck.reduce((total, card) => total + card.count, 0);
-  const sideDeckCount = sideDeck.reduce((total, card) => total + card.count, 0);
+  const extraDeckCount = deck
+    .filter(deckEntry => deckEntry.deckType === CardDeck.EXTRA)
+    .reduce((total, deckEntry) => total + deckEntry.count, 0);
+  const mainDeckCount = deck
+    .filter(deckEntry => deckEntry.deckType === CardDeck.MAIN)
+    .reduce((total, deckEntry) => total + deckEntry.count, 0);
+  const sideDeckCount = deck
+    .filter(deckEntry => deckEntry.deckType === CardDeck.SIDE)
+    .reduce((total, deckEntry) => total + deckEntry.count, 0);
   useEffect(() => {
     if (mainDeckCount > 0 && !userToggled) {
       setMainDeckOpen(true);
@@ -116,11 +92,11 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
   }));
 
   const saveDeck = () => {
-    const deck = {
+    const deckToSave = {
       deckNameText,
-      clickedCards,
+      deck,
     };
-    console.log(deck);
+    console.log(deckToSave);
   };
   const handleCopyDeck = () => {
     saveDeck();
@@ -171,43 +147,44 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
   const clearDeckbuilder = () => {
     setDeckName('');
     setDeckNameText('');
-    setSideDeck([]);
     clearDeck(CardDeck.MAIN);
     clearDeck(CardDeck.EXTRA);
+    clearDeck(CardDeck.SIDE);
   };
 
   const updateCardCount = (cardName: string, increment: boolean) => {
-    setClickedCards(prevCards => {
+    setDeck(prevCards => {
       const isBulkUpdate = selectedCards.size > 0;
-      const updatedCards = prevCards.map(card => {
+      const updatedDeck = prevCards.map(deckEntry => {
+        const card = deckEntry.card;
         if (isBulkUpdate) {
           if (selectedCards.has(card.cardName)) {
             const maxCount = card.isAce ? 1 : 3;
             const newCount = Math.max(
               0,
-              Math.min(maxCount, card.count + (increment ? 1 : -1))
+              Math.min(maxCount, deckEntry.count + (increment ? 1 : -1))
             );
             if (newCount <= 0) {
               handleCheckboxChange(card.cardName);
               return null;
             }
-            return { ...card, count: newCount };
+            return { ...deckEntry, count: newCount };
           }
-          return card;
+          return deckEntry;
         }
         if (card.cardName === cardName) {
           const newCount = Math.max(
             0,
-            Math.min(3, card.count + (increment ? 1 : -1))
+            Math.min(3, deckEntry.count + (increment ? 1 : -1))
           );
           if (newCount <= 0) {
             return null;
           }
-          return { ...card, count: newCount };
+          return { ...deckEntry, count: newCount };
         }
-        return card;
+        return deckEntry;
       });
-      return updatedCards.filter(card => card !== null);
+      return updatedDeck.filter(deckEntry => deckEntry !== null);
     });
   };
 
@@ -271,7 +248,7 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </Dialog>
       </CardActions>
       <DeckBuilderManagement
-        clickedCards={clickedCards}
+        deck={deck}
         deckName={deckName}
         handleDeckChange={handleDeckChange}
         clearDeckbuilder={clearDeckbuilder}
@@ -291,7 +268,7 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </IconButton>
         <Collapse in={mainDeckOpen}>
           <DeckTable
-            cards={mainDeck}
+            cards={deck.filter(card => card.deckType === CardDeck.MAIN)}
             groupBy="cardType"
             getGroupLabel={group => `${group}`}
             isCardSelected={isCardSelected}
@@ -313,7 +290,7 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </IconButton>
         <Collapse in={extraDeckOpen}>
           <DeckTable
-            cards={extraDeck}
+            cards={deck.filter(card => card.deckType === CardDeck.EXTRA)}
             groupBy="subtype"
             getGroupLabel={group => `${group}`}
             isCardSelected={isCardSelected}
@@ -329,7 +306,7 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </IconButton>
         <Collapse in={sideDeckOpen}>
           <DeckTable
-            cards={sideDeck}
+            cards={deck.filter(card => card.deckType === CardDeck.SIDE)}
             groupBy="cardType"
             getGroupLabel={group => `${group}`}
             isCardSelected={isCardSelected}

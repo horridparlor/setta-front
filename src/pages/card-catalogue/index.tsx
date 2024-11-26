@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Box } from '@mui/material';
-import { CardData, CardDeck } from '../../types/card';
+import { CardData, CardDeck, CardSubtype } from '../../types/card';
 import { CardOwner } from '../../types/user';
 import { CardExpansion } from '../../types/expansion';
 import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
@@ -12,6 +12,11 @@ import { AppPage } from '../../types/navigation';
 import { PageCookie } from '../../types/cookie';
 import DeckBuilder from '../../components/card-catalogue/DeckBuilder';
 
+export type DeckData = {
+  card: CardData;
+  count: number;
+  deckType: CardDeck;
+};
 interface CardCataloguePageProps {
   cards: Array<CardData>;
   cardOwners: Array<CardOwner>;
@@ -33,11 +38,11 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showDeckBuilder, setShowDeckBuilder] = useState<boolean>(false);
-  const [clickedCards, setClickedCards] = useState<CardData[]>([]);
   const [showClickedCards, setShowClickedCards] = useState(false);
   const toggleClickedCards = () => {
     setShowClickedCards(!showClickedCards);
   };
+  const [deck, setDeck] = useState<DeckData[]>([]);
 
   const commitSave = () => {
     catalogueRef.current?.toggleFilters();
@@ -67,48 +72,55 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
       navigate(cardRoute);
       return;
     }
-    setClickedCards(prevCards => {
-      const existingCardIndex = prevCards.findIndex(
-        c => c.cardName === card.cardName
+    setDeck(prevDeck => {
+      const existingEntryIndex = prevDeck.findIndex(
+        entry => entry.card.cardName === card.cardName
       );
-      if (existingCardIndex >= 0) {
-        const updatedCards = [...prevCards];
-        const existingCard = updatedCards[existingCardIndex];
-        if (existingCard.isAce) {
-          existingCard.count = 1;
-        } else {
-          existingCard.count = Math.min(3, existingCard.count + 1);
-        }
-        updatedCards[existingCardIndex] = existingCard;
-        return updatedCards;
-      } else {
-        return [...prevCards, { ...card, count: 1 }];
+
+      if (existingEntryIndex >= 0) {
+        return updateExistingDeckEntry(prevDeck, existingEntryIndex, card);
       }
+      return [...prevDeck, createNewDeckEntry(card)];
     });
+  };
+  const updateExistingDeckEntry = (
+    deck: DeckData[],
+    index: number,
+    card: CardData
+  ): DeckData[] => {
+    const updatedDeck = [...deck];
+    const existingEntry = updatedDeck[index];
+    const newCount = card.isAce ? 1 : Math.min(3, existingEntry.count + 1);
+    updatedDeck[index] = {
+      ...existingEntry,
+      count: newCount,
+      deckType: existingEntry.deckType,
+    };
+    return updatedDeck;
+  };
+  const createNewDeckEntry = (card: CardData): DeckData => {
+    const isExtraDeckCard = [
+      CardSubtype.FUSION,
+      CardSubtype.REVENGE,
+      CardSubtype.ROYAL,
+      CardSubtype.TIME_TRAVELLER,
+      CardSubtype.KILLER_MOVE,
+    ].includes(card.subtype);
+    return {
+      card,
+      count: 1,
+      deckType: isExtraDeckCard ? CardDeck.EXTRA : CardDeck.MAIN,
+    };
   };
 
   const handleRemoveCard = (cardName: string) => {
-    setClickedCards(prevCards =>
-      prevCards.filter(card => card.cardName !== cardName)
+    setDeck(prevDeck =>
+      prevDeck.filter(entry => entry.card.cardName !== cardName)
     );
   };
 
   const clearDeck = (deckType: CardDeck) => {
-    setClickedCards(prevCards =>
-      prevCards.filter(card => {
-        const isExtraDeckCard = [
-          'Fusion',
-          'Revenge',
-          'Royal',
-          'Time Traveller',
-          'Killer Move',
-        ].includes(card.subtype);
-
-        if (deckType === CardDeck.MAIN) return isExtraDeckCard;
-        if (deckType === CardDeck.EXTRA) return !isExtraDeckCard;
-        return false;
-      })
-    );
+    setDeck(prevDeck => prevDeck.filter(entry => entry.deckType !== deckType));
   };
 
   useEffect(() => {
@@ -174,7 +186,7 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
           }}
         >
           <CardCatalogue
-            cards={showClickedCards ? clickedCards : cards}
+            cards={showClickedCards ? deck.map(entry => entry.card) : cards}
             cardOwners={cardOwners}
             expansions={expansions}
             ref={catalogueRef}
@@ -200,9 +212,9 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
           >
             <DeckBuilder
               onClose={toggleDeckBuilder}
-              clickedCards={clickedCards}
+              deck={deck}
               onRemoveCard={handleRemoveCard}
-              setClickedCards={setClickedCards}
+              setDeck={setDeck}
               clearDeck={clearDeck}
               toggleClickedCards={toggleClickedCards}
               showClickedCards={showClickedCards}

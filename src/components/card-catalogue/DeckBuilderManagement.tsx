@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DeckValidation from './DeckValidation';
-import { CardData } from '../../types/card';
+import { DeckData } from '../../pages/card-catalogue';
 import {
   Box,
   Button,
@@ -33,7 +33,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslation } from 'react-i18next';
 
 interface DeckBuilderManagementProps {
-  clickedCards: CardData[];
+  deck: DeckData[];
   deckName: string;
   handleDeckChange: (e: SelectChangeEvent) => void;
   clearDeckbuilder: () => void;
@@ -44,7 +44,7 @@ interface DeckBuilderManagementProps {
   deckValidityState: 'released' | 'notValid' | string;
 }
 const DeckBuilderManagement: React.FC<DeckBuilderManagementProps> = ({
-  clickedCards,
+  deck,
   deckName,
   handleDeckChange,
   clearDeckbuilder,
@@ -55,7 +55,7 @@ const DeckBuilderManagement: React.FC<DeckBuilderManagementProps> = ({
   deckValidityState,
 }) => {
   const [deleteDialog, setDeleteDialog] = useState(false);
-  const { deckStateMessage } = DeckValidation(clickedCards);
+  const { deckStateMessage } = DeckValidation(deck);
   const [anchorElSettings, setAnchorElSettings] =
     React.useState<null | HTMLElement>(null);
   const { t } = useTranslation();
@@ -218,7 +218,7 @@ const DeckBuilderManagement: React.FC<DeckBuilderManagementProps> = ({
           disabled={deckValidityState === 'notValid'}
           sx={{ color: deckStateMessage.color }}
         >
-          {deckValidityState === 'released' ? 'Unrelease' : 'Release'}
+          {deckValidityState === 'released' ? t('UNRELEASE') : t('RELEASE')}
         </Button>
       </Box>
     </Box>
