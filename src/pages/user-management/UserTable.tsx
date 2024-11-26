@@ -17,11 +17,11 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { UserRole } from '../../api/types';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AppPage } from '../../types/navigation';
 import RoleChangeModal from './RoleChangeModal';
-import { deleteUser } from '../../api/userManagementApi';
+import { deleteUser, updateUser } from '../../api/userManagementApi';
 import { useTranslation } from 'react-i18next';
 import ConfirmationDialog from '../../components/common/ConfirmationDialog';
 import { toast } from 'react-toastify';
@@ -29,12 +29,25 @@ import { UserWithRole } from '../../hooks/useUsersWithRoles';
 
 export type StatusChipProps = {
   isActive: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
 };
 
-export const StatusChip: React.FC<StatusChipProps> = ({ isActive }) => (
+export const StatusChip: React.FC<StatusChipProps> = ({
+  isActive,
+  onClick,
+  disabled,
+}) => (
   <Tooltip title={isActive ? 'Deactivate' : 'Activate'}>
     <Chip
-      clickable
+      disabled={disabled}
+      clickable={!!onClick}
+      onClick={e => {
+        e.stopPropagation();
+        if (onClick) {
+          onClick();
+        }
+      }}
       label={isActive ? 'Active' : 'Deactivated'}
       color={isActive ? 'success' : 'error'}
       icon={isActive ? <Close /> : <Check />}
@@ -46,6 +59,30 @@ type UserTableProps = {
   roles: UserRole[];
   users: UserWithRole[];
   refetch: () => void;
+};
+
+type StatusFilter = {
+  name: string;
+  predicate: (user: UserWithRole) => boolean;
+};
+
+const statusFilters: Record<string, StatusFilter> = {
+  'Show All': {
+    name: 'Show All',
+    predicate: () => true,
+  },
+  Active: {
+    name: 'Active',
+    predicate: user => user.isActive,
+  },
+  Deactive: {
+    name: 'Deactive',
+    predicate: user => !user.isActive,
+  },
+  'Token Requests': {
+    name: 'Token Requests',
+    predicate: user => !!user.tokenRequest,
+  },
 };
 
 export const UserTable: React.FC<UserTableProps> = ({
@@ -77,15 +114,65 @@ export const UserTable: React.FC<UserTableProps> = ({
   const adminRoleUsersThatAreSelected = users.filter(
     u => u.roleId === 2 && selectedUserRows.includes(u.id)
   );
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(
+    statusFilters['Show All']
+  );
+  const [searchText, setSearchText] = useState('');
+
+  const resetToInitialStates = useCallback(() => {
+    setStatusFilter(statusFilters['Show All']);
+    setSelectedUserRole(null);
+    setSelectedUserRows([]);
+    setSearchText('');
+  }, []);
+
+  const filteredUsers = useMemo(() => {
+    return users
+      .filter(statusFilter.predicate)
+      .filter(user => !selectedUserRole || user.roleId === selectedUserRole.id)
+      .filter(user => {
+        const search = searchText.toLowerCase().trim();
+        return (
+          user.firstname.toLowerCase().includes(search) ||
+          user.lastname.toLowerCase().includes(search) ||
+          user.username.toLowerCase().includes(search) ||
+          user.email?.toLowerCase().includes(search) ||
+          user.role?.name.toLowerCase().includes(search)
+        );
+      });
+  }, [users, statusFilter, selectedUserRole, searchText]);
 
   const handleDeleteUser = async (userId: number) => {
     try {
       await deleteUser(userId);
-      await refetch();
+      refetch();
       setIsConfirmingDeletionOfUser(null);
       toast.success('User deleted successfully');
     } catch (error) {
       console.error('Failed to delete user:', error);
+    }
+  };
+
+  const handleStatusChipClick = async (user: UserWithRole) => {
+    const newStatus = !user.isActive;
+    console.log('Changing status of user:', user, 'to:', newStatus);
+    try {
+      await updateUser({
+        ...user,
+        userId: user.id,
+        isActive: !Boolean(user.isActive),
+      });
+      toast.success(
+        `Status of user ${user.firstname} ${user.lastname} changed to ${
+          newStatus ? 'active' : 'deactivated'
+        }`
+      );
+      refetch();
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      toast.error(
+        `Error updating status of user ${user.firstname} ${user.lastname}`
+      );
     }
   };
 
@@ -162,7 +249,13 @@ export const UserTable: React.FC<UserTableProps> = ({
       field: 'active',
       headerName: 'Status',
       flex: 1,
-      renderCell: params => <StatusChip isActive={params.row.isActive} />,
+      renderCell: params => (
+        <StatusChip
+          disabled={params.row.roleId === 2}
+          isActive={params.row.isActive}
+          onClick={() => handleStatusChipClick(params.row)}
+        />
+      ),
     },
     {
       field: 'options',
@@ -198,6 +291,8 @@ export const UserTable: React.FC<UserTableProps> = ({
             }}
           >
             <TextField
+              value={searchText}
+              onChange={event => setSearchText(event.target.value)}
               label="Search name, email, etc."
               variant="outlined"
               sx={{ width: '30%' }}
@@ -225,11 +320,16 @@ export const UserTable: React.FC<UserTableProps> = ({
             </FormControl>
             <FormControl variant="outlined" sx={{ width: '20%' }}>
               <InputLabel id="filter">Status</InputLabel>
-              <Select id="status" label="status">
-                <MenuItem>Show All</MenuItem>
-                <MenuItem>Active</MenuItem>
-                <MenuItem>Deactive</MenuItem>
-                <MenuItem>Token Requests</MenuItem>
+              <Select id="status" label="status" value={statusFilter.name}>
+                {Object.keys(statusFilters).map(filterName => (
+                  <MenuItem
+                    key={filterName}
+                    value={filterName}
+                    onClick={() => setStatusFilter(statusFilters[filterName])}
+                  >
+                    {filterName}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             {selectedUserRows.length > 0 && (
@@ -265,6 +365,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 users={users}
                 refetch={refetch}
                 open={isRoleChangeDialogOpen}
+                onSuccesfulSubmit={resetToInitialStates}
                 onClose={() => setRoleChangeDialogOpen(false)}
                 initialSelectedUsers={users.filter(user =>
                   selectedUserRows.includes(user.id)
@@ -274,11 +375,7 @@ export const UserTable: React.FC<UserTableProps> = ({
           </Box>
           <Box sx={{ mt: 2 }}>
             <DataGrid
-              rows={
-                selectedUserRole
-                  ? users.filter(user => user.roleId === selectedUserRole?.id)
-                  : users
-              }
+              rows={filteredUsers}
               columns={userColumns}
               onRowSelectionModelChange={handleUserSelectionChange}
               rowSelectionModel={selectedUserRows}
