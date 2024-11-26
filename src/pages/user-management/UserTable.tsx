@@ -261,19 +261,24 @@ export const UserTable: React.FC<UserTableProps> = ({
       field: 'options',
       headerName: 'Options',
       flex: 1,
-      renderCell: params => (
-        <>
-          <IconButton>
-            <Edit />
-          </IconButton>
-          <IconButton
-            onClick={() => setIsConfirmingDeletionOfUser(params.row)}
-            disabled={params.row.roleId === 2}
-          >
-            <Delete />
-          </IconButton>
-        </>
-      ),
+      renderCell: params => {
+        return (
+          <>
+            <IconButton
+              onClick={() => navigate(`/user-management/edit/${params.row.id}`)}
+              disabled={params.row.roleId === 2}
+            >
+              <Edit />
+            </IconButton>
+            <IconButton
+              onClick={() => setIsConfirmingDeletionOfUser(params.row)}
+              disabled={params.row.roleId === 2}
+            >
+              <Delete />
+            </IconButton>
+          </>
+        );
+      },
       align: 'right',
     },
   ];
