@@ -353,7 +353,7 @@ const UserCreation = () => {
               >
                 {roles.map(role => (
                   <MenuItem key={role.id} value={role.id}>
-                    #{role.id} {role.name}
+                    {role.name}
                   </MenuItem>
                 ))}
                 <MenuItem value={-1} sx={{ display: 'none' }}>
