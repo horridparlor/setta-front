@@ -127,6 +127,10 @@ const UserCreation = () => {
   const [selectedExistingRole, _setSelectedExistingRole] =
     useState<UserRole | null>(null);
 
+  const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
+    null
+  );
+
   // Handle setting the accessrights fields to those of the role if a role is selected
   const handleRoleSelect = useCallback((newRole: UserRole | null) => {
     if (newRole) {
@@ -135,6 +139,7 @@ const UserCreation = () => {
       setCustomRoleName('');
     }
     _setSelectedExistingRole(newRole);
+    setSelectedUserRole(null);
   }, []);
 
   // Handle copying access rights from a selected role
@@ -369,16 +374,18 @@ const UserCreation = () => {
                 labelId="copy-access-rights"
                 id="copy-access-rights"
                 label={t('COPY_ACCESS_RIGHTS_FROM_AN_EXISTING_ROLE')}
-                value={-1}
+                value={selectedUserRole?.id ?? -1}
+                onChange={event => {
+                  copyAccessRightsFromRole(
+                    roles.find(role => role.id === event.target.value) ?? null
+                  );
+                  setSelectedUserRole(
+                    roles.find(role => role.id === event.target.value) ?? null
+                  );
+                }}
               >
                 {roles.map(role => (
-                  <MenuItem
-                    key={role.id}
-                    value={role.id}
-                    onClick={() => {
-                      copyAccessRightsFromRole(role);
-                    }}
-                  >
+                  <MenuItem key={role.id} value={role.id}>
                     {role.name}
                   </MenuItem>
                 ))}
@@ -402,7 +409,8 @@ const UserCreation = () => {
             sx={{
               marginTop: 3,
               flexDirection: 'column',
-              display: selectedExistingRole ? 'none' : 'flex',
+              display:
+                selectedExistingRole?.name !== 'Custom role' ? 'flex' : 'none',
             }}
           >
             <TextField
