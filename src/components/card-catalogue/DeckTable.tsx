@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { CardData, CardSubtype, CardType } from '../../types/card';
+import { CardData, CardDeck, CardSubtype, CardType } from '../../types/card';
 import {
   DecrementButton,
   IncrementButton,
@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppPage } from '../../types/navigation';
 
 interface DeckTableProps {
+  type: CardDeck;
   cards: DeckData[];
   groupBy: keyof CardData;
   getGroupLabel: (group: string) => string;
@@ -33,9 +34,12 @@ interface DeckTableProps {
   handleCheckboxToggle: (cardName: string) => () => void;
   updateCardCount: (cardName: string, increment: boolean) => void;
   onRemoveCard: (cardName: string) => void;
+  onMoveSelectedCards: (deck: CardDeck) => void;
+  onMoveCard: (cardName: string, deck: CardDeck) => void;
 }
 
 const DeckTable: React.FC<DeckTableProps> = ({
+  type,
   cards,
   groupBy,
   getGroupLabel,
@@ -43,6 +47,8 @@ const DeckTable: React.FC<DeckTableProps> = ({
   handleCheckboxToggle,
   updateCardCount,
   onRemoveCard,
+  onMoveSelectedCards,
+  onMoveCard,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -50,10 +56,13 @@ const DeckTable: React.FC<DeckTableProps> = ({
   const [anchorElMore, setAnchorElMore] = React.useState<null | HTMLElement>(
     null
   );
+
   const openMore = Boolean(anchorElMore);
+
   const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorElMore(event.currentTarget);
   };
+
   const handleMenuClose = () => {
     setAnchorElMore(null);
   };
@@ -197,11 +206,34 @@ const DeckTable: React.FC<DeckTableProps> = ({
                       open={openMore}
                       onClose={handleMenuClose}
                     >
-                      <MenuItem onClick={handleMenuClose}>
-                        {t('MOVE_CARD_TO_SIDE_DECK')}
+                      <MenuItem
+                        onClick={() => {
+                          onMoveCard(
+                            deckEntry.card.cardName,
+                            type === CardDeck.MAIN
+                              ? CardDeck.SIDE
+                              : CardDeck.MAIN
+                          );
+                          handleMenuClose();
+                        }}
+                      >
+                        {type === CardDeck.MAIN
+                          ? t('MOVE_CARD_TO_SIDE_DECK')
+                          : t('MOVE_CARD_TO_MAIN_DECK')}
                       </MenuItem>
-                      <MenuItem onClick={handleMenuClose}>
-                        {t('MOVE_ALL_SELECTED_CARDS_TO_SIDE_DECK')}
+                      <MenuItem
+                        onClick={() => {
+                          onMoveSelectedCards(
+                            type === CardDeck.MAIN
+                              ? CardDeck.SIDE
+                              : CardDeck.MAIN
+                          );
+                          handleMenuClose();
+                        }}
+                      >
+                        {type === CardDeck.MAIN
+                          ? t('MOVE_ALL_SELECTED_CARDS_TO_SIDE_DECK')
+                          : t('MOVE_ALL_SELECTED_CARDS_TO_MAIN_DECK')}
                       </MenuItem>
                     </Menu>
                     <RemoveButton
