@@ -127,6 +127,10 @@ const UserCreation = () => {
   const [selectedExistingRole, _setSelectedExistingRole] =
     useState<UserRole | null>(null);
 
+  const [selectedUserRole, setSelectedUserRole] = useState<UserRole | null>(
+    null
+  );
+
   // Handle setting the accessrights fields to those of the role if a role is selected
   const handleRoleSelect = useCallback((newRole: UserRole | null) => {
     if (newRole) {
@@ -135,6 +139,7 @@ const UserCreation = () => {
       setCustomRoleName('');
     }
     _setSelectedExistingRole(newRole);
+    setSelectedUserRole(null);
   }, []);
 
   // Handle copying access rights from a selected role
@@ -191,7 +196,7 @@ const UserCreation = () => {
     let roleId = selectedExistingRole?.id;
 
     // Create a new role before the user if a custom set of access rights was selected
-    if (isCustomRole && customRoleName) {
+    if (isCustomRole && customRoleName !== '') {
       try {
         const roleData = {
           name: customRoleName,
@@ -351,11 +356,13 @@ const UserCreation = () => {
                   );
                 }}
               >
-                {roles.map(role => (
-                  <MenuItem key={role.id} value={role.id}>
-                    #{role.id} {role.name}
-                  </MenuItem>
-                ))}
+                {roles
+                  .filter(role => role.id !== 2)
+                  .map(role => (
+                    <MenuItem key={role.id} value={role.id}>
+                      {role.name}
+                    </MenuItem>
+                  ))}
                 <MenuItem value={-1} sx={{ display: 'none' }}>
                   Custom role
                 </MenuItem>
@@ -369,19 +376,23 @@ const UserCreation = () => {
                 labelId="copy-access-rights"
                 id="copy-access-rights"
                 label={t('COPY_ACCESS_RIGHTS_FROM_AN_EXISTING_ROLE')}
-                value={-1}
+                value={selectedUserRole?.id ?? -1}
+                onChange={event => {
+                  copyAccessRightsFromRole(
+                    roles.find(role => role.id === event.target.value) ?? null
+                  );
+                  setSelectedUserRole(
+                    roles.find(role => role.id === event.target.value) ?? null
+                  );
+                }}
               >
-                {roles.map(role => (
-                  <MenuItem
-                    key={role.id}
-                    value={role.id}
-                    onClick={() => {
-                      copyAccessRightsFromRole(role);
-                    }}
-                  >
-                    {role.name}
-                  </MenuItem>
-                ))}
+                {roles
+                  .filter(role => role.id !== 2)
+                  .map(role => (
+                    <MenuItem key={role.id} value={role.id}>
+                      {role.name}
+                    </MenuItem>
+                  ))}
                 <MenuItem value={-1} sx={{ display: 'none' }}>
                   {t('SELECT_ROLE')}
                 </MenuItem>

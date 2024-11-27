@@ -75,8 +75,8 @@ const statusFilters: Record<string, StatusFilter> = {
     name: 'Active',
     predicate: user => user.isActive,
   },
-  Deactive: {
-    name: 'Deactive',
+  Deactivated: {
+    name: 'Deactivated',
     predicate: user => !user.isActive,
   },
   'Token Requests': {

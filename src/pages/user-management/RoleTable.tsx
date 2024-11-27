@@ -59,6 +59,20 @@ export const RoleTable: React.FC<RoleTableProps> = ({
     });
   }, [roles, searchText]);
 
+  type RoleTypeFilter = {
+    name: string;
+    value: string;
+  };
+
+  const roleTypeFilters: Record<string, RoleTypeFilter> = {
+    'Show All': { name: 'Show All', value: 'Show All' },
+    Customized: { name: 'Customized', value: 'Customized' },
+  };
+
+  const [roleTypeFilter, setRoleTypeFilter] = useState<RoleTypeFilter>(
+    roleTypeFilters['Show All']
+  );
+
   const [confirmingDeletionOfRole, setConfirmDeletionOfRole] =
     useState<UserRole | null>(null);
 
@@ -161,10 +175,23 @@ export const RoleTable: React.FC<RoleTableProps> = ({
               sx={{ width: '30%' }}
             />
             <FormControl variant="outlined" sx={{ width: '20%' }}>
-              <InputLabel id="filter">Filter</InputLabel>
-              <Select id="filter" label="filter">
-                <MenuItem>Show All</MenuItem>
-                <MenuItem>Customized</MenuItem>
+              <InputLabel id="filter">Role Type</InputLabel>
+              <Select
+                id="role-type"
+                label="role-type"
+                value={roleTypeFilter.name}
+              >
+                {Object.keys(roleTypeFilters).map(filterName => (
+                  <MenuItem
+                    key={filterName}
+                    value={filterName}
+                    onClick={() =>
+                      setRoleTypeFilter(roleTypeFilters[filterName])
+                    }
+                  >
+                    {filterName}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <Button

@@ -153,11 +153,13 @@ const RoleChangeModal: React.FC<RoleChangeModalProps> = ({
                 );
               }}
             >
-              {roles.map(role => (
-                <MenuItem key={role.id} value={role.id}>
-                  {role.name}
-                </MenuItem>
-              ))}
+              {roles
+                .filter(role => role.id !== 2)
+                .map(role => (
+                  <MenuItem key={role.id} value={role.id}>
+                    {role.name}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
         </Box>
