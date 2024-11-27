@@ -196,7 +196,7 @@ const UserCreation = () => {
     let roleId = selectedExistingRole?.id;
 
     // Create a new role before the user if a custom set of access rights was selected
-    if (isCustomRole && customRoleName) {
+    if (isCustomRole && customRoleName !== '') {
       try {
         const roleData = {
           name: customRoleName,
@@ -409,8 +409,7 @@ const UserCreation = () => {
             sx={{
               marginTop: 3,
               flexDirection: 'column',
-              display:
-                selectedExistingRole?.name !== 'Custom role' ? 'flex' : 'none',
+              display: selectedExistingRole ? 'none' : 'flex',
             }}
           >
             <TextField
