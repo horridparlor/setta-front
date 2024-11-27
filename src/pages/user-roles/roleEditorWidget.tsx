@@ -86,17 +86,19 @@ export const RoleEditorWidget: React.FC<RoleEditorWidgetProps> = ({
             label={t('COPY_ACCESS_RIGHTS_FROM_AN_EXISTING_ROLE')}
             value={-1}
           >
-            {roles.map(role => (
-              <MenuItem
-                key={role.id}
-                value={role.id}
-                onClick={() => {
-                  copyAccessRightsFromRole(role);
-                }}
-              >
-                {role.name}
-              </MenuItem>
-            ))}
+            {roles
+              .filter(role => role.id !== 2)
+              .map(role => (
+                <MenuItem
+                  key={role.id}
+                  value={role.id}
+                  onClick={() => {
+                    copyAccessRightsFromRole(role);
+                  }}
+                >
+                  {role.name}
+                </MenuItem>
+              ))}
             <MenuItem value={-1} sx={{ display: 'none' }}>
               {t('SELECT_ROLE')}
             </MenuItem>

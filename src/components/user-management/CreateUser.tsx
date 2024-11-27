@@ -356,11 +356,13 @@ const UserCreation = () => {
                   );
                 }}
               >
-                {roles.map(role => (
-                  <MenuItem key={role.id} value={role.id}>
-                    {role.name}
-                  </MenuItem>
-                ))}
+                {roles
+                  .filter(role => role.id !== 2)
+                  .map(role => (
+                    <MenuItem key={role.id} value={role.id}>
+                      {role.name}
+                    </MenuItem>
+                  ))}
                 <MenuItem value={-1} sx={{ display: 'none' }}>
                   Custom role
                 </MenuItem>
@@ -384,11 +386,13 @@ const UserCreation = () => {
                   );
                 }}
               >
-                {roles.map(role => (
-                  <MenuItem key={role.id} value={role.id}>
-                    {role.name}
-                  </MenuItem>
-                ))}
+                {roles
+                  .filter(role => role.id !== 2)
+                  .map(role => (
+                    <MenuItem key={role.id} value={role.id}>
+                      {role.name}
+                    </MenuItem>
+                  ))}
                 <MenuItem value={-1} sx={{ display: 'none' }}>
                   {t('SELECT_ROLE')}
                 </MenuItem>
