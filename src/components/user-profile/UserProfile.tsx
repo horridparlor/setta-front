@@ -1,4 +1,4 @@
-import {Check, Close } from '@mui/icons-material';
+import { Check, Close } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -8,12 +8,11 @@ import {
   TextField,
   Typography,
   Button,
-  Grid2
+  Grid2,
 } from '@mui/material';
-import { useState, useEffect} from 'react';
-import { fetchLoggedInUser, fetchUserById, updateUser } from '../../api/userManagementApi';
+import { useState, useEffect } from 'react';
+import { fetchLoggedInUser, updateUser } from '../../api/userManagementApi';
 import { useTranslation } from 'react-i18next';
-
 
 interface UserProfileProps {
   userId?: string; // Optional user ID to fetch another user's data
@@ -24,7 +23,7 @@ const UserProfile = ({ userId }: UserProfileProps) => {
   const { t } = useTranslation();
 
   // State to store user data
-  const [userData, setUserData] = useState<any>(null);
+  const [userDataId, setUserDataId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Form states for editable fields
@@ -39,8 +38,8 @@ const UserProfile = ({ userId }: UserProfileProps) => {
   const [roleName, setRoleName] = useState<string | null>(null);
   const userName = `${firstname}.${lastname}`.toLowerCase();
   const [roleId, setRoleId] = useState<number | null>(null);
-  const [accessRights, setAccessRights] = useState<object | null>(null)
-  
+  const [_accessRights, setAccessRights] = useState<object | null>(null);
+
   // State to manage unsaved changes
   const [originalValues, setOriginalValues] = useState<any>(null);
 
@@ -48,16 +47,12 @@ const UserProfile = ({ userId }: UserProfileProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data;
-        if (userId) {
-          data = await fetchUserById(userId);
-        } else {
-          data = await fetchLoggedInUser();
-        }
-        // Normalize `isActive` to boolean and preserve it in state
-        const activeStatus = Boolean(data.isActive);
+        let data = await fetchLoggedInUser();
 
-        setUserData(data);
+        // Normalize `isActive` to boolean and preserve it in state
+        const activeStatus = Boolean(data);
+
+        setUserDataId(data.id);
         setOriginalValues({ ...data }); // Keep track of original data
 
         // Set form fields
@@ -66,9 +61,9 @@ const UserProfile = ({ userId }: UserProfileProps) => {
         setEmail(data.email || '');
         setPhoneNumber(data.phoneNumber || '');
         setPenName(data.penName || '');
-        setRoleName(data.roleName || '');
-        setRoleId(data.roleId || '');
-        setAccessRights(data.accessRights || '')
+        // setRoleName(data.roleName || '');
+        setRoleId(data.roleId);
+        setAccessRights(data.accessRights || '');
         setIsActive(activeStatus);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -83,7 +78,7 @@ const UserProfile = ({ userId }: UserProfileProps) => {
     try {
       const updatedUser = {
         //...userData,
-        userId: userData?.id || userId, // Ensure userId is included
+        userId: userId, // Ensure userId is included
         username: userName, // Include dynamically computed username
         firstname,
         lastname,
@@ -95,11 +90,7 @@ const UserProfile = ({ userId }: UserProfileProps) => {
       };
       // Normalize and preserve isActive and username
       const response = await updateUser(updatedUser);
-      setUserData(response);
-      setOriginalValues({ ...response }); // Update original values
-      setPenName(response.penName || '');
-      setRoleName(response.roleName || '');
-      setAccessRights(response.accessRights || '');
+      setUserDataId(response.data?.userId ?? null);
     } catch (error) {
       console.error('Error updating user:', error);
     }
@@ -111,7 +102,7 @@ const UserProfile = ({ userId }: UserProfileProps) => {
       setFirstname(originalValues.firstname);
       setLastname(originalValues.lastname);
       setEmail(originalValues.email);
-      setPhoneNumber(originalValues.phoneNumber)
+      setPhoneNumber(originalValues.phoneNumber);
 
       // Reset non-editable fields to original value
       setIsActive(Boolean(originalValues.isActive));
@@ -126,200 +117,187 @@ const UserProfile = ({ userId }: UserProfileProps) => {
     return <Typography variant="h6">"LOADING"</Typography>;
   }
 
-  if (!userData) {
+  if (!userDataId) {
     return <Typography variant="h6">"NO_USER_DATA"</Typography>;
   }
 
-  // Destructure user data for rendering
-  /*const {
-    //firstname,
-    //lastname,
-    //email,
-    //phoneNumber,
-    //penName,
-    isActive,
-    //activationDate,
-    //roleName
-  } = userData;*/
-  //const userName = `${firstname}.${lastname}`.toLowerCase();
-  
-    const rowContainerStyle = {
-      flexDirection: 'row',
-      alignItems: 'top-left',
-      gap: 2,
-      marginBottom: 2,
-      display: 'flex',
-    };
-  
-    const columnContainerStyle = {
-      flexDirection: 'column',
-      alignItems: 'top-left',
-      gap: 2,
-      marginBottom: 2,
-      display: 'flex',
-      width: '60%',
-    };
-  
-    return (
-      <Card sx={{ m: 1, pt: 60, width: '70%', overflow: 'auto' }}>
-        <CardHeader
-          titleTypographyProps={{ variant: 'h4' }}
-          title={t('PROFILE')}
-        />
-        <CardContent>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'top-left',
-              gap: 2,
-              flexDirection: 'column',
-            }}
-          >
-            <CardContent>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'top-left',
-                  gap: 2,
-                  flexDirection: 'column',
-                }}
-              > 
-                {/* Personal Information */}
-                <Box sx={rowContainerStyle}>
-                  <Box sx={{ pr: 10 }}>
-                    <Typography variant="h5" gutterBottom align="inherit">
-                      {t('PERSONAL_INFORMATION')}
-                    </Typography>
-                  </Box>
-                  <Box sx={columnContainerStyle}>
-                    <TextField
-                      value={firstname ||''}
-                      onChange={(e) => setFirstname(e.target.value)}
-                      label={t('FIRST_NAME')}
-                      size="medium"
-                      variant="standard"
-                    />
-                    <TextField
-                      value={lastname ||''}
-                      onChange={(e) => setLastname(e.target.value)}
-                      label={t('LAST_NAME')}
-                      size="medium"
-                      variant="standard"
-                    />
-                    <TextField
-                      value={email ||''}
-                      onChange={(e) => setLastname(e.target.value)}
-                      label={t('EMAIL')}
-                      size="medium"
-                      variant="standard"
-                    />
-                    <TextField
-                      value={phoneNumber ||''}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      label={t('PHONE_NUMBER')}
-                      size="medium"
-                      variant="standard"
-                    />
-                  </Box>
+  const rowContainerStyle = {
+    flexDirection: 'row',
+    alignItems: 'top-left',
+    gap: 2,
+    marginBottom: 2,
+    display: 'flex',
+  };
+
+  const columnContainerStyle = {
+    flexDirection: 'column',
+    alignItems: 'top-left',
+    gap: 2,
+    marginBottom: 2,
+    display: 'flex',
+    width: '60%',
+  };
+
+  return (
+    <Card sx={{ m: 1, pt: 60, width: '70%', overflow: 'auto' }}>
+      <CardHeader
+        titleTypographyProps={{ variant: 'h4' }}
+        title={t('PROFILE')}
+      />
+      <CardContent>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'top-left',
+            gap: 2,
+            flexDirection: 'column',
+          }}
+        >
+          <CardContent>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'top-left',
+                gap: 2,
+                flexDirection: 'column',
+              }}
+            >
+              {/* Personal Information */}
+              <Box sx={rowContainerStyle}>
+                <Box sx={{ pr: 10 }}>
+                  <Typography variant="h5" gutterBottom align="inherit">
+                    {t('PERSONAL_INFORMATION')}
+                  </Typography>
+                </Box>
+                <Box sx={columnContainerStyle}>
+                  <TextField
+                    value={firstname || ''}
+                    onChange={e => setFirstname(e.target.value)}
+                    label={t('FIRST_NAME')}
+                    size="medium"
+                    variant="standard"
+                  />
+                  <TextField
+                    value={lastname || ''}
+                    onChange={e => setLastname(e.target.value)}
+                    label={t('LAST_NAME')}
+                    size="medium"
+                    variant="standard"
+                  />
+                  <TextField
+                    value={email || ''}
+                    onChange={e => setLastname(e.target.value)}
+                    label={t('EMAIL')}
+                    size="medium"
+                    variant="standard"
+                  />
+                  <TextField
+                    value={phoneNumber || ''}
+                    onChange={e => setPhoneNumber(e.target.value)}
+                    label={t('PHONE_NUMBER')}
+                    size="medium"
+                    variant="standard"
+                  />
                 </Box>
               </Box>
-            </CardContent>
-            {/* User Account */}
-            <CardContent>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'top-left',
-                  gap: 2,
-                  flexDirection: 'column',
-                }}
-              >
-                <Box sx={rowContainerStyle}>
-                  <Box sx={{ pr: 21 }}>
-                    <Typography variant="h5" gutterBottom>
-                      {t('USER_ACCOUNT')}
-                    </Typography>
+            </Box>
+          </CardContent>
+          {/* User Account */}
+          <CardContent>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'top-left',
+                gap: 2,
+                flexDirection: 'column',
+              }}
+            >
+              <Box sx={rowContainerStyle}>
+                <Box sx={{ pr: 21 }}>
+                  <Typography variant="h5" gutterBottom>
+                    {t('USER_ACCOUNT')}
+                  </Typography>
+                </Box>
+                <Box sx={columnContainerStyle}>
+                  <Box>
+                    <Chip
+                      size="small"
+                      label={isActive ? 'ACTIVE' : 'INACTIVE'}
+                      variant="filled"
+                      color={isActive ? 'success' : 'error'}
+                      icon={isActive ? <Check /> : <Close />}
+                    />
                   </Box>
-                  <Box sx={columnContainerStyle}>
-                    <Box>
-                      <Chip
-                        size="small"
-                        label={isActive ? 'ACTIVE' : 'INACTIVE'}
-                        variant="filled"
-                        color={isActive ? 'success' : 'error'}
-                        icon={isActive ? <Check /> : <Close />}
-                      />
-                    </Box>
-                    {/*can be implemented if this kind of data is available on backend
+                  {/*can be implemented if this kind of data is available on backend
                     <Typography variant="caption" gutterBottom>
                       {t('ACTIVE_SINCE')}activationdate 
                     </Typography>*/}
-                    <TextField
-                      value={userName || ''}
-                      label={t('USERNAME')}
-                      size="medium"
-                      variant="standard"
-                      disabled
-                    />
-                    <TextField
-                      value={penName || ''}
-                      label={t('PEN_NAME')}
-                      size="medium"
-                      variant="standard"
-                      disabled
-                    />
-                  </Box>
+                  <TextField
+                    value={userName || ''}
+                    label={t('USERNAME')}
+                    size="medium"
+                    variant="standard"
+                    disabled
+                  />
+                  <TextField
+                    value={penName || ''}
+                    label={t('PEN_NAME')}
+                    size="medium"
+                    variant="standard"
+                    disabled
+                  />
                 </Box>
               </Box>
-            </CardContent>
-            
-            {/* Role Information */}
-            <CardContent>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'top-left',
-                  gap: 2,
-                  flexDirection: 'column',
-                }}
-              >
-                <Box sx={rowContainerStyle}>
-                  <Box sx={{ pr: 35 }}>
-                    <Typography variant="h5" gutterBottom>
-                      {t('ROLE')}
-                    </Typography>
-                  </Box>
-                  <Box sx={columnContainerStyle}>
-                    <Typography variant="h6" gutterBottom>
-                      {roleName || 'UNKNOWN'}
-                    </Typography>
-                    
-                    <Grid2
-                      container
-                      sx={{ justifyContent: 'flex-end', marginTop: 2, gap: 2 }}
-                    >
-                      <Button onClick={handleCancel} variant="outlined">
-                        {t('CANCEL')}
-                      </Button>
-                      <Button onClick={handleSave} variant="contained">
-                        {t('SAVE')}
-                      </Button>
-                    </Grid2>
-                    {/*can be implemented if this kind of data is available on backend
+            </Box>
+          </CardContent>
+
+          {/* Role Information */}
+          <CardContent>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'top-left',
+                gap: 2,
+                flexDirection: 'column',
+              }}
+            >
+              <Box sx={rowContainerStyle}>
+                <Box sx={{ pr: 35 }}>
+                  <Typography variant="h5" gutterBottom>
+                    {t('ROLE')}
+                  </Typography>
+                </Box>
+                <Box sx={columnContainerStyle}>
+                  <Typography variant="h6" gutterBottom>
+                    {roleName || 'UNKNOWN'}
+                  </Typography>
+
+                  <Grid2
+                    container
+                    sx={{ justifyContent: 'flex-end', marginTop: 2, gap: 2 }}
+                  >
+                    <Button onClick={handleCancel} variant="outlined">
+                      {t('CANCEL')}
+                    </Button>
+                    <Button onClick={handleSave} variant="contained">
+                      {t('SAVE')}
+                    </Button>
+                  </Grid2>
+                  {/*can be implemented if this kind of data is available on backend
                     <Typography variant="caption" gutterBottom>
                       {t('LAST_EDITED')}dd/mm/yyyy
                     </Typography>*/}
-                    <Typography variant="caption" gutterBottom>
-                      {t('EDITED_BY')}
-                      {userName}
-                    </Typography>
-                  </Box>
+                  <Typography variant="caption" gutterBottom>
+                    {t('EDITED_BY')}
+                    {userName}
+                  </Typography>
                 </Box>
               </Box>
-            </CardContent>
-          </Box>
-        </CardContent>
-      </Card>
-    );
-  };
-  export default UserProfile;
+            </Box>
+          </CardContent>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+export default UserProfile;
