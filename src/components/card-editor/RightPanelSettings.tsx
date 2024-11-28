@@ -2722,11 +2722,15 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         aria-label="form tabs"
         sx={{ marginBottom: '2rem' }}
       >
-        <Tab label={t('TAB_STATS')} />
-        <Tab label={t('TAB_EFFECTS')} onClick={() => fixEffects()} />
+        <Tab data-testid="stats-tab-button" label={t('TAB_STATS')} />
+        <Tab
+          data-testid="effects-tab-button"
+          label={t('TAB_EFFECTS')}
+          onClick={() => fixEffects()}
+        />
 
-        <Tab label="Art" />
-        <Tab label="Deck" />
+        <Tab data-testid="art-tab-button" label="Art" />
+        <Tab data-testid="deck-tab-button" label="Deck" />
       </Tabs>
       <Box sx={{ display: tabId === STATS_TAB ? 'block' : 'none' }}>
         <Box sx={rowContainerStyle}>

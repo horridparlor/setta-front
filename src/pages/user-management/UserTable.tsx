@@ -359,6 +359,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             )}
             <Button
               variant="contained"
+              data-testid="create-new-user-button"
               sx={{ ml: 'auto' }}
               onClick={handleCreateNewUserClick}
             >

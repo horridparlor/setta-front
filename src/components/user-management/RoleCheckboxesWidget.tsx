@@ -90,7 +90,13 @@ export const RoleAccessRightsCheckboxesWidget: React.FC<
         </Typography>
         <FormControlLabel
           key={'SUPER_ADMIN_CHECKBOX'}
-          control={<Checkbox checked={!!value.isSuperAdmin} disabled />}
+          control={
+            <Checkbox
+              data-testid="all-admin-rights-checkbox"
+              checked={!!value.isSuperAdmin}
+              disabled
+            />
+          }
           label="isSuperAdmin"
         />
 
@@ -108,6 +114,7 @@ export const RoleAccessRightsCheckboxesWidget: React.FC<
                 key={accessRightName}
                 control={
                   <Checkbox
+                    data-testid="admin-right-checkbox"
                     checked={!!value[accessRightName]}
                     onChange={e => {
                       onChange({
@@ -151,6 +158,7 @@ export const RoleAccessRightsCheckboxesWidget: React.FC<
           key={'selectAllCommon'}
           control={
             <Checkbox
+              data-testid="all-common-rights-checkbox"
               checked={!!allCommonAccessRightsSelected}
               onChange={e => setAllCommonRights(e.target.checked)}
             />
@@ -171,6 +179,7 @@ export const RoleAccessRightsCheckboxesWidget: React.FC<
                 key={accessRightName}
                 control={
                   <Checkbox
+                    data-testid="common-right-checkbox"
                     checked={!!value[accessRightName]}
                     onChange={e => {
                       onChange({

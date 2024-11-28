@@ -51,4 +51,10 @@ test.describe('[navigation]', () => {
     await page.getByTestId('nav-user-management-button').click();
     await expect(page).toHaveURL(`${BASE_URL}/user-management`);
   });
+  test('[drawer] can navigate to /user-profile', async ({ page }) => {
+    await page.goto(BASE_URL);
+
+    await page.getByTestId('menu-open-button').click();
+    await page.getByTestId('nav-card-profile-button')
+  })
 });
