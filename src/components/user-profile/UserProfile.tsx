@@ -79,7 +79,6 @@ const UserProfile = ({ userId }: UserProfileProps) => {
     try {
       const filteredAccessRights: AccessRights = { ..._accessRights };
       delete filteredAccessRights.isSuperAdmin;
-      console.log('this is filtered rights: ', filteredAccessRights);
       //const { isSuperAdmin, ...filteredAccessRights } = accessRights;
       const updatedUser = {
         //...userData,
@@ -94,7 +93,6 @@ const UserProfile = ({ userId }: UserProfileProps) => {
         accessRights: filteredAccessRights,
       };
       // Normalize and preserve isActive and username
-      console.log(updatedUser);
       const response = await updateUser(updatedUser);
       setUserDataId(response.data?.userId ?? null);
     } catch (error) {
