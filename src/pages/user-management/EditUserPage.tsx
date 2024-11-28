@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import HomeBar, { HomeBarRef } from '../../components/common/HomeBar';
 import {
   Box,
   Button,
@@ -26,7 +27,13 @@ import NewTokenRequest from '../../components/user-profile/NewTokenRequest';
 import { useUsersWithRoles } from '../../hooks/useUsersWithRoles';
 import { Check, Close } from '@mui/icons-material';
 
-const EditUserPage: React.FC = () => {
+interface EditUserPageProps {
+  refetch: () => Promise<void>;
+}
+
+const EditUserPage = (props: EditUserPageProps) => {
+  const { refetch } = props;
+  const homeBarRef = useRef<HomeBarRef>(null);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -61,7 +68,7 @@ const EditUserPage: React.FC = () => {
         setUserId(String(user.id));
         setUsername(user.username);
         setAccessRights(createFullAccessRightsFromPartial(user.accessRights));
-        setIsActive(Boolean(user.isActive)); // Set isActive state
+        setIsActive(Boolean(user.isActive));
 
         // Match user's roleId with available roles and set roleName
         const role = roles.find(role => role.id === user.roleId);
@@ -142,7 +149,7 @@ const EditUserPage: React.FC = () => {
         phoneNumber,
         penName,
         accessRights: filteredAccessRights,
-        isActive, // Correctly send boolean to backend
+        isActive,
         roleId,
       });
       toast.success('User updated successfully.');
@@ -169,133 +176,153 @@ const EditUserPage: React.FC = () => {
   return (
     <Box
       sx={{
-        bgcolor: 'background.paper',
-        p: 3,
-        maxWidth: 800,
-        margin: 'auto',
-        borderRadius: 2,
-        boxShadow: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        backgroundColor: '#244775',
+        overflowX: 'hidden',
+        marginBottom: 2,
       }}
     >
-      <NewTokenRequest />
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Personal Information
-      </Typography>
-      <Box>
-        <TextField
-          label="First Name"
-          value={firstName}
-          onChange={e => setFirstName(e.target.value)}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Last Name"
-          value={lastName}
-          onChange={e => setLastName(e.target.value)}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Phone Number"
-          value={phoneNumber}
-          onChange={e => setPhoneNumber(e.target.value)}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
+      <Box sx={{ width: '100%' }}>
+        <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
-      <Typography variant="h4" sx={{ mt: 3 }}>
-        User Account
-      </Typography>
-      <Box>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            mb: 2,
-          }}
-        >
-          <Typography variant="subtitle1">Status:</Typography>
-          <Tooltip title={isActive ? 'Deactivate' : 'Activate'}>
-            <Chip
-              clickable
-              label={isActive ? 'Active' : 'Deactivated'}
-              color={isActive ? 'success' : 'error'}
-              icon={isActive ? <Close /> : <Check />}
-              onClick={toggleActivation}
-            />
-          </Tooltip>
+      <Box
+        sx={{
+          bgcolor: 'background.paper',
+          p: 3,
+          maxWidth: 800,
+          margin: 'auto',
+          borderRadius: 2,
+          boxShadow: 3,
+          marginTop: 3,
+        }}
+      >
+        <NewTokenRequest />
+        <Typography variant="h4" sx={{ mb: 3 }}>
+          Personal Information
+        </Typography>
+        <Box>
+          <TextField
+            label="First Name"
+            value={firstName}
+            onChange={e => setFirstName(e.target.value)}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Last Name"
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Phone Number"
+            value={phoneNumber}
+            onChange={e => setPhoneNumber(e.target.value)}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
         </Box>
-        <TextField
-          label="UserID"
-          value={userId}
-          fullWidth
-          disabled
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Username"
-          value={username}
-          fullWidth
-          disabled
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Pen Name"
-          value={penName}
-          onChange={e => setPenName(e.target.value)}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
-      </Box>
-      <Typography variant="h4" sx={{ mt: 3 }}>
-        Role and Access Rights
-      </Typography>
-      <Typography variant="h5" sx={{ mt: 2, marginBottom: 2 }}>
-        Current Role: {selectedRole?.name || 'None'}
-      </Typography>
-      <Box sx={{ display: 'flex', gap: 4, mt: 2, mb: 2 }}>
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel id="copy-access-rights-label">
-            Copy Access Rights
-          </InputLabel>
-          <Select
-            labelId="copy-access-rights-label"
-            value={selectedRole?.id ?? ''}
-            onChange={e => {
-              const roleId = Number(e.target.value);
-              handleCopyAccessRights(roleId);
-              handleRoleSelect(roleId);
+        <Typography variant="h4" sx={{ mt: 3 }}>
+          User Account
+        </Typography>
+        <Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              mb: 2,
             }}
-            label="Copy Access Rights"
           >
-            {roles.map(role => (
-              <MenuItem key={role.id} value={role.id}>
-                {role.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-      <RoleAccessRightsCheckboxesWidget
-        value={accessRights}
-        onChange={setAccessRights}
-      />
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4, gap: 2 }}>
-        <Button variant="outlined" onClick={() => navigate('/user-management')}>
-          Cancel
-        </Button>
-        <Button variant="contained" onClick={handleSave}>
-          Save
-        </Button>
+            <Typography variant="subtitle1">Status:</Typography>
+            <Tooltip title={isActive ? 'Deactivate' : 'Activate'}>
+              <Chip
+                clickable
+                label={isActive ? 'Active' : 'Deactivated'}
+                color={isActive ? 'success' : 'error'}
+                icon={isActive ? <Close /> : <Check />}
+                onClick={toggleActivation}
+              />
+            </Tooltip>
+          </Box>
+          <TextField
+            label="UserID"
+            value={userId}
+            fullWidth
+            disabled
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Username"
+            value={username}
+            fullWidth
+            disabled
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Pen Name"
+            value={penName}
+            onChange={e => setPenName(e.target.value)}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+        </Box>
+        <Typography variant="h4" sx={{ mt: 3 }}>
+          Role and Access Rights
+        </Typography>
+        <Typography variant="h5" sx={{ mt: 2, marginBottom: 2 }}>
+          Current Role: {selectedRole?.name || 'None'}
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 4, mt: 2, mb: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel id="copy-access-rights-label">
+              Copy Access Rights
+            </InputLabel>
+            <Select
+              labelId="copy-access-rights-label"
+              value={selectedRole?.id ?? ''}
+              onChange={e => {
+                const roleId = Number(e.target.value);
+                handleCopyAccessRights(roleId);
+                handleRoleSelect(roleId);
+              }}
+              label="Copy Access Rights"
+            >
+              {roles.map(role => (
+                <MenuItem key={role.id} value={role.id}>
+                  {role.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+        <RoleAccessRightsCheckboxesWidget
+          value={accessRights}
+          onChange={setAccessRights}
+        />
+        <Box
+          sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4, gap: 2 }}
+        >
+          <Button
+            variant="outlined"
+            onClick={() => navigate('/user-management')}
+          >
+            Cancel
+          </Button>
+          <Button variant="contained" onClick={handleSave}>
+            Save
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
