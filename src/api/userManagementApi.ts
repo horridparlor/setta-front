@@ -215,10 +215,9 @@ export const updateUser = async (user: any) => {
       },
     });
 
-    const responseData = await response;
     //for seeing that it passed, remove before in production
-    console.log('Updated User Role:', responseData);
-    return responseData;
+    console.log('Updated User Role:', response);
+    return response;
   } catch (error) {
     console.error('Error updating user role:', error);
     throw error;
