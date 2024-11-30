@@ -43,6 +43,7 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
     setShowClickedCards(!showClickedCards);
   };
   const [deck, setDeck] = useState<DeckData[]>([]);
+  const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
 
   const commitSave = () => {
     catalogueRef.current?.toggleFilters();
@@ -120,7 +121,23 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
   };
 
   const clearDeck = (deckType: CardDeck) => {
-    setDeck(prevDeck => prevDeck.filter(entry => entry.deckType !== deckType));
+    setDeck(prevDeck => {
+      const updatedDeck = prevDeck.filter(entry => entry.deckType !== deckType);
+      setSelectedCards(prevSelectedCards => {
+        const updatedSelectedCards = new Set(prevSelectedCards);
+        prevDeck.forEach(entry => {
+          if (
+            entry.deckType === deckType &&
+            updatedSelectedCards.has(entry.card.cardName)
+          ) {
+            updatedSelectedCards.delete(entry.card.cardName);
+          }
+        });
+        return updatedSelectedCards;
+      });
+
+      return updatedDeck;
+    });
   };
 
   useEffect(() => {
@@ -218,6 +235,8 @@ const CardCataloguePage = (props: CardCataloguePageProps) => {
               clearDeck={clearDeck}
               toggleClickedCards={toggleClickedCards}
               showClickedCards={showClickedCards}
+              selectedCards={selectedCards}
+              setSelectedCards={setSelectedCards}
             />
           </Box>
         )}

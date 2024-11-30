@@ -10,6 +10,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Tooltip,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { CardData, CardDeck, CardSubtype, CardType } from '../../types/card';
@@ -36,6 +37,8 @@ interface DeckTableProps {
   onRemoveCard: (cardName: string) => void;
   onMoveSelectedCards: (deck: CardDeck) => void;
   onMoveCard: (cardName: string, deck: CardDeck) => void;
+  determineTargetDeck: (selectedCards: Set<string>) => CardDeck;
+  selectedCards: Set<string>;
 }
 
 const DeckTable: React.FC<DeckTableProps> = ({
@@ -49,6 +52,8 @@ const DeckTable: React.FC<DeckTableProps> = ({
   onRemoveCard,
   onMoveSelectedCards,
   onMoveCard,
+  determineTargetDeck,
+  selectedCards,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -198,9 +203,11 @@ const DeckTable: React.FC<DeckTableProps> = ({
                       goToCardEditor={goToCardEditor}
                       cardId={deckEntry.card.cardId}
                     />
-                    <IconButton size="small" onClick={handleMoreClick}>
-                      <MoreVertIcon fontSize="small" />
-                    </IconButton>
+                    <Tooltip title={t('MORE_ACTIONS')}>
+                      <IconButton size="small" onClick={handleMoreClick}>
+                        <MoreVertIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                     <Menu
                       anchorEl={anchorElMore}
                       open={openMore}
@@ -208,37 +215,45 @@ const DeckTable: React.FC<DeckTableProps> = ({
                     >
                       <MenuItem
                         onClick={() => {
-                          onMoveCard(
-                            deckEntry.card.cardName,
+                          const targetDeck =
                             type === CardDeck.MAIN
                               ? CardDeck.SIDE
-                              : CardDeck.MAIN
-                          );
+                              : type === CardDeck.EXTRA
+                                ? CardDeck.SIDE
+                                : determineTargetDeck(
+                                    new Set([deckEntry.card.cardName])
+                                  );
+
+                          onMoveCard(deckEntry.card.cardName, targetDeck);
                           handleMenuClose();
                         }}
                       >
-                        {type === CardDeck.MAIN
-                          ? t('MOVE_CARD_TO_SIDE_DECK')
-                          : t('MOVE_CARD_TO_MAIN_DECK')}
+                        {type === CardDeck.SIDE
+                          ? t('MOVE_CARD_TO_ORIGINAL_DECK')
+                          : t('MOVE_CARD_TO_SIDE_DECK')}
                       </MenuItem>
                       <MenuItem
                         onClick={() => {
-                          onMoveSelectedCards(
+                          const targetDeck =
                             type === CardDeck.MAIN
                               ? CardDeck.SIDE
-                              : CardDeck.MAIN
-                          );
+                              : type === CardDeck.EXTRA
+                                ? CardDeck.SIDE
+                                : determineTargetDeck(selectedCards);
+                          onMoveSelectedCards(targetDeck);
                           handleMenuClose();
                         }}
                       >
-                        {type === CardDeck.MAIN
-                          ? t('MOVE_ALL_SELECTED_CARDS_TO_SIDE_DECK')
-                          : t('MOVE_ALL_SELECTED_CARDS_TO_MAIN_DECK')}
+                        {type === CardDeck.SIDE
+                          ? t('MOVE_ALL_SELECTED_CARDS_TO_ORIGINAL_DECKS')
+                          : t('MOVE_ALL_SELECTED_CARDS_TO_SIDE_DECK')}
                       </MenuItem>
                     </Menu>
                     <RemoveButton
                       cardName={card.cardName}
                       onRemoveCard={onRemoveCard}
+                      isCardSelected={isCardSelected}
+                      handleCheckboxToggle={handleCheckboxToggle(card.cardName)}
                     />
                   </TableCell>
                 </TableRow>
