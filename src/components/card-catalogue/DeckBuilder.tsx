@@ -59,7 +59,6 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
   const [extraDeckOpen, setExtraDeckOpen] = useState(false);
   const [sideDeckOpen, setSideDeckOpen] = useState(false);
   const { deckValidityState } = DeckValidation(deck);
-  //const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
   const { t } = useTranslation();
   const [userToggled, setUserToggled] = useState(false);
 

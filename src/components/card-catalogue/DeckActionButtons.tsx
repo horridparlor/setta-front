@@ -32,7 +32,7 @@ export const IncrementButton: React.FC<{
       <IconButton
         size="small"
         onClick={() => updateCardCount(cardName, true)}
-        disabled={!!(count === 3 || isAce)}
+        disabled={count === 3 || isAce}
       >
         <AddIcon fontSize="small" />
       </IconButton>
