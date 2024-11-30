@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from 'react';
 import { fetchLoggedInUser, updateUser } from '../../api/userManagementApi';
 import { useTranslation } from 'react-i18next';
+import { AccessRights } from '../../types/api';
 
 interface UserProfileProps {
   userId?: string; // Optional user ID to fetch another user's data
@@ -76,9 +77,12 @@ const UserProfile = ({ userId }: UserProfileProps) => {
 
   const handleSave = async () => {
     try {
+      const filteredAccessRights: AccessRights = { ..._accessRights };
+      delete filteredAccessRights.isSuperAdmin;
+      //const { isSuperAdmin, ...filteredAccessRights } = accessRights;
       const updatedUser = {
         //...userData,
-        userId: userId, // Ensure userId is included
+        userId: Number(userDataId), // Ensure userId is included
         username: userName, // Include dynamically computed username
         firstname,
         lastname,
@@ -86,7 +90,7 @@ const UserProfile = ({ userId }: UserProfileProps) => {
         email,
         phoneNumber,
         roleId,
-        //accessRights
+        accessRights: filteredAccessRights,
       };
       // Normalize and preserve isActive and username
       const response = await updateUser(updatedUser);

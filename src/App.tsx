@@ -70,7 +70,10 @@ export default function App() {
             path="/user-management"
             element={<UserManagementPage refetch={refetch} />}
           />
-          <Route path="/user-management/edit/:id" element={<EditUserPage />} />
+          <Route
+            path="/user-management/edit/:id"
+            element={<EditUserPage refetch={refetch} />}
+          />
           <Route
             path="/user-creation"
             element={<UserCreationPage refetch={refetch} />}
