@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { CardDeck } from '../../types/card';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { CardDeck, CardSubtype } from '../../types/card';
 import DeckValidation from './DeckValidation';
 import DeckTable from './DeckTable';
 import DeckBuilderManagement from './DeckBuilderManagement';
@@ -16,6 +16,7 @@ import {
   DialogContentText,
   DialogTitle,
   Collapse,
+  Tooltip,
 } from '@mui/material';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -36,6 +37,8 @@ interface DeckBuilderProps {
   toggleClickedCards: () => void;
   showClickedCards: boolean;
   setDeck: React.Dispatch<React.SetStateAction<DeckData[]>>;
+  selectedCards: Set<string>;
+  setSelectedCards: Dispatch<SetStateAction<Set<string>>>;
 }
 
 const DeckBuilder: React.FC<DeckBuilderProps> = ({
@@ -46,6 +49,8 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
   toggleClickedCards,
   showClickedCards,
   setDeck,
+  selectedCards,
+  setSelectedCards,
 }) => {
   const [openExitDialog, setOpenExitDialog] = useState(false);
   const [deckName, setDeckName] = useState('');
@@ -54,7 +59,6 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
   const [extraDeckOpen, setExtraDeckOpen] = useState(false);
   const [sideDeckOpen, setSideDeckOpen] = useState(false);
   const { deckValidityState } = DeckValidation(deck);
-  const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
   const { t } = useTranslation();
   const [userToggled, setUserToggled] = useState(false);
 
@@ -167,6 +171,26 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
     );
   };
 
+  const determineTargetDeck = (selectedCards: Set<string>): CardDeck => {
+    let targetDeck = CardDeck.MAIN;
+    deck.forEach(entry => {
+      if (selectedCards.has(entry.card.cardName)) {
+        if (
+          [
+            CardSubtype.FUSION,
+            CardSubtype.REVENGE,
+            CardSubtype.ROYAL,
+            CardSubtype.TIME_TRAVELLER,
+            CardSubtype.KILLER_MOVE,
+          ].includes(entry.card.subtype)
+        ) {
+          targetDeck = CardDeck.EXTRA;
+        }
+      }
+    });
+
+    return targetDeck;
+  };
   const updateCardCount = (cardName: string, increment: boolean) => {
     setDeck(prevCards => {
       const isBulkUpdate = selectedCards.size > 0;
@@ -278,9 +302,11 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
           {mainDeckOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           {t('MAIN_DECK')} ({mainDeckCount})
         </IconButton>
-        <IconButton onClick={() => clearDeck(CardDeck.MAIN)} size="small">
-          <DeleteIcon />
-        </IconButton>
+        <Tooltip title={t('CLEAR_MAIN_DECK')}>
+          <IconButton onClick={() => clearDeck(CardDeck.MAIN)} size="small">
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
         <Collapse in={mainDeckOpen}>
           <DeckTable
             type={CardDeck.MAIN}
@@ -293,6 +319,8 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
             onRemoveCard={onRemoveCard}
             onMoveCard={handleMoveCard}
             onMoveSelectedCards={handleMoveSelectedCards}
+            determineTargetDeck={determineTargetDeck}
+            selectedCards={selectedCards}
           />
         </Collapse>
 
@@ -303,9 +331,11 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
           {extraDeckOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           {t('EXTRA_DECK')} ({extraDeckCount})
         </IconButton>
-        <IconButton onClick={() => clearDeck(CardDeck.EXTRA)} size="small">
-          <DeleteIcon />
-        </IconButton>
+        <Tooltip title={t('CLEAR_EXTRA_DECK')}>
+          <IconButton onClick={() => clearDeck(CardDeck.EXTRA)} size="small">
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
         <Collapse in={extraDeckOpen}>
           <DeckTable
             type={CardDeck.EXTRA}
@@ -318,6 +348,8 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
             onRemoveCard={onRemoveCard}
             onMoveCard={handleMoveCard}
             onMoveSelectedCards={handleMoveSelectedCards}
+            determineTargetDeck={determineTargetDeck}
+            selectedCards={selectedCards}
           />
         </Collapse>
 
@@ -325,6 +357,11 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
           {sideDeckOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           {t('SIDE_DECK')} ({sideDeckCount})
         </IconButton>
+        <Tooltip title={t('CLEAR_SIDE_DECK')}>
+          <IconButton onClick={() => clearDeck(CardDeck.SIDE)} size="small">
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
         <Collapse in={sideDeckOpen}>
           <DeckTable
             type={CardDeck.SIDE}
@@ -337,6 +374,8 @@ const DeckBuilder: React.FC<DeckBuilderProps> = ({
             onRemoveCard={onRemoveCard}
             onMoveCard={handleMoveCard}
             onMoveSelectedCards={handleMoveSelectedCards}
+            determineTargetDeck={determineTargetDeck}
+            selectedCards={selectedCards}
           />
         </Collapse>
       </CardContent>
