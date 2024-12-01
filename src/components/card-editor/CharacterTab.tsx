@@ -117,10 +117,10 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
         onChange={handleCharacterSubTabChange}
         aria-label="character sub-tabs"
       >
-        <Tab label="Main Character" />
-        <Tab label="Side Character" />
-        <Tab label="Side Character 2" />
-        <Tab label="Hidden" />
+        <Tab data-testid="main-character-tab" label="Main Character" />
+        <Tab data-testid="side-character-tab" label="Side Character" />
+        <Tab data-testid="side-character2-tab" label="Side Character 2" />
+        <Tab data-testid="hidden-tab" label="Hidden" />
       </Tabs>
 
       <Box
@@ -160,6 +160,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           <FormControlLabel
             control={
               <Checkbox
+                data-testid="impersonate-checkbox"
                 checked={showSelect}
                 onChange={handleImpersonateChange}
               />
@@ -173,6 +174,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
               <FormControl fullWidth>
                 <InputLabel id="select-user">Select User</InputLabel>
                 <Select
+                  data-testid="user-select"
                   labelId="select-user"
                   value={user}
                   label="User"

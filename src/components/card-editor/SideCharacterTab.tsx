@@ -73,6 +73,7 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
         <TextField
           fullWidth
           variant="outlined"
+          data-testid="side-character-name"
           placeholder="Side Character Name"
           label="Name"
           value={sideCharacterFields.sideCharacterName}

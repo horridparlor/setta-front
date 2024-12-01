@@ -253,6 +253,7 @@ const UserCreation = () => {
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setFirstName(event.target.value);
               }}
+              data-testid="firstname-field"
               label="First name"
               variant="outlined"
               value={firstName}
@@ -263,6 +264,7 @@ const UserCreation = () => {
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setLastName(event.target.value);
               }}
+              data-testid="lastname-field"
               label="Last name"
               variant="outlined"
               value={lastName}
@@ -299,6 +301,7 @@ const UserCreation = () => {
               disabled
             />
             <TextField
+              data-testid="firstname-lastname-field"
               label="firstname.lastname"
               placeholder="firstname.lastname"
               variant="outlined"
@@ -436,7 +439,11 @@ const UserCreation = () => {
             container
             sx={{ justifyContent: 'flex-end', marginTop: 2, gap: 2 }}
           >
-            <Button onClick={handleCancel} variant="outlined">
+            <Button
+              data-testid="cancel-button"
+              onClick={handleCancel}
+              variant="outlined"
+            >
               {t('CANCEL')}
             </Button>
             <Button type="submit" variant="contained">

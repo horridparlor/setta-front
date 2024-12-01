@@ -68,6 +68,7 @@ const ConfirmationDialog = forwardRef<HTMLDivElement, ConfirmationDialogProps>(
             <FormControlLabel
               control={
                 <Checkbox
+                  data-testid="i-understand-checkbox"
                   checked={isChecked}
                   onChange={e => setIsChecked(e.target.checked)}
                 />
@@ -79,6 +80,7 @@ const ConfirmationDialog = forwardRef<HTMLDivElement, ConfirmationDialogProps>(
         <DialogActions>
           <Button onClick={handleClose}>{cancelText ?? t('CANCEL')}</Button>
           <Button
+            data-testid="confirm-button"
             color="error"
             onClick={handleConfirm}
             autoFocus

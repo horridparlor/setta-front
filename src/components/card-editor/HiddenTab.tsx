@@ -16,7 +16,9 @@ const HiddenTab: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6">Hidden Characters</Typography>
+      <Typography data-testid="hidden-characters-text" variant="h6">
+        Hidden Characters
+      </Typography>
       <List>
         {testCharacters.map((character, index) => (
           <ListItem key={index}>

@@ -195,6 +195,7 @@ export const RoleTable: React.FC<RoleTableProps> = ({
               </Select>
             </FormControl>
             <Button
+              data-testid="create-new-role-button"
               variant="contained"
               sx={{ ml: 'auto' }}
               onClick={handleCreateNewRoleClick}

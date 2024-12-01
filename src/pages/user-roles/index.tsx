@@ -146,7 +146,12 @@ const UserRolesPage = (props: UserRolesPageProps) => {
                 mt: 2,
               }}
             >
-              <Button type="button" variant="outlined" onClick={handleCancel}>
+              <Button
+                data-testid="cancel-button"
+                type="button"
+                variant="outlined"
+                onClick={handleCancel}
+              >
                 {t('CANCEL')}
               </Button>
               <Button type="submit" variant="contained">

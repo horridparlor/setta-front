@@ -100,9 +100,9 @@ const ArtTab = () => {
         aria-label="art sub-tabs"
         sx={{ marginBottom: '1rem' }}
       >
-        <Tab label="Background" />
-        <Tab label="Character" />
-        <Tab label="Special Effects" />
+        <Tab data-testid="background-tab" label="Background" />
+        <Tab data-testid="character-tab" label="Character" />
+        <Tab data-testid="special-effects-tab" label="Special Effects" />
       </Tabs>
 
       {/* Display the relevant sub-tab */}
@@ -191,6 +191,7 @@ const ArtTab = () => {
         multiline
         minRows={4}
         value={promptText}
+        data-testid="prompt-textfield"
         placeholder="Your prompt will appear here"
         InputProps={{
           readOnly: !isEditMode,
