@@ -76,6 +76,7 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({
         <FormControl fullWidth>
           <InputLabel id="background-type-selector-label">Type</InputLabel>
           <Select
+            data-testid="type-select"
             labelId="background-type-selector-label"
             value={selectedType || ''}
             label="Type"

@@ -109,6 +109,7 @@ const SideCharacter2Tab: React.FC<SideCharacter2TabProps> = ({
           fullWidth
           variant="outlined"
           placeholder="Side Character Name"
+          data-testid="side-character2-name"
           label="Name"
           value={sideCharacter2Fields.sideCharacter2Name}
           onChange={handleInputChange('sideCharacter2Name')}

@@ -52,6 +52,7 @@ export enum CardDeck {
   NONE = 'None',
   MAIN = 'Main',
   EXTRA = 'Extra',
+  SIDE = 'Side',
 }
 
 export const isCardDeck = (value: string): value is CardDeck => {

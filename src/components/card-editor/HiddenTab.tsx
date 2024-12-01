@@ -39,8 +39,9 @@ const HiddenTab: React.FC<HiddenTabProps> = ({
 
   return (
     <Box>
-      <Typography variant="h6">Hidden Characters</Typography>
-
+      <Typography data-testid="hidden-characters-text" variant="h6">
+        Hidden Characters
+      </Typography>
       <List>
         {/*Loop through all hidden characters */}
         {hiddenCharacters.map((character, index) => (

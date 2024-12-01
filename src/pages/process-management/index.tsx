@@ -83,7 +83,7 @@ const ProcessManagementPage = (props: ProcessManagementPageProps) => {
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ width: '100%', p: 2 }}>
+      <Box sx={{ width: '100%' }}>
         <HomeBar refetch={refetch} ref={homeBarRef} />
       </Box>
 
@@ -94,6 +94,7 @@ const ProcessManagementPage = (props: ProcessManagementPageProps) => {
           flexWrap: 'wrap',
           justifyContent: 'center',
           overflow: 'auto',
+          p: 2,
         }}
       >
         <Card sx={{ width: '90%' }}>

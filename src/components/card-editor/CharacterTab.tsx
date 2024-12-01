@@ -31,7 +31,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     characterName: '',
     race: 'Human',
     gender: 'Male',
-    age: 'Young',
+    age: 'Adult',
     charactertype: 'Main',
     appearance: '',
     tool: '',
@@ -185,7 +185,7 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
   const [characterSubTabId, setCharacterSubTabId] = useState(0);
 
   const handleCharacterSubTabChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     newValue: number
   ) => {
     setCharacterSubTabId(newValue);
@@ -204,10 +204,10 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
         onChange={handleCharacterSubTabChange}
         aria-label="character sub-tabs"
       >
-        <Tab label="Main Character" />
-        <Tab label="Side Character" />
-        <Tab label="Side Character 2" />
-        <Tab label="Hidden" />
+        <Tab data-testid="main-character-tab" label="Main Character" />
+        <Tab data-testid="side-character-tab" label="Side Character" />
+        <Tab data-testid="side-character2-tab" label="Side Character 2" />
+        <Tab data-testid="hidden-tab" label="Hidden" />
       </Tabs>
 
       <Box

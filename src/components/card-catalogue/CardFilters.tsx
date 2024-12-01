@@ -19,7 +19,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { CardData, getPointerId } from '../../types/card';
 import { CardExpansion } from '../../types/expansion';
-import Button from '@mui/material/Button';
+import Button, { ButtonProps } from '@mui/material/Button';
 import { normalizeName } from '../../utils/string';
 import { toast } from 'react-toastify';
 import FiltersModal from './FiltersModal';
@@ -28,6 +28,7 @@ import { ComparisonType } from '../../types/filter';
 import { CardOwner } from '../../types/user';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TextColor } from '../../types/color';
+import { purple } from '@mui/material/colors';
 
 interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
   onFilterChange: (filters: {
@@ -61,6 +62,8 @@ interface CardFiltersProps extends React.RefAttributes<CardFiltersRef> {
   resultCountString: string;
   resultsCount: number;
   handleExportAll: () => void;
+  onToggleDeckBuilder: () => void;
+  showDeckBuilder: boolean;
 }
 
 export interface CardFiltersRef {
@@ -68,6 +71,8 @@ export interface CardFiltersRef {
   resetFilters: () => void;
   clearReference: () => void;
   toggleFilters: () => void;
+  onToggleDeckBuilder: () => void;
+  showDeckBuilder: boolean;
 }
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -93,6 +98,8 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<
       resultCountString,
       resultsCount,
       handleExportAll,
+      onToggleDeckBuilder,
+      showDeckBuilder,
     },
     ref
   ) => {
@@ -501,11 +508,18 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<
       resetFilters,
       clearReference,
       toggleFilters,
+      onToggleDeckBuilder,
+      showDeckBuilder,
     }));
 
     useEffect(() => {
       updateUrlParams();
     }, []);
+
+    const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
+      color: theme.palette.getContrastText(purple[500]),
+      backgroundColor: purple[500],
+    }));
 
     return (
       <StyledAppBar position="sticky" sx={{ margin: '0.2rem 0' }}>
@@ -624,6 +638,20 @@ const CardFilters: React.FC<CardFiltersProps> = forwardRef<
               >
                 Reset
               </Button>
+              {!showDeckBuilder && (
+                <ColorButton
+                  variant="contained"
+                  onClick={onToggleDeckBuilder}
+                  sx={{
+                    whiteSpace: 'nowrap',
+                    marginLeft: '0.6rem',
+                    borderRadius: '1rem',
+                    padding: '0.2rem',
+                  }}
+                >
+                  Open Deck Builder
+                </ColorButton>
+              )}
             </Box>
           </Box>
           <FiltersModal
