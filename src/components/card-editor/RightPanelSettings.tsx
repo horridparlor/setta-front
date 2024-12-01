@@ -19,13 +19,13 @@ import DeckTab from './DeckTab';
 import {
   BACKROW_CARD_TYPES,
   canEditCard,
-  // canErrataCard,
+  canErrataCard,
   CardClass,
   CardData,
   CardSubtype,
   CardSupertype,
   CardType,
-  // combineEffectsTexts,
+  combineEffectsTexts,
   DefaultTextSize,
   EXTRA_DECK_SUBTYPES,
   getEffectsChainEffect,
@@ -188,14 +188,14 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   cardData,
   expansions,
   onCardDataChange,
-  // onExport,
+  onExport,
   onSave,
-  // onImageFileChange,
-  // onDelete,
-  // onEncode,
+  onImageFileChange,
+  onDelete,
+  onEncode,
   cards,
-  // onErrata,
-  // onCopy,
+  onErrata,
+  onCopy,
 }) => {
   const STATS_TAB = 0;
   const { t } = useTranslation();
@@ -3152,71 +3152,103 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         <DeckTab />
       </Box>
       <Box sx={{ ...rowContainerStyle, marginBottom: 0 }}>
-        <Button
-          onClick={onSave}
-          variant="contained"
-          color="primary"
-          disabled={cardData.cardName.length === 0}
-          sx={hideHiddenButton()}
-        >
-          {t('SAVE')}
-        </Button>
-        {/*
-        <Button
-          onClick={onExport}
-          variant="contained"
-          color="secondary"
-          disabled={cardData.cardName.length === 0}
-        >
-          {t('EXPORT_PNG')}
-        </Button>
-        <Button
-          variant="contained"
-          color="info"
-          component="label"
-          sx={hideHiddenButton()}
-        >
-          {t('UPLOAD_IMAGE')}
-          <input
-            type="file"
-            hidden
-            accept="image/*"
-            onChange={onImageFileChange}
-          />
-        </Button>
-        <Button
-          onClick={onEncode}
-          variant="contained"
-          color="secondary"
-          disabled={
-            (cardData.cardName + combineEffectsTexts(cardData)).length === 0
-          }
-          sx={hideHiddenButton()}
-        >
-          {t('ENCODE')}
-        </Button>
-        <Button
-          onClick={onDelete}
-          variant="contained"
-          color="error"
-          disabled={cardData.cardId === 0}
-          sx={hideHiddenButton()}
-        >
-          {t('DELETE')}
-        </Button>
-        <Button
-          onClick={onErrata}
-          variant="contained"
-          color="primary"
-          sx={{
-            display: canErrataCard(cardData, expansions) ? 'flex' : 'none',
-          }}
-        >
-          {t('ERRATA')}
-        </Button>
-        <Button onClick={onCopy} variant="contained" color="secondary">
-          {t('COPY')}
-        </Button> */}
+        {tabId === Art_TAB ? (
+          <Box
+            sx={{
+              marginTop: '1rem',
+              marginBottom: '1rem',
+              display: 'flex',
+              gap: 2,
+            }}
+          >
+            <Button
+              onClick={onSave}
+              variant="contained"
+              color="primary"
+              disabled={cardData.cardName.length === 0}
+              sx={hideHiddenButton()}
+            >
+              {t('SAVE')}
+            </Button>
+            <Button variant="contained" color="info">
+              Generate
+            </Button>
+            <Button variant="outlined" color="warning">
+              Return
+            </Button>
+            <Button variant="outlined" color="error">
+              Reset
+            </Button>
+          </Box>
+        ) : null}
+        {tabId === STATS_TAB || tabId === EFFECTS_TAB || tabId === DECK_TAB ? (
+          <>
+            <Button
+              onClick={onSave}
+              variant="contained"
+              color="primary"
+              disabled={cardData.cardName.length === 0}
+              sx={hideHiddenButton()}
+            >
+              {t('SAVE')}
+            </Button>
+            <Button
+              onClick={onExport}
+              variant="contained"
+              color="secondary"
+              disabled={cardData.cardName.length === 0}
+            >
+              {t('EXPORT_PNG')}
+            </Button>
+            <Button
+              variant="contained"
+              color="info"
+              component="label"
+              sx={hideHiddenButton()}
+            >
+              {t('UPLOAD_IMAGE')}
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={onImageFileChange}
+              />
+            </Button>
+            <Button
+              onClick={onEncode}
+              variant="contained"
+              color="secondary"
+              disabled={
+                (cardData.cardName + combineEffectsTexts(cardData)).length === 0
+              }
+              sx={hideHiddenButton()}
+            >
+              {t('ENCODE')}
+            </Button>
+            <Button
+              onClick={onDelete}
+              variant="contained"
+              color="error"
+              disabled={cardData.cardId === 0}
+              sx={hideHiddenButton()}
+            >
+              {t('DELETE')}
+            </Button>
+            <Button
+              onClick={onErrata}
+              variant="contained"
+              color="primary"
+              sx={{
+                display: canErrataCard(cardData, expansions) ? 'flex' : 'none',
+              }}
+            >
+              {t('ERRATA')}
+            </Button>
+            <Button onClick={onCopy} variant="contained" color="secondary">
+              {t('COPY')}
+            </Button>
+          </>
+        ) : null}
       </Box>
     </Box>
   );

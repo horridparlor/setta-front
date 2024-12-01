@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -15,27 +15,43 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface SideCharacterTabProps {
-  updateSideCharacterValues: (values: Partial<any>) => void; // Thistransmits side character values
+  updateSideCharacterValues: (values: Partial<any>) => void; // This transmits side character values
+  deleteSideCharacter: (character: {
+    who: string;
+    prompt: string;
+    values: any;
+    type: string;
+  }) => void;
+  sideCharacterFields: {
+    sideCharacterName: string;
+    sideCharacterType: string;
+    sideCharacterAppearance: string;
+  };
+  setSideCharacterFields: React.Dispatch<
+    React.SetStateAction<{
+      sideCharacterName: string;
+      sideCharacterType: string;
+      sideCharacterAppearance: string;
+    }>
+  >;
 }
 
 const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
   updateSideCharacterValues,
+  deleteSideCharacter,
+  sideCharacterFields,
+  setSideCharacterFields,
 }) => {
-  const [sideCharacterFields, setSideCharacterFields] = useState({
+  const defaultSideCharacterFields = {
     sideCharacterName: '',
-    sideCharacterRace: '',
-    sideCharacterGender: '',
-    sideCharacterAge: '',
     sideCharacterType: '',
     sideCharacterAppearance: '',
-    sideCharacterTool: '',
-    sideCharacterAction: '',
-  });
+  };
 
   // On component mount, transmit the default values
   useEffect(() => {
     updateSideCharacterValues(sideCharacterFields);
-  }, []);
+  }, [sideCharacterFields, updateSideCharacterValues]);
 
   // Function to handle input changes for text fields and dropdowns
   const handleInputChange =
@@ -58,12 +74,31 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
     updateSideCharacterValues({ [field]: '' });
   };
 
+  // Move a side character to the hidden characters list on hidden tab
+  const handleDeleteSideCharacter = () => {
+    const newHiddenCharacter = {
+      who: sideCharacterFields.sideCharacterName,
+      prompt: `Side Character: ${sideCharacterFields.sideCharacterName}
+      Side Character Appearance: ${sideCharacterFields.sideCharacterAppearance}
+      Side Character Type: ${sideCharacterFields.sideCharacterType}`,
+      values: { ...sideCharacterFields },
+      type: 'side',
+    };
+    deleteSideCharacter(newHiddenCharacter); // Add to hidden characters list
+    setSideCharacterFields(defaultSideCharacterFields); // Clear fields
+    updateSideCharacterValues(defaultSideCharacterFields);
+  };
+
   return (
     <Box>
       <Typography variant="h6">Side Character</Typography>
 
       <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
-        <Button variant="outlined" color="error">
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleDeleteSideCharacter}
+        >
           Delete Character
         </Button>
       </Box>
@@ -117,7 +152,7 @@ const SideCharacterTab: React.FC<SideCharacterTabProps> = ({
           labelId="type-selector-label"
           value={sideCharacterFields.sideCharacterType}
           label="Type"
-          onChange={handleInputChange('Charactertype')}
+          onChange={handleInputChange('sideCharacterType')}
         >
           <MenuItem value="Supporting">Supporting</MenuItem>
           <MenuItem value="Antagonist">Antagonist</MenuItem>

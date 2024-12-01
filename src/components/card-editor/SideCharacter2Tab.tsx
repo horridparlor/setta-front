@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -15,27 +15,43 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface SideCharacter2TabProps {
-  updateSideCharacter2Values: (values: Partial<any>) => void; // Thistransmits side character values
+  updateSideCharacter2Values: (values: Partial<any>) => void; // This transmits side character values
+  deleteSideCharacter2: (character: {
+    who: string;
+    prompt: string;
+    values: any;
+    type: string;
+  }) => void;
+  sideCharacter2Fields: {
+    sideCharacter2Name: string;
+    sideCharacter2Type: string;
+    sideCharacter2Appearance: string;
+  };
+  setSideCharacter2Fields: React.Dispatch<
+    React.SetStateAction<{
+      sideCharacter2Name: string;
+      sideCharacter2Type: string;
+      sideCharacter2Appearance: string;
+    }>
+  >;
 }
 
 const SideCharacter2Tab: React.FC<SideCharacter2TabProps> = ({
   updateSideCharacter2Values,
+  deleteSideCharacter2,
+  sideCharacter2Fields,
+  setSideCharacter2Fields,
 }) => {
-  const [sideCharacter2Fields, setSideCharacter2Fields] = useState({
+  const defaultSideCharacter2Fields = {
     sideCharacter2Name: '',
-    sideCharacter2Race: '',
-    sideCharacter2Gender: '',
-    sideCharacter2Age: '',
     sideCharacter2Type: '',
     sideCharacter2Appearance: '',
-    sideCharacter2Tool: '',
-    sideCharacter2Action: '',
-  });
+  };
 
   // On component mount, transmit the default values
   useEffect(() => {
     updateSideCharacter2Values(sideCharacter2Fields);
-  }, []);
+  }, [sideCharacter2Fields, updateSideCharacter2Values]);
 
   // Function to handle input changes for text fields and dropdowns
   const handleInputChange =
@@ -58,12 +74,31 @@ const SideCharacter2Tab: React.FC<SideCharacter2TabProps> = ({
     updateSideCharacter2Values({ [field]: '' });
   };
 
+  // Move a side character 2 to the hidden characters list on hidden tab
+  const handleDeleteSideCharacter2 = () => {
+    const newHiddenCharacter = {
+      who: sideCharacter2Fields.sideCharacter2Name,
+      prompt: `Side Character: ${sideCharacter2Fields.sideCharacter2Name}
+      Side Character Appearance: ${sideCharacter2Fields.sideCharacter2Appearance}
+      Side Character Type: ${sideCharacter2Fields.sideCharacter2Type}`,
+      values: { ...sideCharacter2Fields },
+      type: 'side2',
+    };
+    deleteSideCharacter2(newHiddenCharacter); // Add to hidden characters list
+    setSideCharacter2Fields(defaultSideCharacter2Fields); // Clear fields
+    updateSideCharacter2Values(defaultSideCharacter2Fields);
+  };
+
   return (
     <Box>
       <Typography variant="h6">Side Character 2</Typography>
 
       <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
-        <Button variant="outlined" color="error">
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleDeleteSideCharacter2}
+        >
           Delete Character
         </Button>
       </Box>
@@ -117,7 +152,7 @@ const SideCharacter2Tab: React.FC<SideCharacter2TabProps> = ({
           labelId="type-selector-label"
           value={sideCharacter2Fields.sideCharacter2Type}
           label="Type"
-          onChange={handleInputChange('Character2type')}
+          onChange={handleInputChange('sideCharacter2Type')}
         >
           <MenuItem value="Supporting">Supporting</MenuItem>
           <MenuItem value="Antagonist">Antagonist</MenuItem>

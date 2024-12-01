@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { SelectChangeEvent } from '@mui/material/Select'; // Import correct SelectChangeEvent
+import AddNewStyleModal from './AddNewStyleModal';
 
 interface BackgroundTabProps {
   updatePromptValues: (
@@ -71,7 +72,7 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({
         />
       </Box>
 
-      <Box sx={{ maxWidth: '200px', marginBottom: '4rem' }}>
+      <Box sx={{ maxWidth: '200px', marginBottom: '1rem' }}>
         <FormControl fullWidth>
           <InputLabel id="background-type-selector-label">Type</InputLabel>
           <Select
@@ -86,6 +87,9 @@ const BackgroundTab: React.FC<BackgroundTabProps> = ({
             <MenuItem value="Abstract">Abstract</MenuItem>
           </Select>
         </FormControl>
+      </Box>
+      <Box>
+        <AddNewStyleModal />
       </Box>
     </Box>
   );

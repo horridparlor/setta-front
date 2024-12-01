@@ -6,7 +6,6 @@ import {
   TextField,
   Typography,
   Button,
-  Modal,
   IconButton,
   InputAdornment,
   Select,
@@ -57,12 +56,6 @@ const ArtTab = () => {
   const updatePromptValues = (newValues: Partial<typeof promptValues>) => {
     setPromptValues(prevValues => ({ ...prevValues, ...newValues }));
   };
-
-  // Modal State and Functions
-  const [openStyleModal, setOpenStyleModal] = useState(false);
-
-  const handleOpenStyleModal = () => setOpenStyleModal(true);
-  const handleCloseStyleModal = () => setOpenStyleModal(false);
 
   const handleSubTabChange = (
     _event: React.SyntheticEvent,
@@ -115,31 +108,6 @@ const ArtTab = () => {
       <Box sx={{ display: subTabId === 2 ? 'block' : 'none' }}>
         <SpecialEffectsTab updatePromptValues={updatePromptValues} />
       </Box>
-
-      {/* Style Modal Button */}
-      <Button
-        variant="contained"
-        onClick={handleOpenStyleModal}
-        sx={{ marginTop: 2 }}
-      >
-        Add New Style
-      </Button>
-
-      {/* Modal for Styles */}
-      <Modal open={openStyleModal} onClose={handleCloseStyleModal}>
-        <Box
-          sx={{
-            padding: 4,
-            backgroundColor: 'white',
-            margin: 'auto',
-            maxWidth: '500px',
-          }}
-        >
-          <Typography variant="h6">Create or Edit Style</Typography>
-          {/* Additional form fields for Style creation to be implemented later */}
-          <Button onClick={handleCloseStyleModal}>Close</Button>
-        </Box>
-      </Modal>
 
       {/* Edit Mode Toggle Button */}
       <Box
@@ -205,23 +173,6 @@ const ArtTab = () => {
         }}
         onChange={isEditMode ? e => setManualPrompt(e.target.value) : undefined}
       />
-
-      <Box
-        sx={{
-          marginTop: '1rem',
-          marginBottom: '1rem',
-          display: 'flex',
-          gap: 2,
-        }}
-      >
-        <Button variant="contained">Generate</Button>
-        <Button variant="outlined" color="warning">
-          Return
-        </Button>
-        <Button variant="outlined" color="error">
-          Reset
-        </Button>
-      </Box>
     </Box>
   );
 };

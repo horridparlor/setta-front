@@ -40,19 +40,50 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     search: '',
     who: '',
   });
+
+  const [sideCharacterFields, setSideCharacterFields] = useState({
+    sideCharacterName: '',
+    sideCharacterType: '',
+    sideCharacterAppearance: '',
+  });
+
+  const [sideCharacter2Fields, setSideCharacter2Fields] = useState({
+    sideCharacter2Name: '',
+    sideCharacter2Type: '',
+    sideCharacter2Appearance: '',
+  });
+
+  const [hiddenCharacters, setHiddenCharacters] = useState<
+    { who: string; prompt: string; values: any; type: string }[]
+  >([]);
   const [showSelect, setShowSelect] = useState<boolean>(false);
   const [user, setUser] = useState<string>('');
   const [isFieldsActive, setFieldsActive] = useState<boolean>(false);
 
+  const defaultCharacterFields = {
+    characterName: '',
+    race: 'Human',
+    gender: 'Male',
+    age: 'Young',
+    charactertype: 'Main',
+    appearance: '',
+    tool: '',
+    inherited_tool: false,
+    action: '',
+    search: '',
+    who: '',
+  };
+
   // On component mount, this transmits the default values to the prompt object
   useEffect(() => {
     updatePromptValues(characterFields);
-  }, []);
+  }, [characterFields, updatePromptValues]);
 
   useEffect(() => {
     setFieldsActive(
-      // Set fields to active if search or who is entered
-      characterFields.search.trim() !== '' || characterFields.who.trim() !== ''
+      // Set fields to active if 'search' or 'who' is entered
+      (characterFields.search || '').trim() !== '' ||
+        (characterFields.who || '').trim() !== ''
     );
   }, [characterFields.search, characterFields.who]);
 
@@ -68,6 +99,15 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
       setCharacterFields(prevFields => ({ ...prevFields, [field]: newValue }));
       updatePromptValues({ [field]: newValue });
     };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.checked;
+    setCharacterFields(prevFields => ({
+      ...prevFields,
+      inherited_tool: newValue,
+    }));
+    updatePromptValues({ inherited_tool: newValue });
+  };
 
   const clearField = (field: string) => () => {
     setCharacterFields(prevFields => ({ ...prevFields, [field]: '' }));
@@ -87,14 +127,61 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
     setUser(newUser);
   };
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.checked;
-    setCharacterFields(prevFields => ({
-      ...prevFields,
-      inherited_tool: newValue,
-    }));
-    updatePromptValues({ inherited_tool: newValue });
+  // Move a main character to the hidden list on hidden tab
+  const handleDeleteMainCharacter = () => {
+    const newHiddenCharacter = {
+      who: characterFields.who,
+      prompt: `Character: ${characterFields.characterName}
+        Race: ${characterFields.race}
+        Gender: ${characterFields.gender}
+        Age: ${characterFields.age}
+        Type: ${characterFields.charactertype}
+        Appearance: ${characterFields.appearance}
+        Tool: ${characterFields.tool}`,
+      values: { ...characterFields },
+      type: 'main',
+    };
+
+    // Add to hidden characters
+    setHiddenCharacters(prevState => [...prevState, newHiddenCharacter]);
+    // Clear fields
+    setCharacterFields(defaultCharacterFields);
   };
+
+  // Handle restoring a main character from the hidden characters list
+  const handleRestoreMain = (index: number) => {
+    const characterToRestore = hiddenCharacters[index];
+    setCharacterFields(characterToRestore.values);
+    updatePromptValues(characterToRestore.values);
+
+    // Remove the character from hiddenCharacters
+    setHiddenCharacters(prevHiddenCharacters =>
+      prevHiddenCharacters.filter((_, i) => i !== index)
+    );
+  };
+
+  // Handle restoring a side character
+  const handleRestoreSide = (index: number) => {
+    const characterToRestore = hiddenCharacters[index];
+    setSideCharacterFields(characterToRestore.values);
+    updatePromptValues(characterToRestore.values);
+
+    setHiddenCharacters(prevHiddenCharacters =>
+      prevHiddenCharacters.filter((_, i) => i !== index)
+    );
+  };
+
+  // Handle restoring side character 2
+  const handleRestoreSide2 = (index: number) => {
+    const characterToRestore = hiddenCharacters[index];
+    setSideCharacter2Fields(characterToRestore.values);
+    updatePromptValues(characterToRestore.values);
+
+    setHiddenCharacters(prevHiddenCharacters =>
+      prevHiddenCharacters.filter((_, i) => i !== index)
+    );
+  };
+
   const [characterSubTabId, setCharacterSubTabId] = useState(0);
 
   const handleCharacterSubTabChange = (
@@ -131,13 +218,47 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
         <Typography variant="h6">Main Character</Typography>
 
         <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
-          <Button variant="outlined" color="error">
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleDeleteMainCharacter}
+          >
             Delete Character
           </Button>
         </Box>
 
-        <Box>
-          <Typography variant="subtitle1">Character</Typography>
+        <Typography variant="subtitle1">Character</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            marginBottom: 2,
+          }}
+        >
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showSelect}
+                onChange={handleImpersonateChange}
+              />
+            }
+            label="Impersonate"
+          />
+
+          {/*If impersonate checked, select user */}
+          {showSelect && (
+            <FormControl fullWidth>
+              <InputLabel id="select-user">Select User</InputLabel>
+              <Select
+                labelId="select-user"
+                value={user}
+                label="User"
+                onChange={handleUserSelectChange}
+              >
+                <MenuItem value="User">Users coming soon...</MenuItem>
+              </Select>
+            </FormControl>
+          )}
           <TextField
             fullWidth
             variant="outlined"
@@ -154,37 +275,6 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
               ),
             }}
           />
-        </Box>
-
-        <Box sx={{ display: 'flex', gap: 2, marginTop: 2, marginBottom: 2 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                data-testid="impersonate-checkbox"
-                checked={showSelect}
-                onChange={handleImpersonateChange}
-              />
-            }
-            label="Impersonate"
-          />
-
-          {/*If impersonate checked, select user and style */}
-          {showSelect && (
-            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
-              <FormControl fullWidth>
-                <InputLabel id="select-user">Select User</InputLabel>
-                <Select
-                  data-testid="user-select"
-                  labelId="select-user"
-                  value={user}
-                  label="User"
-                  onChange={handleUserSelectChange}
-                >
-                  <MenuItem value="User">Users coming soon...</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-          )}
         </Box>
 
         <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
@@ -222,11 +312,6 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
               ),
             }}
           />
-          {characterFields.characterName && (
-            <Button variant="contained" color="primary">
-              Save Character
-            </Button>
-          )}
         </Box>
 
         <Box sx={{ marginBottom: '1rem' }}>
@@ -366,21 +451,40 @@ const CharacterTab: React.FC<CharacterTabProps> = ({ updatePromptValues }) => {
           display: characterSubTabId === SIDE_CHARACTER_TAB ? 'block' : 'none',
         }}
       >
-        <SideCharacterTab updateSideCharacterValues={updatePromptValues} />
+        <SideCharacterTab
+          sideCharacterFields={sideCharacterFields}
+          setSideCharacterFields={setSideCharacterFields}
+          updateSideCharacterValues={updatePromptValues}
+          deleteSideCharacter={character => {
+            setHiddenCharacters(prev => [...prev, character]);
+          }}
+        />
       </Box>
       <Box
         sx={{
           display: characterSubTabId === SIDE_CHARACTER2_TAB ? 'block' : 'none',
         }}
       >
-        <SideCharacter2Tab updateSideCharacter2Values={updatePromptValues} />
+        <SideCharacter2Tab
+          sideCharacter2Fields={sideCharacter2Fields}
+          setSideCharacter2Fields={setSideCharacter2Fields}
+          updateSideCharacter2Values={updatePromptValues}
+          deleteSideCharacter2={character =>
+            setHiddenCharacters(prev => [...prev, character])
+          }
+        />
       </Box>
       <Box
         sx={{
           display: characterSubTabId === HIDDEN_TAB ? 'block' : 'none',
         }}
       >
-        <HiddenTab />
+        <HiddenTab
+          hiddenCharacters={hiddenCharacters}
+          onRestoreMain={handleRestoreMain}
+          onRestoreSide={handleRestoreSide}
+          onRestoreSide2={handleRestoreSide2}
+        />
       </Box>
     </Box>
   );
