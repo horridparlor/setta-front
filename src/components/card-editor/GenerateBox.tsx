@@ -11,9 +11,7 @@ import {
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
-interface GenerateBoxProps {}
-
-const GenerateBox: React.FC<GenerateBoxProps> = () => {
+const GenerateBox: React.FC<any> = () => {
   const [selectedDate, setSelectedDate] = useState<string>('2024-10-03'); // Default selection of mock data
   const [dropdownItems] = useState<string[]>([
     '2024-10-01',

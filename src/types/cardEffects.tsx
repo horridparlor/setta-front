@@ -435,6 +435,11 @@ export const DEFAULT_CARD_EFFECTS: CardEffects = {
 
 export const getCostSubtypeOptions = (cardData: CardData): Array<string> => {
   let costTypes;
+
+  const notAvailable = isMonster(cardData)
+    ? [...SpellSpecificStateCostTypes, StateCostType.NONE]
+    : [...MonsterSpecificStateCostTypes, StateCostType.NONE];
+
   switch (cardData.cardEffects.cost.costType) {
     case CostType.PAYMENT:
       return Object.values(PaymentCostType).filter(
@@ -442,11 +447,6 @@ export const getCostSubtypeOptions = (cardData: CardData): Array<string> => {
       );
     case CostType.STATE:
       costTypes = Object.values(StateCostType);
-      const notAvailable = (
-        isMonster(cardData)
-          ? SpellSpecificStateCostTypes
-          : MonsterSpecificStateCostTypes
-      ).concat([StateCostType.NONE]);
       return costTypes.filter(costType => !notAvailable.includes(costType));
     case CostType.TRIGGER:
       costTypes = Object.values(TriggerCostType);
@@ -776,10 +776,10 @@ export const getCostPrestateOptions = (cardData: CardData) => {
   return [];
 };
 
-export const getDefaultCostPrestate = (cardData: CardData) => {
-  const cost = getEffectsCost(cardData);
-  switch (cost.costType) {
-  }
+export const getDefaultCostPrestate = (_cardData: CardData) => {
+  // const cost = getEffectsCost(cardData);
+  // switch (cost.costType) {
+  // }
   return StateCostType.NONE;
 };
 
@@ -797,10 +797,10 @@ export const getCostPaymentTypeOptions = (cardData: CardData) => {
   return [];
 };
 
-export const getDefaultCostPaymentType = (cardData: CardData) => {
-  const cost = getEffectsCost(cardData);
-  switch (cost.costType) {
-  }
+export const getDefaultCostPaymentType = (_cardData: CardData) => {
+  // const cost = getEffectsCost(cardData);
+  // switch (cost.costType) {
+  // }
   return PaymentCostType.NONE;
 };
 
@@ -812,10 +812,10 @@ export const getCostPostCountTypeOptions = (cardData: CardData) => {
   return [];
 };
 
-export const getDefaultCostPostCountType = (cardData: CardData) => {
-  const cost = getEffectsCost(cardData);
-  switch (cost.costType) {
-  }
+export const getDefaultCostPostCountType = (_cardData: CardData) => {
+  // const cost = getEffectsCost(cardData);
+  // switch (cost.costType) {
+  // }
   return PaymentCostType.NONE;
 };
 
@@ -835,10 +835,8 @@ export const getDefaultCostPostCountSubtype = (countType: PostCountType) => {
   return '';
 };
 
-export const getEffectTypeOptions = (cardData: CardData) => {
+export const getEffectTypeOptions = () => {
   const options = Object.values(EffectType);
-  switch (cardData.cardType) {
-  }
   return options;
 };
 
@@ -1191,17 +1189,17 @@ export const getDefaultEffectTargetOwner = (cardData: CardData) => {
   return TargetOwner.NONE;
 };
 
-export const getEffectTargetZoneOptions = (cardData: CardData) => {
-  const effect = getEffectsEffect(cardData);
-  switch (effect.effectType) {
-  }
+export const getEffectTargetZoneOptions = (_cardData: CardData) => {
+  // const effect = getEffectsEffect(cardData);
+  // switch (effect.effectType) {
+  // }
   return [];
 };
 
-export const getDefaultEffectTargetZone = (cardData: CardData) => {
-  const effect = getEffectsEffect(cardData);
-  switch (effect.effectType) {
-  }
+export const getDefaultEffectTargetZone = (_cardData: CardData) => {
+  // const effect = getEffectsEffect(cardData);
+  // switch (effect.effectType) {
+  // }
   return Zone.NONE;
 };
 

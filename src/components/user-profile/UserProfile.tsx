@@ -48,7 +48,7 @@ const UserProfile = ({ userId }: UserProfileProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = await fetchLoggedInUser();
+        const data = await fetchLoggedInUser();
 
         // Normalize `isActive` to boolean and preserve it in state
         const activeStatus = Boolean(data);

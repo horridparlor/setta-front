@@ -26,7 +26,7 @@ const getSizeByIndex = (index: number) => {
   if (index > Object.values(FONT_SIZES).length) {
     return index;
   }
-  return FONT_SIZES.hasOwnProperty(index) ? FONT_SIZES[index] : FONT_SIZES[4];
+  return FONT_SIZES[index] ?? FONT_SIZES[4];
 };
 
 export const getFontSize = (index: number, scale: number) => {

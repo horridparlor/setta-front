@@ -97,8 +97,9 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
 
     const [open, setOpen] = useState(false);
 
+    const location = useLocation();
+
     const getPageName = () => {
-      const location = useLocation();
       const pageLocation =
         '/' + location.pathname.split('/').filter(Boolean)[0] || '';
       const appPage = isAppPage(pageLocation) ? pageLocation : AppPage.Error;

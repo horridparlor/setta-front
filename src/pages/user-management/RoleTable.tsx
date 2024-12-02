@@ -134,7 +134,7 @@ export const RoleTable: React.FC<RoleTableProps> = ({
                 onClick={() => {
                   setConfirmDeletionOfRole(params.row);
                 }}
-                sx={{ color: false ? 'grey' : 'default' }}
+                sx={{ color: 'default' }}
                 disabled={roleIdToUserMapping[params.row.id]?.length > 0}
               >
                 <Delete />

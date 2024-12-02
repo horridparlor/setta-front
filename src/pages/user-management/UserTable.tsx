@@ -160,7 +160,7 @@ export const UserTable: React.FC<UserTableProps> = ({
       await updateUser({
         ...user,
         userId: user.id,
-        isActive: !Boolean(user.isActive),
+        isActive: !user.isActive,
       });
       toast.success(
         `Status of user ${user.firstname} ${user.lastname} changed to ${

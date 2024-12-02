@@ -1788,7 +1788,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
               disabled={cannotEdit()}
             >
               {getStringSelector(
-                getEffectTypeOptions(cardData),
+                getEffectTypeOptions(),
                 getDefaultEffectType(cardData)
               )}
             </Select>
