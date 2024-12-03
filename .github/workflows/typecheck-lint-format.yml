@@ -1,9 +1,9 @@
 name: Typecheck Format Lint
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, dev]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, dev]
 jobs:
   typecheck:
     timeout-minutes: 30
