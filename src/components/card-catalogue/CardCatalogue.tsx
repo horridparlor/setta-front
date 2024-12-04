@@ -3,12 +3,10 @@ import { Box, Card } from '@mui/material';
 import {
   CardData,
   CardType,
-  combineEffectsTexts,
   getCardsExpansion,
   getCardsExpansionIds,
   getCombinedStats,
   getFullTypeString,
-  getPointerId,
   isExtraDeckCard,
   isGroupCardType,
   isIncludedInGroupCardType,
@@ -93,9 +91,28 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
       filtersRef.current?.referenceCard(cardData);
     };
 
-    const getReferencesCountsAs = () => {
-      return cards.find(c => getPointerId(c).toString() === filters.referenceId)
-        ?.countsAsId;
+    const getAllCardIdsReferencedInCard = (card: CardData) => {
+      return [
+        card.cardId,
+        card.errataOfId,
+        card.primaryMaterialId,
+        card.secondaryMaterialId,
+        card.tertiaryMaterialId,
+        card.countsAsId,
+      ];
+    };
+
+    const isReferenceToCard = (card: CardData, referenceId: number) => {
+      const referenceCard: CardData | undefined = cards.find(
+        card => card.cardId === referenceId
+      );
+      if (!referenceCard) {
+        return false;
+      }
+      const references = getAllCardIdsReferencedInCard(referenceCard);
+      return getAllCardIdsReferencedInCard(card)
+        .filter(id => id)
+        .some(id => references.includes(id));
     };
 
     const isInReferenceMode = () => {
@@ -162,60 +179,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
               (card.costText + card.effectText).toLowerCase().includes(word)
           ) &&
         (!isInReferenceMode() ||
-          [
-            getPointerId(card),
-            card.primaryMaterialId,
-            card.secondaryMaterialId,
-            card.tertiaryMaterialId,
-            card.countsAsId,
-          ].includes(parseInt(filters.referenceId)) ||
-          !!cards.find(
-            c =>
-              getPointerId(c) === parseInt(filters.referenceId) &&
-              ([
-                c.primaryMaterialId,
-                c.secondaryMaterialId,
-                c.tertiaryMaterialId,
-                c.countsAsId,
-              ].some(
-                reference =>
-                  reference === getPointerId(card) ||
-                  (card.countsAsId && reference === card.countsAsId)
-              ) ||
-                combineEffectsTexts(c)
-                  .toLowerCase()
-                  .includes(normalizeName(card.cardName).toLowerCase()) ||
-                (card.countsAsId &&
-                  card.countsAsId > 0 &&
-                  combineEffectsTexts(c)
-                    .toLowerCase()
-                    .includes(
-                      normalizeName(
-                        cards
-                          .find(c2 => getPointerId(c2) === card.countsAsId)
-                          ?.cardName.toLowerCase()
-                      )
-                    )))
-          ) ||
-          (cards.find(
-            c => getPointerId(c).toString() === filters.referenceId
-          ) &&
-            combineEffectsTexts(card).includes(
-              cards.find(
-                c => getPointerId(c).toString() === filters.referenceId
-              )!.cardName
-            )) ||
-          (cards.find(
-            c =>
-              getPointerId(c).toString() === getReferencesCountsAs()?.toString()
-          ) &&
-            combineEffectsTexts(card).includes(
-              cards.find(
-                c =>
-                  getPointerId(c).toString() ===
-                  getReferencesCountsAs()?.toString()
-              )!.cardName
-            ))) &&
+          isReferenceToCard(card, parseInt(filters.referenceId))) &&
         (isInReferenceMode() ||
           isNoneString(filters.cardType) ||
           (isGroupCardType(filters.cardType)
