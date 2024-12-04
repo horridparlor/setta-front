@@ -13,7 +13,7 @@ export const normalizeName = (cardData: CardData | any): string => {
       : cardData.cardName + getMaximumExtension(cardData);
   return name
     .replace(/^({i}The)/i, '{i}')
-    .replace(/{[^}]*}/g, '')
+    .replace(/{[^}]*}|\.\.\./g, '')
     .replace(/[^a-zA-Z0-9\s-'!?–,.:áäéö$[\]]/g, '');
 };
 
