@@ -373,6 +373,7 @@ export interface components {
             subtype: string;
             supertype: string;
             maximumPiece: string;
+            secondaryClass: string;
             /** Format: int32 */
             level: number;
             /** Format: int32 */
@@ -652,6 +653,7 @@ export interface components {
             subtype: string;
             supertype: string;
             maximumPiece: string;
+            secondaryClass?: string;
             /** Format: int32 */
             level: number;
             /** Format: int32 */
@@ -755,6 +757,7 @@ export interface components {
             subtype: string;
             supertype: string;
             maximumPiece: string;
+            secondaryClass?: string;
             /** Format: int32 */
             level: number;
             /** Format: int32 */

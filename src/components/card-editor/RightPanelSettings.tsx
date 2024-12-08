@@ -268,7 +268,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
     switch (value) {
       case CardSupertype.DECK_MASTER:
         onCardDataChange('level', DECK_MASTER_LEVEL_PROPS.min);
-        onCardDataChange('primaryClass', cardData.cardClass);
     }
     onCardDataChange(
       'maximumPiece',
@@ -2865,6 +2864,26 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
               </Select>
             </FormControl>
           </Box>
+          <Box
+            sx={{
+              display: isDeckMaster(cardData) ? 'inline' : 'none',
+            }}
+          >
+            <FormControl fullWidth>
+              <InputLabel id="secondary-class-selector-label">
+                {'Secondary Class'}
+              </InputLabel>
+              <Select
+                labelId="secondary-class-selector-label"
+                value={cardData.secondaryClass}
+                label={'Secondary Class'}
+                onChange={handleSelectChange('secondaryClass')}
+                disabled={cannotEdit()}
+              >
+                {getCardClassOptions(true, [cardData.cardClass])}
+              </Select>
+            </FormControl>
+          </Box>
           <FormControl fullWidth>
             <InputLabel id="type-selector-label">{t('CARD_TYPE')}</InputLabel>
             <Select
@@ -2921,41 +2940,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
               </Select>
             </FormControl>
           </Box>
-        </Box>
-        <Box
-          sx={{
-            ...rowContainerStyle,
-            display: isDeckMaster(cardData) ? 'flex' : 'none',
-          }}
-        >
-          <FormControl fullWidth>
-            <InputLabel id="primary-class-selector-label">
-              {'Primary Class'}
-            </InputLabel>
-            <Select
-              labelId="primary-class-selector-label"
-              value={cardData.primaryClass}
-              label={'Primary Class'}
-              onChange={handleSelectChange('primaryClass')}
-              disabled={cannotEdit()}
-            >
-              {getCardClassOptions()}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id="secondary-class-selector-label">
-              {'Secondary Class'}
-            </InputLabel>
-            <Select
-              labelId="secondary-class-selector-label"
-              value={cardData.secondaryClass}
-              label={'Secondary Class'}
-              onChange={handleSelectChange('secondaryClass')}
-              disabled={cannotEdit()}
-            >
-              {getCardClassOptions(true)}
-            </Select>
-          </FormControl>
         </Box>
         <Box
           sx={{

@@ -21,7 +21,6 @@ import {
 } from './cardEffects';
 import { isNoneString, NONE_STRING } from '../utils/string';
 import { getUser } from './api';
-import { values } from 'lodash';
 
 export enum CardClass {
   NONE = 'None',
@@ -128,7 +127,6 @@ export interface CardData {
   subtype: CardSubtype;
   supertype: CardSupertype;
   maximumPiece: MaximumPiece;
-  primaryClass: CardClass;
   secondaryClass: CardClass;
   level: number;
   atk: number;
@@ -234,7 +232,6 @@ export const DEFAULT_CARD_DATA = {
   subtype: CardSubtype.FUSION,
   supertype: CardSupertype.NONE,
   maximumPiece: MaximumPiece.NONE,
-  primaryClass: CardClass.NONE,
   secondaryClass: CardClass.NONE,
   level: 1,
   atk: 0,
@@ -296,9 +293,15 @@ const getActiveSubtypes = (cardType: CardType) => {
   }
 };
 
-export const getCardClassOptions = (allowNone: boolean = false) => {
+export const getCardClassOptions = (
+  allowNone: boolean = false,
+  filterThese: Array<CardClass> = []
+) => {
   return Object.values(CardClass)
-    .filter(value => allowNone || !isNoneString(value))
+    .filter(
+      value =>
+        (allowNone || !isNoneString(value)) && !filterThese.includes(value)
+    )
     .map(c => (
       <MenuItem key={c} value={c}>
         {c}

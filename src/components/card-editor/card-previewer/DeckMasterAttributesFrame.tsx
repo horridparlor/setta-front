@@ -49,7 +49,7 @@ const DeckMasterAttributesFrame: React.FC<DeckMasterAttributesFrameProps> = ({
     >
       {isDeckMaster(cardData)
         ? getDeckMasterAttributeIcon(
-            cardData.primaryClass,
+            cardData.cardClass,
             isSecondaryClassDefined
           )
         : ''}

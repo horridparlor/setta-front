@@ -43,6 +43,7 @@ model PostCardRequest {
   subtype: string;
   supertype: string;
   maximumPiece: string;
+  secondaryClass?: string;
   level: int32;
   atk: int32;
   def: int32;
@@ -78,6 +79,7 @@ model PutCardRequest {
   subtype: string;
   supertype: string;
   maximumPiece: string;
+  secondaryClass?: string;
   level: int32;
   atk: int32;
   def: int32;
@@ -455,6 +457,7 @@ model CardData {
   subtype: string;
   supertype: string;
   maximumPiece: string;
+  secondaryClass: string;
   level: int32;
   atk: int32;
   def: int32;
