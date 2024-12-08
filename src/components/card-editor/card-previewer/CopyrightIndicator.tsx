@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { CardData, getOwnerName } from '../../../types/card';
+import { CardData, getOwnerName, isDeckMaster } from '../../../types/card';
 import { getFontSize } from '../../../utils/fonts';
 import { TextColor } from '../../../types/color';
 import { CardExpansion } from '../../../types/expansion.ts';
@@ -16,6 +16,7 @@ const CopyrightIndicator: React.FC<CopyrightIndicatorProps> = ({
   cardData,
   expansions,
 }) => {
+  const extraPush = isDeckMaster(cardData) ? 0.7 : 0;
   return (
     <Typography
       variant="h6"
@@ -23,7 +24,7 @@ const CopyrightIndicator: React.FC<CopyrightIndicatorProps> = ({
         position: 'absolute',
         fontWeight: '300',
         right: `${2.5 * scale}rem`,
-        top: `${40.2 * scale + 0.6 / scale}rem`,
+        top: `${(40.2 + extraPush) * scale + 0.6 / scale}rem`,
         fontSize: getFontSize(0, scale),
         color: TextColor.BLACK,
         opacity: 0.34,

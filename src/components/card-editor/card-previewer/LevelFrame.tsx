@@ -2,13 +2,14 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { getFontSize } from '../../../utils/fonts';
 import { AssetEndpoint, getAsset } from '../../../types/api';
+import { CardData, isDeckMaster } from '../../../types/card.tsx';
 
 interface LevelFrameProps {
-  level: number;
+  cardData: CardData;
   scale: number;
 }
 
-const LevelFrame: React.FC<LevelFrameProps> = ({ level, scale }) => {
+const LevelFrame: React.FC<LevelFrameProps> = ({ cardData, scale }) => {
   const STAR_SIZE = 7.4;
 
   return (
@@ -25,7 +26,11 @@ const LevelFrame: React.FC<LevelFrameProps> = ({ level, scale }) => {
       }}
     >
       <img
-        src={getAsset(AssetEndpoint.LEVEL_FRAME)}
+        src={getAsset(
+          isDeckMaster(cardData)
+            ? AssetEndpoint.DECK_MASTER_LEVEL_FRAME
+            : AssetEndpoint.LEVEL_FRAME
+        )}
         alt="Level icon"
         style={{
           width: `${STAR_SIZE * scale}rem`,
@@ -44,7 +49,7 @@ const LevelFrame: React.FC<LevelFrameProps> = ({ level, scale }) => {
           fontSize: getFontSize(10, scale),
         }}
       >
-        {level}
+        {cardData.level}
       </Typography>
     </Box>
   );

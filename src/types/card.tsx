@@ -19,8 +19,9 @@ import {
   isCountedAmount,
   PostCount,
 } from './cardEffects';
-import { NONE_STRING } from '../utils/string';
+import { isNoneString, NONE_STRING } from '../utils/string';
 import { getUser } from './api';
+import { values } from 'lodash';
 
 export enum CardClass {
   NONE = 'None',
@@ -76,10 +77,11 @@ export const isCardSubtype = (value: string): value is CardSubtype => {
 
 export enum CardSupertype {
   NONE = 'None',
+  DECK_MASTER = 'Deck Master',
+  DOMAIN = 'Domain',
   HAND_TRAP = 'Hand Trap',
   MAXIMUM = 'Maximum',
   PENDULUM = 'Pendulum',
-  DOMAIN = 'Domain',
 }
 
 export const isCardSupertype = (value: string): value is CardSupertype => {
@@ -126,6 +128,8 @@ export interface CardData {
   subtype: CardSubtype;
   supertype: CardSupertype;
   maximumPiece: MaximumPiece;
+  primaryClass: CardClass;
+  secondaryClass: CardClass;
   level: number;
   atk: number;
   def: number;
@@ -197,6 +201,7 @@ export const hasFlavourText = (cardData: CardData) => {
     !(
       cardData.cardType !== CardType.MONSTER ||
       cardData.subtype === CardSubtype.EFFECT ||
+      cardData.supertype === CardSupertype.DECK_MASTER ||
       cardData.effectText.length > 0 ||
       cardData.costText.length > 0
     )
@@ -229,6 +234,8 @@ export const DEFAULT_CARD_DATA = {
   subtype: CardSubtype.FUSION,
   supertype: CardSupertype.NONE,
   maximumPiece: MaximumPiece.NONE,
+  primaryClass: CardClass.NONE,
+  secondaryClass: CardClass.NONE,
   level: 1,
   atk: 0,
   def: 0,
@@ -289,6 +296,16 @@ const getActiveSubtypes = (cardType: CardType) => {
   }
 };
 
+export const getCardClassOptions = (allowNone: boolean = false) => {
+  return Object.values(CardClass)
+    .filter(value => allowNone || !isNoneString(value))
+    .map(c => (
+      <MenuItem key={c} value={c}>
+        {c}
+      </MenuItem>
+    ));
+};
+
 export const getSubtypeOptions = (cardType: CardType): React.ReactNode => {
   const activeSubtypes = getActiveSubtypes(cardType);
   return Object.values(CardSubtype)
@@ -313,6 +330,7 @@ const getActiveSupertypes = (cardType: CardType, subtype: CardSubtype) => {
     case CardSubtype.NORMAL:
       return [
         CardSupertype.NONE,
+        CardSupertype.DECK_MASTER,
         CardSupertype.HAND_TRAP,
         CardSupertype.PENDULUM,
       ];
@@ -387,6 +405,10 @@ export const isKiller = (cardData: CardData) => {
 
 export const isDomain = (cardData: CardData) => {
   return cardData.supertype === CardSupertype.DOMAIN;
+};
+
+export const isDeckMaster = (cardData: CardData) => {
+  return cardData.supertype === CardSupertype.DECK_MASTER;
 };
 
 export const getCardsExpansion = (
@@ -556,4 +578,18 @@ export const isOfCardDeck = (card: CardData, deck: CardDeck | string) => {
       return isExtraDeckCard(card);
   }
   return false;
+};
+
+export const DECK_MASTER_LEVEL_PROPS = {
+  min: 7,
+  max: 9,
+};
+
+export const getCardsLevelProps = (card: CardData) => {
+  switch (card.supertype) {
+    case CardSupertype.DECK_MASTER:
+      return DECK_MASTER_LEVEL_PROPS;
+    default:
+      return { min: 1, max: 8 };
+  }
 };

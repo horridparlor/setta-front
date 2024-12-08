@@ -26,8 +26,11 @@ import {
   CardSupertype,
   CardType,
   combineEffectsTexts,
+  DECK_MASTER_LEVEL_PROPS,
   DefaultTextSize,
   EXTRA_DECK_SUBTYPES,
+  getCardClassOptions,
+  getCardsLevelProps,
   getEffectsChainEffect,
   getEffectsCost,
   getEffectsCostPayment,
@@ -45,6 +48,7 @@ import {
   isCardClass,
   isCardSubtype,
   isCardType,
+  isDeckMaster,
   isExtraDeckCard,
   isGroupCardType,
   isKiller,
@@ -143,6 +147,7 @@ import {
   isTargetOwner,
   isTargetType,
   isZone,
+  LEVEL_AMOUNT_PROPS,
   MonsterSpecificStateCostTypes,
   NULLABLE_LEVEL_AMOUNT_PROPS,
   NULLABLE_STAT_AMOUNT_PROPS,
@@ -161,6 +166,7 @@ import {
 } from '../../types/cardEffects';
 import { menuTitleStyle } from '../../utils/fonts';
 import { isEqual } from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 interface RightPanelSettingsProps {
   cardData: CardData;
@@ -181,7 +187,6 @@ interface RightPanelSettingsProps {
   tabId: number;
   onActiveTabChange: (activeTab: number) => void;
 }
-import { useTranslation } from 'react-i18next';
 
 const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   onActiveTabChange,
@@ -246,6 +251,28 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
   const backrowCardSelector = () => {
     return cardSelector(
       cards.filter(card => BACKROW_CARD_TYPES.includes(card.cardType))
+    );
+  };
+  const handleSupertypeChange = (value: CardSupertype) => {
+    switch (cardData.supertype) {
+      case CardSupertype.DECK_MASTER:
+        onCardDataChange('level', LEVEL_AMOUNT_PROPS.min);
+        break;
+      case CardSupertype.HAND_TRAP:
+        onCardDataChange('effectText', '');
+        break;
+      case CardSupertype.PENDULUM:
+        onCardDataChange('costText', '');
+        break;
+    }
+    switch (value) {
+      case CardSupertype.DECK_MASTER:
+        onCardDataChange('level', DECK_MASTER_LEVEL_PROPS.min);
+        onCardDataChange('primaryClass', cardData.cardClass);
+    }
+    onCardDataChange(
+      'maximumPiece',
+      value === CardSupertype.MAXIMUM ? MaximumPiece.LEFT : MaximumPiece.NONE
     );
   };
   const handleSelectChange =
@@ -351,23 +378,11 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             onCardDataChange('secondaryMaterialId', '');
             onCardDataChange('tertiaryMaterialId', '');
           }
+          handleSupertypeChange(CardSupertype.NONE);
           onCardDataChange('supertype', CardSupertype.NONE);
           break;
         case 'supertype':
-          switch (cardData.supertype) {
-            case CardSupertype.HAND_TRAP:
-              onCardDataChange('effectText', '');
-              break;
-            case CardSupertype.PENDULUM:
-              onCardDataChange('costText', '');
-              break;
-          }
-          onCardDataChange(
-            'maximumPiece',
-            value === CardSupertype.MAXIMUM
-              ? MaximumPiece.LEFT
-              : MaximumPiece.NONE
-          );
+          handleSupertypeChange(value as CardSupertype);
           break;
         case 'primaryMaterialId':
           onCardDataChange(
@@ -2846,13 +2861,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
                 onChange={handleSelectChange('cardClass')}
                 disabled={cannotEdit()}
               >
-                {Object.values(CardClass)
-                  .filter(value => !isNoneString(value))
-                  .map(c => (
-                    <MenuItem key={c} value={c}>
-                      {c}
-                    </MenuItem>
-                  ))}
+                {getCardClassOptions()}
               </Select>
             </FormControl>
           </Box>
@@ -2916,6 +2925,41 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         <Box
           sx={{
             ...rowContainerStyle,
+            display: isDeckMaster(cardData) ? 'flex' : 'none',
+          }}
+        >
+          <FormControl fullWidth>
+            <InputLabel id="primary-class-selector-label">
+              {'Primary Class'}
+            </InputLabel>
+            <Select
+              labelId="primary-class-selector-label"
+              value={cardData.primaryClass}
+              label={'Primary Class'}
+              onChange={handleSelectChange('primaryClass')}
+              disabled={cannotEdit()}
+            >
+              {getCardClassOptions()}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel id="secondary-class-selector-label">
+              {'Secondary Class'}
+            </InputLabel>
+            <Select
+              labelId="secondary-class-selector-label"
+              value={cardData.secondaryClass}
+              label={'Secondary Class'}
+              onChange={handleSelectChange('secondaryClass')}
+              disabled={cannotEdit()}
+            >
+              {getCardClassOptions(true)}
+            </Select>
+          </FormControl>
+        </Box>
+        <Box
+          sx={{
+            ...rowContainerStyle,
             display: cardData.cardType === CardType.MONSTER ? 'flex' : 'none',
           }}
         >
@@ -2926,7 +2970,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             variant="outlined"
             value={cardData.level}
             onChange={handleInputChange('level')}
-            inputProps={{ min: 1, max: 9 }}
+            inputProps={getCardsLevelProps(cardData)}
             disabled={cannotEdit()}
           />
           <TextField

@@ -12,6 +12,7 @@ export enum RequestMethod {
 export enum AssetEndpoint {
   ATTRIBUTE_FRAME = 'icons/attribute',
   CARD_ART = 'card-art',
+  DECK_MASTER_LEVEL_FRAME = 'icons/deck-master-level-frame',
   LEVEL_FRAME = 'icons/level-frame',
   SMALL_CARD_ART = 'small-art',
 }

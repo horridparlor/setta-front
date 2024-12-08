@@ -12,6 +12,7 @@ import AttributeFrame from './AttributeFrame';
 import CopyrightIndicator from './CopyrightIndicator';
 import AceFrame from './AceFrame';
 import { CardExpansion } from '../../../types/expansion.ts';
+import DeckMasterAttributesFrame from './DeckMasterAttributesFrame.tsx';
 
 interface CardPreviewerProps {
   cardData: CardData;
@@ -32,7 +33,7 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({
   overwriteArt,
   oldName,
 }) => {
-  const { level, atk, def } = cardData;
+  const { atk, def } = cardData;
   return (
     <Card
       ref={cardRef}
@@ -69,12 +70,13 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({
               cardData.cardType === CardType.MONSTER ? 'visible' : 'hidden',
           }}
         >
-          <LevelFrame level={level} scale={scale} />
+          <LevelFrame cardData={cardData} scale={scale} />
           <StatFrame value={atk} statType={StatType.ATTACK} scale={scale} />
           <StatFrame value={def} statType={StatType.DEFENSE} scale={scale} />
           <Box style={{ width: '0' }} />
         </Box>
         <EffectsFrame cards={cards} cardData={cardData} scale={scale} />
+        <DeckMasterAttributesFrame cardData={cardData} scale={scale} />
       </Box>
       <CopyrightIndicator
         scale={scale}

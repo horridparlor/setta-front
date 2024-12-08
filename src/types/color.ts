@@ -82,6 +82,10 @@ export const getCardBackground = (cardData: CardData) => {
       break;
   }
   switch (cardData.supertype) {
+    case CardSupertype.DECK_MASTER:
+      darkColor = `${CardMainFrameColor.NORMAL} ${GradientCutPoint.HAND_TRAP_DROP}%`;
+      lightColor = `${CardEffectFrameColor.NORMAL} ${GradientCutPoint.PENDULUM_DROP + GradientCutPoint.PENDULUM_EDGE}%`;
+      break;
     case CardSupertype.HAND_TRAP:
       darkColor = `${CardMainFrameColor.NORMAL} ${GradientCutPoint.HAND_TRAP_DROP}%`;
       lightColor = `${CardMainFrameColor.TRAP} ${GradientCutPoint.HAND_TRAP_DROP + GradientCutPoint.HAND_TRAP_EDGE}%`;
