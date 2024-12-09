@@ -59,9 +59,9 @@ export const encodeEffectsString = (message: string) => {
     words
       .slice(1)
       .join(' ')
-      .replace('(', '{i}')
+      .replace(/(?<!\{b\})\(/g, '{i}')
       .replace('.)', ')')
-      .replace(')', '{/i}')
+      .replace(/\)(?!\{\/b\})/g, '{/i}')
       .replace(tagPattern, (match, p1, _p2, p3, p4) => {
         if (p1) return p1;
         if (p3) return `{sb}${match}{/sb}`;
