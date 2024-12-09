@@ -123,7 +123,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({
   const getFlavourText = () => {
     const flavourPrefix = `{i=${getEffectsSize()}}`;
     const flavourText = addSizeToRichText(
-      cardData.flavourText,
+      cardData.flavourText.replace(/–(?=[A-Z])/g, '{/i}\n{i}–'),
       getEffectsSize()
     );
     return hasFlavourText(cardData)

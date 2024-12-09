@@ -55,8 +55,8 @@ export function addSizeToRichText(
     richText = richText.toString();
   }
   return richText
-    .replace('{i}', ' {i}(')
-    .replace('{/i}', '.){/i}')
+    .replace(/(?<!\{\/i\}\n)\{i\}/g, ' {i}(')
+    .replace(/\{\/i\}(?!\n\{i\})/g, '.){/i}')
     .replace(regex, `{$1=${fontSize}}`);
 }
 
