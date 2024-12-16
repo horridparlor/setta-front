@@ -7,6 +7,7 @@ import {
   getCardsExpansionIds,
   getCombinedStats,
   getFullTypeString,
+  isDeckMaster,
   isExtraDeckCard,
   isGroupCardType,
   isIncludedInGroupCardType,
@@ -348,10 +349,10 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
     };
 
     const countOfFilteredMain = filteredCards.filter(
-      card => !isExtraDeckCard(card) && !card.isAce
+      card => !isExtraDeckCard(card) && !card.isAce && !isDeckMaster(card)
     ).length;
     const countOfFilteredMainAce = filteredCards.filter(
-      card => !isExtraDeckCard(card) && card.isAce
+      card => !isExtraDeckCard(card) && (card.isAce || isDeckMaster(card))
     ).length;
     const countOfFilteredExtra = filteredCards.filter(card =>
       isExtraDeckCard(card)
