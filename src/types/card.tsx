@@ -50,6 +50,7 @@ export const isCardType = (value: string): value is CardType => {
 
 export enum CardDeck {
   NONE = 'None',
+  DECK_MASTER = 'Deck Master',
   MAIN = 'Main',
   EXTRA = 'Extra',
   SIDE = 'Side',
@@ -575,8 +576,10 @@ export const isOfCardDeck = (card: CardData, deck: CardDeck | string) => {
     return false;
   }
   switch (deck) {
+    case CardDeck.DECK_MASTER:
+      return isDeckMaster(card);
     case CardDeck.MAIN:
-      return !isExtraDeckCard(card);
+      return !isDeckMaster(card) && !isExtraDeckCard(card);
     case CardDeck.EXTRA:
       return isExtraDeckCard(card);
   }

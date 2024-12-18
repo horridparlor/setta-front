@@ -51,6 +51,7 @@ export enum TextColor {
 }
 
 export enum BrandColor {
+  ACE = '#f2ef37',
   BLUE = '#78abf3',
   DARK_BLUE = '#2259a4',
   DARK_PURPLE = '#502263',

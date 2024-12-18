@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { CardData } from '../../../types/card';
 import { getFontSize } from '../../../utils/fonts';
+import { BrandColor } from '../../../types/color.ts';
 
 interface AceFrameProps {
   scale: number;
@@ -22,7 +23,7 @@ const AceFrame: React.FC<AceFrameProps> = ({ scale, cardData }) => {
           justifyContent: 'center',
           width: `${5.8 * scale}rem`,
           height: `${2.2 * scale}rem`,
-          backgroundColor: '#f2ef37',
+          backgroundColor: BrandColor.ACE,
           borderRadius: `${0.8 * scale}rem`,
           padding: `${0.9 * scale}rem ${0.55 * scale}rem`,
         }}
