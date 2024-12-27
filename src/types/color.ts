@@ -54,13 +54,18 @@ export enum BrandColor {
   ACE = '#f2ef37',
   BLUE = '#78abf3',
   DARK_BLUE = '#2259a4',
+  DARK_GREEN = '#26aa3d',
   DARK_PURPLE = '#502263',
+  ERROR = '#ee4772',
+  GREEN = '#95e887',
   LIGHT_BLUE = '#4acaeb',
+  LIGHT_GREEN = '#9ddda0',
   LIGHT_PURPLE = '#7f5094',
   MILK = '#f8cbe9',
   NIGHT_PURPLE = '#2c133f',
   PURPLE = '#8d1175',
   STEEL_BLUE = '#0e305d',
+  SUCCESS = '#53d796',
   WARNING = '#f4f300',
 }
 
