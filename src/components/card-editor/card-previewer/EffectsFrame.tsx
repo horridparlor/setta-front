@@ -14,6 +14,7 @@ import {
   isHandTrapCard,
   isKiller,
   isPendulumCard,
+  isTrap,
   SpecialCountsAsId,
 } from '../../../types/card';
 import {
@@ -100,9 +101,9 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({
   };
   const getCostText = () => {
     const costOpener = isPendulumCard(cardData)
-      ? 'Dethrone>>'
-      : isDomain(cardData)
-        ? 'Domain>>'
+      ? 'Pedestal>>'
+      : isTrap(cardData)
+        ? 'Trigger>>'
         : isContinuous(cardData)
           ? 'Continuous:'
           : 'Cost:';

@@ -2944,7 +2944,6 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
         <Box
           sx={{
             ...rowContainerStyle,
-            display: cardData.cardType === CardType.MONSTER ? 'flex' : 'none',
           }}
         >
           <TextField
@@ -2966,6 +2965,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             onChange={handleInputChange('atk')}
             inputProps={{ min: 0, max: 2600, step: 100 }}
             disabled={cannotEdit()}
+            sx={{
+              display: cardData.cardType === CardType.MONSTER ? 'flex' : 'none',
+            }}
           />
           <TextField
             fullWidth
@@ -2976,6 +2978,9 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             onChange={handleInputChange('def')}
             inputProps={{ min: 0, max: 2500, step: 100 }}
             disabled={cannotEdit()}
+            sx={{
+              display: cardData.cardType === CardType.MONSTER ? 'flex' : 'none',
+            }}
           />
         </Box>
 
@@ -3138,7 +3143,7 @@ const RightPanelSettings: React.FC<RightPanelSettingsProps> = ({
             variant="outlined"
             value={cardData.effectsSize}
             onChange={handleInputChange('effectsSize')}
-            inputProps={{ min: 1, max: 5 }}
+            inputProps={{ min: 4, max: 5 }}
             disabled={cannotEdit()}
             sx={{ minWidth: '8rem' }}
           />

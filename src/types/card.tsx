@@ -40,8 +40,8 @@ export enum CardType {
   NONE = 'None',
   MONSTER = 'Monster',
   BACKROW = 'Backrow',
-  SPELL = 'Spell',
-  TRAP = 'Trap',
+  SPELL = 'Skill',
+  TRAP = 'Trick',
 }
 
 export const isCardType = (value: string): value is CardType => {
