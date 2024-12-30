@@ -10,30 +10,30 @@ const ARTWORK_BORDER_THICKNESS = 0.225;
 const EFFECTS_BORDER_THICKNESS = 0.2;
 
 export enum CardMainFrameColor {
-  NORMAL = '#e0c71b',
-  EFFECT = '#ec8c57',
-  FUSION = '#b361e2',
-  REVENGE = '#f35a5a',
+  NORMAL = '#eccd1e',
+  FUSION = '#bd71e3',
+  SPELL = '#81ca6d',
+  REVENGE = '#f45f5f',
   ROYAL_DARK = '#1d1d1d',
   ROYAL_LIGHT = '#616161',
   TIME_TRAVELLER_DARK = '#102058',
   TIME_TRAVELLER_LIGHT = '#2650ea',
-  SPELL = '#4cb871',
-  TRAP = '#e77c9b',
-  KILLER_MOVE = '#5f9bdb',
+  EFFECT = '#ec83ad',
+  TRAP = '#7fb3f6',
+  KILLER_MOVE = '#5ad1d1',
   FRAME = '#171717',
 }
 
 export enum CardEffectFrameColor {
-  NORMAL = '#f6f4cb',
-  EFFECT = '#f5dfd4',
+  NORMAL = '#f6f5da',
   FUSION = '#eee2f5',
+  SPELL = '#e3eddf',
   REVENGE = '#f6dcdc',
   ROYAL = '#e5e5e5',
   TIME_TRAVELLER = '#e9ecf6',
-  SPELL = '#e3f5ea',
-  TRAP = '#f5e0e6',
-  KILLER_MOVE = '#e7f0f7',
+  EFFECT = '#efe0e3',
+  TRAP = '#e7f0f7',
+  KILLER_MOVE = '#dbeae7',
 }
 
 export enum StatBoxColor {
@@ -241,6 +241,7 @@ export const getEffectsBorder = (cardData: CardData, scale: number) => {
       CardSubtype.REVENGE,
       CardSubtype.ROYAL,
       CardSubtype.TIME_TRAVELLER,
+      CardSubtype.KILLER_MOVE,
     ].includes(cardData.subtype)
       ? 'black'
       : 'transparent'

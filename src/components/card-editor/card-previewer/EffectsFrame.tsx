@@ -100,7 +100,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({
   };
   const getCostText = () => {
     const costOpener = isPendulumCard(cardData)
-      ? 'Pendulum>>'
+      ? 'Dethrone>>'
       : isDomain(cardData)
         ? 'Domain>>'
         : isContinuous(cardData)
@@ -112,7 +112,7 @@ const EffectsFrame: React.FC<EffectsFrameProps> = ({
   };
   const getEffectText = () => {
     const effectOpener = isHandTrapCard(cardData)
-      ? 'Hand Trap>>'
+      ? 'Hand Trick>>'
       : isDomain(cardData)
         ? 'Continuous:'
         : 'Effect:';

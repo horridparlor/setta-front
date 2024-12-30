@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Card } from '@mui/material';
-import { CardData, CardType, StatType } from '../../../types/card';
+import { CardData, isMonster, StatType } from '../../../types/card';
 import NameFrame from './NameFrame';
 import ArtFrame from './ArtFrame';
 import StatFrame from './StatFrame';
@@ -66,13 +66,15 @@ const CardPreviewer: React.FC<CardPreviewerProps> = ({
           sx={{
             display: 'flex',
             justifyContent: 'space-around',
-            visibility:
-              cardData.cardType === CardType.MONSTER ? 'visible' : 'hidden',
           }}
         >
           <LevelFrame cardData={cardData} scale={scale} />
-          <StatFrame value={atk} statType={StatType.ATTACK} scale={scale} />
-          <StatFrame value={def} statType={StatType.DEFENSE} scale={scale} />
+          <Box sx={{ visibility: isMonster(cardData) ? 'visible' : 'hidden' }}>
+            <StatFrame value={atk} statType={StatType.ATTACK} scale={scale} />
+          </Box>
+          <Box sx={{ visibility: isMonster(cardData) ? 'visible' : 'hidden' }}>
+            <StatFrame value={def} statType={StatType.DEFENSE} scale={scale} />
+          </Box>
           <Box style={{ width: '0' }} />
         </Box>
         <EffectsFrame cards={cards} cardData={cardData} scale={scale} />

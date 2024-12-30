@@ -18,6 +18,16 @@ const AttributeFrame: React.FC<AttributeFrameProps> = ({ scale, cardData }) => {
     }
     return cardData.cardType;
   };
+  const getAttributeName = () => {
+    const name: String = getAttribute();
+    if (name === CardType.SPELL) {
+      return 'Skill';
+    }
+    if (name === CardType.TRAP) {
+      return 'Trick';
+    }
+    return name;
+  };
 
   return (
     <Box
@@ -52,7 +62,7 @@ const AttributeFrame: React.FC<AttributeFrameProps> = ({ scale, cardData }) => {
           color: getFrameTextColor(cardData),
         }}
       >
-        {getAttribute()}
+        {getAttributeName()}
       </Typography>
     </Box>
   );
