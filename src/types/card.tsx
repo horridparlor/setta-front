@@ -588,7 +588,7 @@ export const isOfCardDeck = (card: CardData, deck: CardDeck | string) => {
 
 export const DECK_MASTER_LEVEL_PROPS = {
   min: 7,
-  max: 9,
+  max: 8,
 };
 
 export const getCardsLevelProps = (card: CardData) => {

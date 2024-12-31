@@ -45,8 +45,8 @@ const DeckValidation = (deck: DeckData[]) => {
     );
     const checkExtraDeckValidity = totalCounts.aceExtraDeck > 1;
     if (
-      totalCounts.main !== 60 ||
-      totalCounts.extra > 15 ||
+      totalCounts.main !== 50 ||
+      totalCounts.extra > 8 ||
       checkMainDeckValidity ||
       checkExtraDeckValidity
     ) {
