@@ -20,7 +20,8 @@ const StatFrame: React.FC<StatFrameProps> = ({ value, statType, scale }) => (
         borderRadius: `${0.8 * scale}rem`,
         color: TextColor.WHITE,
         padding: `${0.1 * scale}rem`,
-        paddingBottom: `${0.4 * scale}rem`,
+        paddingTop: `${0.2 * scale}rem`,
+        paddingBottom: `${0.2 * scale}rem`,
         fontSize: getFontSize(8, scale),
         fontWeight: '700',
         width: `${7.07 * scale}rem`,
@@ -33,14 +34,14 @@ const StatFrame: React.FC<StatFrameProps> = ({ value, statType, scale }) => (
     <Typography
       sx={{
         textAlign: 'center',
-        marginTop: `-${1.9 * scale}rem`,
-        fontSize: getFontSize(0, scale),
+        marginTop: `-${1.8 * scale}rem`,
+        fontSize: 16 * scale,
         fontWeight: '600',
         opacity: 0.34,
         color: 'white',
       }}
     >
-      {statType == StatType.ATTACK ? 'STRIKE' : 'ASSIST'}
+      {statType == StatType.ATTACK ? 'STR' : 'ASS'}
     </Typography>
   </>
 );
