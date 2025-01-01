@@ -7,6 +7,7 @@ import {
   getCardsExpansionIds,
   getCombinedStats,
   getFullTypeString,
+  getPointerId,
   isDeckMaster,
   isExtraDeckCard,
   isGroupCardType,
@@ -105,7 +106,7 @@ const CardCatalogue = forwardRef<CardCatalogueRef, CardCatalogueProps>(
 
     const isReferenceToCard = (card: CardData, referenceId: number) => {
       const referenceCard: CardData | undefined = cards.find(
-        card => card.cardId === referenceId
+        card => getPointerId(card) === referenceId
       );
       if (!referenceCard) {
         return false;
