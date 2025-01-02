@@ -231,7 +231,7 @@ const HomeBar = forwardRef<HomeBarRef, HomeBarProps>(
               </Box>
             </Drawer>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              Setta
+              Cinder Hearts
             </Typography>
 
             <Typography variant="h5" sx={{ flexGrow: 1, fontWeight: 600 }}>
